@@ -1,19 +1,21 @@
 ﻿using System;
-//using CLISSC.Classes;
+using System.IO;
+//using CLISC.Classes;
 
-namespace CLISSC
+namespace CLISC
 {
     class Program
     {
         static void Main(string[] args)
         {
             // Declare variables
-            string argument1, prefix;
-            bool recursive, nolog;
+            string argument1, directory, prefix;
+            bool recursive, nolog, IsWellFormedUriString=true;
             // User guidance
-            Console.WriteLine("CLISCC - Command Line Interface Spreadsheet Convert and Compare");
+            Console.WriteLine("CLIS3C - Command Line Interface Spreadsheet Count Convert and Compare");
             Console.WriteLine();
             Console.WriteLine("Program behavior:");
+            Console.WriteLine("\tCount spreadsheets sorted by file format");
             Console.WriteLine("\tConvert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)");
             Console.WriteLine("\tOutput all conversions in same folder");
             Console.WriteLine("\tRename all conversions n+1.xlsx");
@@ -27,22 +29,64 @@ namespace CLISSC
             Console.WriteLine();
             Console.WriteLine("Input your argument:");
             // User input
-            argument1 = Console.ReadLine();
+            directory = Console.ReadLine();
             //Validate user input
-            while (public static bool IsWellFormedUriString (string? argument1, UriKind 0))
+            //while (IsWellFormedUriString == false)
+            //{
+            //    if (public static bool IsWellFormedUriString(string? argument1, UriKind 0))
+            //        {
+            //        IsWellFormedUriString = true;
+            //        }
+            //    else
+            //        {
+            //        Console.WriteLine("Please enter a valid filepath");
+            //        argument1 = Console.ReadLine();
+            //        }
+            //}
+
+            // Count
+            //Count.CountSpreadsheets();
+            DirectoryInfo di = new DirectoryInfo(@directory);
+            int numXLS = di.GetFiles("*.xls", SearchOption.AllDirectories).Length;
+            int numXLT = di.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
+            int numXLAM = di.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
+            int numXLSB = di.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
+            int numXLSM = di.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
+            int numXLSX = di.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
+            int numXLTM = di.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
+            int numXLTX = di.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
+            // Show count to user
+            Console.WriteLine();
+            Console.WriteLine($"{numXLS} XLS");
+            Console.WriteLine($"{numXLT} XLT");
+            Console.WriteLine($"{numXLAM} XLAM");
+            Console.WriteLine($"{numXLSB} XLSB");
+            Console.WriteLine($"{numXLSM} XLSM");
+            Console.WriteLine($"{numXLSX} XLSX");
+            Console.WriteLine($"{numXLTM} XLTM");
+            Console.WriteLine($"{numXLTX} XLTX");
+            Console.WriteLine();
+            if (numXLS == 0 && numXLT == 0 && numXLAM == 0 && numXLSB == 0 && numXLSM == 0 && numXLSX == 0 && numXLTM == 0 && numXLTX == 0)
             {
-                //Perform functions
-                break
-                Console.WriteLine("Please enter a valid filepath");
-                argument1 = Console.ReadLine();
+                Console.WriteLine("No spreadsheets identified. Input new argument:");
+                directory = Console.ReadLine();
             }
-            
-            // Functions
-            // - Convert
+            // Convert
+            Console.WriteLine("Continue to conversion y/n");
+            // linje nedenunder bør være bool i stedet for string
+            string continue_conversion = Console.ReadLine();
+            if (continue_conversion == "y")
+            {
+                Console.WriteLine("funktion på vej");
+                //Insert convert function
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
+            // Compare
 
-            // - Compare
-
-            // - Log
+            // Log
 
             // User confirmation
             //Console.WriteLine("Conversion completed");
