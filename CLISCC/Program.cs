@@ -12,19 +12,19 @@ namespace CLISC
             string argument1, directory, prefix;
             bool recursive, nolog, IsWellFormedUriString=true;
             // User guidance
-            Console.WriteLine("CLIS3C - Command Line Interface Spreadsheet Count Convert and Compare");
+            Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert & Compare");
             Console.WriteLine();
             Console.WriteLine("Program behavior:");
-            Console.WriteLine("\tCount spreadsheets sorted by file format");
+            Console.WriteLine("\tCount spreadsheets in directory by file format");
             Console.WriteLine("\tConvert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)");
-            Console.WriteLine("\tOutput all conversions in same folder");
+            Console.WriteLine("\tOutput all conversions in same directory");
             Console.WriteLine("\tRename all conversions n+1.xlsx");
             Console.WriteLine("\tCompare the results to log workbook differences between input and output file formats");
             Console.WriteLine();
             Console.WriteLine("Available arguments:");
-            Console.WriteLine("\t[value] | Filepath to folder e.g. C:\\Users\\[your_username]\\Desktop | Mandatory");
+            Console.WriteLine("\t[value] | Filepath to directory e.g. C:\\Users\\[your_username]\\Desktop | Mandatory");
+            Console.WriteLine("\trecursive | Recursively count & convert spreadsheets in any subdirectories | Optional (not working)");
             Console.WriteLine("\tprefix=[value] | Prefix filename i.e. [value]n+1.xlsx | Optional (not working)");
-            Console.WriteLine("\trecursive | Recursively convert spreadsheets in any subfolders | Optional (not working)");
             Console.WriteLine("\tnolog | Output no XML log | Optional (not working)");
             Console.WriteLine();
             Console.WriteLine("Input your argument:");
@@ -43,7 +43,6 @@ namespace CLISC
             //        argument1 = Console.ReadLine();
             //        }
             //}
-
             // Count
             //Count.CountSpreadsheets();
             DirectoryInfo di = new DirectoryInfo(@directory);
