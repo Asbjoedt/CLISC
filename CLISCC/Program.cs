@@ -4,14 +4,13 @@ using System.IO;
 
 namespace CLISC
 {
+
     class Program
     {
-        static void Main(string[] args)
+
+        // User guidance
+        public void Main(string[] args)
         {
-            // Declare variables
-            string argument1, directory, prefix;
-            bool recursive, nolog, IsWellFormedUriString=true;
-            // User guidance
             Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert & Compare");
             Console.WriteLine();
             Console.WriteLine("Program behavior:");
@@ -28,23 +27,45 @@ namespace CLISC
             Console.WriteLine("\tnolog | Output no XML log | Optional (not working)");
             Console.WriteLine();
             Console.WriteLine("Input your argument:");
-            // User input
-            directory = Console.ReadLine();
+        }
+        
+        // User input
+        public argument(string directory, string recursive = "", string prefix ="", string nolog = "")
+        {
+            Console.ReadLine();
+
             //Validate user input
+            if ()
+            if (recursive != "recursive" || recursive != "")
+            {
+                Console.WriteLine("Invalid recursive argument");
+            }
+            if (prefix != "prefix=" + || prefix != "")
+            {
+                Console.WriteLine("Invalid prefix argument");
+            }
+            if (nolog != "nolog" || nolog != "")
+            {
+                Console.WriteLine("Invalid nolog argument");
+            }
+            // Directory will be validated in the next step
             //while (IsWellFormedUriString == false)
             //{
-            //    if (public static bool IsWellFormedUriString(string? argument1, UriKind 0))
+            //    if (public static bool IsWellFormedUriString(string? argument, UriKind 0))
             //        {
             //        IsWellFormedUriString = true;
             //        }
             //    else
             //        {
             //        Console.WriteLine("Please enter a valid filepath");
-            //        argument1 = Console.ReadLine();
+            //        argument = Console.ReadLine();
             //        }
             //}
-            // Count
-            //Count.CountSpreadsheets();
+        }
+
+        // Count
+        public Count()
+        { 
             DirectoryInfo di = new DirectoryInfo(@directory);
             int numXLS = di.GetFiles("*.xls", SearchOption.AllDirectories).Length;
             int numXLT = di.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
@@ -65,13 +86,16 @@ namespace CLISC
             Console.WriteLine($"{numXLTM} XLTM");
             Console.WriteLine($"{numXLTX} XLTX");
             Console.WriteLine();
-            if (numXLS == 0 && numXLT == 0 && numXLAM == 0 && numXLSB == 0 && numXLSM == 0 && numXLSX == 0 && numXLTM == 0 && numXLTX == 0)
-            {
-                Console.WriteLine("No spreadsheets identified. Input new argument:");
-                directory = Console.ReadLine();
-            }
-            // Convert
-            Console.WriteLine("Continue to conversion y/n");
+                // If no spreadsheets identified ask for new argument
+                if (numXLS == 0 && numXLT == 0 && numXLAM == 0 && numXLSB == 0 && numXLSM == 0 && numXLSX == 0 && numXLTM == 0 && numXLTX == 0)
+                {
+                    Console.WriteLine("No spreadsheets identified. Input new argument:");
+                    directory = Console.ReadLine();
+                }
+        }
+        
+        // Convert
+        Console.WriteLine("Continue to conversion y/n");
             // linje nedenunder bør være bool i stedet for string
             string continue_conversion = Console.ReadLine();
             if (continue_conversion == "y")
@@ -83,6 +107,15 @@ namespace CLISC
             {
                 Environment.Exit(0);
             }
+
+            // Rename
+            // int filenumber = 1;
+            // if (prefix has value)
+            // {
+            // filename = prefix + ++filenumber + ".xlsx"
+            // }
+            // else 
+            // filename = ++filenumber + ".xlsx"
             // Compare
 
             // Log
@@ -91,6 +124,5 @@ namespace CLISC
             //Console.WriteLine("Conversion completed");
             //Console.WriteLine("X ""conversions contain differences");
             //Console.WriteLine("Comparison results saved to log");
-        }
     }
 }
