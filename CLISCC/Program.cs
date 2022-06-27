@@ -9,7 +9,7 @@ namespace CLISC
     {
 
         // User guidance
-        public void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert & Compare");
             Console.WriteLine();
@@ -27,76 +27,68 @@ namespace CLISC
             Console.WriteLine("\tnolog | Output no XML log | Optional (not working)");
             Console.WriteLine();
             Console.WriteLine("Input your argument:");
-        }
-        
-        // User input
-        public argument(string directory, string recursive = "", string prefix ="", string nolog = "")
-        {
-            Console.ReadLine();
+            argument();
 
-            //Validate user input
-            if ()
-            if (recursive != "recursive" || recursive != "")
+            // User input
+            public argument(string directory, string recursive = "", string prefix = "", string nolog = "")
             {
-                Console.WriteLine("Invalid recursive argument");
-            }
-            if (prefix != "prefix=" + || prefix != "")
-            {
-                Console.WriteLine("Invalid prefix argument");
-            }
-            if (nolog != "nolog" || nolog != "")
-            {
-                Console.WriteLine("Invalid nolog argument");
-            }
-            // Directory will be validated in the next step
-            //while (IsWellFormedUriString == false)
-            //{
-            //    if (public static bool IsWellFormedUriString(string? argument, UriKind 0))
-            //        {
-            //        IsWellFormedUriString = true;
-            //        }
-            //    else
-            //        {
-            //        Console.WriteLine("Please enter a valid filepath");
-            //        argument = Console.ReadLine();
-            //        }
-            //}
-        }
+                Console.ReadLine();
 
-        // Count
-        public Count()
-        { 
-            DirectoryInfo di = new DirectoryInfo(@directory);
-            int numXLS = di.GetFiles("*.xls", SearchOption.AllDirectories).Length;
-            int numXLT = di.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
-            int numXLAM = di.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
-            int numXLSB = di.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
-            int numXLSM = di.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
-            int numXLSX = di.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-            int numXLTM = di.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
-            int numXLTX = di.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
-            // Show count to user
-            Console.WriteLine();
-            Console.WriteLine($"{numXLS} XLS");
-            Console.WriteLine($"{numXLT} XLT");
-            Console.WriteLine($"{numXLAM} XLAM");
-            Console.WriteLine($"{numXLSB} XLSB");
-            Console.WriteLine($"{numXLSM} XLSM");
-            Console.WriteLine($"{numXLSX} XLSX");
-            Console.WriteLine($"{numXLTM} XLTM");
-            Console.WriteLine($"{numXLTX} XLTX");
-            Console.WriteLine();
-                // If no spreadsheets identified ask for new argument
+                //Validate user input
+                if (recursive != "recursive" || recursive != "")
+                {
+                    Console.WriteLine("Invalid recursive argument. Input new argument:");
+                    Console.ReadLine();
+                }
+                if (prefix != "prefix=" + System.Text.RegularExpressions.Regex.IsMatch(prefix, "^[- a-zA-Z]*$") || prefix != "")
+                {
+                    Console.WriteLine("Invalid prefix argument. Input new argument:");
+                    Console.ReadLine();
+                }
+                if (nolog != "nolog" || nolog != "")
+                {
+                    Console.WriteLine("Invalid nolog argument. Input new argument:");
+                    Console.ReadLine();
+                }
+                return directory;
+                return recursive;
+                return prefix;
+                return nolog;
+            }
+
+            // Count
+            public void Count()
+            {
+                DirectoryInfo di = new DirectoryInfo(@directory);
+                int numXLS = di.GetFiles("*.xls", SearchOption.AllDirectories).Length;
+                int numXLT = di.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
+                int numXLAM = di.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
+                int numXLSB = di.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
+                int numXLSM = di.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
+                int numXLSX = di.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
+                int numXLTM = di.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
+                int numXLTX = di.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
+                // Show count to user
+                Console.WriteLine();
+                Console.WriteLine($"{numXLS} XLS");
+                Console.WriteLine($"{numXLT} XLT");
+                Console.WriteLine($"{numXLAM} XLAM");
+                Console.WriteLine($"{numXLSB} XLSB");
+                Console.WriteLine($"{numXLSM} XLSM");
+                Console.WriteLine($"{numXLSX} XLSX");
+                Console.WriteLine($"{numXLTM} XLTM");
+                Console.WriteLine($"{numXLTX} XLTX");
+                Console.WriteLine();
+                // If no spreadsheets identified, ask for new argument
                 if (numXLS == 0 && numXLT == 0 && numXLAM == 0 && numXLSB == 0 && numXLSM == 0 && numXLSX == 0 && numXLTM == 0 && numXLTX == 0)
                 {
                     Console.WriteLine("No spreadsheets identified. Input new argument:");
-                    directory = Console.ReadLine();
+                    Console.ReadLine();
                 }
-        }
-        
-        // Convert
-        Console.WriteLine("Continue to conversion y/n");
-            // linje nedenunder bør være bool i stedet for string
+            }
+
+            // Convert
+            Console.WriteLine("Continue to conversion y/n");
             string continue_conversion = Console.ReadLine();
             if (continue_conversion == "y")
             {
@@ -124,5 +116,6 @@ namespace CLISC
             //Console.WriteLine("Conversion completed");
             //Console.WriteLine("X ""conversions contain differences");
             //Console.WriteLine("Comparison results saved to log");
+        }
     }
 }
