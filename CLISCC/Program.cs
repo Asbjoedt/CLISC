@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-//using CLISC.Classes;
 
 namespace CLISC
 {
@@ -8,114 +7,38 @@ namespace CLISC
     class Program
     {
 
-        // User guidance
         public static void Main(string[] args)
         {
+            // User guidance
             Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert & Compare");
             Console.WriteLine();
             Console.WriteLine("Program behavior:");
             Console.WriteLine("\tCount spreadsheets in directory by file format");
             Console.WriteLine("\tConvert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)");
-            Console.WriteLine("\tOutput all conversions in same directory");
+            Console.WriteLine("\tOutput all conversions in a new directory with new subdirectories named n+1");
             Console.WriteLine("\tRename all conversions n+1.xlsx");
             Console.WriteLine("\tCompare the results to log workbook differences between input and output file formats");
+            Console.WriteLine("\tOutput log in CSV");
             Console.WriteLine();
             Console.WriteLine("Available arguments:");
             Console.WriteLine("\t[value] | Filepath to directory e.g. C:\\Users\\[your_username]\\Desktop | Mandatory");
-            Console.WriteLine("\trecursive | Recursively count & convert spreadsheets in any subdirectories | Optional (not working)");
-            Console.WriteLine("\tprefix=[value] | Prefix filename i.e. [value]n+1.xlsx | Optional (not working)");
-            Console.WriteLine("\tnolog | Output no XML log | Optional (not working)");
+            Console.WriteLine("\trecursive | Recursively count & convert spreadsheets in any subdirectories | Optional");
+            Console.WriteLine("\tprefix=[value] | Prefix filename i.e. [value]n+1.xlsx | Optional");
             Console.WriteLine();
-            Console.WriteLine("Input your argument:");
-            argument();
-
-            // User input
-            public argument(string directory, string recursive = "", string prefix = "", string nolog = "")
-            {
-                Console.ReadLine();
-
-                //Validate user input
-                if (recursive != "recursive" || recursive != "")
-                {
-                    Console.WriteLine("Invalid recursive argument. Input new argument:");
-                    Console.ReadLine();
-                }
-                if (prefix != "prefix=" + System.Text.RegularExpressions.Regex.IsMatch(prefix, "^[- a-zA-Z]*$") || prefix != "")
-                {
-                    Console.WriteLine("Invalid prefix argument. Input new argument:");
-                    Console.ReadLine();
-                }
-                if (nolog != "nolog" || nolog != "")
-                {
-                    Console.WriteLine("Invalid nolog argument. Input new argument:");
-                    Console.ReadLine();
-                }
-                return directory;
-                return recursive;
-                return prefix;
-                return nolog;
-            }
-
-            // Count
-            public void Count()
-            {
-                DirectoryInfo di = new DirectoryInfo(@directory);
-                int numXLS = di.GetFiles("*.xls", SearchOption.AllDirectories).Length;
-                int numXLT = di.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
-                int numXLAM = di.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
-                int numXLSB = di.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
-                int numXLSM = di.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
-                int numXLSX = di.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-                int numXLTM = di.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
-                int numXLTX = di.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
-                // Show count to user
-                Console.WriteLine();
-                Console.WriteLine($"{numXLS} XLS");
-                Console.WriteLine($"{numXLT} XLT");
-                Console.WriteLine($"{numXLAM} XLAM");
-                Console.WriteLine($"{numXLSB} XLSB");
-                Console.WriteLine($"{numXLSM} XLSM");
-                Console.WriteLine($"{numXLSX} XLSX");
-                Console.WriteLine($"{numXLTM} XLTM");
-                Console.WriteLine($"{numXLTX} XLTX");
-                Console.WriteLine();
-                // If no spreadsheets identified, ask for new argument
-                if (numXLS == 0 && numXLT == 0 && numXLAM == 0 && numXLSB == 0 && numXLSM == 0 && numXLSX == 0 && numXLTM == 0 && numXLTX == 0)
-                {
-                    Console.WriteLine("No spreadsheets identified. Input new argument:");
-                    Console.ReadLine();
-                }
-            }
-
-            // Convert
-            Console.WriteLine("Continue to conversion y/n");
-            string continue_conversion = Console.ReadLine();
-            if (continue_conversion == "y")
-            {
-                Console.WriteLine("funktion på vej");
-                //Insert convert function
-            }
-            else
-            {
-                Environment.Exit(0);
-            }
-
-            // Rename
-            // int filenumber = 1;
-            // if (prefix has value)
-            // {
-            // filename = prefix + ++filenumber + ".xlsx"
-            // }
-            // else 
-            // filename = ++filenumber + ".xlsx"
-            // Compare
-
-            // Log
-
+            // New object reference
+            Spreadsheets spreadsheet = new Spreadsheets();
+            // Method references
+            Spreadsheets.UserInput();
+            //Spreadsheets.Count();
+            //Spreadsheets.ConfirmConversion();
+            //Spreadsheets.Convert();
+            //Spreadsheets.Compare();
             // User confirmation
-            //Console.WriteLine("Conversion completed");
-            //Console.WriteLine("X ""conversions contain differences");
-            //Console.WriteLine("Comparison results saved to log");
+            //Console.WriteLine($"{} out of {numTOTAL} conversions completed");
+            //Console.WriteLine($"{} out of {numTOTAL} conversions have differences");
+            //Console.WriteLine("Results saved to log in CSV file format");
         }
+
     }
+
 }
