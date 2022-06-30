@@ -9,11 +9,11 @@ using DocumentFormat.OpenXml;
 namespace CLISC
 {
 
-    public class Spreadsheets
+    public class Spreadsheet
     {
         // Declare public variables
         public string directory;
-        public string prefix = ""; // = null; ???
+        public string prefix = "";
         //public string valid_prefix = prefix.Length=>8;
 
         // User input
@@ -29,11 +29,11 @@ namespace CLISC
             bool recursive = recursiveString == "true";
             if (recursiveString == "true")
             {
-                Console.WriteLine($"{recursive}: Subdirectories will be included");
+                Console.WriteLine("Subdirectories will be included");
             }
             else if (recursiveString == "false")
             {
-                Console.WriteLine($"{recursive}: Subdirectories will not be included");
+                Console.WriteLine("Subdirectories will be excluded");
             }
             else
             {
@@ -50,15 +50,17 @@ namespace CLISC
         // Count spreadsheets
         public void Count()
         {
-            DirectoryInfo di = new DirectoryInfo(@directory);
-            int numXLS = di.GetFiles("*.xls", SearchOption.AllDirectories).Length;
-            int numXLT = di.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
-            int numXLAM = di.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
-            int numXLSB = di.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
-            int numXLSM = di.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
-            int numXLSX = di.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-            int numXLTM = di.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
-            int numXLTX = di.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
+            //Object reference
+            DirectoryInfo dir = new DirectoryInfo(@directory);
+            // Spreadsheets to count
+            int numXLS = dir.GetFiles("*.xls", SearchOption.AllDirectories).Length;
+            int numXLT = dir.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
+            int numXLAM = dir.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
+            int numXLSB = dir.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
+            int numXLSM = dir.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
+            int numXLSX = dir.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
+            int numXLTM = dir.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
+            int numXLTX = dir.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
             int numTOTAL = numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             // Show count to user
             Console.WriteLine();
@@ -70,7 +72,10 @@ namespace CLISC
             Console.WriteLine($"{numXLSX} XLSX");
             Console.WriteLine($"{numXLTM} XLTM");
             Console.WriteLine($"{numXLTX} XLTX");
+            Console.WriteLine();
             Console.WriteLine($"{numTOTAL} spreadsheets in total");
+            //Console.WriteLine("Results saved to log in CSV file format");
+            Console.WriteLine("Count finished");
             Console.WriteLine();
             // If no spreadsheets identified, ask for new argument
             if (numXLS == 0 && numXLT == 0 && numXLAM == 0 && numXLSB == 0 && numXLSM == 0 && numXLSX == 0 && numXLTM == 0 && numXLTX == 0)
@@ -79,12 +84,15 @@ namespace CLISC
                 directory = Console.ReadLine();
             }
         }
-        public void ConfirmConversion()
+
+        // User confirmation prompt
+        public void Confirm()
         {
-            Console.WriteLine("Continue to conversion? y/n");
+            Console.WriteLine("Continue to next process y/n");
             string continue_conversion = Console.ReadLine();
             if (continue_conversion == "y")
             {
+                Console.WriteLine();
                 Console.WriteLine("Funktion på vej");
             }
             else
@@ -109,6 +117,11 @@ namespace CLISC
             // filename = ++filenumber + ".xlsx"
 
             // Convert spreadsheet
+            Console.WriteLine();
+            //Console.WriteLine($"{} out of {numTOTAL} conversions completed");
+            Console.WriteLine("Results saved to log in CSV file format");
+            Console.WriteLine("Conversion finished");
+            Console.WriteLine();
         }
 
         // Compare spreadsheets
@@ -117,6 +130,11 @@ namespace CLISC
             Console.WriteLine("funktion på vej");
             //Delete copy
             // Log
+            Console.WriteLine();
+            //Console.WriteLine($"{} out of {numTOTAL} conversions have differences");
+            Console.WriteLine("Results saved to log in CSV file format");
+            Console.WriteLine("Comparison finished");
+            Console.WriteLine();
         }
 
     }
