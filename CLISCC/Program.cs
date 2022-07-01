@@ -29,7 +29,7 @@ namespace CLISC
             Spreadsheet process = new Spreadsheet();
             // Method reference
             process.UserInput();
-            switch (expression)
+            switch (args[i])
             {
                 case "Count":
                     process.Count();

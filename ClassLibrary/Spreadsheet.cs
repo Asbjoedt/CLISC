@@ -40,11 +40,7 @@ namespace CLISC
                 Console.WriteLine("Input not valid");
                 // Restart method or create another kind of loop?
             }
-            Console.WriteLine();
-            // Use prefix
-            Console.WriteLine("Input prefix for renaming conversions. If no prefix hit 'Enter' without writing anything");
-            prefix = Console.ReadLine();
-            //return (directory, recursive, prefix);
+            //return (directory);
         }
 
         // Count spreadsheets
