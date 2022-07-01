@@ -8,8 +8,8 @@
 * Compare the results to log workbook and checksum differences between input and output file formats
 * Output log in CSV
 
-## Available arguments
-In the terminal navigate (cd) to filepath of CLISC.exe 
+## How to execute
+In the terminal navigate (cd) to directory of CLISC.exe 
 
 To execute the program input CLISC.exe [YourArgument]
 
