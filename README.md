@@ -8,6 +8,12 @@
 * Output log in CSV
 
 ## Available arguments:
+In the terminal navigate (cd) to filepath of CLISC.exe 
+
+To execute the program input CLISC.exe [YourArgument]
+
+Replace [YourArgument] with one of the following arguments:
+
 ```
 Count 'Filepath to directory' -Recursive
 ```
@@ -17,3 +23,5 @@ Count&Convert 'Filepath to directory' -Recursive
 ```
 Count&Convert&Compare 'Filepath to directory' -Recursive
 ```
+
+If you do not want to include subdirectories (recursive function) remove '-Recursive'.
