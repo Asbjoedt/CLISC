@@ -25,25 +25,28 @@ namespace CLISC
             Console.WriteLine("\tCount&Convert 'Filepath to directory' -Recursive");
             Console.WriteLine("\tCount&Convert&Compare 'Filepath to directory' -Recursive");
             Console.WriteLine();
+            Console.WriteLine("Input your argument:");
             // Object reference
             Spreadsheet process = new Spreadsheet();
             // Method reference
-            process.UserInput();
-            switch (args[i])
+            foreach (string arg in args)
             {
-                case "Count":
-                    process.Count();
-                    break;
-                case "Count&Convert":
-                    process.Count();
-                    process.Convert();
-                    break;
-                case "Count&Convert&Compare":
-                    process.Count();
-                    process.Convert();
-                    process.Compare();
-                    break;
-                default: throw new ArgumentException("Unknown argument", args[i]);
+                switch (args[0])
+                {
+                    case "Count":
+                        process.Count(args[2]);
+                        break;
+                    case "Count&Convert":
+                        process.Count(args[2]);
+                        process.Convert(args[2]);
+                        break;
+                    case "Count&Convert&Compare":
+                        process.Count(args[2]);
+                        process.Convert(args[2]);
+                        process.Compare(args[2]);
+                        break;
+                    default: throw new ArgumentException("Unknown argument", args[0]);
+                }
             }
 
         }
