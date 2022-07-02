@@ -17,13 +17,11 @@ To execute the program input CLISC.exe [YourArgument]
 Replace [YourArgument] with one of the following arguments:
 
 ```
-Count 'Filepath to input directory' 'Filepath to output directory' -Recursive
+Count 'Filepath to input directory' 'Filepath to output directory' Recursive=Yes/No
 ```
 ```
-Count&Convert 'Filepath to input directory' 'Filepath to output directory' -Recursive
+Count&Convert 'Filepath to input directory' 'Filepath to output directory' Recursive=Yes/No
 ```
 ```
-Count&Convert&Compare 'Filepath to input directory' 'Filepath to output directory' -Recursive
+Count&Convert&Compare 'Filepath to input directory' 'Filepath to output directory' Recursive=Yes/No
 ```
-
-If you do not want to include subdirectories (recursive function) remove '-Recursive'.
