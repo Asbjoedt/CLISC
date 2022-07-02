@@ -2,14 +2,21 @@
 Command Line Interface Spreadsheet Count, Convert & Compare
 
 ## Program behavior
-* Count Excel spreadsheets in directory by file format
+**Count
+* Count number of spreadsheets in directory by file format/extension
+* Output results in a CSV log
+
+**Convert
 * Convert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
 * Output all conversions in a new directory with new subdirectories named n+1
 * Rename all conversions n+1.xlsx
-* Compare the results to log workbook and checksum differences between input and output file formats
-* Output log in CSV
+* Output results in a CSV log
 
-## How to execute
+**Compare
+* Compare the spreadsheets to log workbook and checksum differences between input and output file formats
+* Output results in a CSV
+
+## How to use
 In the terminal navigate (cd) to directory of CLISC.exe 
 
 To execute the program input CLISC.exe [YourArgument]
