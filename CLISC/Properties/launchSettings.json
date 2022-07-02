@@ -2,7 +2,7 @@
   "profiles": {
     "CLISC": {
       "commandName": "Project",
-      "commandLineArgs": "Count C:\\Users\\Asbjo\\Desktop"
+      "commandLineArgs": "Count C:\\Users\\Asbjo C:\\Users\\Asbjo\\Desktop\\Count_Results.csv Recursive=No"
     }
   }
 }

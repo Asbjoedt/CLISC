@@ -4,11 +4,15 @@ using System.IO;
 namespace CLISC
 {
 
-    class Program
+    public class Program
     {
 
         public static void Main(string[] args)
         {
+            
+            string argument1 = Convert.ToString(args[1]);
+            string argument2 = Convert.ToString(args[2]);
+            string argument3 = Convert.ToString(args[3]);
 
             // Object reference
             Spreadsheet process = new Spreadsheet();
@@ -17,16 +21,16 @@ namespace CLISC
             switch (args[0])
             {
                 case "Count":
-                    process.Count();
+                    process.Count(argument1, argument2, argument3);
                     break;
                 case "Count&Convert":
-                    process.Count();
-                    process.Convert();
+                    process.Count(argument1, argument2, argument3);
+                    process.Convert(argument1, argument2, argument3);
                     break;
                 case "Count&Convert&Compare":
-                    process.Count();
-                    process.Convert();
-                    process.Compare();
+                    process.Count(argument1, argument2, argument3);
+                    process.Convert(argument1, argument2, argument3);
+                    process.Compare(argument1, argument2, argument3);
                     break;
                 default: throw new ArgumentException("Unknown argument", args[0]);
             }

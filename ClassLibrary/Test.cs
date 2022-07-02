@@ -11,6 +11,27 @@ namespace CLISC.Classes
         //Declare public variables
         public string directory;
 
+        // User guidance
+        static void UserGuidance()
+        {   
+            Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert & Compare");
+            Console.WriteLine();
+            Console.WriteLine("Program behavior:");
+            Console.WriteLine("\tCount Excel spreadsheets in directory by file format");
+            Console.WriteLine("\tConvert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)");
+            Console.WriteLine("\tOutput all conversions in a new directory with new subdirectories named n+1");
+            Console.WriteLine("\tRename all conversions n+1.xlsx");
+            Console.WriteLine("\tCompare the results to log workbook and checksum differences between input and output file formats");
+            Console.WriteLine("\tOutput log in CSV");
+            Console.WriteLine();
+            Console.WriteLine("Available arguments:");
+            Console.WriteLine("\tCount 'Filepath to directory' -Recursive");
+            Console.WriteLine("\tCount&Convert 'Filepath to directory' -Recursive");
+            Console.WriteLine("\tCount&Convert&Compare 'Filepath to directory' -Recursive");
+            Console.WriteLine();
+            Console.WriteLine("Input your argument:");
+        }
+
         // User input
         public void UserInput()
         {
@@ -39,7 +60,7 @@ namespace CLISC.Classes
         }
 
         // User confirmation prompt
-        public void Confirm()
+        static void Confirm()
         {
             Console.WriteLine("Continue to next process y/n");
             string continue_conversion = Console.ReadLine();
