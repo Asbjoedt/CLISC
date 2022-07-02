@@ -2,17 +2,17 @@
 Command Line Interface Spreadsheet Count, Convert & Compare
 
 ## Program behavior
-**Count
+**Count**
 * Count number of spreadsheets in directory by file format/extension
 * Output results in a CSV log
 
-**Convert
+**Convert**
 * Convert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
 * Output all conversions in a new directory with new subdirectories named n+1
 * Rename all conversions n+1.xlsx
 * Output results in a CSV log
 
-**Compare
+**Compare**
 * Compare the spreadsheets to log workbook and checksum differences between input and output file formats
 * Output results in a CSV
 
