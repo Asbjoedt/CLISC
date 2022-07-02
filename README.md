@@ -1,4 +1,5 @@
 # CLISC
+Command Line Interface Spreadsheet Count, Convert & Compare
 
 ## Program behavior
 * Count Excel spreadsheets in directory by file format
