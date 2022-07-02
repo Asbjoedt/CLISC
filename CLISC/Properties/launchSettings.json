@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CLISC": {
+      "commandName": "Project",
+      "commandLineArgs": "Count C:\\Users\\Asbjo\\Desktop"
+    }
+  }
+}

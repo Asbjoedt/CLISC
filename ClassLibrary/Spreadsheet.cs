@@ -11,57 +11,61 @@ namespace CLISC
 
     public class Spreadsheet
     {
-        // Declare public variables
-        public string directory;
-        public string prefix = "";
-        //public string valid_prefix = prefix.Length=>8;
-
-        // User input
-        public void UserInput()
-        {
-            // Input directory
-            Console.WriteLine("Input directory path:");
-            directory = Console.ReadLine();
-            Console.WriteLine();
-            // Include subdirectories
-            Console.WriteLine("Include subdirectories? Input 'true' or 'false'");
-            string recursiveString = Console.ReadLine();
-            bool recursive = recursiveString == "true";
-            if (recursiveString == "true")
-            {
-                Console.WriteLine("Subdirectories will be included");
-            }
-            else if (recursiveString == "false")
-            {
-                Console.WriteLine("Subdirectories will be excluded");
-            }
-            else
-            {
-                Console.WriteLine("Input not valid");
-                // Restart method or create another kind of loop?
-            }
-            //return (directory);
-        }
 
         // Count spreadsheets
         public void Count()
         {
+
+            // Declare variables
+            int numODS, numOTS, numFODS, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLTM, numXLTX, numTOTAL;
+
             //Object reference
-            DirectoryInfo dir = new DirectoryInfo(@directory);
+            DirectoryInfo dir = new DirectoryInfo(args[1]);
+
             // Spreadsheets to count
-            int numXLS = dir.GetFiles("*.xls", SearchOption.AllDirectories).Length;
-            int numXLT = dir.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
-            int numXLAM = dir.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
-            int numXLSB = dir.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
-            int numXLSM = dir.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
-            int numXLSX = dir.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-            int numXLTM = dir.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
-            int numXLTX = dir.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
-            int numTOTAL = numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
+            if (args[2] == "-Recursive")
+            {
+                numFODS = dir.GetFiles("*.fods", SearchOption.AllDirectories).Length;
+                numODS = dir.GetFiles("*.ods", SearchOption.AllDirectories).Length;
+                numOTS = dir.GetFiles("*.ots", SearchOption.AllDirectories).Length;
+                numXLS = dir.GetFiles("*.xls", SearchOption.AllDirectories).Length;
+                numXLT = dir.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
+                numXLAM = dir.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
+                numXLSB = dir.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
+                numXLSM = dir.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
+                numXLSX = dir.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
+                numXLTM = dir.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
+                numXLTX = dir.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
+                numTOTAL = numFODS + numODS + numOTS + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
+            }
+            else
+            {
+                numFODS = dir.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
+                numODS = dir.GetFiles("*.ods", SearchOption.TopDirectoryOnly).Length;
+                numOTS = dir.GetFiles("*.ots", SearchOption.TopDirectoryOnly).Length;
+                numXLS = dir.GetFiles("*.xls", SearchOption.TopDirectoryOnly).Length;
+                numXLT = dir.GetFiles("*.xlt", SearchOption.TopDirectoryOnly).Length;
+                numXLAM = dir.GetFiles("*.xlam", SearchOption.TopDirectoryOnly).Length;
+                numXLSB = dir.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
+                numXLSM = dir.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
+                numXLSX = dir.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
+                numXLTM = dir.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
+                numXLTX = dir.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
+                numTOTAL = numFODS + numODS + numOTS + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
+            }
+
             // Show count to user
             Console.WriteLine();
+            Console.WriteLine("OpenDocument formats");
+            Console.WriteLine($"{numFODS} FODS (Flat XML OpenDocument Spreadsheets)");
+            Console.WriteLine($"{numODS} ODS (OpenDocument Spreadsheets)");
+            Console.WriteLine($"{numOTS} OTS");
+            Console.WriteLine();
+            Console.WriteLine("Legacy Microsoft Excel formats");
             Console.WriteLine($"{numXLS} XLS");
             Console.WriteLine($"{numXLT} XLT");
+            Console.WriteLine();
+            Console.WriteLine("OfficeOpen XML formats (Microsoft Excel)");
             Console.WriteLine($"{numXLAM} XLAM");
             Console.WriteLine($"{numXLSB} XLSB");
             Console.WriteLine($"{numXLSM} XLSM");
@@ -69,32 +73,17 @@ namespace CLISC
             Console.WriteLine($"{numXLTM} XLTM");
             Console.WriteLine($"{numXLTX} XLTX");
             Console.WriteLine();
-            Console.WriteLine($"{numTOTAL} spreadsheets in total");
+            Console.WriteLine($"**{numTOTAL}** spreadsheets in total");
             //Console.WriteLine("Results saved to log in CSV file format");
             Console.WriteLine("Count finished");
             Console.WriteLine();
-            // If no spreadsheets identified, ask for new argument
+
+            // Inform user if no spreadsheets identified
             if (numXLS == 0 && numXLT == 0 && numXLAM == 0 && numXLSB == 0 && numXLSM == 0 && numXLSX == 0 && numXLTM == 0 && numXLTX == 0)
             {
-                Console.WriteLine("No spreadsheets identified. Input new argument:");
-                directory = Console.ReadLine();
+                Console.WriteLine("Count finished. No spreadsheets identified.");
             }
-        }
 
-        // User confirmation prompt
-        public void Confirm()
-        {
-            Console.WriteLine("Continue to next process y/n");
-            string continue_conversion = Console.ReadLine();
-            if (continue_conversion == "y")
-            {
-                Console.WriteLine();
-                Console.WriteLine("Funktion på vej");
-            }
-            else
-            {
-                Environment.Exit(0);
-            }
         }
 
         // Convert spreadsheets
