@@ -5,7 +5,7 @@ A small Exe-program made in C#. It is as a hobby project. It might have use case
 
 ## Program behavior
 **Count**
-* Count number of spreadsheets in directory by file format (extension)
+* Count number of spreadsheets in directory by file format (file extension)
 
 **Convert**
 * Convert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
@@ -16,7 +16,7 @@ A small Exe-program made in C#. It is as a hobby project. It might have use case
 * Compare the spreadsheets to log workbook and checksum differences between input and output file formats
 
 **General**
-* Include subdirectories recursively
+* Include or exclude subdirectories recursively
 * Output results in CSV logs
 
 ## How to use
