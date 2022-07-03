@@ -127,41 +127,42 @@ namespace CLISC
         {
             string convert_directory = argument2 + "\\Converted_Spreadsheets";
 
+            Console.WriteLine("Convert");
+
             // Create new folder
             if (Directory.Exists(@convert_directory))
             {
-                Console.WriteLine("Output directory with name 'Converted_Spreadsheets' must not exist to prevent accidental overwriting of data");
+                Console.WriteLine($"Error: Directory identified: {convert_directory}");
+                Console.WriteLine("ErrorMessage: Directory with name 'Converted_Spreadsheets' must not exist in the output directory to prevent accidental overwriting of data");
             }
             else
             {
                 DirectoryInfo OutputDir = Directory.CreateDirectory(@argument2 + "\\Converted_Spreadsheets");
+
+                // Copy spreadsheets
+
+
+                // Rename
+                // int filenumber = 1;
+                // if (prefix has value)
+                // {
+                // filename = prefix + ++filenumber + ".xlsx"
+                // }
+                // else 
+                // filename = ++filenumber + ".xlsx"
+
+                // Convert spreadsheet
+                //Console.WriteLine($"{} out of {numTOTAL} conversions completed");
+                //var csv = new StringBuilder();
+                //var newLine0 = string.Format($"#,{file_format[0]},{file_format_description[0]}");
+                //csv.AppendLine(newLine0);
+                //string convert_CSV_filename = argument2 + "\\2_Convert_Results.csv";
+                //File.WriteAllText(convert_CSV_filename, csv.ToString());
+                //Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filename}");
+                Console.WriteLine("Conversion finished");
+                Console.WriteLine("---");
             }
-                
 
-            // Copy spreadsheets
-            
-            // createfolder_copyfile_renamefile()
-            // Rename
-            // int filenumber = 1;
-            // if (prefix has value)
-            // {
-            // filename = prefix + ++filenumber + ".xlsx"
-            // }
-            // else 
-            // filename = ++filenumber + ".xlsx"
-
-            // Convert spreadsheet
-            Console.WriteLine();
-            Console.WriteLine("Convert");
-            //Console.WriteLine($"{} out of {numTOTAL} conversions completed");
-            //var csv = new StringBuilder();
-            //var newLine0 = string.Format($"#,{file_format[0]},{file_format_description[0]}");
-            //csv.AppendLine(newLine0);
-            //string convert_CSV_filename = argument2 + "\\2_Convert_Results.csv";
-            //File.WriteAllText(convert_CSV_filename, csv.ToString());
-            //Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filename}");
-            Console.WriteLine("Conversion finished");
-            Console.WriteLine("---");
         }
 
         // Compare spreadsheets
