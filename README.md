@@ -5,23 +5,28 @@ A small Exe-program made in C#. It is as a hobby project. It might have use case
 
 ## Program behavior
 **Count**
-* Count number of spreadsheets in directory by file format/extension
+* Count number of spreadsheets in directory by file format (extension)
+* Include subdirectories recursively
 * Output results in a CSV log
 
 **Convert**
 * Convert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
 * Output all conversions in a new directory with new subdirectories named n+1
 * Rename all conversions n+1.xlsx
+* Include subdirectories recursively
 * Output results in a CSV log
 
 **Compare**
 * Compare the spreadsheets to log workbook and checksum differences between input and output file formats
-* Output results in a CSV
+* Include subdirectories recursively
+* Output results in a CSV log
 
 ## How to use
-In the terminal navigate (cd) to directory of CLISC.exe 
+In the terminal navigate (cd) to directory of CLISC.exe. To execute the program input:
 
-To execute the program input CLISC.exe [YourArgument]
+```
+CLISC.exe [YourArgument]
+```
 
 Replace [YourArgument] with one of the following arguments:
 
