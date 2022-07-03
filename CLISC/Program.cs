@@ -32,7 +32,9 @@ namespace CLISC
                     process.Convert(argument1, argument2, argument3);
                     process.Compare(argument1, argument2, argument3);
                     break;
-                default: throw new ArgumentException("Unknown argument", args[0]);
+                default: 
+                    Console.WriteLine("Invalid first argument. First argument must be one these: Count, Count&Convert, Count&Convert&Compare");
+                    break;
             }
 
         }
