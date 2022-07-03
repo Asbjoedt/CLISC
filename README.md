@@ -20,7 +20,7 @@ A small Exe-program made in C#. It is as a hobby project. It might have use case
 * Output results in CSV logs
 
 ## How to use
-In the terminal navigate (cd) to directory of CLISC.exe. To execute the program input:
+In the terminal navigate (cd) to directory of CLISC.exe. To execute the program, input:
 
 ```
 CLISC.exe [YourArgument]
