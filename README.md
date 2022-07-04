@@ -23,7 +23,7 @@ A small Exe-program made in C#. It is as a hobby project. It might have use case
 In the terminal navigate (cd) to directory of CLISC.exe. To execute the program, input:
 
 ```
-CLISC.exe [YourArgument]
+.\CLISC.exe [YourArgument]
 ```
 
 Replace [YourArgument] with one of the following arguments:
