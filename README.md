@@ -37,3 +37,9 @@ Count&Convert 'Filepath to input directory' 'Filepath to output directory' Recur
 ```
 Count&Convert&Compare 'Filepath to input directory' 'Filepath to output directory' Recursive=Yes/No
 ```
+
+## Dependencies
+Prerequisite tools for the program to work.
+
+**Compare**
+* Microsoft Spreadsheet Compare, which is included in Microsoft Office Professional Plus 2013, 2016, 2019
