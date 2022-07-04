@@ -28,7 +28,7 @@ namespace CLISC
             // Spreadsheets to count
             if (argument3 == "Recursive=Yes")
             {
-                3numFODS = InputDir.GetFiles("*.fods", SearchOption.AllDirectories).Length;
+                numFODS = InputDir.GetFiles("*.fods", SearchOption.AllDirectories).Length;
                 numODS = InputDir.GetFiles("*.ods", SearchOption.AllDirectories).Length;
                 numOTS = InputDir.GetFiles("*.ots", SearchOption.AllDirectories).Length;
                 numXLS = InputDir.GetFiles("*.xls", SearchOption.AllDirectories).Length;
@@ -85,6 +85,19 @@ namespace CLISC
                 Console.WriteLine($"{numXLTX} {file_format[11]} - {file_format_description[11]}");
                 Console.WriteLine($"{numTOTAL} spreadsheets in total");
 
+                // Create new directory to output results in CSV
+                int results_directory_number = 1;
+                string results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+
+                if (Directory.Exists(@results_directory))
+                {
+                    DirectoryInfo OutputDir = Directory.CreateDirectory(@results_directory);
+                }
+                else
+                {
+                    DirectoryInfo OutputDir = Directory.CreateDirectory(@results_directory);
+                }
+
                 // Output results in CSV
                 var csv = new StringBuilder();
                 var newLine0 = string.Format($"#,{file_format[0]},{file_format_description[0]}");
@@ -116,10 +129,13 @@ namespace CLISC
                 Console.WriteLine($"Results saved to CSV log in filepath: {count_CSV_filename}");
             }
 
-            // Inform user of end of Count
+            // Inform user of end of Count method
             Console.WriteLine("Count finished");
             Console.WriteLine("---");
 
+
         }
+
     }
+
 }
