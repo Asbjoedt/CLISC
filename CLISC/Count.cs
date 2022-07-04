@@ -23,49 +23,51 @@ namespace CLISC
             string[] file_format_description = { "Name", "OpenDocument Flat XML Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Add-In", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
 
             //Object reference
-            DirectoryInfo InputDir = new DirectoryInfo(argument1);
+            DirectoryInfo process = new DirectoryInfo(argument1);
 
-            // Spreadsheets to count
+            // Count spreadsheets recursively or not
             if (argument3 == "Recursive=Yes")
             {
-                numFODS = InputDir.GetFiles("*.fods", SearchOption.AllDirectories).Length;
-                numODS = InputDir.GetFiles("*.ods", SearchOption.AllDirectories).Length;
-                numOTS = InputDir.GetFiles("*.ots", SearchOption.AllDirectories).Length;
-                numXLS = InputDir.GetFiles("*.xls", SearchOption.AllDirectories).Length;
-                numXLT = InputDir.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
-                numXLAM = InputDir.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
-                numXLSB = InputDir.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
-                numXLSM = InputDir.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
-                numXLSX = InputDir.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-                numXLTM = InputDir.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
-                numXLTX = InputDir.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
+                numFODS = process.GetFiles("*.fods", SearchOption.AllDirectories).Length;
+                numODS = process.GetFiles("*.ods", SearchOption.AllDirectories).Length;
+                numOTS = process.GetFiles("*.ots", SearchOption.AllDirectories).Length;
+                numXLS = process.GetFiles("*.xls", SearchOption.AllDirectories).Length;
+                numXLT = process.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
+                numXLAM = process.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
+                numXLSB = process.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
+                numXLSM = process.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
+                numXLSX = process.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
+                numXLTM = process.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
+                numXLTX = process.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
                 numTOTAL = numFODS + numODS + numOTS + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
             else if (argument3 == "Recursive=No")
             {
-                numFODS = InputDir.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
-                numODS = InputDir.GetFiles("*.ods", SearchOption.TopDirectoryOnly).Length;
-                numOTS = InputDir.GetFiles("*.ots", SearchOption.TopDirectoryOnly).Length;
-                numXLS = InputDir.GetFiles("*.xls", SearchOption.TopDirectoryOnly).Length;
-                numXLT = InputDir.GetFiles("*.xlt", SearchOption.TopDirectoryOnly).Length;
-                numXLAM = InputDir.GetFiles("*.xlam", SearchOption.TopDirectoryOnly).Length;
-                numXLSB = InputDir.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
-                numXLSM = InputDir.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
-                numXLSX = InputDir.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
-                numXLTM = InputDir.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
-                numXLTX = InputDir.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
+                numFODS = process.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
+                numODS = process.GetFiles("*.ods", SearchOption.TopDirectoryOnly).Length;
+                numOTS = process.GetFiles("*.ots", SearchOption.TopDirectoryOnly).Length;
+                numXLS = process.GetFiles("*.xls", SearchOption.TopDirectoryOnly).Length;
+                numXLT = process.GetFiles("*.xlt", SearchOption.TopDirectoryOnly).Length;
+                numXLAM = process.GetFiles("*.xlam", SearchOption.TopDirectoryOnly).Length;
+                numXLSB = process.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
+                numXLSM = process.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
+                numXLSX = process.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
+                numXLTM = process.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
+                numXLTX = process.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
                 numTOTAL = numFODS + numODS + numOTS + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
             else
             {
-                Console.WriteLine("Invalid argument in position args[3]");
+                Console.WriteLine("Invalid recursive argument in position args[3]");
             }
 
             // Inform user if no spreadsheets identified
             if (numTOTAL == 0)
             {
                 Console.WriteLine("No spreadsheets identified");
-                Environment.Exit(0);
+                Console.WriteLine("Count finished");
+                Console.WriteLine("---");
+                Environment.Exit(2);
             }
             else
             {
@@ -124,12 +126,11 @@ namespace CLISC
                 string count_CSV_filepath = results_directory + "\\1_Count_Results.csv";
                 File.WriteAllText(count_CSV_filepath, csv.ToString());
                 Console.WriteLine($"Results saved to CSV log in filepath: {count_CSV_filepath}");
+
+                // Inform user of end of Count method
+                Console.WriteLine("Count finished");
+                Console.WriteLine("---");
             }
-
-            // Inform user of end of Count method
-            Console.WriteLine("Count finished");
-            Console.WriteLine("---");
-
 
         }
 
