@@ -4,6 +4,8 @@
 A small Windows Exe program made in C#. It is as a hobby project. It might have use cases in digital archiving of spreadsheets.
 
 ## Program behavior
+Three functions.
+
 **Count**
 * Count number of spreadsheets in directory by file format (file extension)
 
@@ -18,6 +20,12 @@ A small Windows Exe program made in C#. It is as a hobby project. It might have 
 **General**
 * Include or exclude subdirectories recursively
 * Output results in CSV logs
+
+## Dependencies
+Prerequisite software for the program to work with all functions.
+
+**Compare**
+* Microsoft Spreadsheet Compare, which is included in Microsoft Office Professional Plus 2013, 2016, 2019
 
 ## How to use
 In the terminal navigate (cd) to directory of CLISC.exe. To execute the program, input:
@@ -37,9 +45,3 @@ Count&Convert 'Filepath to input directory' 'Filepath to output directory' Recur
 ```
 Count&Convert&Compare 'Filepath to input directory' 'Filepath to output directory' Recursive=Yes/No
 ```
-
-## Dependencies
-Prerequisite tools for the program to work.
-
-**Compare**
-* Microsoft Spreadsheet Compare, which is included in Microsoft Office Professional Plus 2013, 2016, 2019
