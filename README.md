@@ -1,7 +1,7 @@
 # CLISC
 **Command Line Interface Spreadsheet Count Convert & Compare**
 
-A small Exe-program made in C#. It is as a hobby project. It might have use cases in digital archiving of spreadsheets.
+A small Windows Exe program made in C#. It is as a hobby project. It might have use cases in digital archiving of spreadsheets.
 
 ## Program behavior
 **Count**
