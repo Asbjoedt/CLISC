@@ -10,6 +10,7 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
+        
         // Compare spreadsheets
         public void Compare(string argument1, string argument2, string argument3)
         {
@@ -22,6 +23,7 @@ namespace CLISC
             Console.WriteLine("Comparison finished");
             Console.WriteLine();
         }
+   
     }
 
 }

@@ -9,8 +9,9 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
+        
         // Public variables
-        public int numODS, numOTS, numFODS, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLTM, numXLTX, numTOTAL;
+        public int numFODS, numODS, numOTS, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLTM, numXLTX, numTOTAL;
 
         // Count spreadsheets
         public void Count(string argument1, string argument2, string argument3)
@@ -27,7 +28,7 @@ namespace CLISC
             // Spreadsheets to count
             if (argument3 == "Recursive=Yes")
             {
-                numFODS = InputDir.GetFiles("*.fods", SearchOption.AllDirectories).Length;
+                3numFODS = InputDir.GetFiles("*.fods", SearchOption.AllDirectories).Length;
                 numODS = InputDir.GetFiles("*.ods", SearchOption.AllDirectories).Length;
                 numOTS = InputDir.GetFiles("*.ots", SearchOption.AllDirectories).Length;
                 numXLS = InputDir.GetFiles("*.xls", SearchOption.AllDirectories).Length;
