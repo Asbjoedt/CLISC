@@ -88,15 +88,12 @@ namespace CLISC
                 // Create new directory to output results in CSV
                 int results_directory_number = 1;
                 string results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
-
-                if (Directory.Exists(@results_directory))
+                while (Directory.Exists(@results_directory))
                 {
-                    DirectoryInfo OutputDir = Directory.CreateDirectory(@results_directory);
+                    results_directory_number++;
+                    results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
                 }
-                else
-                {
-                    DirectoryInfo OutputDir = Directory.CreateDirectory(@results_directory);
-                }
+                DirectoryInfo OutputDir = Directory.CreateDirectory(@results_directory);
 
                 // Output results in CSV
                 var csv = new StringBuilder();
@@ -124,9 +121,9 @@ namespace CLISC
                 csv.AppendLine(newLine10);
                 var newLine11 = string.Format($"{numXLTX},{file_format[11]},{file_format_description[11]}");
                 csv.AppendLine(newLine11);
-                string count_CSV_filename = argument2 + "\\1_Count_Results.csv";
-                File.WriteAllText(count_CSV_filename, csv.ToString());
-                Console.WriteLine($"Results saved to CSV log in filepath: {count_CSV_filename}");
+                string count_CSV_filepath = results_directory + "\\1_Count_Results.csv";
+                File.WriteAllText(count_CSV_filepath, csv.ToString());
+                Console.WriteLine($"Results saved to CSV log in filepath: {count_CSV_filepath}");
             }
 
             // Inform user of end of Count method

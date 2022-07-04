@@ -18,6 +18,9 @@ namespace CLISC
 
             Console.WriteLine("Convert");
 
+            int id = 0;
+            string results_directory = argument2;
+            string reuls = results_directory + "\\CLISC_Results_" + id++;
             string convert_directory = results_directory + "\\Converted spreadsheets";
 
             DirectoryInfo OutputDir = Directory.CreateDirectory(@convert_directory);
