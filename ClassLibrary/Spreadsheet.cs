@@ -19,7 +19,8 @@ namespace CLISC
         {
 
             // Arrays
-            string[] file_format = { "Extension", "FODS", "ODS", "OTS", "XLS", "XLT", "XLAM", "XLSB", "XLSM", "XLSX", "XLTM", "XLTX" };
+            string[] file_format = { "Extension", ".fods", ".ods", ".ots", ".xls", ".xlt", ".xlam", ".xlsb", ".xlsm", ".xlsx", ".xltm", ".xltx" };
+
             string[] file_format_description = { "Name", "OpenDocument Flat XML Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Add-In", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
 
             //Object reference
@@ -140,8 +141,23 @@ namespace CLISC
                 DirectoryInfo OutputDir = Directory.CreateDirectory(@argument2 + "\\Converted_Spreadsheets");
 
                 // Copy spreadsheets
+                if (argument3 == "Recursive=Yes")
+                {
+                    foreach (string dirPath in Directory.GetDirectories(@argument1, "*", SearchOption.AllDirectories))
+                    {
+                        //Copy all the files
+                        foreach (string newPath in Directory.GetFiles(@argument1, "*.*", SearchOption.AllDirectories))
+                            File.Copy(newPath, newPath.Replace(argument1, convert_directory));
+                    }
+                }
+                else if (argument3 == "Recursive=No")
+                {
 
-
+                }
+                else
+                {
+                    Console.WriteLine("Invalid argument in position args[3]");
+                }
                 // Rename
                 // int filenumber = 1;
                 // if (prefix has value)
