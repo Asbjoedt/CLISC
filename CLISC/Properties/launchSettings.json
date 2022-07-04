@@ -2,7 +2,7 @@
   "profiles": {
     "CLISC": {
       "commandName": "Project",
-      "commandLineArgs": "Count C:\\Users\\B046804\\Desktop\\Test C:\\Users\\B046804\\Desktop\\Test Recursive=Yes"
+      "commandLineArgs": "Count C:\\Users\\%USERNAME%\\Desktop\\Test C:\\Users\\%USERNAME%\\Desktop\\Test Recursive=Yes"
     }
   }
 }
