@@ -19,6 +19,12 @@ namespace CLISC
 
             Console.WriteLine("Convert");
 
+            // Open CSV file to log results
+            string complete = "complete", fail = "fail";
+            var csv = new StringBuilder();
+            var newLine0 = string.Format($"Original filepath,Original filename, Original file format,Conversion Complete,New filepath,New filename, New file format");
+            csv.AppendLine(newLine0);
+
             // Create subdirectory
             int results_directory_number = 1;
             string results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
@@ -29,12 +35,10 @@ namespace CLISC
             }
             results_directory_number = results_directory_number - 1;
             results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
-            string convert_directory = results_directory + "\\Converted_Spreadsheets\\";
-            DirectoryInfo process = Directory.CreateDirectory(@convert_directory);
+            string convert_directory = results_directory + "\\Spreadsheets\\";
+            DirectoryInfo OutputDir = Directory.CreateDirectory(@convert_directory);
 
-            // Copy spreadsheets to subdirectory
-
-
+            // Copy spreadsheets to subdirectory recursively
             if (argument3 == "Recursive=Yes")
             {
                 var extensions = new List<string> { ".fods", ".ods", ".ots", ".xls", ".xlt", ".xlam", ".xlsb", ".xlsm", ".xlsx", ".xltm", ".xltx" };
@@ -69,36 +73,34 @@ namespace CLISC
                 // Loop spreadsheets based on enumeration
                 foreach (var file in enumeration)
                 {
+                    //Create new subdirectory for each spreadsheet
+                    int convert_directory_number = 1;
+                    string convert_directory_sub = convert_directory + convert_directory_number;
+                    while (Directory.Exists(@convert_directory_sub))
+                    {
+                        convert_directory_number++;
+                        convert_directory_sub = convert_directory + convert_directory_number;
+                    }
+                    DirectoryInfo OutputDirSub = Directory.CreateDirectory(@convert_directory_sub);
+
                     // Rename new copy
                     int copy_file_number = 1;
-                    string new_filepath = convert_directory + copy_file_number + file.Extension;
+                    string new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
                     while (File.Exists(new_filepath))
                     {
                         copy_file_number++;
-                        new_filepath = convert_directory + copy_file_number + file.Extension;
+                        new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
                     }
 
-                    // Copy
+                    // Copy spreadsheet into subdirectory
                     File.Copy(file.FullName, new_filepath);
 
+                    // Convert spreadsheet
 
-                    //string complete = "complete", fail = "fail";
+                    // Output result in open CSV file
+                    var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},dd,{new_filepath},{copy_file_number}.xlsx,.xlsx");
+                    csv.AppendLine(newLine1);
                 }
-
-                // Rename
-                // int filenumber = 1;
-
-                // Output results in CSV
-                // var csv = new StringBuilder();
-                // var newLine0 = string.Format($"Original filepath,Original filename, Original filesize, New filepath,New filename, New filesize, Conversion Completed");
-                // csv.AppendLine(newLine0);
-
-                // loop nednestående newLine1 = 1++
-                // var newLine1 = string.Format($"{},{},{convert_directory},{}");
-                // csv.AppendLine(newLine1);
-                // string count_CSV_filepath = results_directory + "\\2_Convert_Results.csv";
-                // File.WriteAllText(convert_CSV_filepath, csv.ToString());
-                // Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filepath}");
             }
             else if (argument3 == "Recursive=No")
             {
@@ -109,9 +111,11 @@ namespace CLISC
                 Console.WriteLine("Invalid recursive argument in position args[3]");
             }
 
-
+            // Close CSV file to log results
+            string convert_CSV_filepath = results_directory + "\\2_Convert_Results.csv";
+            File.WriteAllText(convert_CSV_filepath, csv.ToString());
             //Console.WriteLine($"{} out of {numTOTAL} conversions completed");
-            //Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filename}");
+            Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filepath}");
             Console.WriteLine("Conversion finished");
             Console.WriteLine("---");
 
