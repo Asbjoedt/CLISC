@@ -137,6 +137,7 @@ namespace CLISC
                 // Inform user of end of Count method
                 Console.WriteLine("Count finished");
                 Console.WriteLine("---");
+
             }
 
         }

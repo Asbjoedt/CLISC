@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace CLISC
 {
@@ -22,7 +23,8 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Open CSV file to log results
-            string complete = "complete", fail = "fail";
+            string complete = "COMPLETE", fail = "FAIL";
+            int numFAILED = 0;
             var csv = new StringBuilder();
             var newLine0 = string.Format($"Original filepath,Original filename, Original file format,Conversion Complete,New filepath,New filename, New file format");
             csv.AppendLine(newLine0);
@@ -73,10 +75,11 @@ namespace CLISC
                 };
 
                 // Loop spreadsheets based on enumeration
-                foreach (var file in enumeration)
+                int convert_directory_number = 1;
+                int copy_file_number = 1;
+                foreach (var file in enumeration.ToList())
                 {
                     //Create new subdirectory for each spreadsheet
-                    int convert_directory_number = 1;
                     string convert_directory_sub = convert_directory + convert_directory_number;
                     while (Directory.Exists(@convert_directory_sub))
                     {
@@ -86,7 +89,6 @@ namespace CLISC
                     DirectoryInfo OutputDirSub = Directory.CreateDirectory(@convert_directory_sub);
 
                     // Rename new copy
-                    int copy_file_number = 1;
                     string new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
                     while (File.Exists(new_filepath))
                     {
@@ -94,58 +96,97 @@ namespace CLISC
                         new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
                     }
 
-                    // Copy spreadsheet into subdirectory
-                    File.Copy(file.FullName, new_filepath);
-
-                    // Convert spreadsheet
-                    switch (file.Extension)
+                    // Exception from copy if spreadsheet is encrypted
+                    bool password_exist = false;
+                    char[] chBuffer = new char[4096];
+                    TextReader trReader = new StreamReader(file.FullName, Encoding.UTF8, true);
+                    // Read the buffer
+                    trReader.ReadBlock(chBuffer, 0, chBuffer.Length);
+                    trReader.Close();
+                    // Remove non-printable and unicode characters, we're only interested in ASCII character set
+                    for (int i = 0; i < chBuffer.Length; i++)
                     {
-                        
-                        // OpenDocument file formats
-                        case ".fods":
-                        case ".ods":
-                        case ".ots":
-                            Console.WriteLine(file.FullName);
-                            Console.WriteLine("- Error: Use LibreOffice to convert the spreadsheets");
-                            break;
+                        if ((chBuffer[i] < ' ') || (chBuffer[i] > '~')) chBuffer[i] = ' ';
+                    }
+                    string strBuffer = new string(chBuffer);
+                    // .xls format files contains this text when password protected
+                    if (strBuffer.Contains("M i c r o s o f t   E n h a n c e d   C r y p t o g r a p h i c   P r o v i d e r"))
+                    {
+                        password_exist = true;
+                    }
+                    // .xlsx format files contain this text when password protected
+                    if (strBuffer.Contains("E n c r y p t e d P a c k a g e"))
+                    {
+                        password_exist = true;
+                    }
+                    // If password exist
+                    if (password_exist == true)
+                    {
+                        Console.WriteLine(file.FullName);
+                        Console.WriteLine("- Error: Spreadsheet is password protected or corrupt");
+                        numFAILED++;
 
-                        // Legacy Microsoft Excel file formats
-                        case ".xla":
-                        case ".xls":
-                        case ".xlt":
-                            Console.WriteLine(file.FullName);
-                            Console.WriteLine("- Error: Legacy Excel spreadsheets cannot be converted. Feature on its way");
-                            break;
+                        // Output result in open CSV file
+                        var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},{fail},,,,");
+                        csv.AppendLine(newLine1);
+                    }
+                    else
+                    {
+                        // Copy spreadsheet
+                        File.Copy(file.FullName, new_filepath);
 
-                        // Office Open XML file formats
-                        case ".xlsb":
-                            Console.WriteLine(file.FullName);
-                            Console.WriteLine("- Error: XLSB spreadsheets cannot be converted. Feature on its way");
-                            break;
-                        case ".xlam":
-                        case ".xlsm":
-                        case ".xlsx":
-                        case ".xltm":
-                        case ".xltx":
-                            byte[] byteArray = File.ReadAllBytes(new_filepath);
-                            using (MemoryStream stream = new MemoryStream())
-                            {
-                                stream.Write(byteArray, 0, (int)byteArray.Length);
-                                using (SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.Open(stream, true))
+                        // Convert spreadsheet
+                        switch (file.Extension)
+                        {
+
+                            // OpenDocument file formats
+                            case ".fods":
+                            case ".ods":
+                            case ".ots":
+                                Console.WriteLine(file.FullName);
+                                Console.WriteLine("- Error: OpenDocument spreadsheets cannot be converted. Create issue if you want this feature: https://github.com/Asbjoedt/CLISC");
+                                break;
+
+                            // Legacy Microsoft Excel file formats
+                            case ".xla":
+                            case ".xls":
+                            case ".xlt":
+                                Console.WriteLine(file.FullName);
+                                Console.WriteLine("- Error: Legacy Excel spreadsheets cannot be converted. Create issue if you want this feature: https://github.com/Asbjoedt/CLISC");
+                                break;
+                            // Office Open XML file formats
+                            case ".xlsb":
+                                Console.WriteLine(file.FullName);
+                                Console.WriteLine("- Error: XLSB spreadsheets cannot be converted. Create issue if you want this feature: https://github.com/Asbjoedt/CLISC");
+                                break;
+                            case ".xlam":
+                            case ".xlsm":
+                            case ".xlsx":
+                            case ".xltm":
+                            case ".xltx":
+                                byte[] byteArray = File.ReadAllBytes(new_filepath);
+                                using (MemoryStream stream = new MemoryStream())
                                 {
-                                    spreadsheetDoc.ChangeDocumentType(DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
+                                    stream.Write(byteArray, 0, (int)byteArray.Length);
+                                    using (SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.Open(stream, true))
+                                    {
+                                        spreadsheetDoc.ChangeDocumentType(DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
+                                    }
+                                    new_filepath = convert_directory_sub + "\\" + copy_file_number + ".xlsx";
+                                    File.WriteAllBytes(new_filepath, stream.ToArray());
                                 }
-                                new_filepath = convert_directory_sub + "\\" + copy_file_number + ".xlsx";
-                                File.WriteAllBytes(new_filepath, stream.ToArray());
-                            }
-                            break;
+                                break;
+                        }
+
+                        // Output result in open CSV file
+                        var newLine2 = string.Format($"{file.FullName},{file.Name},{file.Extension},{complete},{new_filepath},{copy_file_number}.xlsx,.xlsx");
+                        csv.AppendLine(newLine2);
+                        break;
 
                     }
 
-                    // Output result in open CSV file
-                    var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},dd,{new_filepath},{copy_file_number}.xlsx,.xlsx");
-                    csv.AppendLine(newLine1);
                 }
+
             }
             else if (argument3 == "Recursive=No")
             {
@@ -160,6 +201,7 @@ namespace CLISC
             string convert_CSV_filepath = results_directory + "\\2_Convert_Results.csv";
             File.WriteAllText(convert_CSV_filepath, csv.ToString());
             //Console.WriteLine($"{} out of {numTOTAL} conversions completed");
+            Console.WriteLine($"{numFAILED} conversions failed");
             Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filepath}");
             Console.WriteLine("Conversion finished");
             Console.WriteLine("---");
