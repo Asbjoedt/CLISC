@@ -10,12 +10,12 @@ Three functions.
 * Count number of spreadsheets in directory by file format (file extension)
 
 **Convert**
-* Convert XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
-* Output all conversions in a new directory with new subdirectories named n+1
+* Convert FODS, ODS, OTS, XLA, XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
+* Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
 
 **Compare**
-* Compare the spreadsheets to log workbook and checksum differences between input and output file formats
+* Compare the spreadsheets to log workbook, file size and checksum differences between input and output file formats
 
 **General**
 * Include or exclude subdirectories recursively
