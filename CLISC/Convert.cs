@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.IO.Enumeration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
-using System.IO.Enumeration;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
 {
@@ -18,6 +19,7 @@ namespace CLISC
         {
 
             Console.WriteLine("Convert");
+            Console.WriteLine("---");
 
             // Open CSV file to log results
             string complete = "complete", fail = "fail";
@@ -41,7 +43,7 @@ namespace CLISC
             // Copy spreadsheets to subdirectory recursively
             if (argument3 == "Recursive=Yes")
             {
-                var extensions = new List<string> { ".fods", ".ods", ".ots", ".xls", ".xlt", ".xlam", ".xlsb", ".xlsm", ".xlsx", ".xltm", ".xltx" };
+                var extensions = new List<string> { ".fods", ".ods", ".ots", ".xla", ".xls", ".xlt", ".xlam", ".xlsb", ".xlsm", ".xlsx", ".xltm", ".xltx" };
 
                 // Create enumeration that only includes spreadsheet file extensions
                 var enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1,(ref FileSystemEntry entry) => entry.ToFileSystemInfo(),new EnumerationOptions() { RecurseSubdirectories = true })
@@ -96,6 +98,49 @@ namespace CLISC
                     File.Copy(file.FullName, new_filepath);
 
                     // Convert spreadsheet
+                    switch (file.Extension)
+                    {
+                        
+                        // OpenDocument file formats
+                        case ".fods":
+                        case ".ods":
+                        case ".ots":
+                            Console.WriteLine(file.FullName);
+                            Console.WriteLine("- Error: Use LibreOffice to convert the spreadsheets");
+                            break;
+
+                        // Legacy Microsoft Excel file formats
+                        case ".xla":
+                        case ".xls":
+                        case ".xlt":
+                            Console.WriteLine(file.FullName);
+                            Console.WriteLine("- Error: Legacy Excel spreadsheets cannot be converted. Feature on its way");
+                            break;
+
+                        // Office Open XML file formats
+                        case ".xlsb":
+                            Console.WriteLine(file.FullName);
+                            Console.WriteLine("- Error: XLSB spreadsheets cannot be converted. Feature on its way");
+                            break;
+                        case ".xlam":
+                        case ".xlsm":
+                        case ".xlsx":
+                        case ".xltm":
+                        case ".xltx":
+                            byte[] byteArray = File.ReadAllBytes(new_filepath);
+                            using (MemoryStream stream = new MemoryStream())
+                            {
+                                stream.Write(byteArray, 0, (int)byteArray.Length);
+                                using (SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.Open(stream, true))
+                                {
+                                    spreadsheetDoc.ChangeDocumentType(DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
+                                }
+                                new_filepath = convert_directory_sub + "\\" + copy_file_number + ".xlsx";
+                                File.WriteAllBytes(new_filepath, stream.ToArray());
+                            }
+                            break;
+
+                    }
 
                     // Output result in open CSV file
                     var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},dd,{new_filepath},{copy_file_number}.xlsx,.xlsx");

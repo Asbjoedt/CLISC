@@ -15,7 +15,9 @@ namespace CLISC
         // Compare spreadsheets
         public void Compare(string argument1, string argument2, string argument3)
         {
-            Console.WriteLine("funktion på vej");
+            
+            Console.WriteLine("Compare");
+            Console.WriteLine("---");
 
 
             //Calculate checksums

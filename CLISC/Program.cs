@@ -9,7 +9,11 @@ namespace CLISC
 
         public static void Main(string[] args)
         {
-            
+
+            Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count Convert & Compare");
+            Console.WriteLine("@Asbjørn Skødt, web: https://github.com/Asbjoedt/CLISC");
+            Console.WriteLine("---");
+
             string argument1 = Convert.ToString(args[1]);
             string argument2 = Convert.ToString(args[2]);
             string argument3 = Convert.ToString(args[3]);
