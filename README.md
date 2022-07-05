@@ -36,6 +36,10 @@ In the terminal navigate (cd) to directory of CLISC.exe. To execute the program,
 
 Replace [YourArgument] with one of the following arguments:
 
+*-- Input and output directorices are not allowed to be identical.*
+
+*-- Delete ' ' around input and output directories.*
+
 ```
 Count 'Filepath to input directory' 'Filepath to output directory' Recursive=Yes/No
 ```
