@@ -16,7 +16,7 @@ namespace CLISC
         public void Compare(string argument1, string argument2, string argument3)
         {
             
-            Console.WriteLine("Compare");
+            Console.WriteLine("COMPARE");
             Console.WriteLine("---");
 
 

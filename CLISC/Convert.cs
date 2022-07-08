@@ -19,14 +19,18 @@ namespace CLISC
         public void Convert(string argument1, string argument2, string argument3)
         {
 
-            Console.WriteLine("Convert");
+            Console.WriteLine("CONVERT");
             Console.WriteLine("---");
 
-            // Open CSV file to log results
+            // Conversion error messages
             string complete = "COMPLETE", fail = "FAIL";
+            string create_issue = "Create issue: https://github.com/Asbjoedt/CLISC";
+            string[] error_message = { "", "Legacy Excel spreadsheets cannot be converted", "Binary XLSB spreadsheets cannot be converted", "OpenDocument spreadsheets cannot be converted", "Spreadsheet is password protected" };
+
+            // Open CSV file to log results
             int numFAILED = 0;
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath,Original filename, Original file format,Conversion Complete,New filepath,New filename, New file format");
+            var newLine0 = string.Format($"Original filepath,Original filename,Original file format,New filepath,New filename, New file format,Success,Error message");
             csv.AppendLine(newLine0);
 
             // Create subdirectory
@@ -39,7 +43,7 @@ namespace CLISC
             }
             results_directory_number = results_directory_number - 1;
             results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
-            string convert_directory = results_directory + "\\Spreadsheets\\";
+            string convert_directory = results_directory + "\\docCollection\\";
             DirectoryInfo OutputDir = Directory.CreateDirectory(@convert_directory);
 
             // Copy spreadsheets to subdirectory recursively
@@ -77,24 +81,9 @@ namespace CLISC
                 // Loop spreadsheets based on enumeration
                 int convert_directory_number = 1;
                 int copy_file_number = 1;
+                string convert_directory_sub = convert_directory + convert_directory_number;
                 foreach (var file in enumeration.ToList())
                 {
-                    //Create new subdirectory for each spreadsheet
-                    string convert_directory_sub = convert_directory + convert_directory_number;
-                    while (Directory.Exists(@convert_directory_sub))
-                    {
-                        convert_directory_number++;
-                        convert_directory_sub = convert_directory + convert_directory_number;
-                    }
-                    DirectoryInfo OutputDirSub = Directory.CreateDirectory(@convert_directory_sub);
-
-                    // Rename new copy
-                    string new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
-                    while (File.Exists(new_filepath))
-                    {
-                        copy_file_number++;
-                        new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
-                    }
 
                     // Exception from copy if spreadsheet is encrypted
                     PasswordProtection(file.FullName);
@@ -103,17 +92,15 @@ namespace CLISC
                     if (password_exist == true)
                     {
                         Console.WriteLine(file.FullName);
-                        Console.WriteLine("- Error: Spreadsheet is password protected or corrupt");
+                        Console.WriteLine($"- Conversion {fail} - {error_message[4]}. {create_issue}");
                         numFAILED++;
 
                         // Output result in open CSV file
-                        var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},{fail},,,,");
+                        var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail}, {error_message[4]}");
                         csv.AppendLine(newLine1);
                     }
                     else
                     {
-                        // Copy spreadsheet
-                        File.Copy(file.FullName, new_filepath);
 
                         // Convert spreadsheet
                         switch (file.Extension)
@@ -123,27 +110,61 @@ namespace CLISC
                             case ".fods":
                             case ".ods":
                             case ".ots":
+                                // Inform user
                                 Console.WriteLine(file.FullName);
-                                Console.WriteLine("- Error: OpenDocument spreadsheets cannot be converted. Create issue if you want this feature: https://github.com/Asbjoedt/CLISC");
-                                break;
+                                Console.WriteLine($"- Conversion {fail} - {error_message[3]}. {create_issue}");
 
+                                // Output result in open CSV file
+                                var newLine2 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail},{error_message[3]}");
+                                csv.AppendLine(newLine2);
+                                break;
                             // Legacy Microsoft Excel file formats
                             case ".xla":
                             case ".xls":
                             case ".xlt":
+                                // Inform user
                                 Console.WriteLine(file.FullName);
-                                Console.WriteLine("- Error: Legacy Excel spreadsheets cannot be converted. Create issue if you want this feature: https://github.com/Asbjoedt/CLISC");
+                                Console.WriteLine($"- Conversion {fail} - {error_message[1]}. {create_issue}");
+
+                                // Output result in open CSV file
+                                var newLine3 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail},{error_message[1]}");
+                                csv.AppendLine(newLine3);
                                 break;
                             // Office Open XML file formats
                             case ".xlsb":
+                                //Inform user
                                 Console.WriteLine(file.FullName);
-                                Console.WriteLine("- Error: XLSB spreadsheets cannot be converted. Create issue if you want this feature: https://github.com/Asbjoedt/CLISC");
+                                Console.WriteLine($"- Conversion {fail} - {error_message[2]}. {create_issue}");
+
+                                // Output result in open CSV file
+                                var newLine4 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail},{error_message[2]}");
+                                csv.AppendLine(newLine4);
                                 break;
                             case ".xlam":
                             case ".xlsm":
                             case ".xlsx":
                             case ".xltm":
                             case ".xltx":
+                                //Create new subdirectory for the spreadsheet
+                                while (Directory.Exists(@convert_directory_sub))
+                                {
+                                    convert_directory_number++;
+                                    convert_directory_sub = convert_directory + convert_directory_number;
+                                }
+                                DirectoryInfo OutputDirSub = Directory.CreateDirectory(@convert_directory_sub);
+
+                                // Rename new copy
+                                string new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
+                                while (File.Exists(new_filepath))
+                                {
+                                    copy_file_number++;
+                                    new_filepath = convert_directory_sub + "\\" + copy_file_number + file.Extension;
+                                }
+
+                                // Copy spreadsheet
+                                File.Copy(file.FullName, new_filepath);
+
+                                // Conversion code
                                 byte[] byteArray = File.ReadAllBytes(new_filepath);
                                 using (MemoryStream stream = new MemoryStream())
                                 {
@@ -155,13 +176,16 @@ namespace CLISC
                                     new_filepath = convert_directory_sub + "\\" + copy_file_number + ".xlsx";
                                     File.WriteAllBytes(new_filepath, stream.ToArray());
                                 }
+                                
+                                // Inform user
+                                Console.WriteLine(file.FullName);
+                                Console.WriteLine($"- Conversion {complete}");
+
+                                // Output result in open CSV file
+                                var newLine5 = string.Format($"{file.FullName},{file.Name},{file.Extension},{new_filepath},{copy_file_number}.xlsx,.xlsx,{complete},{error_message[0]}");
+                                csv.AppendLine(newLine5);
                                 break;
                         }
-
-                        // Output result in open CSV file
-                        var newLine2 = string.Format($"{file.FullName},{file.Name},{file.Extension},{complete},{new_filepath},{copy_file_number}.xlsx,.xlsx");
-                        csv.AppendLine(newLine2);
-                        break;
 
                     }
 
