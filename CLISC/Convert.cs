@@ -204,8 +204,11 @@ namespace CLISC
             // Close CSV file to log results
             string convert_CSV_filepath = results_directory + "\\2_Convert_Results.csv";
             File.WriteAllText(convert_CSV_filepath, csv.ToString());
-            //Console.WriteLine($"{} out of {numTOTAL} conversions completed");
-            Console.WriteLine($"{numFAILED} conversions failed");
+            
+            // Inform user
+            int numCOMPLETE = numTOTAL - numFAILED;
+            Console.WriteLine($"{numCOMPLETE} out of {numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"{numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filepath}");
             Console.WriteLine("Conversion finished");
             Console.WriteLine("---");
