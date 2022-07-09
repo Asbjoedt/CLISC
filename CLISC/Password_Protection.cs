@@ -11,6 +11,20 @@ namespace CLISC
         bool password_exist = false;
         bool PasswordProtection(string filepath)
         {
+            // Windows file encryption
+            FileAttributes attributes = File.GetAttributes("C:\testfile.txt");
+            if ((attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted)
+            {
+                password_exist = true;
+                return (password_exist);
+            }
+            else
+            {
+                password_exist = false;
+                return (password_exist);
+            }
+
+            // File format encryptions
             char[] chBuffer = new char[4096];
             TextReader trReader = new StreamReader(filepath, Encoding.UTF8, true);
             // Read the buffer
@@ -22,15 +36,24 @@ namespace CLISC
                 if ((chBuffer[i] < ' ') || (chBuffer[i] > '~')) chBuffer[i] = ' ';
             }
             string strBuffer = new string(chBuffer);
-            // .xls format files contains this text when password protected
+            // .xls spreadsheets, protection of read
             if (strBuffer.Contains("M i c r o s o f t   E n h a n c e d   C r y p t o g r a p h i c   P r o v i d e r"))
             {
                 password_exist = true;
             }
-            // .xlsx format files contain this text when password protected
-            if (strBuffer.Contains("E n c r y p t e d P a c k a g e"))
+            // .xlsx spreadsheets, protection of read
+            else if (strBuffer.Contains("E n c r y p t e d P a c k a g e"))
             {
                 password_exist = true;
+            }
+            // .ods spreadsheets, protection of structure
+            else if (strBuffer.Contains("structure-protected=\"true\""))
+            {
+                password_exist = true;
+            }
+            else
+            {
+                password_exist = false;
             }
             return (password_exist);
         }
