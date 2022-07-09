@@ -17,7 +17,7 @@ namespace CLISC
         public void Count(string argument1, string argument2, string argument3)
         {
 
-            Console.WriteLine("Count");
+            Console.WriteLine("COUNT");
             Console.WriteLine("---");
 
             // Arrays
@@ -137,6 +137,7 @@ namespace CLISC
                 // Inform user of end of Count method
                 Console.WriteLine("Count finished");
                 Console.WriteLine("---");
+
             }
 
         }
