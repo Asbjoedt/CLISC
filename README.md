@@ -10,9 +10,11 @@ Three functions.
 * Count number of spreadsheets in directory by file format (file extension)
 
 **Convert**
-* Convert FODS, ODS, OTS, XLA, XLS, XLT, XLAM, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
+* Convert FODS, ODS, OTS, XLS, XLT, XLSB, XLTX, XLSM, XLTM to XLSX (OOXML Transitional conformance)
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
+
+XLA and XLAM file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion.
 
 **Compare**
 * Compare the spreadsheets to log workbook, file size and checksum differences between input and output file formats
