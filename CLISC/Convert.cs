@@ -26,7 +26,7 @@ namespace CLISC
 
             // Conversion error messages
             bool success;
-            string[] error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "OpenDocument file formats are not supported", "Spreadsheet is password protected", "Microsoft Excel Add-In file format is not supported" };
+            string[] error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "OpenDocument file formats are not supported", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed" };
 
             // Open CSV file to log results
             int numFAILED = 0;
@@ -82,30 +82,27 @@ namespace CLISC
                 // Loop spreadsheets based on enumeration
                 int conv_dir_number = 1;
                 int copy_file_number = 1;
+                string conv_dir_org_filepath;
                 string conv_dir_sub = conv_dir + conv_dir_number;
+                string new_filepath = conv_dir_sub + "\\" + copy_file_number + ".xlsx";
+
                 foreach (var file in enumeration.ToList())
                 {
 
-                    // Exception from copy if spreadsheet is encrypted
-                    PasswordProtection(file.FullName);
-
-                    // If password exist
-                    if (password_exist == true)
+                    try
                     {
-                        // Code to execute
-                        numFAILED++;
-                        success = false;
 
-                        // Inform user
-                        Console.WriteLine(file.FullName);
-                        Console.WriteLine($"--> Conversion {success} - {error_message[4]}");
+                        // Create new subdirectory for the spreadsheet
+                        while (Directory.Exists(@conv_dir_sub))
+                        {
+                            conv_dir_number++;
+                            conv_dir_sub = conv_dir + conv_dir_number;
+                        }
+                        DirectoryInfo OutputDirSub = Directory.CreateDirectory(@conv_dir_sub);
 
-                        // Output result in open CSV file
-                        var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{success}, {error_message[4]}");
-                        csv.AppendLine(newLine1);
-                    }
-                    else
-                    {
+                        // Copy spreadsheet
+                        conv_dir_org_filepath = conv_dir_sub + "\\" + "orgFile_" + file.Name;
+                        File.Copy(file.FullName, conv_dir_org_filepath);
 
                         // Convert spreadsheet
                         switch (file.Extension)
@@ -185,28 +182,17 @@ namespace CLISC
                                 csv.AppendLine(newLine6);
                                 break;
                             case ".xlsm":
-                            case ".xlsx":
                             case ".xltm":
                             case ".xltx":
-                                // Create new subdirectory for the spreadsheet
-                                while (Directory.Exists(@conv_dir_sub))
-                                {
-                                    conv_dir_number++;
-                                    conv_dir_sub = conv_dir + conv_dir_number;
-                                }
-                                DirectoryInfo OutputDirSub =  Directory.CreateDirectory(@conv_dir_sub);
 
-                                // Copy spreadsheet
-                                string conv_dir_org_filepath = conv_dir_sub + "\\" + "original_" + file.Name;
-                                File.Copy(file.FullName, conv_dir_org_filepath);
-
-                                // Rename new copy
-                                string new_filepath = conv_dir_sub + "\\" + copy_file_number + file.Extension;
+                                // Loop naming of new conversion
                                 while (File.Exists(new_filepath))
                                 {
                                     copy_file_number++;
-                                    new_filepath = conv_dir_sub + "\\" + copy_file_number + file.Extension;
+                                    new_filepath = conv_dir_sub + "\\" + copy_file_number + ".xlsx";
                                 }
+                                // This code must exist otherwise the switch will convert .fods to .xlsx by error
+                                new_filepath = conv_dir_sub + "\\" + copy_file_number + ".xlsx";
 
                                 // Conversion code
                                 byte[] byteArray = File.ReadAllBytes(conv_dir_org_filepath);
@@ -217,11 +203,10 @@ namespace CLISC
                                     {
                                         spreadsheetDoc.ChangeDocumentType(DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
                                     }
-                                    new_filepath = conv_dir_sub + "\\" + copy_file_number + ".xlsx";
                                     File.WriteAllBytes(new_filepath, stream.ToArray());
                                 }
                                 success = true;
-                                
+
                                 // Inform user
                                 Console.WriteLine(file.FullName);
                                 Console.WriteLine($"--> Conversion {success}");
@@ -230,7 +215,40 @@ namespace CLISC
                                 var newLine7 = string.Format($"{file.FullName},{file.Name},{file.Extension},{new_filepath},{copy_file_number}.xlsx,.xlsx,{success},{error_message[0]}");
                                 csv.AppendLine(newLine7);
                                 break;
+                            case ".xlsx":
+                                success = true;
+
+                                // Inform user
+                                Console.WriteLine(file.FullName);
+                                Console.WriteLine($"--> Conversion {success} - {error_message[7]}");
+
+                                // Output result in open CSV file
+                                var newLine8 = string.Format($"{file.FullName},{file.Name},{file.Extension},{new_filepath},{copy_file_number}.xlsx,.xlsx,{success},{error_message[7]}");
+                                csv.AppendLine(newLine8);
+
+                                break;
+
                         }
+
+                    }
+
+                    catch (System.IO.FileFormatException)
+                    {
+                        // Code to execute
+                        numFAILED++;
+                        success = false;
+
+                        // Inform user
+                        Console.WriteLine(file.FullName);
+                        Console.WriteLine($"--> Conversion {success} - {error_message[4]}");
+
+                        // Output result in open CSV file
+                        var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},{conv_dir_org_filepath},,,{success}, {error_message[4]}");
+                        csv.AppendLine(newLine1);
+                    }
+
+                    finally
+                    {
 
                     }
 
