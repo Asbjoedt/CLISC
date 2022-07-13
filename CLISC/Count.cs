@@ -23,7 +23,7 @@ namespace CLISC
             // Arrays
             string[] file_format = { "Extension", ".fods", ".ods", ".ots", ".xla", ".xls", ".xlt", ".xlam", ".xlsb", ".xlsm", ".xlsx", ".xltm", ".xltx" };
 
-            string[] file_format_description = { "Name", "OpenDocument Flat XML Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet Add-in", "Legacy Microsoft Excel Spreadsheet", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Add-In", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet (Transitional and Strict conformance)", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
+            string[] file_format_description = { "Name", "OpenDocument Flat XML Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet Add-In", "Legacy Microsoft Excel Spreadsheet", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Add-In", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet (Transitional and Strict conformance)", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
 
             //Object reference
             DirectoryInfo process = new DirectoryInfo(argument1);
@@ -90,7 +90,6 @@ namespace CLISC
                 Console.WriteLine($"{numXLSX} {file_format[10]} - {file_format_description[10]}");
                 Console.WriteLine($"{numXLTM} {file_format[11]} - {file_format_description[11]}");
                 Console.WriteLine($"{numXLTX} {file_format[12]} - {file_format_description[12]}");
-                Console.WriteLine($"{numTOTAL} spreadsheets in total");
 
                 // Create new directory to output results in CSV
                 int results_directory_number = 1;
@@ -132,9 +131,11 @@ namespace CLISC
                 csv.AppendLine(newLine12);
                 string count_CSV_filepath = results_directory + "\\1_Count_Results.csv";
                 File.WriteAllText(count_CSV_filepath, csv.ToString());
-                Console.WriteLine($"Results saved to CSV log in filepath: {count_CSV_filepath}");
 
-                // Inform user of end of Count method
+                // Inform user of results
+                Console.WriteLine("---");
+                Console.WriteLine($"{numTOTAL} spreadsheet files in total");
+                Console.WriteLine($"Results saved to CSV log in filepath: {count_CSV_filepath}");
                 Console.WriteLine("Count finished");
                 Console.WriteLine("---");
 
