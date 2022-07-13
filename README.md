@@ -13,13 +13,14 @@ Three functions.
 Convert any spreadsheet to XLSX (OfficeOpen XML Transitional conformance)
 
 * The following file formats are supported
-  - OpenDocument with extensions FODS, ODS and OTS (feature not working)
-  - Legacy Microsoft Excel with extensions XLS and XLT<sup>*</sup> (feature not working)
   - OfficeOpen XML with extensions XLSB, XLTX, XLSM and XLTM<sup>*</sup>
+  - Legacy Microsoft Excel with extensions XLS and XLT<sup>*</sup> (feature not working)
+  - OpenDocument with extensions FODS, ODS and OTS (feature not working)
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
+* Your spreadsheets are packaged in a new archivable directory, which includes copies of the original spreadsheets
 
-<sup>* XLA and XLAM file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archivable directory.</sup>
+<sup>*XLA and XLAM file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archivable directory.</sup>
 
 ### Compare
 * Compare the spreadsheets to log workbook, file size and checksum differences between input and output file formats
@@ -27,7 +28,6 @@ Convert any spreadsheet to XLSX (OfficeOpen XML Transitional conformance)
 ### General
 * Include or exclude subdirectories recursively
 * Output results in CSV logs
-* Your spreadsheets are packaged in a new archivable directory (using only Count function will not copy any files)
 * Password protected or otherwise unreadable spreadsheets will not be converted or compared, but they will be copied to the new archivable directory
 
 ## Dependencies
