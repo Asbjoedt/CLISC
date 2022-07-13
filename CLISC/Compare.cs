@@ -15,10 +15,25 @@ namespace CLISC
         // Compare spreadsheets
         public void Compare(string argument1, string argument2, string argument3)
         {
-            
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
 
+            if (true)
+            {
+                // Author: Kamil Niklasinski
+                // This script is provided under GNU license -see license file for details.
+                // Make sure you add to system path folder with SPREADSHEETCOMPARE.EXE
+                // C:\Program Files(x86)\Microsoft Office\Office15\DCF\
+
+                //excomp.bat Book1.xlsx Book2.xlsx
+                //dir % 1 / B / S > temp.txt
+                //dir % 2 / B / S >> temp.txt
+                //SPREADSHEETCOMPARE temp.txt
+            }
+            else
+            {
+                Console.WriteLine("Error: The program Microsoft Spreadsheet Compare is necessary for compare function to run.");
+            }
 
             //Calculate checksums
 

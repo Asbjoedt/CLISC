@@ -25,10 +25,8 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Conversion error messages
-            bool success = true;
-            string complete = "COMPLETE", fail = "FAIL";
-            string create_issue = "Create issue: https://github.com/Asbjoedt/CLISC";
-            string[] error_message = { "", "Legacy Excel spreadsheets cannot be converted", "Binary XLSB spreadsheets cannot be converted", "OpenDocument spreadsheets cannot be converted", "Spreadsheet is password protected" };
+            bool success;
+            string[] error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "OpenDocument file formats are not supported", "Spreadsheet is password protected", "Microsoft Excel Add-In file format is not supported" };
 
             // Open CSV file to log results
             int numFAILED = 0;
@@ -94,12 +92,16 @@ namespace CLISC
                     // If password exist
                     if (password_exist == true)
                     {
-                        Console.WriteLine(file.FullName);
-                        Console.WriteLine($"- Conversion {fail} - {error_message[4]}. {create_issue}");
+                        // Code to execute
                         numFAILED++;
+                        success = false;
+
+                        // Inform user
+                        Console.WriteLine(file.FullName);
+                        Console.WriteLine($"--> Conversion {success} - {error_message[4]}");
 
                         // Output result in open CSV file
-                        var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail}, {error_message[4]}");
+                        var newLine1 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{success}, {error_message[4]}");
                         csv.AppendLine(newLine1);
                     }
                     else
@@ -113,45 +115,75 @@ namespace CLISC
                             case ".fods":
                             case ".ods":
                             case ".ots":
+                                // Code to execute
                                 numFAILED++;
+                                success = false;
 
                                 // Inform user
                                 Console.WriteLine(file.FullName);
-                                Console.WriteLine($"- Conversion {fail} - {error_message[3]}. {create_issue}");
+                                Console.WriteLine($"--> Conversion {success} - {error_message[3]}");
 
                                 // Output result in open CSV file
-                                var newLine2 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail},{error_message[3]}");
+                                var newLine2 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{success},{error_message[3]}");
                                 csv.AppendLine(newLine2);
                                 break;
 
                             // Legacy Microsoft Excel file formats
                             case ".xla":
-                            case ".xls":
-                            case ".xlt":
+                                // Code to execute
                                 numFAILED++;
+                                success = false;
 
                                 // Inform user
                                 Console.WriteLine(file.FullName);
-                                Console.WriteLine($"- Conversion {fail} - {error_message[1]}. {create_issue}");
+                                Console.WriteLine($"--> Conversion {success} - {error_message[5]}");
 
                                 // Output result in open CSV file
-                                var newLine3 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail},{error_message[1]}");
+                                var newLine3 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{success},{error_message[5]}");
                                 csv.AppendLine(newLine3);
+                                break;
+                            case ".xls":
+                            case ".xlt":
+                                // Code to execute
+                                numFAILED++;
+                                success = false;
+
+                                // Inform user
+                                Console.WriteLine(file.FullName);
+                                Console.WriteLine($"--> Conversion {success} - {error_message[1]}");
+
+                                // Output result in open CSV file
+                                var newLine4 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{success},{error_message[1]}");
+                                csv.AppendLine(newLine4);
                                 break;
 
                             // Office Open XML file formats
                             case ".xlsb":
-                                //Inform user
+                                // Code to execute
                                 numFAILED++;
+                                success = false;
 
+                                // Inform user
                                 Console.WriteLine(file.FullName);
-                                Console.WriteLine($"- Conversion {fail} - {error_message[2]}. {create_issue}");
+                                Console.WriteLine($"--> Conversion {success} - {error_message[2]}");
 
                                 // Output result in open CSV file
-                                var newLine4 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{fail},{error_message[2]}");
-                                csv.AppendLine(newLine4);
+                                var newLine5 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{success},{error_message[2]}");
+                                csv.AppendLine(newLine5);
                                 break;
                             case ".xlam":
+                                // Code to execute
+                                numFAILED++;
+                                success = false;
+
+                                // Inform user
+                                Console.WriteLine(file.FullName);
+                                Console.WriteLine($"--> Conversion {success} - {error_message[5]}");
+
+                                // Output result in open CSV file
+                                var newLine6 = string.Format($"{file.FullName},{file.Name},{file.Extension},,,,{success},{error_message[5]}");
+                                csv.AppendLine(newLine6);
+                                break;
                             case ".xlsm":
                             case ".xlsx":
                             case ".xltm":
@@ -188,14 +220,15 @@ namespace CLISC
                                     new_filepath = conv_dir_sub + "\\" + copy_file_number + ".xlsx";
                                     File.WriteAllBytes(new_filepath, stream.ToArray());
                                 }
+                                success = true;
                                 
                                 // Inform user
                                 Console.WriteLine(file.FullName);
-                                Console.WriteLine($"- Conversion {complete}");
+                                Console.WriteLine($"--> Conversion {success}");
 
                                 // Output result in open CSV file
-                                var newLine5 = string.Format($"{file.FullName},{file.Name},{file.Extension},{new_filepath},{copy_file_number}.xlsx,.xlsx,{complete},{error_message[0]}");
-                                csv.AppendLine(newLine5);
+                                var newLine7 = string.Format($"{file.FullName},{file.Name},{file.Extension},{new_filepath},{copy_file_number}.xlsx,.xlsx,{success},{error_message[0]}");
+                                csv.AppendLine(newLine7);
                                 break;
                         }
 
@@ -217,8 +250,9 @@ namespace CLISC
             string convert_CSV_filepath = results_directory + "\\2_Convert_Results.csv";
             File.WriteAllText(convert_CSV_filepath, csv.ToString());
             
-            // Inform user
+            // Inform user of results
             int numCOMPLETE = numTOTAL - numFAILED;
+            Console.WriteLine("---");
             Console.WriteLine($"{numCOMPLETE} out of {numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"{numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filepath}");
