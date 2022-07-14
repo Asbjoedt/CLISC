@@ -63,7 +63,7 @@ namespace CLISC
             }
             else
             {
-                Console.WriteLine("Invalid recursive argument in position args[3]");
+                Console.WriteLine("Invalid recursive argument");
             }
 
             // Inform user if no spreadsheets identified
