@@ -11,7 +11,7 @@ namespace CLISC
     {
         
         // Public variables
-        public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLTM, numXLTX, numTOTAL;
+        public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLSX_Strict, numXLTM, numXLTX, numTOTAL;
 
         // Count spreadsheets
         public void Count(string argument1, string argument2, string argument3)
@@ -45,6 +45,7 @@ namespace CLISC
                 numXLTX = process.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
+
             else if (argument3 == "Recursive=No")
             {
                 numFODS = process.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
@@ -61,6 +62,7 @@ namespace CLISC
                 numXLTX = process.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
+
             else
             {
                 Console.WriteLine("Invalid recursive argument");

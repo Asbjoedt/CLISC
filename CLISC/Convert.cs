@@ -156,7 +156,7 @@ namespace CLISC
                                 csv.AppendLine(newLine4);
                                 break;
 
-                            // Office Open XML file formats
+                                // Office Open XML file formats
                             case ".xlsb":
                                 // Code to execute
                                 numFAILED++;
