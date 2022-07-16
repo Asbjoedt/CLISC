@@ -25,7 +25,7 @@ namespace CLISC
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filesize;Original checksum;New convert filepath;New filesize;New convert cheksum");
+            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Original checksum;New convert filepath;New filesize (KB);New convert checksum");
             csv.AppendLine(newLine0);
 
             // Identify CLISC subdirectory
@@ -51,29 +51,59 @@ namespace CLISC
                 ShouldIncludePredicate = (ref FileSystemEntry entry) => entry.IsDirectory
             };
 
-            // Identify existence of converted spreadsheet
-            string compare_org_filepath = "orgFile_" + "";
-            string compare_conv_filepath = docCollection + "\\1.xlsx";
+            // Loop through docCollection enumeration
+            string compare_org_filepath = "";
+            string compare_conv_filepath = "";
             int numTOTAL_conv = 0;
 
             foreach (var folder in folder_enumeration)
             {
-                File.Exists(compare_conv_filepath);
+
+                // Identify original file in docCollection
+                var files = from file in
+                Directory.EnumerateFiles(folder)
+                            where file.Contains("orgFile_")
+                            select file;
+                foreach (var file in files)
+                {
+                    compare_org_filepath = file.ToString();
+                }
+
+                // Identify existence of converted spreadsheet
+                if (File.Exists(folder + "\\1.xlsx"))
+                {
+                    compare_conv_filepath = folder + "\\1.xlsx";
+                    Console.WriteLine(compare_conv_filepath);
+                    Console.WriteLine($"--> Comparing to: {compare_org_filepath}");
+                }
 
                 // Calculate checksums
                 var org_checksum = CalculateMD5(compare_org_filepath);
                 var conv_checksum = CalculateMD5(compare_conv_filepath);
 
                 // Find filesizes
-                long filesize;
+                int? org_filesize = null;
+                int? org_filesize_kb = null;
+                int? conv_filesize = null;
+                int? conv_filesize_kb = null;
 
-                FileInfo fi = new FileInfo(compare_org_filepath);
-                filesize = fi.Length;
-                long original_filesize = filesize;
+                try 
+                {
+                    FileInfo fi = new FileInfo(compare_org_filepath);
+                    org_filesize = (int)fi.Length;
+                    org_filesize_kb = org_filesize / 1024;
 
-                new FileInfo(compare_conv_filepath);
-                filesize = fi.Length;
-                long conv_filesize = filesize;
+                    new FileInfo(compare_conv_filepath);
+                    conv_filesize = (int)fi.Length;
+                    conv_filesize_kb = conv_filesize / 1024;
+                }
+
+                // If conversion does not exist do nothing
+                catch (SystemException)
+                {
+                    
+                }
+
 
                 // Compare workbook differences
                 if (File.Exists(compare_conv_filepath))
@@ -131,7 +161,7 @@ namespace CLISC
                 }
 
                 // Output result in open CSV file
-                var newLine1 = string.Format($"{compare_org_filepath};{original_filesize};{org_checksum};{compare_conv_filepath};{conv_filesize};{conv_checksum}");
+                var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{org_checksum};{compare_conv_filepath};{conv_filesize_kb};{conv_checksum}");
                 csv.AppendLine(newLine1);
 
             }

@@ -9,15 +9,30 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
+        // Calculate MD5 checksum to fingerprint the spreadsheet
         public string CalculateMD5(string filepath)
         {
-            using (var md5 = MD5.Create())
+
+            try
             {
-                using (var stream = File.OpenRead(filepath))
+                using (var md5 = MD5.Create())
                 {
-                    var checksum = md5.ComputeHash(stream);
-                    return BitConverter.ToString(checksum).Replace("-", "").ToLowerInvariant();
+                    using (var stream = File.OpenRead(filepath))
+                    {
+                        var checksum = md5.ComputeHash(stream);
+                        return BitConverter.ToString(checksum).Replace("-", "").ToLowerInvariant();
+                    }
                 }
+            }
+
+            // If no converted spreadsheet exist
+            catch (System.ArgumentException)
+            {
+                return "";
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                return "";
             }
         }
     }
