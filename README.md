@@ -23,9 +23,16 @@ Convert any spreadsheet to XLSX (Excel, Office Open XML Transitional conformance
 <sub>*XLA and XLAM file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archivable directory.</sub>
 
 ### Compare
-* Compare the spreadsheets to log workbook, file size and checksum differences between input and output file formats
+Compare original and converted spreadsheets to log differences* in
+
+* Workbook cell values
+* File size
+* File checksum
+
+<sub>*The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.</sub>
 
 ### General
+* Bulk convert spreadsheets in a directory
 * Include or exclude subdirectories recursively
 * Output results in CSV logs
 * Password protected or otherwise unreadable spreadsheets will not be converted or compared, but they will be copied to the new archivable directory
@@ -33,7 +40,12 @@ Convert any spreadsheet to XLSX (Excel, Office Open XML Transitional conformance
 ## Dependencies
 Prerequisite software for the program to work with all functions.
 
-**Compare**
+### Convert
+* LibreOffice (free, you need to install)
+* EPPLUS6 (you need to purchase license, you do NOT need to install)
+
+### Compare
+* Beyond Compare 4 (you need to purchase license, you need to install)
 * Microsoft Spreadsheet Compare, which is included in Microsoft Office Professional Plus 2013, 2016, 2019
 
 ## How to use
