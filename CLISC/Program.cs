@@ -17,6 +17,7 @@ namespace CLISC
             string argument1 = Convert.ToString(args[1]);
             string argument2 = Convert.ToString(args[2]);
             string argument3 = Convert.ToString(args[3]);
+            string finish = "CLISC has finished";
 
             if (argument1 == argument2)
             {
@@ -27,24 +28,39 @@ namespace CLISC
                 // Object reference
                 Spreadsheet process = new Spreadsheet();
 
-                // Method references
-                switch (args[0])
+                // Validate recursive argument
+                if (argument3 == "Recursive=Yes" || argument3 == "Recursive=No")
+
+                    // Method references
+                    switch (args[0])
+                    {
+                        case "Count":
+                            process.Count(argument1, argument2, argument3);
+                            Console.WriteLine(finish);
+                            Console.WriteLine("---");
+                            break;
+                        case "Count&Convert":
+                            process.Count(argument1, argument2, argument3);
+                            process.Convert(argument1, argument2, argument3);
+                            Console.WriteLine(finish);
+                            Console.WriteLine("---");
+                            break;
+                        case "Count&Convert&Compare":
+                            process.Count(argument1, argument2, argument3);
+                            process.Convert(argument1, argument2, argument3);
+                            process.Compare(argument1, argument2, argument3);
+                            Console.WriteLine(finish);
+                            Console.WriteLine("---");
+                            break;
+                        default:
+                            Console.WriteLine("Invalid first argument. First argument must be one these: Count, Count&Convert, Count&Convert&Compare");
+                            break;
+                    }
+
+                // Inform user of invalid recursive argument
+                else
                 {
-                    case "Count":
-                        process.Count(argument1, argument2, argument3);
-                        break;
-                    case "Count&Convert":
-                        process.Count(argument1, argument2, argument3);
-                        process.Convert(argument1, argument2, argument3);
-                        break;
-                    case "Count&Convert&Compare":
-                        process.Count(argument1, argument2, argument3);
-                        process.Convert(argument1, argument2, argument3);
-                        process.Compare(argument1, argument2, argument3);
-                        break;
-                    default:
-                        Console.WriteLine("Invalid first argument. First argument must be one these: Count, Count&Convert, Count&Convert&Compare");
-                        break;
+                    Console.WriteLine("Invalid recursive argument");
                 }
 
             }

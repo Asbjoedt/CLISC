@@ -11,7 +11,7 @@ namespace CLISC
     {
         
         // Public variables
-        public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLTM, numXLTX, numTOTAL;
+        public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLSX_Strict, numXLTM, numXLTX, numTOTAL;
 
         // Count spreadsheets
         public void Count(string argument1, string argument2, string argument3)
@@ -28,7 +28,7 @@ namespace CLISC
             //Object reference
             DirectoryInfo process = new DirectoryInfo(argument1);
 
-            // Count spreadsheets recursively or not
+            // Count spreadsheets recursively
             if (argument3 == "Recursive=Yes")
             {
                 numFODS = process.GetFiles("*.fods", SearchOption.AllDirectories).Length;
@@ -45,7 +45,9 @@ namespace CLISC
                 numXLTX = process.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
-            else if (argument3 == "Recursive=No")
+
+            // Count spreadsheets NOT recursively
+            else
             {
                 numFODS = process.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
                 numODS = process.GetFiles("*.ods", SearchOption.TopDirectoryOnly).Length;
@@ -60,10 +62,6 @@ namespace CLISC
                 numXLTM = process.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
                 numXLTX = process.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
-            }
-            else
-            {
-                Console.WriteLine("Invalid recursive argument in position args[3]");
             }
 
             // Inform user if no spreadsheets identified
@@ -103,31 +101,31 @@ namespace CLISC
 
                 // Output results in CSV
                 var csv = new StringBuilder();
-                var newLine0 = string.Format($"#,{file_format[0]},{file_format_description[0]}");
+                var newLine0 = string.Format($"#;{file_format[0]};{file_format_description[0]}");
                 csv.AppendLine(newLine0);
-                var newLine1 = string.Format($"{numFODS},{file_format[1]},{file_format_description[1]}");
+                var newLine1 = string.Format($"{numFODS};{file_format[1]};{file_format_description[1]}");
                 csv.AppendLine(newLine1);
-                var newLine2 = string.Format($"{numODS},{file_format[2]},{file_format_description[2]}");
+                var newLine2 = string.Format($"{numODS};{file_format[2]};{file_format_description[2]}");
                 csv.AppendLine(newLine2);
-                var newLine3 = string.Format($"{numOTS},{file_format[3]},{file_format_description[3]}");
+                var newLine3 = string.Format($"{numOTS};{file_format[3]};{file_format_description[3]}");
                 csv.AppendLine(newLine3);
-                var newLine4 = string.Format($"{numXLA},{file_format[4]},{file_format_description[4]}");
+                var newLine4 = string.Format($"{numXLA};{file_format[4]};{file_format_description[4]}");
                 csv.AppendLine(newLine4);
-                var newLine5 = string.Format($"{numXLS},{file_format[5]},{file_format_description[5]}");
+                var newLine5 = string.Format($"{numXLS};{file_format[5]};{file_format_description[5]}");
                 csv.AppendLine(newLine5);
-                var newLine6 = string.Format($"{numXLT},{file_format[6]},{file_format_description[6]}");
+                var newLine6 = string.Format($"{numXLT};{file_format[6]};{file_format_description[6]}");
                 csv.AppendLine(newLine6);
-                var newLine7 = string.Format($"{numXLAM},{file_format[7]},{file_format_description[7]}");
+                var newLine7 = string.Format($"{numXLAM};{file_format[7]};{file_format_description[7]}");
                 csv.AppendLine(newLine7);
-                var newLine8 = string.Format($"{numXLSB},{file_format[8]},{file_format_description[8]}");
+                var newLine8 = string.Format($"{numXLSB};{file_format[8]};{file_format_description[8]}");
                 csv.AppendLine(newLine8);
-                var newLine9 = string.Format($"{numXLSM},{file_format[9]},{file_format_description[9]}");
+                var newLine9 = string.Format($"{numXLSM};{file_format[9]};{file_format_description[9]}");
                 csv.AppendLine(newLine9);
-                var newLine10 = string.Format($"{numXLSX},{file_format[10]},{file_format_description[10]}");
+                var newLine10 = string.Format($"{numXLSX};{file_format[10]};{file_format_description[10]}");
                 csv.AppendLine(newLine10);
-                var newLine11 = string.Format($"{numXLTM},{file_format[11]},{file_format_description[11]}");
+                var newLine11 = string.Format($"{numXLTM};{file_format[11]};{file_format_description[11]}");
                 csv.AppendLine(newLine11);
-                var newLine12 = string.Format($"{numXLTX},{file_format[12]},{file_format_description[12]}");
+                var newLine12 = string.Format($"{numXLTX};{file_format[12]};{file_format_description[12]}");
                 csv.AppendLine(newLine12);
                 string count_CSV_filepath = results_directory + "\\1_Count_Results.csv";
                 File.WriteAllText(count_CSV_filepath, csv.ToString());
