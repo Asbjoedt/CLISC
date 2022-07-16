@@ -38,7 +38,7 @@ Compare original and converted spreadsheets to log differences* in
 * Password protected or otherwise unreadable spreadsheets will not be converted or compared, but they will be copied to the new archivable directory
 
 ## Dependencies
-Prerequisite software for the program to work with all functions.
+Prerequisite software for the program to work with the following functions.
 
 ### Convert
 * LibreOffice (free, you need to install)
@@ -46,10 +46,9 @@ Prerequisite software for the program to work with all functions.
 
 ### Compare
 * Beyond Compare 4 (you need to purchase license, you need to install)
-* Microsoft Spreadsheet Compare, which is included in Microsoft Office Professional Plus 2013, 2016, 2019
 
 ## How to use
-In the terminal navigate to directory of CLISC.exe. To execute the program, input:
+In the terminal change directory to the folder where CLISC.exe is. Then, to execute the program, input:
 
 ```
 .\CLISC.exe [YourArgument]
