@@ -53,7 +53,7 @@ namespace CLISC
             int numTOTAL_conv = 0;
             foreach (var folder in folder_enumeration)
             {
-                
+
                 Console.WriteLine(folder);
             }
 
@@ -76,6 +76,11 @@ namespace CLISC
                         bcscript.WriteLine(compare_conv_filepath);
                     }
 
+                    // Use BC
+
+                    // Delete BC script
+                    //File.Delete(bcscript_filename);
+
                     // Calculate checksums
                     int? original_checksum = null;
                     int? conv_checksum = null;
@@ -84,28 +89,9 @@ namespace CLISC
                     int? original_filesize = null;
                     int? conv_filesize = null;
 
-                    // Delete BC script
-                    //File.Delete(bcscript_filename);
-
-                    // Author: Kamil Niklasinski
-                    // This script is provided under GNU license -see license file for details.
-                    // Make sure you add to system path folder with SPREADSHEETCOMPARE.EXE
-                    // C:\Program Files(x86)\Microsoft Office\Office15\DCF\
-
-                    //excomp.bat Book1.xlsx Book2.xlsx
-                    //dir % 1 / B / S > temp.txt
-                    //dir % 2 / B / S >> temp.txt
-                    //SPREADSHEETCOMPARE temp.txt
-
-                    // Log
-
-
                     // Output result in open CSV file
                     var newLine1 = string.Format($"{compare_org_filepath}, {original_filesize},{original_checksum},{compare_conv_filepath},{conv_filesize},{conv_checksum}");
                     csv.AppendLine(newLine1);
-
-
-
 
                 }
 
@@ -124,7 +110,7 @@ namespace CLISC
 
             else
             {
-                
+
             }
 
             // Close CSV file to log results
