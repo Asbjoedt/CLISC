@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
 
 namespace CLISC
 {
@@ -49,67 +48,67 @@ namespace CLISC
             };
 
             // Identify existence of converted spreadsheet
-            string conv_filename = "1.xlsx";
+            string compare_org_filepath = File.FullName;
+            string compare_conv_filepath = docCollection + "\\1.xlsx";
             int numTOTAL_conv = 0;
+
             foreach (var folder in folder_enumeration)
             {
+                File.Exists(compare_conv_filepath);
 
-                Console.WriteLine(folder);
-            }
+                // Calculate checksums
+                var org_checksum = CalculateMD5(compare_org_filepath);
+                var conv_checksum = CalculateMD5(compare_conv_filepath);
 
-            if (conv_filename == "1.xlsx")
-            {
-                numTOTAL_conv++;
+                // Find filesizes
+                long filesize;
 
-                try
+                FileInfo fi = new FileInfo(compare_org_filepath);
+                filesize = fi.Length;
+                long original_filesize = filesize;
+
+                new FileInfo(compare_conv_filepath);
+                filesize = fi.Length;
+                long conv_filesize = filesize;
+
+                // Compare workbook differences
+                if (File.Exists(compare_conv_filepath))
                 {
-                    // Foreach folder with conversion in enumeration
+                    numTOTAL_conv++;
 
-                    //Create "Beyond Compare" script file
-                    string bcscript_filename = results_directory + "\\bcscript.txt";
-                    string compare_org_filepath = "???";
-                    string compare_conv_filepath = "???";
-
-                    using (StreamWriter bcscript = File.CreateText(bcscript_filename))
+                    try
                     {
-                        bcscript.WriteLine(compare_org_filepath);
-                        bcscript.WriteLine(compare_conv_filepath);
+                        //Create "Beyond Compare" script file
+                        string bcscript_filename = results_directory + "\\bcscript.txt";
+                        using (StreamWriter bcscript = File.CreateText(bcscript_filename))
+                        {
+                            bcscript.WriteLine(compare_org_filepath);
+                            bcscript.WriteLine(compare_conv_filepath);
+                        }
+
+                        // Use BC
+
+                        // Delete BC script
+                        File.Delete(bcscript_filename);
+
                     }
 
-                    // Use BC
+                    // Error message if BC is not detected
+                    catch (FileNotFoundException)
+                    {
+                        Console.WriteLine("Error: The program Microsoft Spreadsheet Compare is necessary for compare function to run.");
+                    }
 
-                    // Delete BC script
-                    //File.Delete(bcscript_filename);
+                    finally
+                    {
 
-                    // Calculate checksums
-                    int? original_checksum = null;
-                    int? conv_checksum = null;
-
-                    // Find filesizes
-                    int? original_filesize = null;
-                    int? conv_filesize = null;
-
-                    // Output result in open CSV file
-                    var newLine1 = string.Format($"{compare_org_filepath}, {original_filesize},{original_checksum},{compare_conv_filepath},{conv_filesize},{conv_checksum}");
-                    csv.AppendLine(newLine1);
+                    }
 
                 }
 
-                // Error message if BC is not detected
-                catch (FileNotFoundException)
-                {
-                    Console.WriteLine("Error: The program Microsoft Spreadsheet Compare is necessary for compare function to run.");
-                }
-
-                finally
-                {
-
-                }
-
-            }
-
-            else
-            {
+                // Output result in open CSV file
+                var newLine1 = string.Format($"{compare_org_filepath}, {original_filesize},{org_checksum},{compare_conv_filepath},{conv_filesize},{conv_checksum}");
+                csv.AppendLine(newLine1);
 
             }
 
@@ -119,7 +118,7 @@ namespace CLISC
 
             // Inform user of results
             Console.WriteLine("---");
-            Console.WriteLine($"{numTOTAL_conv} converted spreadsheets were compared");
+            Console.WriteLine($"{numTOTAL_conv} conversions out of {numTOTAL} spreadsheets were compared");
             //Console.WriteLine($"{} out of {numTOTAL_conv} conversions have workbook differences");
             Console.WriteLine("Results saved to log in CSV file format");
             Console.WriteLine("Comparison finished");
