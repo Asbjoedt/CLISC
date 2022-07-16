@@ -28,7 +28,7 @@ namespace CLISC
             //Object reference
             DirectoryInfo process = new DirectoryInfo(argument1);
 
-            // Count spreadsheets recursively or not
+            // Count spreadsheets recursively
             if (argument3 == "Recursive=Yes")
             {
                 numFODS = process.GetFiles("*.fods", SearchOption.AllDirectories).Length;
@@ -46,7 +46,8 @@ namespace CLISC
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
 
-            else if (argument3 == "Recursive=No")
+            // Count spreadsheets NOT recursively
+            else
             {
                 numFODS = process.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
                 numODS = process.GetFiles("*.ods", SearchOption.TopDirectoryOnly).Length;
@@ -61,11 +62,6 @@ namespace CLISC
                 numXLTM = process.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
                 numXLTX = process.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
-            }
-
-            else
-            {
-                Console.WriteLine("Invalid recursive argument");
             }
 
             // Inform user if no spreadsheets identified
