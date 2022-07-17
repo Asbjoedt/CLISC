@@ -25,11 +25,12 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Conversion error messages
+            int numCOMPLETE = 0;
+            int numFAILED = 0;
             bool success;
             string[] error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "OpenDocument file formats are not supported", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed" };
 
             // Open CSV file to log results
-            int numFAILED = 0;
             var csv = new StringBuilder();
             var newLine0 = string.Format($"Original filepath;Original filename;Original file format;New copy filepath;New copy filename; New convert filepath; New convert filename; New convert file format;Success;Message");
             csv.AppendLine(newLine0);
@@ -269,7 +270,7 @@ namespace CLISC
             File.WriteAllText(convert_CSV_filepath, csv.ToString());
             
             // Inform user of results
-            int numCOMPLETE = numTOTAL - numFAILED;
+            numCOMPLETE = numTOTAL - numFAILED;
             Console.WriteLine("---");
             Console.WriteLine($"{numCOMPLETE} out of {numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"{numFAILED} spreadsheets failed conversion");

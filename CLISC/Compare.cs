@@ -20,12 +20,12 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Comparison errors
-            bool success;
+            bool success = false;
             int numTOTAL_diff = 0;
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Original checksum;New convert filepath;New filesize (KB);New convert checksum");
+            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Original checksum;Conversion identified;Conversion filepath;Conversion filesize (KB);Conversion checksum");
             csv.AppendLine(newLine0);
 
             // Identify CLISC subdirectory
@@ -59,20 +59,26 @@ namespace CLISC
             foreach (var folder in folder_enumeration)
             {
 
-                // Identify original file in docCollection
-                var files = from file in
+                // Identify original file in folder
+                var org_file = from file in
                 Directory.EnumerateFiles(folder)
                             where file.Contains("orgFile_")
                             select file;
-                foreach (var file in files)
+                foreach (var file in org_file)
                 {
                     compare_org_filepath = file.ToString();
                 }
 
-                // Identify existence of converted spreadsheet
-                if (File.Exists(folder + "\\1.xlsx"))
+                // Identify converted spreadsheet in folder
+                var conv_file = from file in
+                Directory.EnumerateFiles(folder)
+                            where file.Equals("1.xlsx")
+                            select file;
+                foreach (var file2 in conv_file)
                 {
-                    compare_conv_filepath = folder + "\\1.xlsx";
+                    compare_conv_filepath = file2.ToString();
+
+                    // Inform user of comparison
                     Console.WriteLine(compare_conv_filepath);
                     Console.WriteLine($"--> Comparing to: {compare_org_filepath}");
                 }
@@ -98,16 +104,16 @@ namespace CLISC
                     conv_filesize_kb = conv_filesize / 1024;
                 }
 
-                // If conversion does not exist do nothing
+                // If conversion does not exist, do nothing
                 catch (SystemException)
                 {
-                    
+                    // Do nothing
                 }
-
 
                 // Compare workbook differences
                 if (File.Exists(compare_conv_filepath))
                 {
+                    success = true;
                     numTOTAL_conv++;
 
                     try
@@ -150,18 +156,19 @@ namespace CLISC
                     // Error message if BC is not detected
                     catch (FileNotFoundException)
                     {
-                        Console.WriteLine("Error: The program Microsoft Spreadsheet Compare is necessary for compare function to run.");
+                        Console.WriteLine("Error: The program Beyond Compare 4 is necessary for compare function to run.");
                     }
 
+                    // Not to forget finally if we need it
                     finally
                     {
-
+                        // Nothing to see
                     }
 
                 }
 
                 // Output result in open CSV file
-                var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{org_checksum};{compare_conv_filepath};{conv_filesize_kb};{conv_checksum}");
+                var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{org_checksum};{success};{compare_conv_filepath};{conv_filesize_kb};{conv_checksum}");
                 csv.AppendLine(newLine1);
 
             }
