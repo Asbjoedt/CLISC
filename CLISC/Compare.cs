@@ -97,18 +97,18 @@ namespace CLISC
                         try
                         {
                             //Create "Beyond Compare" script file
-                            string bcscript_filename = results_directory + "\\bcscript.txt";
-                            string bcscript_results_filename = folder + "\\comparisonResults.txt";
-                            using (StreamWriter bcscript = File.CreateText(bcscript_filename))
+                            string bcscript_filepath = results_directory + "\\bcscript.txt";
+                            string bcscript_results_filepath = folder + "\\comparisonResults.html";
+                            using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
                             {
-                                bcscript.WriteLine($"data-report layout:side-by-side options:display-mismatches title:Comparison_Results output-to:{bcscript_results_filename} {compare_org_filepath} {compare_conv_filepath}");
+                                bcscript.WriteLine($"data-report layout:interleaved options:display-mismatches title:CLISC_Comparison_Results output-to:\"{bcscript_results_filepath}\" output-options:wrap-word,html-color \"{compare_org_filepath}\" \"{compare_conv_filepath}\"");
                             }
 
                             // Execute BC in console
-                            Process.Start($"C:\\Program Files\\Beyond Compare 4\\BCompare.exe {bcscript_filename}");
+                            //Process.Start($"C:\\Program Files\\Beyond Compare 4\\BCompare.exe\" \"@{bcscript_filepath}\"");
 
                             // Delete BC script
-                            File.Delete(bcscript_filename);
+                            //File.Delete(bcscript_filepath);
 
                             // If there is workbook differences
                             //if (fail)
@@ -124,16 +124,16 @@ namespace CLISC
                             //else
                             //{
                             //    // Inform user
-                            //    Console.WriteLine(compare_conv_filepath);
                             //    Console.WriteLine($"--> Comparison {success}");
                             //}
 
                         }
 
                         // Error message if BC is not detected
-                        catch (FileNotFoundException)
+                        catch (System.ComponentModel.Win32Exception)
                         {
-                            Console.WriteLine("Error: The program Beyond Compare 4 is necessary for compare function to run.");
+                            Console.WriteLine("--> Beyond Compare 4 filepath not found: C:\\Program Files\\Beyond Compare 4\\BCompare.exe");
+                            Console.WriteLine("--> The program Beyond Compare 4 must be installed to compare workbook differences");
                         }
 
                         // Perform other comparisons
@@ -168,7 +168,7 @@ namespace CLISC
 
             // Inform user of results
             Console.WriteLine("---");
-            Console.WriteLine($"{numTOTAL_conv} converted spreadsheets out of {numTOTAL} spreadsheets were compared");
+            Console.WriteLine($"{numTOTAL_conv} out of {numTOTAL} spreadsheets were compared");
             //Console.WriteLine($"{numTOTAL_diff} out of {numTOTAL_conv} conversions have workbook differences");
             Console.WriteLine("Results saved to log in CSV file format");
             Console.WriteLine("Comparison finished");

@@ -10,6 +10,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Office.Interop; // not used
 using Excel = Microsoft.Office.Interop.Excel; // not used
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace CLISC
 {
@@ -28,7 +30,7 @@ namespace CLISC
             int numCOMPLETE = 0;
             int numFAILED = 0;
             bool success;
-            string[] error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "OpenDocument file formats are not supported", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed" };
+            string[] error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "OpenDocument file formats are not supported", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed", "LibreOffice is not installed or has incorrect filepath. Filepath must be: C:\\Program Files\\LibreOffice" };
 
             // Open CSV file to log results
             var csv = new StringBuilder();
@@ -114,12 +116,27 @@ namespace CLISC
                             case ".ods":
                             case ".ots":
                                 // Code to execute
-                                numFAILED++;
-                                success = false;
+                                try
+                                {
+                                    success = true;
 
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {success} - {error_message[3]}");
+                                    Process.Start($"C:\\Program Files\\LibreOffice\\program\\soffice.com --headless --convert-to xlsx {copy_new_filepath} --outdir {conv_new_filepath}");
+
+                                    // Inform user
+                                    Console.WriteLine(org_filepath);
+                                    Console.WriteLine($"--> Conversion {success}");
+                                }
+
+                                // Error, if LibreOffice is not installed in correct filepath
+                                catch (System.ComponentModel.Win32Exception)
+                                {
+                                    numFAILED++;
+                                    success = false;
+
+                                    // Inform user
+                                    Console.WriteLine(org_filepath);
+                                    Console.WriteLine($"--> Conversion {success} - {error_message[7]}");
+                                }
 
                                 // Output result in open CSV file
                                 var newLine2 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{success};{error_message[3]}");
@@ -140,6 +157,7 @@ namespace CLISC
                                 var newLine3 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{success};{error_message[5]}");
                                 csv.AppendLine(newLine3);
                                 break;
+
                             case ".xls":
                             case ".xlt":
                                 // Code to execute
@@ -155,7 +173,7 @@ namespace CLISC
                                 csv.AppendLine(newLine4);
                                 break;
 
-                                // Office Open XML file formats
+                            // Office Open XML file formats
                             case ".xlsb":
                                 // Code to execute
                                 numFAILED++;
@@ -169,6 +187,7 @@ namespace CLISC
                                 var newLine5 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{success};{error_message[2]}");
                                 csv.AppendLine(newLine5);
                                 break;
+
                             case ".xlam":
                                 // Code to execute
                                 numFAILED++;
