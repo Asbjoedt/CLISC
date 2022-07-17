@@ -7,8 +7,10 @@ using System.Security.Cryptography;
 
 namespace CLISC
 {
+
     public partial class Spreadsheet
     {
+
         // Calculate MD5 checksum to fingerprint the spreadsheet
         public string CalculateMD5(string filepath)
         {
@@ -30,10 +32,14 @@ namespace CLISC
             {
                 return "";
             }
+
             catch (System.IO.FileNotFoundException)
             {
                 return "";
             }
+
         }
+
     }
+
 }
