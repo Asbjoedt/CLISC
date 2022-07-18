@@ -10,8 +10,6 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Office.Interop; // not used
 using Excel = Microsoft.Office.Interop.Excel; // not used
-using System.Diagnostics;
-using System.ComponentModel;
 
 namespace CLISC
 {

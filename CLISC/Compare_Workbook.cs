@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace CLISC
 {
@@ -23,9 +25,9 @@ namespace CLISC
                 }
 
                 // Use Beyond Compare 4 command line for comparison
-                System.Diagnostics.Process app = new System.Diagnostics.Process();
+                Process app = new Process();
                 app.StartInfo.FileName = "C:\\Program Files\\Beyond Compare 4\\BCompare.exe";
-                app.StartInfo.Arguments = $"\"@{bcscript_filepath}\"";
+                app.StartInfo.Arguments = $"\"@{bcscript_filepath}\" /silent";
                 app.Start();
                 app.WaitForExit();
                 app.Close();

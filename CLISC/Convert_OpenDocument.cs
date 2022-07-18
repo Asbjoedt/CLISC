@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace CLISC
 {
@@ -19,7 +21,7 @@ namespace CLISC
                 convert_success = true;
 
                 // Use LibreOffice command line for conversion
-                System.Diagnostics.Process app = new System.Diagnostics.Process();
+                Process app = new Process();
                 app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
                 app.StartInfo.Arguments = "--headless --convert-to xlsx " + copy_new_filepath + " --outdir " + conv_new_filepath;
                 app.Start();

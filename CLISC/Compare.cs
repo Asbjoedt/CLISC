@@ -80,9 +80,9 @@ namespace CLISC
                 Directory.EnumerateFiles(folder)
                             where Path.GetFileName(file).Equals("1.xlsx")
                             select file;
-                foreach (var file2 in conv_file)
+                foreach (var file in conv_file)
                 {
-                    compare_conv_filepath = file2.ToString();
+                    compare_conv_filepath = file.ToString();
 
                     // Inform user of comparison
                     Console.WriteLine(compare_org_filepath);

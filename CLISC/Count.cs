@@ -26,41 +26,43 @@ namespace CLISC
             string[] file_format_description = { "Name", "OpenDocument Flat XML Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet Add-In", "Legacy Microsoft Excel Spreadsheet", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Add-In", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet (Transitional and Strict conformance)", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
 
             //Object reference
-            DirectoryInfo process = new DirectoryInfo(argument1);
+            DirectoryInfo count = new DirectoryInfo(argument1);
 
             // Count spreadsheets recursively
             if (argument3 == "Recursive=Yes")
             {
-                numFODS = process.GetFiles("*.fods", SearchOption.AllDirectories).Length;
-                numODS = process.GetFiles("*.ods", SearchOption.AllDirectories).Length;
-                numOTS = process.GetFiles("*.ots", SearchOption.AllDirectories).Length;
-                numXLA = process.GetFiles("*.xla", SearchOption.AllDirectories).Length;
-                numXLS = process.GetFiles("*.xls", SearchOption.AllDirectories).Length;
-                numXLT = process.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
-                numXLAM = process.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
-                numXLSB = process.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
-                numXLSM = process.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
-                numXLSX = process.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-                numXLTM = process.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
-                numXLTX = process.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
+                numFODS = count.GetFiles("*.fods", SearchOption.AllDirectories).Length;
+                numODS = count.GetFiles("*.ods", SearchOption.AllDirectories).Length;
+                numOTS = count.GetFiles("*.ots", SearchOption.AllDirectories).Length;
+                numXLA = count.GetFiles("*.xla", SearchOption.AllDirectories).Length;
+                numXLS = count.GetFiles("*.xls", SearchOption.AllDirectories).Length;
+                numXLT = count.GetFiles("*.xlt", SearchOption.AllDirectories).Length;
+                numXLAM = count.GetFiles("*.xlam", SearchOption.AllDirectories).Length;
+                numXLSB = count.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
+                numXLSM = count.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
+                numXLSX = count.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
+                numXLTM = count.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
+                numXLTX = count.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
+
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
 
             // Count spreadsheets NOT recursively
             else
             {
-                numFODS = process.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
-                numODS = process.GetFiles("*.ods", SearchOption.TopDirectoryOnly).Length;
-                numOTS = process.GetFiles("*.ots", SearchOption.TopDirectoryOnly).Length;
-                numXLA = process.GetFiles("*.xla", SearchOption.TopDirectoryOnly).Length;
-                numXLS = process.GetFiles("*.xls", SearchOption.TopDirectoryOnly).Length;
-                numXLT = process.GetFiles("*.xlt", SearchOption.TopDirectoryOnly).Length;
-                numXLAM = process.GetFiles("*.xlam", SearchOption.TopDirectoryOnly).Length;
-                numXLSB = process.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
-                numXLSM = process.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
-                numXLSX = process.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
-                numXLTM = process.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
-                numXLTX = process.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
+                numFODS = count.GetFiles("*.fods", SearchOption.TopDirectoryOnly).Length;
+                numODS = count.GetFiles("*.ods", SearchOption.TopDirectoryOnly).Length;
+                numOTS = count.GetFiles("*.ots", SearchOption.TopDirectoryOnly).Length;
+                numXLA = count.GetFiles("*.xla", SearchOption.TopDirectoryOnly).Length;
+                numXLS = count.GetFiles("*.xls", SearchOption.TopDirectoryOnly).Length;
+                numXLT = count.GetFiles("*.xlt", SearchOption.TopDirectoryOnly).Length;
+                numXLAM = count.GetFiles("*.xlam", SearchOption.TopDirectoryOnly).Length;
+                numXLSB = count.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
+                numXLSM = count.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
+                numXLSX = count.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
+                numXLTM = count.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
+                numXLTX = count.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
+
                 numTOTAL = numFODS + numODS + numOTS + numXLA + numXLS + numXLT + numXLAM + numXLSB + numXLSM + numXLSX + numXLTM + numXLTX;
             }
 
