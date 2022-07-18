@@ -13,13 +13,13 @@ Download the executable here. In the terminal change directory to the folder whe
 Replace [YourArgument] with one of the following arguments*:
 
 ```
-Count 'path to input directory' 'path to output directory' Recursive=Yes/No
+Count 'path to input directory' 'path to output directory' Recursive=Yes/No Archive=Yes/No
 ```
 ```
-Count&Convert 'path to input directory' 'path to output directory' Recursive=Yes/No
+Count&Convert 'path to input directory' 'path to output directory' Recursive=Yes/No Archive=Yes/No
 ```
 ```
-Count&Convert&Compare 'path to input directory' 'path to output directory' Recursive=Yes/No
+Count&Convert&Compare 'path to input directory' 'path to output directory' Recursive=Yes/No Archive=Yes/No
 ```
 <sub>*Input and output directorices are not allowed to be identical.</sub>
 
@@ -59,28 +59,30 @@ Compare original and converted spreadsheets to log differences* in
 <sub>*The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.</sub>
 
 ### Advanced archival requirements (feature not working)
+The program supports the conversion of spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. Enabling advanced archival requirements will
 
 * Validate spreadsheet against its file format standard (Office Open XML and OpenDocument)
 * Remove formula linking celss to other local spreadsheets but keep the cell values
 * Remove external data connections but keep snapshot of data
 * Remove RealTimeData (RTD) functions but keep snapshot of data
 * Alert if spreadsheet has embedded objects
+* Zip the output directory
 
 ## Dependencies
 Prerequisite software for the program to work with these functions.
 
 ### Convert
-* LibreOffice
+* [LibreOffice](https://www.libreoffice.org/)
   - If you want to convert OpenDocument spreadsheets in file extensions FODS, ODS and OTS
   - You need to install program in its default directory
   - The program is free
-* EPPLUS6
+* [EPPLUS6](https://www.epplussoftware.com/)
   - If you want to convert legacy Excel file formats in extensions XLS and XLT
   - You do NOT need to install
   - You need to purchase license
 
 ### Compare
-* Beyond Compare 4 
+* [Beyond Compare 4](https://www.scootersoftware.com/)
   - If you want to use the compare function
   - You need to install program in its default directory
   - You need to purchase license
