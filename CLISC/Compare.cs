@@ -85,8 +85,8 @@ namespace CLISC
                     compare_conv_filepath = file2.ToString();
 
                     // Inform user of comparison
-                    Console.WriteLine(compare_conv_filepath);
-                    Console.WriteLine($"--> Comparing to: {compare_org_filepath}");
+                    Console.WriteLine(compare_org_filepath);
+                    Console.WriteLine($"--> Comparing to: {compare_conv_filepath}");
 
                     // Compare workbook differences
                     if (File.Exists(compare_conv_filepath))
@@ -94,65 +94,22 @@ namespace CLISC
                         success = true;
                         numTOTAL_conv++;
 
-                        try
-                        {
-                            //Create "Beyond Compare" script file
-                            string bcscript_filepath = results_directory + "\\bcscript.txt";
-                            string bcscript_results_filepath = folder + "\\comparisonResults.html";
-                            using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
-                            {
-                                bcscript.WriteLine($"data-report layout:interleaved options:display-mismatches title:CLISC_Comparison_Results output-to:\"{bcscript_results_filepath}\" output-options:wrap-word,html-color \"{compare_org_filepath}\" \"{compare_conv_filepath}\"");
-                            }
+                        // Compare workbooks using external app Beyond Compare 4
+                        Compare_Workbook(results_directory, folder, compare_org_filepath, compare_conv_filepath);
 
-                            // Execute BC in console
-                            //Process.Start($"BCompare.exe\" \"@{bcscript_filepath}\"");
+                        // Calculate MD5 of converted spreadsheet
+                        conv_checksum = Calculate_MD5(compare_conv_filepath);
 
-                            // Delete BC script
-                            //File.Delete(bcscript_filepath);
-
-                            // If there is workbook differences
-                            //if (fail)
-                            //{
-                            //    numTOTAL_diff++;
-                            //
-                            //    // Inform user
-                            //    Console.WriteLine(compare_conv_filepath);
-                            //    Console.WriteLine($"--> Comparison {success} - Workbook differences identified");
-                            //}
-
-                            // No workbook differences
-                            //else
-                            //{
-                            //    // Inform user
-                            //    Console.WriteLine($"--> Comparison {success}");
-                            //}
-
-                        }
-
-                        // Error message if BC is not detected
-                        catch (System.ComponentModel.Win32Exception)
-                        {
-                            Console.WriteLine("--> Beyond Compare 4 alias for BComp.com not found. Edit Windows Registry");
-                            Console.WriteLine("--> The program Beyond Compare 4 must be installed to compare workbook differences");
-                        }
-
-                        // Perform other comparisons
-                        finally
-                        {
-                            // Calculate MD5 of converted spreadsheet
-                            conv_checksum = CalculateMD5(compare_conv_filepath);
-
-                            // Calculate filesize of converted spreadsheet
-                            conv_filesize_kb = CalculateFilesize(compare_conv_filepath);
-                        }
+                        // Calculate filesize of converted spreadsheet
+                        conv_filesize_kb = Calculate_Filesize(compare_conv_filepath);
 
                     }
 
                     // Calculate checksum of original spreadsheet
-                    org_checksum = CalculateMD5(compare_org_filepath);
+                    org_checksum = Calculate_MD5(compare_org_filepath);
 
                     // Calculate filesize of original spreadsheet
-                    org_filesize_kb = CalculateFilesize(compare_org_filepath);
+                    org_filesize_kb = Calculate_Filesize(compare_org_filepath);
 
                     // Output result in open CSV file
                     var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{org_checksum};{success};{compare_conv_filepath};{conv_filesize_kb};{conv_checksum}");

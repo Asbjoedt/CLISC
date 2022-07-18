@@ -12,7 +12,7 @@ namespace CLISC
     {
 
         // Calculate MD5 checksum to fingerprint the spreadsheet
-        public string CalculateMD5(string filepath)
+        public string Calculate_MD5(string filepath)
         {
 
             try
