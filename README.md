@@ -15,7 +15,7 @@ Convert any spreadsheet to XLSX (Excel, Office Open XML Transitional conformance
 * The following file formats are supported
   - Office Open XML with extensions XLSB, XLTX, XLSM and XLTM*
   - Legacy Microsoft Excel with extensions XLS and XLT* (feature not working)
-  - OpenDocument with extensions FODS, ODS and OTS (feature not working)
+  - OpenDocument with extensions FODS, ODS and OTS
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
 * Your spreadsheets are packaged in a new archivable directory, which includes copies of the original spreadsheets
