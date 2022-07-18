@@ -13,6 +13,14 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
+        // Comparison data types
+        bool compare_success = false;
+        int numTOTAL_diff = 0;
+        string conv_checksum = "";
+        string org_checksum = "";
+        int? org_filesize_kb = null;
+        int? conv_filesize_kb = null;
+        string[] compare_error_message = { "", "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4" };
 
         // Compare spreadsheets
         public void Compare(string argument1, string argument2, string argument3)
@@ -20,14 +28,6 @@ namespace CLISC
 
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
-
-            // Comparison data types
-            bool success = false;
-            int numTOTAL_diff = 0;
-            var conv_checksum = "";
-            var org_checksum = "";
-            int? org_filesize_kb = null;
-            int? conv_filesize_kb = null;
 
             // Open CSV file to log results
             var csv = new StringBuilder();
@@ -91,7 +91,7 @@ namespace CLISC
                     // Compare workbook differences
                     if (File.Exists(compare_conv_filepath))
                     {
-                        success = true;
+                        compare_success = true;
                         numTOTAL_conv++;
 
                         // Compare workbooks using external app Beyond Compare 4
@@ -112,7 +112,7 @@ namespace CLISC
                     org_filesize_kb = Calculate_Filesize(compare_org_filepath);
 
                     // Output result in open CSV file
-                    var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{org_checksum};{success};{compare_conv_filepath};{conv_filesize_kb};{conv_checksum}");
+                    var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{org_checksum};{compare_success};{compare_conv_filepath};{conv_filesize_kb};{conv_checksum}");
                     csv.AppendLine(newLine1);
 
                 }

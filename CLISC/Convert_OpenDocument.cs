@@ -13,12 +13,10 @@ namespace CLISC
         // Convert spreadsheets in OpenDocument file formats
         public bool Convert_OpenDocument(string org_filepath, string copy_new_filepath, string conv_new_filepath)
         {
-            
-            bool success;
 
             try
             {
-                success = true;
+                convert_success = true;
 
                 // Use LibreOffice command line for conversion
                 System.Diagnostics.Process app = new System.Diagnostics.Process();
@@ -30,20 +28,20 @@ namespace CLISC
 
                 // Inform user
                 Console.WriteLine(org_filepath);
-                Console.WriteLine($"--> Conversion {success}");
+                Console.WriteLine($"--> Conversion {convert_success}");
 
-                return success;
+                return convert_success;
             }
 
             catch (System.ComponentModel.Win32Exception)
             {
-                success = false;
+                convert_success = false;
 
                 // Inform user
                 Console.WriteLine(org_filepath);
-                Console.WriteLine($"--> Conversion {success} - {error_message[3]}");
+                Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[3]}");
 
-                return success;
+                return convert_success;
             }
 
         }
