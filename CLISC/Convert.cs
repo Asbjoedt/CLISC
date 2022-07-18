@@ -120,7 +120,7 @@ namespace CLISC
                                 {
                                     success = true;
 
-                                    Process.Start($"C:\\Program Files\\LibreOffice\\program\\soffice.com --headless --convert-to xlsx {copy_new_filepath} --outdir {conv_new_filepath}");
+                                    Process.Start($"soffice.com --headless --convert-to xlsx {copy_new_filepath} --outdir {conv_new_filepath}");
 
                                     // Inform user
                                     Console.WriteLine(org_filepath);

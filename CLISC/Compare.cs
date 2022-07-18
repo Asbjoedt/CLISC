@@ -105,7 +105,7 @@ namespace CLISC
                             }
 
                             // Execute BC in console
-                            //Process.Start($"C:\\Program Files\\Beyond Compare 4\\BCompare.exe\" \"@{bcscript_filepath}\"");
+                            //Process.Start($"BCompare.exe\" \"@{bcscript_filepath}\"");
 
                             // Delete BC script
                             //File.Delete(bcscript_filepath);
@@ -132,7 +132,7 @@ namespace CLISC
                         // Error message if BC is not detected
                         catch (System.ComponentModel.Win32Exception)
                         {
-                            Console.WriteLine("--> Beyond Compare 4 filepath not found: C:\\Program Files\\Beyond Compare 4\\BCompare.exe");
+                            Console.WriteLine("--> Beyond Compare 4 alias for BComp.com not found. Edit Windows Registry");
                             Console.WriteLine("--> The program Beyond Compare 4 must be installed to compare workbook differences");
                         }
 
