@@ -68,7 +68,7 @@ namespace CLISC
                 // Identify original file in folder
                 var org_file = from file in
                 Directory.EnumerateFiles(folder)
-                            where file.Contains("orgFile_")
+                            where file.Contains("orgFile_") // Should this be similar code to line 81?
                             select file;
                 foreach (var file in org_file)
                 {

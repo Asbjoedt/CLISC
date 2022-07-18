@@ -55,7 +55,7 @@ namespace CLISC
             }
 
             // Error message if BC is not detected
-            catch (System.ComponentModel.Win32Exception)
+            catch (Win32Exception)
             {
                 Console.WriteLine($"--> {compare_error_message[1]}");
             }

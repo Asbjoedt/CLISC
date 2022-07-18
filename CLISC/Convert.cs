@@ -146,7 +146,7 @@ namespace CLISC
                         case ".ots":
 
                             // Conversion code
-                            convert_success = Convert_OpenDocument(org_filepath, copy_new_filepath, conv_new_filepath);
+                            convert_success = Convert_OpenDocument(org_filepath, copy_new_filepath, conv_dir_sub);
 
                             if (convert_success == false)
                             {
@@ -270,7 +270,7 @@ namespace CLISC
                             Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[6]}");
 
                             // Output result in open CSV file
-                            var newLine8 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename}{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[6]}");
+                            var newLine8 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[6]}");
                             csv.AppendLine(newLine8);
 
                             break;
@@ -279,7 +279,7 @@ namespace CLISC
 
                 }
 
-                catch (System.IO.FileFormatException)
+                catch (FileFormatException)
                 {
                     // Code to execute
                     numFAILED++;

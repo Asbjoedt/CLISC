@@ -9,6 +9,7 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
+
         // Calculate filesize
         public int? Calculate_Filesize(string filepath)
         {
