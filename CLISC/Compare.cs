@@ -23,7 +23,7 @@ namespace CLISC
         string[] compare_error_message = { "", "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4" };
 
         // Compare spreadsheets
-        public void Compare(string argument1, string argument2, string argument3)
+        public void Compare(string argument1, string argument2, string argument3, string argument4)
         {
 
             Console.WriteLine("COMPARE");
@@ -36,14 +36,14 @@ namespace CLISC
 
             // Identify CLISC subdirectory
             int results_directory_number = 1;
-            string results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+            string results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
             while (Directory.Exists(@results_directory))
             {
                 results_directory_number++;
-                results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+                results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
             }
             results_directory_number = results_directory_number - 1;
-            results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+            results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
 
             // Identify docCollection
             string docCollection = results_directory + "\\docCollection";

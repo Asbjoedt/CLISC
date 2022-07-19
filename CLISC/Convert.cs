@@ -24,7 +24,7 @@ namespace CLISC
         string[] convert_error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed" };
 
         // Convert spreadsheets method
-        public void Convert(string argument1, string argument2, string argument3)
+        public void Convert(string argument1, string argument2, string argument3, string argument4)
         {
 
             Console.WriteLine("CONVERT");
@@ -37,14 +37,14 @@ namespace CLISC
 
             // Identify CLISC subdirectory
             int results_directory_number = 1;
-            string results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+            string results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
             while (Directory.Exists(@results_directory))
             {
                 results_directory_number++;
-                results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+                results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
             }
             results_directory_number = results_directory_number - 1;
-            results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+            results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
 
             // Create subdirectory for spreadsheets
             string conv_dir = results_directory + "\\docCollection\\";
@@ -151,11 +151,18 @@ namespace CLISC
                             if (convert_success == false)
                             {
                                 numFAILED++;
+
+                                // Output result in open CSV file
+                                var newLine2 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[3]}");
+                                csv.AppendLine(newLine2);
                             }
 
+                            // The next line must exist otherwise CSV will have wrong "conv_new_filepath"
+                            conv_new_filepath = conv_dir_sub + "\\" + conv_file_number + ".xlsx";
+
                             // Output result in open CSV file
-                            var newLine2 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[3]}");
-                            csv.AppendLine(newLine2);
+                            var newLine9 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[0]}");
+                            csv.AppendLine(newLine9);
 
                             break;
 
@@ -230,7 +237,7 @@ namespace CLISC
                         case ".xltm":
                         case ".xltx":
 
-                            // This code must exist otherwise the switch will convert .fods to .xlsx by error
+                            // The next line must exist otherwise the switch will not convert
                             conv_new_filepath = conv_dir_sub + "\\" + conv_file_number + ".xlsx";
 
                             // Conversion code
@@ -244,6 +251,7 @@ namespace CLISC
                                 }
                                 File.WriteAllBytes(conv_new_filepath, stream.ToArray());
                             }
+
                             convert_success = true;
 
                             // Inform user

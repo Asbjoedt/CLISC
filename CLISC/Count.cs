@@ -11,7 +11,14 @@ namespace CLISC
     {
         
         // Public variables
-        public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLSX_Strict, numXLTM, numXLTX, numTOTAL;
+        public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLSX_Strict, numXLSX_Transitional, numXLTM, numXLTX, numTOTAL;
+
+        // Generate date to use in name of new directory
+        static String GetTimestamp(DateTime value)
+        {
+            return value.ToString("yyyy.MM.dd");
+        }
+        String dateStamp = GetTimestamp(DateTime.Now);
 
         // Count spreadsheets
         public void Count(string argument1, string argument2, string argument3)
@@ -88,16 +95,18 @@ namespace CLISC
                 Console.WriteLine($"{numXLSB} {file_format[8]} - {file_format_description[8]}");
                 Console.WriteLine($"{numXLSM} {file_format[9]} - {file_format_description[9]}");
                 Console.WriteLine($"{numXLSX} {file_format[10]} - {file_format_description[10]}");
+                Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {file_format[10]} have Office Open XML Transional conformance");
+                Console.WriteLine($"--> {numXLSX_Strict} of {numXLSX} {file_format[10]} have Office Open XML Strict conformance");
                 Console.WriteLine($"{numXLTM} {file_format[11]} - {file_format_description[11]}");
                 Console.WriteLine($"{numXLTX} {file_format[12]} - {file_format_description[12]}");
 
                 // Create new directory to output results in CSV
                 int results_directory_number = 1;
-                string results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+                string results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
                 while (Directory.Exists(@results_directory))
                 {
                     results_directory_number++;
-                    results_directory = argument2 + "\\CLISC_Results_" + results_directory_number;
+                    results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
                 }
                 DirectoryInfo OutputDir = Directory.CreateDirectory(@results_directory);
 
