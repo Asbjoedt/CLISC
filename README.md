@@ -13,16 +13,17 @@ Download the executable here. In the terminal change directory to the folder whe
 Replace [YourArgument] with one of the following arguments*:
 
 ```
-Count 'path to input directory' 'path to output directory' Recursive=Yes/No
+Count 'path to input directory' 'path to output directory' Recursive='Yes'/'No'
 ```
 ```
-Count&Convert 'path to input directory' 'path to output directory' Recursive='Yes'/'No' Archive='Yes'/'No'
+Count&Convert 'path to input dir' 'path to output dir' Recursive='Yes'/'No' Archive='Yes'/'No'
 ```
 ```
-Count&Convert&Compare 'path to input directory' 'path to output directory' Recursive='Yes'/'No' Archive='Yes'/'No'
+Count&Convert&Compare 'path to input dir' 'path to output dir' Recursive='Yes'/'No' Archive='Yes'/'No'
 ```
-
 <sub>*Remove ' ' around arguments</sub>
+
+<sub>*You must input your arguments in the order above, and you cannot leave out an argument</sub>
 
 ## Program behavior
 
@@ -57,14 +58,14 @@ Compare original and converted spreadsheets to log differences* in
 
 <sub>*The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.</sub>
 
-### Advanced archival requirements (feature not working)
+### Advanced archival requirements (use argument Archive=Yes)
 The program supports the conversion of spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. Enabling advanced archival requirements will
 
-* Validate spreadsheet against its file format standard (Office Open XML and OpenDocument)
-* Remove formula linking celss to other local spreadsheets but keep the cell values
-* Remove external data connections but keep snapshot of data
-* Remove RealTimeData (RTD) functions but keep snapshot of data
-* Alert if spreadsheet has embedded objects
+* Validate spreadsheet against its file format standard (Office Open XML and OpenDocument) (feature not working)
+* Remove formula linking celss to other local spreadsheets but keep the cell values (feature not working)
+* Remove external data connections but keep snapshot of data (feature not working)
+* Remove RealTimeData (RTD) functions but keep snapshot of data (feature not working)
+* Alert if spreadsheet has embedded objects (feature not working)
 * Zip the output directory
 
 ## Dependencies
