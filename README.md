@@ -13,17 +13,16 @@ Download the executable here. In the terminal change directory to the folder whe
 Replace [YourArgument] with one of the following arguments*:
 
 ```
-Count 'path to input directory' 'path to output directory' Recursive=Yes/No Archive=Yes/No
+Count 'path to input directory' 'path to output directory' Recursive=Yes/No
 ```
 ```
-Count&Convert 'path to input directory' 'path to output directory' Recursive=Yes/No Archive=Yes/No
+Count&Convert 'path to input directory' 'path to output directory' Recursive='Yes'/'No' Archive='Yes'/'No'
 ```
 ```
-Count&Convert&Compare 'path to input directory' 'path to output directory' Recursive=Yes/No Archive=Yes/No
+Count&Convert&Compare 'path to input directory' 'path to output directory' Recursive='Yes'/'No' Archive='Yes'/'No'
 ```
-<sub>*Input and output directorices are not allowed to be identical.</sub>
 
-<sub>*Delete ' ' around input and output directories.</sub>
+<sub>*Remove ' ' around arguments</sub>
 
 ## Program behavior
 
