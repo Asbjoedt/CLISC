@@ -66,18 +66,18 @@ The program supports the conversion of spreadsheets to meet a data quality level
 * Remove external data connections but keep snapshot of data (feature not working)
 * Remove RealTimeData (RTD) functions but keep snapshot of data (feature not working)
 * Alert if spreadsheet has embedded objects (feature not working)
-* Zip the output directory
+* Zip the archivable directory
 
 ## Dependencies
 Prerequisite software for the program to work with these functions.
 
 ### Convert
 * [LibreOffice](https://www.libreoffice.org/)
-  - If you want to convert OpenDocument spreadsheets in file extensions FODS, ODS and OTS
+  - If you want to convert OpenDocument spreadsheets
   - You need to install program in its default directory
   - The program is free
 * [EPPLUS6](https://www.epplussoftware.com/)
-  - If you want to convert legacy Excel file formats in extensions XLS and XLT
+  - If you want to convert legacy Excel file formats
   - You do NOT need to install
   - You need to purchase license
 
