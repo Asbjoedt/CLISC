@@ -14,11 +14,11 @@ namespace CLISC
         public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLSX_Strict, numXLSX_Transitional, numXLTM, numXLTX, numTOTAL;
 
         // Generate date to use in name of new directory
-        static String GetTimestamp(DateTime value)
+        public static string GetTimestamp(DateTime value)
         {
             return value.ToString("yyyy.MM.dd");
         }
-        String dateStamp = GetTimestamp(DateTime.Now);
+        public string dateStamp = GetTimestamp(DateTime.Now);
 
         // Count spreadsheets
         public void Count(string argument1, string argument2, string argument3)

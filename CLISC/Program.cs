@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.IO.Enumeration;
+using System.IO.Compression;
 
 namespace CLISC
 {
@@ -22,11 +24,14 @@ namespace CLISC
             try
             {
 
-                    // Object reference
-                    Spreadsheet process = new Spreadsheet();
+            // Object reference
+            Spreadsheet process = new Spreadsheet();
 
-                    // Validate recursive argument
-                    if (argument3 == "Recursive=Yes" || argument3 == "Recursive=No")
+                // Validate recurse and archive arguments
+                if (argument3 == "Recurse=Yes" || argument3 == "Recurse=No")
+                {
+                    if (argument4 == "Archive=Yes" || argument4 == "Archive=No")
+                    {
 
                         // Method references
                         switch (args[0])
@@ -48,11 +53,21 @@ namespace CLISC
                                 break;
                         }
 
-                    // Inform user of invalid recursive argument
+                    }
+
+                    // Inform user of invalid archive argument
                     else
                     {
-                        Console.WriteLine("Invalid recursive argument");
+                        Console.WriteLine("Invalid archive argument. It must be one of these Archive=Yes or Archive=No");
                     }
+
+                }
+
+                // Inform user of invalid recurse argument
+                else
+                {
+                    Console.WriteLine("Invalid recurse argument. It must be one of these Resurse=Yes or Recurse=No");
+                }
 
             }
 
@@ -64,6 +79,46 @@ namespace CLISC
 
             finally
             {
+
+                // Zip the output directory
+                if (argument4 == "Archive=Yes")
+                {
+                    // Identify CLISC subdirectory
+                    string dateStamp = Spreadsheet.GetTimestamp(DateTime.Now);
+                    int results_directory_number = 1;
+                    string results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
+                    while (Directory.Exists(@results_directory))
+                    {
+                        results_directory_number++;
+                        results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
+                    }
+                    results_directory_number = results_directory_number - 1;
+                    results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
+
+                    // Zip the folder
+                    string startPath = results_directory;
+                    string zipPath = results_directory + ".zip";
+
+                    ZipFile.CreateFromDirectory(startPath, zipPath);
+
+                    // Create enumeration of unzipped folder and delete it
+                    DirectoryInfo unzipped_folder = new DirectoryInfo(results_directory);
+                    foreach (var file in unzipped_folder.EnumerateFiles("*", SearchOption.AllDirectories))
+                    {
+                        string item = file.ToString();
+                        File.Delete(item);
+                    }
+                    unzipped_folder = new DirectoryInfo(results_directory + "\\docCollection");
+                    foreach (var folder in unzipped_folder.EnumerateDirectories("*", SearchOption.AllDirectories))
+                    {
+                        string item = folder.ToString();
+                        Directory.Delete(item);
+                    }
+                    Directory.Delete(results_directory +"\\docCollection");
+                    Directory.Delete(results_directory);
+
+                }
+
                 // Inform user of end of CLISC
                 Console.WriteLine("CLISC has finished");
                 Console.WriteLine("---");
