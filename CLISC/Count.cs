@@ -13,13 +13,6 @@ namespace CLISC
         // Public variables
         public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLSX_Strict, numXLSX_Transitional, numXLTM, numXLTX, numTOTAL;
 
-        // Generate date to use in name of new directory
-        public static string GetTimestamp(DateTime value)
-        {
-            return value.ToString("yyyy.MM.dd");
-        }
-        public string dateStamp = GetTimestamp(DateTime.Now);
-
         // Count spreadsheets
         public void Count(string argument1, string argument2, string argument3)
         {
@@ -101,14 +94,7 @@ namespace CLISC
                 Console.WriteLine($"{numXLTX} {file_format[12]} - {file_format_description[12]}");
 
                 // Create new directory to output results in CSV
-                int results_directory_number = 1;
-                string results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
-                while (Directory.Exists(@results_directory))
-                {
-                    results_directory_number++;
-                    results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
-                }
-                DirectoryInfo OutputDir = Directory.CreateDirectory(@results_directory);
+                results_directory = Name_Directory(argument1, argument2);
 
                 // Output results in CSV
                 var csv = new StringBuilder();

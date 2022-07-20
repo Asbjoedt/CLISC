@@ -34,17 +34,6 @@ namespace CLISC
             var newLine0 = string.Format($"Original filepath;Original filesize (KB);Original checksum;Conversion identified;Conversion filepath;Conversion filesize (KB);Conversion checksum");
             csv.AppendLine(newLine0);
 
-            // Identify CLISC subdirectory
-            int results_directory_number = 1;
-            string results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
-            while (Directory.Exists(@results_directory))
-            {
-                results_directory_number++;
-                results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
-            }
-            results_directory_number = results_directory_number - 1;
-            results_directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
-
             // Identify docCollection
             string docCollection = results_directory + "\\docCollection";
 
