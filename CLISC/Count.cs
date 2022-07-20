@@ -36,7 +36,7 @@ namespace CLISC
             DirectoryInfo count = new DirectoryInfo(argument1);
 
             // Count spreadsheets recursively
-            if (argument3 == "Recursive=Yes")
+            if (argument3 == "Recurse=Yes")
             {
                 numFODS = count.GetFiles("*.fods", SearchOption.AllDirectories).Length;
                 numODS = count.GetFiles("*.ods", SearchOption.AllDirectories).Length;

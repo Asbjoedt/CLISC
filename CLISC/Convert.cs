@@ -56,7 +56,7 @@ namespace CLISC
             var spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = true });
 
             // Enumerate spreadsheets recursively
-            if (argument3 == "Recursive=Yes")
+            if (argument3 == "Recurse=Yes")
             {
                 // Create enumeration of files with spreadsheet file extensions
                 spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = true })
