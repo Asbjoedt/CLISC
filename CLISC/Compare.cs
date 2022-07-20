@@ -109,8 +109,8 @@ namespace CLISC
             }
 
             // Close CSV file to log results
-            string convert_CSV_filepath = results_directory + "\\3_Compare_Results.csv";
-            File.WriteAllText(convert_CSV_filepath, csv.ToString());
+            string compare_CSV_filepath = results_directory + "\\3_Compare_Results.csv";
+            File.WriteAllText(compare_CSV_filepath, csv.ToString());
 
             // Inform user of results
             Console.WriteLine("---");

@@ -13,7 +13,9 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
-        // Validate Strict conformance
+        public bool ooxml_strict_conformance = false;
+
+        // Identify OOXML Strict conformance
         SpreadsheetDocument OpenSpreadsheetDocument(string filePath)
         {
             return SpreadsheetDocument.Open(filePath, false);
@@ -21,7 +23,7 @@ namespace CLISC
 
         Tuple<bool, IEnumerable<ValidationErrorInfo>> Validate(OpenXmlPackage doc, FileFormatVersions version)
         {
-            OpenXmlValidator openXmlValidator = new OpenXmlValidator(version);
+            OpenXmlValidator openXmlValidator = new OpenXmlValidator();
             bool isStrict = doc.StrictRelationshipFound;
             IEnumerable<ValidationErrorInfo> errors = openXmlValidator.Validate(doc);
             return new Tuple<bool, IEnumerable<ValidationErrorInfo>>(isStrict, errors);

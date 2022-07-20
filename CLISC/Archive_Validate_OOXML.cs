@@ -13,14 +13,13 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
-        public bool ooxml_strict_conformance = false;
-
         // Validate Open Office XML file formats
         public string Validate_OOXML(string argument1, string argument2)
         {
 
             // Filepath to XML error log
             string XML_error_log = results_directory + "\\validationErrors.xml";
+            string XML_errors = "";
 
             try
             {
@@ -33,7 +32,9 @@ namespace CLISC
                 app.Close();
 
                 // Create XML log of errors
-                string XML_errors = File.ReadAllText($"@\"{XML_error_log}\"");
+                XML_errors = File.ReadAllText($"@\"{XML_error_log}\"");
+
+                //Contains("IsStrict = "false"")
 
                 ooxml_strict_conformance = true;
 
@@ -46,12 +47,13 @@ namespace CLISC
                     ooxml_strict_conformance = true;
                 }
 
-                // Return string of errors
-                return XML_errors;
+
 
                 // Identify if Strict conformance
 
 
+                // Return string of errors
+                return XML_errors;
 
             }
 
@@ -59,7 +61,10 @@ namespace CLISC
             catch (Win32Exception)
             {
                 // Inform user
-                Console.WriteLine("OOXML Validator executable cannot be found. Make sure the exe is located in the directory: C:\\Users\\%USERNAME%\\Desktop");
+                Console.WriteLine("OOXML Validator CLI executable cannot be found. Make sure the exe is located in directory: C:\\Users\\%USERNAME%\\Desktop");
+
+                // Return error message
+                return "Validation was not performed";
             }
 
         }

@@ -37,17 +37,17 @@ namespace CLISC
                     break;
             }
 
-
             // Zip the output directory
             ZIP_Directory(argument1, argument2);
 
             // Close CSV file to log results
-            string convert_CSV_filepath = results_directory + "\\4_Archive_Results.csv";
-            File.WriteAllText(convert_CSV_filepath, csv.ToString());
+            string archive_CSV_filepath = results_directory + "\\4_Archive_Results.csv";
+            File.WriteAllText(archive_CSV_filepath, csv.ToString());
 
             // Inform user of results
             Console.WriteLine("---");
-            Console.WriteLine($"{numTOTAL_conv} out of {numTOTAL} spreadsheets were compared");
+            Console.WriteLine("X spreadsheets failed file format validation");
+            Console.WriteLine($"x out of {numTOTAL} spreadsheets were archived");
             Console.WriteLine("Results saved to log in CSV file format");
             Console.WriteLine("Archiving finished");
             Console.WriteLine("---");
