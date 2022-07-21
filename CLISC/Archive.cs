@@ -14,42 +14,62 @@ namespace CLISC
         {
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Original checksum;Conversion identified;Conversion filepath;Conversion filesize (KB);Conversion checksum");
+            var newLine0 = string.Format($"Original filepath;Original filename;Original checksum;Copy filepath; Copy filename; Conversion identified;Conversion filepath;Conversion filename;Conversion checksum;File format validated, Data quality message");
             csv.AppendLine(newLine0);
 
-            // Rename and move converted spreadsheets
+            // Create enumeration of original spreadsheets based on input directory
+            List<string> doc_enumeration = Enumerate_docCollection(argument1);
 
-
-            // Copy original spreadsheets
-
-
-            // Validate file format standards
-            switch (file_info.Extension)
+            foreach (var file in doc_enumeration)
             {
 
-                // Validate OpenDocument file formats
-                case ".fods":
-                case ".ods":
-                case ".ots":
+                // Create instance for finding file information
+                FileInfo file_info = new FileInfo(file);
 
-                    break;
+                // Combine data types to original spreadsheets
+                string conv_extension = file_info.Extension;
+                string conv_filename = file_info.Name;
+                string conv_filepath = file_info.FullName;
 
-                // Validate Office Open XML file formats
-                case ".xlam":
-                case ".xlsm":
-                case ".xlsx":
-                case ".xltx":
-                    Validate_OOXML(argument1, argument2);
-                    break;
+                // Rename and move converted spreadsheets
+
+                // Copy original spreadsheets
+
+
+                // Validate file format standards
+                string validation_message = "";
+
+                switch (file_info.Extension)
+                {
+
+                    // Validate OpenDocument file formats
+                    case ".fods":
+                    case ".ods":
+                    case ".ots":
+
+                        break;
+
+                    // Validate Office Open XML file formats
+                    case ".xlam":
+                    case ".xlsm":
+                    case ".xlsx":
+                    case ".xltx":
+                        validation_message = Validate_OOXML(argument1, argument2);
+                        break;
+                }
+
+                // Calculate checksums
+                string copy_checksum = Calculate_MD5(org_filepath);
+                //string conv_checksum = Calculate_MD5(conv_filepath);
+
+                // Check for data quality requirements
+                string dataquality_message = "";
+
+                // Output result in open CSV file
+                //var newLine1 = string.Format($"{org_filepath};{org_filename};{copy_filepath};{copy_filename};{convert_success};{conv_filepath};{conv_filename};{conv_checksum};{validation_message};{dataquality_message}");
+                //csv.AppendLine(newLine1);
+
             }
-
-            // Calculate checksums
-            string copy_checksum = Calculate_MD5(copy_filepath);
-            string conv_checksum = Calculate_MD5(conv_filepath);
-
-            // Output result in open CSV file
-            var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{conv_filepath};{conv_filesize_kb};");
-            csv.AppendLine(newLine1);
 
             // Close CSV file to log results
             string CSV_filepath = results_directory + "\\4_Archive_Results.csv";

@@ -16,18 +16,11 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
-        // Create data types for converted spreadsheets
-        int conv_dir_number = 1;
-        int conv_file_number = 1;
-        string conv_dir_sub = file_dir + conv_dir_number;
-        public string conv_extension = ".xlsx";
-        public string conv_filename = conv_file_number + conv_extension;
-        string conv_filepath = conv_dir_sub + "\\" + conv_filename;
 
         // Conversion error messages
         int numCOMPLETE = 0;
         int numFAILED = 0;
-        bool convert_success;
+        public bool convert_success;
         string[] convert_error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed" };
 
         // Convert spreadsheets method
@@ -39,15 +32,23 @@ namespace CLISC
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filename;Original file format;New copy filepath;New copy filename; New convert filepath; New convert filename; New convert file format;Success;Message");
+            var newLine0 = string.Format($"Original filepath;Original filename;Original file format;Convert filepath;Convert filename;Convert file format;Success;Message");
             csv.AppendLine(newLine0);
 
             // Create subdirectory for spreadsheet files
             string file_dir = results_directory + "\\docCollection\\";
             DirectoryInfo Output_Dir = Directory.CreateDirectory(@file_dir);
 
+            // Create data types for converted spreadsheets
+            int subdir_number = 1;
+            string file_subdir = file_dir + subdir_number;
+            int conv_file_number = 1;
+            string conv_extension = ".xlsx";
+            string conv_filename = conv_file_number + conv_extension;
+            string conv_filepath = file_subdir + "\\" + conv_filename;
+
             // Create enumeration of original spreadsheets based on input directory
-            IEnumerable<string> org_enumeration = Enumerate_Original<string>(argument1, argument3);
+            List<string> org_enumeration = Enumerate_Original(argument1, argument3);
 
             // Loop spreadsheets based on enumeration
             foreach (var file in org_enumeration.ToList()) // Is .ToList() necessary?
@@ -64,18 +65,18 @@ namespace CLISC
                 // Create data types for copied original spreadsheets
                 //string copy_extension = "orgFile_" + org_filename;
                 string copy_filename = "orgFile_" + org_filename;
-                string copy_filepath = conv_dir_sub + "\\" + copy_filename;
+                string copy_filepath = file_subdir + "\\" + copy_filename;
 
                 // Create new subdirectory for the spreadsheet
-                while (Directory.Exists(@conv_dir_sub))
+                while (Directory.Exists(@file_subdir))
                 {
-                    conv_dir_number++;
-                    conv_dir_sub = file_dir + conv_dir_number;
+                    subdir_number++;
+                    file_subdir = file_dir + subdir_number;
                 }
-                DirectoryInfo OutputDirSub = Directory.CreateDirectory(@conv_dir_sub);
+                DirectoryInfo Output_Subdir = Directory.CreateDirectory(@file_subdir);
 
                 // Copy spreadsheet
-                copy_filepath = conv_dir_sub + "\\" + "orgFile_" + org_filename;
+                copy_filepath = file_subdir + "\\" + "orgFile_" + org_filename;
                 File.Copy(org_filepath, copy_filepath);
 
                 // Convert spreadsheet
@@ -92,22 +93,22 @@ namespace CLISC
                         case ".ots":
 
                             // Conversion code
-                            convert_success = Convert_OpenDocument(org_filepath, copy_filepath, conv_dir_sub);
+                            convert_success = Convert_OpenDocument(org_filepath, copy_filepath, file_subdir);
 
                             if (convert_success == false)
                             {
                                 numFAILED++;
 
                                 // Output result in open CSV file
-                                var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_filepath};{copy_filename};;;;{convert_success};{convert_error_message[3]}");
+                                var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};;;;;{convert_success};{convert_error_message[3]}");
                                 csv.AppendLine(newLine2);
                             }
 
                             // The next line must exist otherwise CSV will have wrong "conv_new_filepath"
-                            conv_filepath = conv_dir_sub + "\\" + conv_file_number + ".xlsx";
+                            conv_filepath = file_subdir + "\\" + conv_file_number + ".xlsx";
 
                             // Output result in open CSV file
-                            var newLine9 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_filepath};{copy_filename};{conv_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[0]}");
+                            var newLine9 = string.Format($"{org_filepath};{org_filename};{org_extension};{conv_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[0]}");
                             csv.AppendLine(newLine9);
 
                             break;
@@ -184,7 +185,7 @@ namespace CLISC
                         case ".xltx":
 
                             // The next line must exist otherwise the switch will not convert
-                            conv_filepath = conv_dir_sub + "\\" + conv_file_number + ".xlsx";
+                            conv_filepath = file_subdir + "\\" + conv_file_number + ".xlsx";
 
                             // Conversion code
                             byte[] byteArray = File.ReadAllBytes(copy_filepath);
@@ -216,7 +217,7 @@ namespace CLISC
                             convert_success = true;
 
                             // Copy spreadsheet
-                            conv_filepath = conv_dir_sub + "\\" + conv_file_number + ".xlsx";
+                            conv_filepath = file_subdir + "\\" + conv_file_number + ".xlsx";
                             File.Copy(copy_filepath, conv_filepath);
 
                             // Inform user

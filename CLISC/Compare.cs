@@ -74,7 +74,7 @@ namespace CLISC
                     compare_conv_filepath = file.ToString();
 
                     // Inform user of comparison
-                    Console.WriteLine(compare_org_filepath);
+                    Console.WriteLine(org_filepath);
                     Console.WriteLine($"--> Comparing to: {compare_conv_filepath}");
 
                     // Compare workbook differences
@@ -95,9 +95,15 @@ namespace CLISC
                     org_filesize_kb = Calculate_Filesize(compare_org_filepath);
 
                     // Output result in open CSV file
-                    var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{compare_success};{compare_conv_filepath};{conv_filesize_kb};");
+                    var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{compare_conv_filepath};{conv_filesize_kb};");
                     csv.AppendLine(newLine1);
 
+                }
+
+                // Delete BC script
+                if (File.Exists(bcscript_filepath))
+                {
+                    File.Delete(bcscript_filepath);
                 }
 
             }

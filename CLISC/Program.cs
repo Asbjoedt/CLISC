@@ -39,15 +39,18 @@ namespace CLISC
                             case "Count":
                                 results_directory = process.Count(argument1, argument2, argument3);
                                 break;
+
                             case "Count&Convert":
                                 results_directory = process.Count(argument1, argument2, argument3);
                                 process.Convert(argument1, results_directory, argument3, argument4);
                                 break;
+
                             case "Count&Convert&Compare":
                                 results_directory = process.Count(argument1, argument2, argument3);
                                 process.Convert(argument1, results_directory, argument3, argument4);
                                 process.Compare(argument1, results_directory, argument3, argument4);
                                 break;
+
                             default:
                                 Console.WriteLine("Invalid first argument. First argument must be one these: Count, Count&Convert, Count&Convert&Compare");
                                 break;

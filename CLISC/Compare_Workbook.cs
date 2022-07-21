@@ -11,13 +11,16 @@ namespace CLISC
     
     public partial class Spreadsheet
     {
+        
+        // Public data type needed for Compare.cs
+        public string bcscript_filepath = "";
 
         public void Compare_Workbook(string results_directory, string folder, string compare_org_filepath, string compare_conv_filepath)
         {
             try
             {
                 //Create "Beyond Compare" script file
-                string bcscript_filepath = results_directory + "\\bcscript.txt";
+                bcscript_filepath = results_directory + "\\bcscript.txt";
                 string bcscript_results_filepath = folder + "\\comparisonResults.html";
                 using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
                 {
@@ -31,9 +34,6 @@ namespace CLISC
                 app.Start();
                 app.WaitForExit();
                 app.Close();
-
-                // Delete BC script
-                File.Delete(bcscript_filepath);
 
                 // If there is workbook differences
                 //if (fail)

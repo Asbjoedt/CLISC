@@ -10,6 +10,20 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
+        public List<string> Enumerate_docCollection(string argument1)
+        {
+
+            var doc_enumeration = new List<string>();
+
+            // Enumerate of spreadsheets in docCollection
+            doc_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.*", SearchOption.TopDirectoryOnly)
+                .Where(file => file_format.Contains(Path.GetExtension(file)))
+                .ToList();
+
+            return doc_enumeration;
+
+        }
+
     }
 
 }
