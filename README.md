@@ -34,19 +34,23 @@ Count&Convert&Compare 'path to input dir' 'path to output dir' Recursive='Yes'/'
 * Password protected or otherwise unreadable spreadsheets will not be converted or compared, but they will be copied to the new archivable directory
 
 ### Count
-* Count number of spreadsheets in directory by file format (file extension)
+* Count number of spreadsheets in directory by file format 
+  - Accepted file extensions: .fods, .ods, .ots, .xla, .xlam, .xls, .xlsb, .xlsm, .xlsx, .xlt, .xltm, .xltx
+  - Office Open XML file formats of Transitional and Strict conformance can be identified
 
 ### Convert
-Convert any spreadsheet to XLSX (Excel, Office Open XML Transitional conformance)
+Convert any spreadsheet to .xlsx (Excel, Office Open XML Transitional conformance)
 
 * The following file formats are supported
-  - Office Open XML with extensions XLSB, XLTX, XLSM and XLTM*
-  - Legacy Microsoft Excel with extensions XLS and XLT* (feature not working)
-  - OpenDocument with extensions FODS, ODS and OTS
+  - Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance*
+  - Legacy Microsoft Excel with extensions .xls and .xlt* (feature not working)
+  - OpenDocument with extensions .fods, .ods and .ots
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
 
-<sub>*XLA and XLAM file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archivable directory.</sub>
+<sub>*.xla and .xlam file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archive directory, if arhciving is selected</sub>
+
+<sub>*.xlsx with Transitional conformance will only be converted if arhciving is selected</sub>
 
 ### Compare
 Compare original and converted spreadsheets to log differences* in
@@ -62,7 +66,7 @@ The program supports the conversion of spreadsheets to meet a data quality level
 * Package spreadsheets and metadata in a new archive directory
 * Include copies of the original spreadsheets
 * Validate spreadsheet against its file format standard (Office Open XML and OpenDocument) (feature not working)
-* Remove formula linking celss to other local spreadsheets but keep the cell values (feature not working)
+* Remove formula linking cells to other local spreadsheets but keep the cell values (feature not working)
 * Remove external data connections but keep snapshot of data (feature not working)
 * Remove RealTimeData (RTD) functions but keep snapshot of data (feature not working)
 * Alert if spreadsheet has embedded objects (feature not working)
