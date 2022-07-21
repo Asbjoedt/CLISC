@@ -19,7 +19,7 @@ namespace CLISC
 
         // Create name for new results directory
         public string results_directory = "";
-        public string Name_Directory(string argument1, string argument2)
+        public string Create_Directory_Results(string argument1, string argument2)
         {
             // Identify available name for results directory
             int results_directory_number = 1;

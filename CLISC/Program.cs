@@ -8,8 +8,7 @@ namespace CLISC
     public class Program
     {
 
-
-    public static void Main(string[] args)
+        public static void Main(string[] args)
         {
 
             Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count Convert & Compare");
@@ -20,6 +19,7 @@ namespace CLISC
             string argument2 = Convert.ToString(args[2]);
             string argument3 = Convert.ToString(args[3]);
             string argument4 = Convert.ToString(args[4]);
+            string results_directory = "";
 
             // Object reference
             Spreadsheet process = new Spreadsheet();
@@ -37,17 +37,20 @@ namespace CLISC
                         switch (args[0])
                         {
                             case "Count":
-                                process.Count(argument1, argument2, argument3);
+                                results_directory = process.Count(argument1, argument2, argument3);
                                 break;
+
                             case "Count&Convert":
-                                process.Count(argument1, argument2, argument3);
-                                process.Convert(argument1, argument2, argument3, argument4);
+                                results_directory = process.Count(argument1, argument2, argument3);
+                                process.Convert(argument1, results_directory, argument3, argument4);
                                 break;
+
                             case "Count&Convert&Compare":
-                                process.Count(argument1, argument2, argument3);
-                                process.Convert(argument1, argument2, argument3, argument4);
-                                process.Compare(argument1, argument2, argument3, argument4);
+                                results_directory = process.Count(argument1, argument2, argument3);
+                                process.Convert(argument1, results_directory, argument3, argument4);
+                                process.Compare(argument1, results_directory, argument3, argument4);
                                 break;
+
                             default:
                                 Console.WriteLine("Invalid first argument. First argument must be one these: Count, Count&Convert, Count&Convert&Compare");
                                 break;
@@ -83,7 +86,7 @@ namespace CLISC
                 // Archive the spreadsheets if argument4 is Archive=Yes
                 if (argument4 == "Archive=Yes")
                 {
-                    process.Archive(argument1, argument2);
+                    process.Archive(argument1, argument2, results_directory);
                 }
 
                 // Inform user of end of CLISC

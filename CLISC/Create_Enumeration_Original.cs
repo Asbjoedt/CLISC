@@ -10,61 +10,39 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
+        
+        // Create data types for original spreadsheets
+        public string org_extension = "";
+        public string org_filename = "";
+        public string org_filepath = "";
 
-        public void Enumerate_Original(string argument1, string argument3)
+        public List<string> Enumerate_Original(string argument1, string argument3)
         {
-            // Prepare for enumeration of files with spreadsheet file extensions
-            var spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = true });
+            
+            var org_enumeration = new List<string>();
 
-            // Enumerate spreadsheets recursively
+            // Recurse enumeration of original spreadsheets from input directory
             if (argument3 == "Recurse=Yes")
             {
-                // Create enumeration of files with spreadsheet file extensions
-                spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = true })
-                {
-                    ShouldIncludePredicate = (ref FileSystemEntry entry) =>
-                    {
-                        if (entry.IsDirectory)
-                        {
-                            return false;
-                        }
-                        foreach (string extension in file_format)
-                        {
-                            var fileExtension = Path.GetExtension(entry.FileName);
-                            if (fileExtension.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                };
+                org_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.*", SearchOption.AllDirectories)
+                    .Where(file => file_format.Contains(Path.GetExtension(file)))
+                    .ToList();
+
+                return org_enumeration;
             }
 
-            // Enumerate spreadsheets NOT recursively
+            // No recurse enumeration
             else
             {
-                // Create enumeration of files with spreadsheet file extensions
-                spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = false })
-                {
-                    ShouldIncludePredicate = (ref FileSystemEntry entry) =>
-                    {
-                        if (entry.IsDirectory)
-                        {
-                            return false;
-                        }
-                        foreach (string extension in file_format)
-                        {
-                            var fileExtension = Path.GetExtension(entry.FileName);
-                            if (fileExtension.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                };
+                org_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.*", SearchOption.TopDirectoryOnly)
+                   .Where(file => file_format.Contains(Path.GetExtension(file)))
+                   .ToList();
+
+                return org_enumeration;
             }
+
         }
+
     }
+
 }

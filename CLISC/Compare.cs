@@ -31,7 +31,7 @@ namespace CLISC
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Original checksum;Conversion identified;Conversion filepath;Conversion filesize (KB);Conversion checksum");
+            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Conversion identified;Conversion filepath;Conversion filesize (KB)");
             csv.AppendLine(newLine0);
 
             // Identify docCollection
@@ -74,7 +74,7 @@ namespace CLISC
                     compare_conv_filepath = file.ToString();
 
                     // Inform user of comparison
-                    Console.WriteLine(compare_org_filepath);
+                    Console.WriteLine(org_filepath);
                     Console.WriteLine($"--> Comparing to: {compare_conv_filepath}");
 
                     // Compare workbook differences
@@ -86,37 +86,37 @@ namespace CLISC
                         // Compare workbooks using external app Beyond Compare 4
                         Compare_Workbook(results_directory, folder, compare_org_filepath, compare_conv_filepath);
 
-                        // Calculate MD5 of converted spreadsheet
-                        conv_checksum = Calculate_MD5(compare_conv_filepath);
-
                         // Calculate filesize of converted spreadsheet
                         conv_filesize_kb = Calculate_Filesize(compare_conv_filepath);
 
                     }
 
-                    // Calculate checksum of original spreadsheet
-                    org_checksum = Calculate_MD5(compare_org_filepath);
-
                     // Calculate filesize of original spreadsheet
                     org_filesize_kb = Calculate_Filesize(compare_org_filepath);
 
                     // Output result in open CSV file
-                    var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{org_checksum};{compare_success};{compare_conv_filepath};{conv_filesize_kb};{conv_checksum}");
+                    var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{compare_conv_filepath};{conv_filesize_kb};");
                     csv.AppendLine(newLine1);
 
+                }
+
+                // Delete BC script
+                if (File.Exists(bcscript_filepath))
+                {
+                    File.Delete(bcscript_filepath);
                 }
 
             }
 
             // Close CSV file to log results
-            string compare_CSV_filepath = results_directory + "\\3_Compare_Results.csv";
-            File.WriteAllText(compare_CSV_filepath, csv.ToString());
+            string CSV_filepath = results_directory + "\\3_Compare_Results.csv";
+            File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
             Console.WriteLine("---");
             Console.WriteLine($"{numTOTAL_conv} out of {numTOTAL} spreadsheets were compared");
             //Console.WriteLine($"{numTOTAL_diff} out of {numTOTAL_conv} conversions have workbook differences");
-            Console.WriteLine("Results saved to log in CSV file format");
+            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Comparison finished");
             Console.WriteLine("---");
 
