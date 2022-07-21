@@ -2,6 +2,7 @@
 using System.IO;
 using System.IO.Enumeration;
 using System.Collections.Generic;
+using Enumerate_org = System.Collections.Generic.IEnumerable<T>;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,60 +12,32 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
-        public void Enumerate_Original(string argument1, string argument3)
+        public IEnumerable<T> Enumerate_Original<T>(string argument1, string argument3)
         {
-            // Prepare for enumeration of files with spreadsheet file extensions
-            var spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = true });
+            Enumerate_org<T> org_enumeration = new Enumerate_org<T>();
 
-            // Enumerate spreadsheets recursively
+            // Recurse enumeration of original spreadsheets from input directory
             if (argument3 == "Recurse=Yes")
             {
-                // Create enumeration of files with spreadsheet file extensions
-                spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = true })
-                {
-                    ShouldIncludePredicate = (ref FileSystemEntry entry) =>
-                    {
-                        if (entry.IsDirectory)
-                        {
-                            return false;
-                        }
-                        foreach (string extension in file_format)
-                        {
-                            var fileExtension = Path.GetExtension(entry.FileName);
-                            if (fileExtension.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                };
+                org_enumeration = Directory.EnumerateFiles(argument1, "*.*", SearchOption.AllDirectories)
+                .Where(file => file.EndsWith(".fods") || file.EndsWith(".ods") || file.EndsWith(".ots") || file.EndsWith("xla") || file.EndsWith(".xls") || file.EndsWith(".xls") || file.EndsWith(".xlt") || file.EndsWith(".xlam") || file.EndsWith(".xlsb") || file.EndsWith(".xlsm") || file.EndsWith(".xlsx") || file.EndsWith(".xltm") || file.EndsWith(".xltx"))
+                .ToList();
+
+                return org_enumeration;
             }
 
-            // Enumerate spreadsheets NOT recursively
+            // No recurse enumeration
             else
             {
-                // Create enumeration of files with spreadsheet file extensions
-                spreadsheets_enumeration = new FileSystemEnumerable<FileSystemInfo>(argument1, (ref FileSystemEntry entry) => entry.ToFileSystemInfo(), new EnumerationOptions() { RecurseSubdirectories = false })
-                {
-                    ShouldIncludePredicate = (ref FileSystemEntry entry) =>
-                    {
-                        if (entry.IsDirectory)
-                        {
-                            return false;
-                        }
-                        foreach (string extension in file_format)
-                        {
-                            var fileExtension = Path.GetExtension(entry.FileName);
-                            if (fileExtension.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                };
+                org_enumeration = Directory.EnumerateFiles(argument1, "*.*", SearchOption.TopDirectoryOnly)
+                .Where(file => file.EndsWith(".fods") || file.EndsWith(".ods") || file.EndsWith(".ots") || file.EndsWith("xla") || file.EndsWith(".xls") || file.EndsWith(".xls") || file.EndsWith(".xlt") || file.EndsWith(".xlam") || file.EndsWith(".xlsb") || file.EndsWith(".xlsm") || file.EndsWith(".xlsx") || file.EndsWith(".xltm") || file.EndsWith(".xltx"))
+                .ToList();
+
+                return org_enumeration;
             }
+
         }
+
     }
+
 }

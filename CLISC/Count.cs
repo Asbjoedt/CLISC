@@ -124,13 +124,13 @@ namespace CLISC
                 csv.AppendLine(newLine11);
                 var newLine12 = string.Format($"{numXLTX};{file_format[11]};{file_format_description[11]}");
                 csv.AppendLine(newLine12);
-                string count_CSV_filepath = results_directory + "\\1_Count_Results.csv";
-                File.WriteAllText(count_CSV_filepath, csv.ToString());
+                string CSV_filepath = results_directory + "\\1_Count_Results.csv";
+                File.WriteAllText(CSV_filepath, csv.ToString());
 
                 // Inform user of results
                 Console.WriteLine("---");
                 Console.WriteLine($"{numTOTAL} spreadsheet files in total");
-                Console.WriteLine($"Results saved to CSV log in filepath: {count_CSV_filepath}");
+                Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
                 Console.WriteLine("Count finished");
                 Console.WriteLine("---");
 

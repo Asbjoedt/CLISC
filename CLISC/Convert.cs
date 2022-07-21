@@ -39,20 +39,29 @@ namespace CLISC
             string conv_dir = results_directory + "\\docCollection\\";
             DirectoryInfo OutputDir = Directory.CreateDirectory(@conv_dir);
 
-
+            // Create enumeration of original spreadsheets based on input directory
+            IEnumerable<string> org_enumeration = Enumerate_Original<string>(argument1, argument3);
 
             // Loop spreadsheets based on enumeration
-            foreach (var file in spreadsheets_enumeration.ToList())
+            foreach (var file in org_enumeration.ToList()) // Is .ToList() necessary?
             {
 
-                // Create data types
+                // Create instance for finding file information
+                FileInfo file_info = new FileInfo(file);
+
+                // Create data types for original spreadsheets
+                string org_extension = file_info.Extension;
+                string org_filename = file_info.Name;
+                string org_filepath = file_info.FullName;
+
+                // Create data types for converted spreadsheets
                 int conv_dir_number = 1;
                 int conv_file_number = 1;
-                string org_filename = file.Name;
-                string org_filepath = file.FullName;
                 string conv_dir_sub = conv_dir + conv_dir_number;
                 string conv_new_filename = conv_file_number + ".xlsx";
                 string conv_new_filepath = conv_dir_sub + "\\" + conv_new_filename;
+
+                // Create data types for copied original spreadsheets
                 string copy_new_filename = "orgFile_" + org_filename;
                 string copy_new_filepath = conv_dir_sub + "\\" + copy_new_filename;
 
@@ -73,7 +82,7 @@ namespace CLISC
                 {
 
                     // Change conversion method based on file extension
-                    switch (file.Extension)
+                    switch (org_extension)
                     {
 
                         // OpenDocument file formats
@@ -89,7 +98,7 @@ namespace CLISC
                                 numFAILED++;
 
                                 // Output result in open CSV file
-                                var newLine2 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[3]}");
+                                var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[3]}");
                                 csv.AppendLine(newLine2);
                             }
 
@@ -97,7 +106,7 @@ namespace CLISC
                             conv_new_filepath = conv_dir_sub + "\\" + conv_file_number + ".xlsx";
 
                             // Output result in open CSV file
-                            var newLine9 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[0]}");
+                            var newLine9 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[0]}");
                             csv.AppendLine(newLine9);
 
                             break;
@@ -114,7 +123,7 @@ namespace CLISC
                             Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[5]}");
 
                             // Output result in open CSV file
-                            var newLine3 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[5]}");
+                            var newLine3 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[5]}");
                             csv.AppendLine(newLine3);
 
                             break;
@@ -131,7 +140,7 @@ namespace CLISC
                             Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[1]}");
 
                             // Output result in open CSV file
-                            var newLine4 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[1]}");
+                            var newLine4 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[1]}");
                             csv.AppendLine(newLine4);
 
                             break;
@@ -148,7 +157,7 @@ namespace CLISC
                             Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[2]}");
 
                             // Output result in open CSV file
-                            var newLine5 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[2]}");
+                            var newLine5 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[2]}");
                             csv.AppendLine(newLine5);
 
                             break;
@@ -164,7 +173,7 @@ namespace CLISC
                             Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[5]}");
 
                             // Output result in open CSV file
-                            var newLine6 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[5]}");
+                            var newLine6 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[5]}");
                             csv.AppendLine(newLine6);
 
                             break;
@@ -195,7 +204,7 @@ namespace CLISC
                             Console.WriteLine($"--> Conversion {convert_success}");
 
                             // Output result in open CSV file
-                            var newLine7 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[0]}");
+                            var newLine7 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[0]}");
                             csv.AppendLine(newLine7);
 
                             break;
@@ -214,7 +223,7 @@ namespace CLISC
                             Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[6]}");
 
                             // Output result in open CSV file
-                            var newLine8 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[6]}");
+                            var newLine8 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};{conv_new_filepath};{conv_file_number}.xlsx;.xlsx;{convert_success};{convert_error_message[6]}");
                             csv.AppendLine(newLine8);
 
                             break;
@@ -234,7 +243,7 @@ namespace CLISC
                     Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[4]}");
 
                     // Output result in open CSV file
-                    var newLine1 = string.Format($"{org_filepath};{org_filename};{file.Extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[4]}");
+                    var newLine1 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_new_filepath};{copy_new_filename};;;;{convert_success};{convert_error_message[4]}");
                     csv.AppendLine(newLine1);
                 }
 
@@ -246,15 +255,15 @@ namespace CLISC
             }
 
             // Close CSV file to log results
-            string convert_CSV_filepath = results_directory + "\\2_Convert_Results.csv";
-            File.WriteAllText(convert_CSV_filepath, csv.ToString());
+            string CSV_filepath = results_directory + "\\2_Convert_Results.csv";
+            File.WriteAllText(CSV_filepath, csv.ToString());
             
             // Inform user of results
             numCOMPLETE = numTOTAL - numFAILED;
             Console.WriteLine("---");
             Console.WriteLine($"{numCOMPLETE} out of {numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"{numFAILED} spreadsheets failed conversion");
-            Console.WriteLine($"Results saved to CSV log in filepath: {convert_CSV_filepath}");
+            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Conversion finished");
             Console.WriteLine("---");
 
