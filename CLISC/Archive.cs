@@ -18,7 +18,7 @@ namespace CLISC
             csv.AppendLine(newLine0);
 
             // Create enumeration of original spreadsheets based on input directory
-            List<string> doc_enumeration = Enumerate_docCollection(argument1);
+            List<string> doc_enumeration = Enumerate_docCollection();
 
             foreach (var file in doc_enumeration)
             {
@@ -27,9 +27,9 @@ namespace CLISC
                 FileInfo file_info = new FileInfo(file);
 
                 // Combine data types to original spreadsheets
-                string conv_extension = file_info.Extension;
-                string conv_filename = file_info.Name;
-                string conv_filepath = file_info.FullName;
+                conv_extension = file_info.Extension;
+                conv_filename = file_info.Name;
+                conv_filepath = file_info.FullName;
 
                 // Rename and move converted spreadsheets
 

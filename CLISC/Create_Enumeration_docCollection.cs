@@ -9,18 +9,22 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
+        // Create data types for original spreadsheets
+        public string conv_extension = "";
+        public string conv_filename = "";
+        public string conv_filepath = "";
 
-        public List<string> Enumerate_docCollection(string argument1)
+        public List<string> Enumerate_docCollection()
         {
 
             var doc_enumeration = new List<string>();
 
             // Enumerate of spreadsheets in docCollection
-            doc_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.*", SearchOption.TopDirectoryOnly)
+            doc_enumeration = (List<string>)Directory.EnumerateFiles(results_directory, "*.*", SearchOption.TopDirectoryOnly)
                 .Where(file => file_format.Contains(Path.GetExtension(file)))
                 .ToList();
 
-            return doc_enumeration;
+                return doc_enumeration;
 
         }
 
