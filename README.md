@@ -54,7 +54,6 @@ Compare original and converted spreadsheets to log differences* in
 
 * Workbook cell values
 * File size
-* File checksum
 
 <sub>*The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.</sub>
 
@@ -66,6 +65,7 @@ The program supports the conversion of spreadsheets to meet a data quality level
 * Remove external data connections but keep snapshot of data (feature not working)
 * Remove RealTimeData (RTD) functions but keep snapshot of data (feature not working)
 * Alert if spreadsheet has embedded objects (feature not working)
+* Calculate file checksums
 * Zip the archivable directory
 
 ## Dependencies
@@ -86,3 +86,9 @@ Prerequisite software for the program to work with these functions.
   - If you want to use the compare function
   - You need to install program in its default directory
   - You need to purchase license
+
+### Archive
+* [OOXML Validator](https://github.com/mikeebowen/OOXML-Validator) by Mike Bowen
+  - If you want to validate Office Open XML file formats
+  - You need to place program in 'Desktop' directory
+  - The program is free
