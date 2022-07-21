@@ -19,7 +19,7 @@ namespace CLISC
         public string[] file_format_description = { "OpenDocument Flat XML Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet Add-In", "Legacy Microsoft Excel Spreadsheet", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Add-In", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet (Transitional and Strict conformance)", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
 
         // Count spreadsheets
-        public void Count(string argument1, string argument2, string argument3)
+        public string Count(string argument1, string argument2, string argument3)
         {
 
             Console.WriteLine("COUNT");
@@ -72,7 +72,9 @@ namespace CLISC
                 Console.WriteLine("No spreadsheets identified");
                 Console.WriteLine("Count finished");
                 Console.WriteLine("---");
-                Environment.Exit(2);
+
+                throw new Exception();
+               
             }
             else
             {
@@ -94,7 +96,7 @@ namespace CLISC
                 Console.WriteLine($"{numXLTX} {file_format[11]} - {file_format_description[11]}");
 
                 // Create new directory to output results in CSV
-                results_directory = Name_Directory(argument1, argument2);
+                results_directory = Create_Directory_Results(argument1, argument2);
 
                 // Output results in CSV
                 var csv = new StringBuilder();
@@ -133,6 +135,8 @@ namespace CLISC
                 Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
                 Console.WriteLine("Count finished");
                 Console.WriteLine("---");
+
+                return results_directory;
 
             }
 

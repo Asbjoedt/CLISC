@@ -10,12 +10,18 @@ namespace CLISC
     {
 
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive(string argument1, string argument2)
+        public void Archive(string argument1, string argument2, string results_directory)
         {
             // Open CSV file to log results
             var csv = new StringBuilder();
             var newLine0 = string.Format($"Original filepath;Original filesize (KB);Original checksum;Conversion identified;Conversion filepath;Conversion filesize (KB);Conversion checksum");
             csv.AppendLine(newLine0);
+
+            // Rename and move converted spreadsheets
+
+
+            // Copy original spreadsheets
+
 
             // Validate file format standards
             switch (file_info.Extension)
@@ -42,7 +48,7 @@ namespace CLISC
             string conv_checksum = Calculate_MD5(conv_filepath);
 
             // Output result in open CSV file
-            var newLine1 = string.Format($"{compare_org_filepath};{org_filesize_kb};{compare_success};{compare_conv_filepath};{conv_filesize_kb};");
+            var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{conv_filepath};{conv_filesize_kb};");
             csv.AppendLine(newLine1);
 
             // Close CSV file to log results
@@ -50,7 +56,7 @@ namespace CLISC
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Zip the output directory
-            ZIP_Directory(argument1, argument2);
+            ZIP_Directory(results_directory);
 
             // Inform user of results
             Console.WriteLine("---");

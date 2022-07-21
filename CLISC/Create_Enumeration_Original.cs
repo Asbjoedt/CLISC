@@ -11,6 +11,11 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
+        
+        // Create data types for original spreadsheets
+        public string org_extension = "";
+        public string org_filename = "";
+        public string org_filepath = "";
 
         public IEnumerable<T> Enumerate_Original<T>(string argument1, string argument3)
         {

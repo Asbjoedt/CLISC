@@ -13,14 +13,12 @@ namespace CLISC
     {
         
         // Zip the archivable directory
-        public void ZIP_Directory(string argument1, string argument2)
+        public void ZIP_Directory(string results_directory)
         {
 
             // Zip the folder
-            string startPath = results_directory;
-            string zipPath = results_directory + ".zip";
-
-            ZipFile.CreateFromDirectory(startPath, zipPath);
+            string zip_path = results_directory + ".zip";
+            ZipFile.CreateFromDirectory(results_directory, zip_path);
 
             // Create enumeration of unzipped folder and delete it
             DirectoryInfo unzipped_folder = new DirectoryInfo(results_directory);
