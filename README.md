@@ -13,13 +13,16 @@ Download the executable here. In the terminal change directory to the folder whe
 Replace [YourArguments] with one of the following*:
 
 ```
-Count 'path to input directory' 'path to output directory' Recursive='Yes'/'No'
+Count 'path to input directory' 'path to output directory' Recurse='Yes'/'No'
 ```
 ```
-Count&Convert 'path to input dir' 'path to output dir' Recursive='Yes'/'No' Archive='Yes'/'No'
+Count&Convert 'path to input dir' 'path to output dir' Recurse='Yes'/'No'
 ```
 ```
-Count&Convert&Compare 'path to input dir' 'path to output dir' Recursive='Yes'/'No' Archive='Yes'/'No'
+Count&Convert&Compare 'path to input dir' 'path to output dir' Recurse='Yes'/'No'
+```
+```
+Count&Convert&Compare&Archive 'path to input dir' 'path to output dir' Recurse='Yes'/'No'
 ```
 <sub>*Remove '...' around arguments</sub>
 
