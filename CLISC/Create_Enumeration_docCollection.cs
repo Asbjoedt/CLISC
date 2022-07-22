@@ -9,10 +9,6 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
-        // Create data types for original spreadsheets
-        public string conv_extension = "";
-        public string conv_filename = "";
-        public string conv_filepath = "";
 
         public List<string> Enumerate_docCollection()
         {

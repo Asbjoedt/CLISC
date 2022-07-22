@@ -13,6 +13,7 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
+
         // Comparison data types
         bool compare_success = false;
         int numTOTAL_diff = 0;

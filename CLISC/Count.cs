@@ -41,8 +41,9 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3);
+                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3); // Inaccurate method
                 numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
+                // numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail); // Alternative method
                 numXLTM = count.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
 
@@ -62,8 +63,9 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
-                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3);
+                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3); // Inaccurate method
                 numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
+                // numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail); // Alternative method
                 numXLTM = count.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
 

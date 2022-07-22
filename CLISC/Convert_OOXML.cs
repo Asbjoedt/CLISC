@@ -28,11 +28,10 @@ namespace CLISC
             }
 
             convert_success = true;
-
             return convert_success;
         }
 
-        // Convert to Office Open XML XLSX Strict conformance
+        // Convert to Office Open XML XLSX Strict conformance - NOT WORKING - IT OUTPUTS TRANSITIONAL
         public bool Convert_OOXML_Strict(string copy_filepath, string conv_filepath)
         {
             byte[] byteArray = File.ReadAllBytes(copy_filepath);
@@ -41,14 +40,12 @@ namespace CLISC
                 stream.Write(byteArray, 0, (int)byteArray.Length);
                 using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(stream, true))
                 {
-                    spreadsheet.ChangeDocumentType(DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
-                    //ConformanceClass<0>;
+                    spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
                 }
                 File.WriteAllBytes(conv_filepath, stream.ToArray());
             }
 
             convert_success = true;
-
             return convert_success;
         }
 

@@ -15,9 +15,16 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
-        // Create public conversion error messages
-        public bool convert_success;
+
+        // Create public conversion data types
+        public int subdir_number = 1;
+        public string file_subdir = "";
+        public int conv_file_number = 1;
+        public string conv_extension = "";
+        public string conv_filename = "";
+        public string conv_filepath = "";
         public string error_message = "";
+        public bool convert_success;
 
         // Convert spreadsheets method
         public void Convert(string argument1, string results_directory, string argument3, string archive)
@@ -42,12 +49,10 @@ namespace CLISC
             DirectoryInfo Output_Dir = Directory.CreateDirectory(@file_dir);
 
             // Create data types for converted spreadsheets
-            int subdir_number = 1;
-            string file_subdir = file_dir + subdir_number;
-            int conv_file_number = 1;
-            string conv_extension = ".xlsx";
-            string conv_filename = conv_file_number + conv_extension;
-            string conv_filepath = file_subdir + "\\" + conv_filename;
+            file_subdir = file_dir + subdir_number;
+            conv_extension = ".xlsx";
+            conv_filename = conv_file_number + conv_extension;
+            conv_filepath = file_subdir + "\\" + conv_filename;
 
             // Create enumeration of original spreadsheets based on input directory
             List<string> org_enumeration = Enumerate_Original(argument1, argument3);
