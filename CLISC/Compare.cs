@@ -69,35 +69,45 @@ namespace CLISC
                 Directory.EnumerateFiles(folder)
                             where Path.GetFileName(file).Equals("1.xlsx")
                             select file;
-                foreach (var file in conv_file)
+                try
                 {
-                    compare_conv_filepath = file.ToString();
 
-                    // Inform user of comparison
-                    Console.WriteLine(org_filepath);
-                    Console.WriteLine($"--> Comparing to: {compare_conv_filepath}");
-
-                    // Compare workbook differences
-                    if (File.Exists(compare_conv_filepath))
+                    foreach (var file in conv_file)
                     {
-                        compare_success = true;
-                        numTOTAL_conv++;
+                        compare_conv_filepath = file.ToString();
 
-                        // Compare workbooks using external app Beyond Compare 4
-                        Compare_Workbook(results_directory, folder, compare_org_filepath, compare_conv_filepath);
+                        // Inform user of comparison
+                        Console.WriteLine(org_filepath);
+                        Console.WriteLine($"--> Comparing to: {compare_conv_filepath}");
 
-                        // Calculate filesize of converted spreadsheet
-                        conv_filesize_kb = Calculate_Filesize(compare_conv_filepath);
+                        // Compare workbook differences
+                        if (File.Exists(compare_conv_filepath))
+                        {
+                            compare_success = true;
+                            numTOTAL_conv++;
+
+                            // Compare workbooks using external app Beyond Compare 4
+                            Compare_Workbook(results_directory, folder, compare_org_filepath, compare_conv_filepath);
+
+                            // Calculate filesize of converted spreadsheet
+                            conv_filesize_kb = Calculate_Filesize(compare_conv_filepath);
+
+                        }
+
+                        // Calculate filesize of original spreadsheet
+                        org_filesize_kb = Calculate_Filesize(compare_org_filepath);
+
+                        // Output result in open CSV file
+                        var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{compare_conv_filepath};{conv_filesize_kb};");
+                        csv.AppendLine(newLine1);
 
                     }
+                }
 
-                    // Calculate filesize of original spreadsheet
-                    org_filesize_kb = Calculate_Filesize(compare_org_filepath);
-
-                    // Output result in open CSV file
-                    var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{compare_conv_filepath};{conv_filesize_kb};");
-                    csv.AppendLine(newLine1);
-
+                // Error message if BC is not detected
+                catch (Win32Exception)
+                {
+                    Console.WriteLine($"--> {compare_error_message[1]}");
                 }
 
                 // Delete BC script

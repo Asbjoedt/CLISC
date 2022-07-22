@@ -96,6 +96,10 @@ namespace CLISC
                 Console.WriteLine($"{numXLSX} {file_format[9]} - {file_format_description[9]}");
                 Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {file_format[9]} have Office Open XML Transional conformance");
                 Console.WriteLine($"--> {numXLSX_Strict} of {numXLSX} {file_format[9]} have Office Open XML Strict conformance");
+                if (conformance_count_fail > 0) 
+                {
+                        Console.WriteLine($"--> {conformance_count_fail} of {numXLSX} {file_format[9]} could not be counted because they are password protected or corrupt");
+                }
                 Console.WriteLine($"{numXLTM} {file_format[10]} - {file_format_description[10]}");
                 Console.WriteLine($"{numXLTX} {file_format[11]} - {file_format_description[11]}");
 

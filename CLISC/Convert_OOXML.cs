@@ -13,7 +13,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
-        public bool Convert_OOXML(string copy_filepath)
+        public bool Convert_OOXML(string copy_filepath, string conv_filepath)
         {
             byte[] byteArray = File.ReadAllBytes(copy_filepath);
             using (MemoryStream stream = new MemoryStream())

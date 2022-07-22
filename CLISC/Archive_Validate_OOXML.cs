@@ -34,18 +34,6 @@ namespace CLISC
                 // Create XML log of errors
                 XML_errors = File.ReadAllText($"@\"{XML_error_log}\"");
 
-                //Contains("IsStrict = "false"")
-
-                ooxml_strict_conformance = true;
-
-                if (ooxml_strict_conformance == false)
-                {
-                    File.Delete(XML_error_log);
-                }
-                else
-                {
-                    ooxml_strict_conformance = true;
-                }
 
 
 

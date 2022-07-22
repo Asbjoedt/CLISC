@@ -154,7 +154,7 @@ namespace CLISC
                             conv_filepath = file_subdir + "\\" + conv_file_number + ".xlsx";
 
                             // Conversion code
-                            convert_success = Convert_OOXML(copy_filepath);
+                            convert_success = Convert_OOXML(copy_filepath, conv_filepath);
 
                             // Inform user
                             Console.WriteLine(org_filepath);
