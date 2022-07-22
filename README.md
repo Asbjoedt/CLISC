@@ -13,7 +13,7 @@ Download the executable here. In the terminal change directory to the folder whe
 Replace [YourArguments] with one of the following*:
 
 ```
-Count 'path to input directory' 'path to output directory' Recurse='Yes'/'No'
+Count 'path to input dir' 'path to output dir' Recurse='Yes'/'No'
 ```
 ```
 Count&Convert 'path to input dir' 'path to output dir' Recurse='Yes'/'No'
@@ -68,7 +68,7 @@ The program supports the conversion of spreadsheets to meet a data quality level
 
 * Package spreadsheets and metadata in a new archive directory
 * Include copies of the original spreadsheets
-* Validate spreadsheet against its file format standard (Office Open XML and OpenDocument) (feature not working)
+* Validate spreadsheets against their file format standards (Office Open XML and OpenDocument) (feature not working)
 * Remove formula linking cells to other local spreadsheets but keep the cell values (feature not working)
 * Remove external data connections but keep snapshot of data (feature not working)
 * Remove RealTimeData (RTD) functions but keep snapshot of data (feature not working)
@@ -94,9 +94,3 @@ Prerequisite software for the program to work with these functions.
   - If you want to use the compare function
   - You need to install program in its default directory
   - You need to purchase license
-
-### Archive
-* [OOXML Validator](https://github.com/mikeebowen/OOXML-Validator) by Mike Bowen
-  - If you want to validate Office Open XML file formats
-  - You need to place program in your 'Desktop' directory
-  - The program is free
