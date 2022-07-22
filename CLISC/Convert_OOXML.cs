@@ -28,7 +28,7 @@ namespace CLISC
 
             convert_success = true;
 
-            return convert_succces;
+            return convert_success;
         }
 
     }

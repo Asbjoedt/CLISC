@@ -15,12 +15,9 @@ namespace CLISC
 
     public partial class Spreadsheet
     {
-
-        // Conversion error messages
-        int numCOMPLETE = 0;
-        int numFAILED = 0;
+        // Create public conversion error messages
         public bool convert_success;
-        string[] convert_error_message = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed" };
+        public string error_message = "";
 
         // Convert spreadsheets method
         public void Convert(string argument1, string results_directory, string argument3, string argument4)
@@ -29,9 +26,15 @@ namespace CLISC
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
 
+            // Local conversion error messages
+            int numCOMPLETE = 0;
+            int numFAILED = 0;
+
+            string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format. File was copied and renamed" };
+
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filename;Original file format;Convert filepath;Convert filename;Convert file format;Success;Message");
+            var newLine0 = string.Format($"Original filepath;Original filename;Original file format;Convert filepath;Convert filename;Convert file format;Convert success;Convert Message");
             csv.AppendLine(newLine0);
 
             // Create subdirectory for spreadsheet files
@@ -102,10 +105,11 @@ namespace CLISC
                             // Conversion code
                             numFAILED++;
                             convert_success = false;
+                            error_message = error_messages[5];
 
                             // Inform user
                             Console.WriteLine(org_filepath);
-                            Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[5]}");
+                            Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                             break;
 
                         case ".xls":
@@ -113,10 +117,11 @@ namespace CLISC
                             // Conversion code
                             numFAILED++;
                             convert_success = false;
+                            error_message = error_messages[1];
 
                             // Inform user
                             Console.WriteLine(org_filepath);
-                            Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[1]}");
+                            Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                             break;
 
                         // Office Open XML file formats
@@ -124,20 +129,22 @@ namespace CLISC
                             // Conversion code
                             numFAILED++;
                             convert_success = false;
+                            error_message = error_messages[2];
 
                             // Inform user
                             Console.WriteLine(org_filepath);
-                            Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[2]}");
+                            Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                             break;
 
                         case ".xlam":
                             // Conversion code
                             numFAILED++;
                             convert_success = false;
+                            error_message = error_messages[5];
 
                             // Inform user
                             Console.WriteLine(org_filepath);
-                            Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[5]}");
+                            Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                             break;
 
                         case ".xlsm":
@@ -157,6 +164,7 @@ namespace CLISC
                         case ".xlsx":
                             // No converison
                             convert_success = true;
+                            error_message = error_messages[6];
 
                             // Copy spreadsheet
                             conv_filepath = file_subdir + "\\" + conv_file_number + ".xlsx";
@@ -164,7 +172,7 @@ namespace CLISC
 
                             // Inform user
                             Console.WriteLine(org_filepath);
-                            Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[6]}");
+                            Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                             break;
 
                     }
@@ -177,13 +185,14 @@ namespace CLISC
                     // Code to execute
                     numFAILED++;
                     convert_success = false;
+                    error_message = error_messages[4];
 
                     // Inform user
                     Console.WriteLine(org_filepath);
-                    Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[4]}");
+                    Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
 
                     // Output result in open CSV file
-                    var newLine1 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_filepath};{copy_filename};;;;{convert_success};{convert_error_message[4]}");
+                    var newLine1 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_filepath};{copy_filename};;;;{convert_success};{error_message}");
                     csv.AppendLine(newLine1);
                 }
 
@@ -192,16 +201,17 @@ namespace CLISC
                 {
                     numFAILED++;
                     convert_success = false;
+                    string error_message = error_messages[3];
 
                     // Inform user
                     Console.WriteLine(org_filepath);
-                    Console.WriteLine($"--> Conversion {convert_success} - {convert_error_message[3]}");
+                    Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                 }
 
                 finally
                 {
                     // Output result in open CSV file
-                    var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_filepath};{copy_filename};;;;{convert_success};{convert_error_message[5]}");
+                    var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{copy_filepath};{copy_filename};;;;{convert_success};{error_message}");
                     csv.AppendLine(newLine2);
                 }
 
