@@ -10,17 +10,19 @@ namespace CLISC
     {
 
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive(string argument1, string argument2, string results_directory)
+        public void Archive(string argument0, string argument1, string argument2, string results_directory)
         {
+
             // Open CSV file to log results
             var csv = new StringBuilder();
             var newLine0 = string.Format($"Original filepath;Original filename;Original checksum;Copy filepath; Copy filename; Conversion identified;Conversion filepath;Conversion filename;Conversion checksum;File format validated, Data quality message");
             csv.AppendLine(newLine0);
 
-            // Create enumeration of original spreadsheets based on input directory
-            List<string> doc_enumeration = Enumerate_docCollection();
+            // Create enumeration of converted spreadsheets based on input directory
+            string docCollection = results_directory + "\\docCollection";
+            List<string> docCollection_enumeration = Enumerate_docCollection(argument0, docCollection);
 
-            foreach (var file in doc_enumeration)
+            foreach (var file in docCollection_enumeration)
             {
 
                 // Create instance for finding file information
@@ -37,7 +39,7 @@ namespace CLISC
 
 
                 // Validate file format standards
-                string validation_message = "";
+                bool valid_file_format;
 
                 switch (file_info.Extension)
                 {
@@ -54,13 +56,13 @@ namespace CLISC
                     case ".xlsm":
                     case ".xlsx":
                     case ".xltx":
-                        validation_message = Validate_OOXML(argument1, argument2);
+                       valid_file_format = Validate_OOXML(argument1, argument2);
                         break;
                 }
 
                 // Calculate checksums
                 string copy_checksum = Calculate_MD5(org_filepath);
-                //string conv_checksum = Calculate_MD5(conv_filepath);
+                string conv_checksum = Calculate_MD5(conv_filepath);
 
                 // Check for data quality requirements
                 string dataquality_message = "";

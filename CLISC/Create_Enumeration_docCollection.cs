@@ -10,18 +10,33 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
-        public List<string> Enumerate_docCollection()
+        // Enumerate docCollection in two different ways
+        public List<string> Enumerate_docCollection(string argument0, string docCollection)
         {
 
-            var doc_enumeration = new List<string>();
+            // For archiving, return enumeration of folders
+            if (argument0 == "Count&Convert&Compare&Archive")
+            {
+                var folder_enumeration = new List<string>();
 
-            // Enumerate of spreadsheets in docCollection
-            doc_enumeration = (List<string>)Directory.EnumerateFiles(results_directory, "*.*", SearchOption.TopDirectoryOnly)
-                .Where(file => file_format.Contains(Path.GetExtension(file)))
-                .ToList();
+                // Enumerate of spreadsheets in docCollection
+                folder_enumeration = (List<string>)Directory.EnumerateDirectories(docCollection, "*", SearchOption.TopDirectoryOnly)
+                    .ToList();
 
-                return doc_enumeration;
+                return folder_enumeration;
+            }
 
+            // For ordinary use, return enumeration of files
+            else
+            {
+                var file_enumeration = new List<string>();
+
+                // Enumerate of spreadsheets in docCollection
+                file_enumeration = (List<string>)Directory.EnumerateFiles(docCollection, "*.*", SearchOption.TopDirectoryOnly)
+                    .ToList();
+
+                return file_enumeration;
+            }
         }
 
     }

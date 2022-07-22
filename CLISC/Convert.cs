@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Office.Interop; // not used
-using Excel = Microsoft.Office.Interop.Excel; // not used
 using System.Diagnostics;
 using System.ComponentModel;
 
@@ -27,7 +25,7 @@ namespace CLISC
         public bool convert_success;
 
         // Convert spreadsheets method
-        public void Convert(string argument1, string results_directory, string argument3, string archive)
+        public void Convert(string argument0, string argument1, string argument3, string results_directory)
         {
 
             Console.WriteLine("CONVERT");
@@ -120,10 +118,7 @@ namespace CLISC
                         case ".xls":
                         case ".xlt":
                             // Conversion code
-
-
-
-
+                            //convert_success = Convert_Legacy_Excel_NPOI(org_filepath);
 
                             numFAILED++;
                             convert_success = false;

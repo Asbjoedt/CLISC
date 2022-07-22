@@ -48,6 +48,10 @@ namespace CLISC
                 {
                     conformance_count_fail++;
                 }
+                catch (OpenXmlPackageException)
+                {
+                    conformance_count_fail++;
+                }
 
                 return numXLSX_Transitional;
             }
@@ -73,6 +77,10 @@ namespace CLISC
                 }
 
                 catch (InvalidDataException)
+                {
+                    conformance_count_fail++;
+                }
+                catch(OpenXmlPackageException)
                 {
                     conformance_count_fail++;
                 }
@@ -114,6 +122,10 @@ namespace CLISC
                 {
                     conformance_count_fail++;
                 }
+                catch (OpenXmlPackageException)
+                {
+                    conformance_count_fail++;
+                }
 
                 return numXLSX_Strict;
             }
@@ -139,6 +151,10 @@ namespace CLISC
                 }
 
                 catch (InvalidDataException)
+                {
+                    conformance_count_fail++;
+                }
+                catch (OpenXmlPackageException)
                 {
                     conformance_count_fail++;
                 }

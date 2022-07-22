@@ -6,6 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
@@ -13,46 +17,61 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
+        public bool valid_file_format = true;
+
         // Validate Open Office XML file formats
-        public string Validate_OOXML(string argument1, string argument2)
+        public bool Validate_OOXML(string argument1, string argument2)
         {
 
             // Filepath to XML error log
             string XML_error_log = results_directory + "\\validationErrors.xml";
-            string XML_errors = "";
 
-            try
+            using (var spreadsheet = SpreadsheetDocument.Open(conv_filepath, false))
             {
-                // Use OOXML Validator command line for comparison
-                Process app = new Process();
-                app.StartInfo.FileName = $"C:\\Users\\%USERNAME%\\Desktop\\OOXMLValidatorCLI.exe";
-                app.StartInfo.Arguments = $"\"{argument1}\" --xml > {XML_error_log}";
-                app.Start();
-                app.WaitForExit();
-                app.Close();
+                var validator = new OpenXmlValidator();
+                var validation_errors = validator.Validate(spreadsheet).ToList();
+                var error_count = String.Format("Spreadsheet has {0} validation errors", validation_errors.Count);
 
-                // Create XML log of errors
-                XML_errors = File.ReadAllText($"@\"{XML_error_log}\"");
+                if (validation_errors.Any())
+                {
+                    // Open CSV file to log results
+                    var csv = new StringBuilder();
+                    var newLine0 = string.Format($"Convert filepath;Validation error messages");
+                    csv.AppendLine(newLine0);
 
+                    valid_file_format = false;
+                    Console.WriteLine(error_count);
+                    Console.WriteLine();
 
+                    foreach (var error in validation_errors)
+                    {
+                        Console.WriteLine("Description: " + error.Description);
+                        Console.WriteLine("ErrorType: " + error.ErrorType);
+                        Console.WriteLine("Node: " + error.Node);
+                        Console.WriteLine("Path: " + error.Path.XPath);
+                        Console.WriteLine("Part: " + error.Part.Uri);
+                        if (error.RelatedNode != null)
+                        {
+                            Console.WriteLine("Related Node: " + error.RelatedNode);
+                            Console.WriteLine("Related Node Inner Text: " + error.RelatedNode.InnerText);
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("==============================");
+                        Console.WriteLine();
 
+                        // Output result in open CSV file
+                        var newLine1 = string.Format($"{conv_filepath};{error}");
+                        csv.AppendLine(newLine1);
+                    }
 
-                // Identify if Strict conformance
+                    // Close CSV file to log results
+                    string CSV_filepath = file_subdir + "\\validationErrors.csv";
+                    File.WriteAllText(CSV_filepath, csv.ToString());
 
+                }
 
-                // Return string of errors
-                return XML_errors;
+                return valid_file_format;
 
-            }
-
-            // If OOXML Validator cannot be found
-            catch (Win32Exception)
-            {
-                // Inform user
-                Console.WriteLine("OOXML Validator CLI executable cannot be found. Make sure the exe is located in directory: C:\\Users\\%USERNAME%\\Desktop");
-
-                // Return error message
-                return "Validation was not performed";
             }
 
         }

@@ -5,6 +5,8 @@ using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.HSSF.UserModel;
+using Microsoft.Office.Interop;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace CLISC
 {
@@ -12,7 +14,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
 
-        public static byte[] Convert(Stream org_filepath, string conv_filepath)
+        public static byte[] Convert_Legacy_Excel_NPOI(Stream org_filepath, string conv_filepath)
         {
             var source = new HSSFWorkbook(org_filepath);
             var destination = new XSSFWorkbook(conv_filepath);
@@ -207,6 +209,22 @@ namespace CLISC
             r.LastColumn == newMergedRegion.LastColumn &&
             r.FirstRow == newMergedRegion.FirstRow &&
             r.LastRow == newMergedRegion.LastRow);
+        }
+
+        // Conver legacy Excel files using Microsoft Office Interop Excel. User  must have Excel Version=15.0.0.0 installed (corresponds to Office 2013, an old version of Office)
+        public bool Convert_Legacy_Excel_OfficeInterop(string org_filepath)
+        {
+            FileInfo file = new FileInfo(org_filepath);
+            var app = new Microsoft.Office.Interop.Excel.Application();
+            var legacy_excel_file = file.FullName;
+            var wb = app.Workbooks.Open(legacy_excel_file);
+            var xlsx_file = legacy_excel_file + "x";
+            conv_filepath = xlsx_file;
+            wb.SaveAs(Filename: xlsx_file, FileFormat: Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook);
+            wb.Close();
+            app.Quit();
+            convert_success = true;
+            return convert_success;
         }
 
     }

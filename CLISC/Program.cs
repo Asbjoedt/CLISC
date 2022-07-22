@@ -15,10 +15,10 @@ namespace CLISC
             Console.WriteLine("@Asbjørn Skødt, web: https://github.com/Asbjoedt/CLISC");
             Console.WriteLine("---");
 
+            string argument0 = Convert.ToString(args[0]);
             string argument1 = Convert.ToString(args[1]);
             string argument2 = Convert.ToString(args[2]);
             string argument3 = Convert.ToString(args[3]);
-            string archive = "no";
             string results_directory = "";
 
             // Object reference
@@ -40,21 +40,20 @@ namespace CLISC
 
                         case "Count&Convert":
                             results_directory = process.Count(argument1, argument2, argument3);
-                            process.Convert(argument1, results_directory, argument3, archive);
+                            process.Convert(argument0, argument1, argument3, results_directory);
                             break;
 
                         case "Count&Convert&Compare":
                             results_directory = process.Count(argument1, argument2, argument3);
-                            process.Convert(argument1, results_directory, argument3, archive);
-                            process.Compare(argument1, results_directory, argument3);
+                            process.Convert(argument0, argument1, argument3, results_directory);
+                            process.Compare(argument0, argument1, results_directory);
                             break;
 
                         case "Count&Convert&Compare&Archive":
                             results_directory = process.Count(argument1, argument2, argument3);
-                            archive = "yes";
-                            process.Convert(argument1, results_directory, argument3, archive);
-                            process.Compare(argument1, results_directory, argument3);
-                            process.Archive(argument1, argument2, results_directory);
+                            process.Convert(argument0, argument1, argument3, results_directory);
+                            process.Compare(argument0, argument1, results_directory);
+                            process.Archive(argument0, argument1, argument2, results_directory);
                             break;
 
                         default:

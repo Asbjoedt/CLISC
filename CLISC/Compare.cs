@@ -17,14 +17,10 @@ namespace CLISC
         // Comparison data types
         bool compare_success = false;
         int numTOTAL_diff = 0;
-        string conv_checksum = "";
-        string org_checksum = "";
-        int? org_filesize_kb = null;
-        int? conv_filesize_kb = null;
         string[] compare_error_message = { "", "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4" };
 
         // Compare spreadsheets
-        public void Compare(string argument1, string argument2, string argument3)
+        public void Compare(string argument0, string argument1, string argument2)
         {
 
             Console.WriteLine("COMPARE");
@@ -35,34 +31,24 @@ namespace CLISC
             var newLine0 = string.Format($"Original filepath;Original filesize (KB);Conversion identified;Conversion filepath;Conversion filesize (KB)");
             csv.AppendLine(newLine0);
 
-            // Identify docCollection
             string docCollection = results_directory + "\\docCollection";
 
             // Create enumeration of docCollection
-            var folder_enumeration = new FileSystemEnumerable<string>(
-                docCollection,
-                (ref FileSystemEntry entry) => entry.ToFullPath(),
-                new EnumerationOptions() { RecurseSubdirectories = false })
-            {
-                ShouldIncludePredicate = (ref FileSystemEntry entry) => entry.IsDirectory
-            };
+            List<string> docCollection_enumeration = Enumerate_docCollection(argument0, docCollection);
 
             // Loop through docCollection enumeration
-            string compare_org_filepath = "";
-            string compare_conv_filepath = "";
             int numTOTAL_conv = 0;
-
-            foreach (var folder in folder_enumeration)
+            foreach (var folder in docCollection_enumeration)
             {
 
-                // Identify original file in folder
+                // Identify copied file in folder
                 var org_file = from file in
                 Directory.EnumerateFiles(folder)
                             where file.Contains("orgFile_") // Should this be similar code to line 81?
                             select file;
                 foreach (var file in org_file)
                 {
-                    compare_org_filepath = file.ToString();
+                    org_filepath = file.ToString();
                 }
 
                 // Identify converted spreadsheet in folder
@@ -75,33 +61,31 @@ namespace CLISC
 
                     foreach (var file in conv_file)
                     {
-                        compare_conv_filepath = file.ToString();
-
-                        // Inform user of comparison
-                        Console.WriteLine(org_filepath);
-                        Console.WriteLine($"--> Comparing to: {compare_conv_filepath}");
+                        conv_filepath = file.ToString();
 
                         // Compare workbook differences
-                        if (File.Exists(compare_conv_filepath))
+                        if (File.Exists(conv_filepath))
                         {
                             compare_success = true;
                             numTOTAL_conv++;
 
+                            // Inform user of comparison
+                            Console.WriteLine(org_filepath);
+                            Console.WriteLine($"--> Comparing to: {conv_filepath}");
+
                             // Compare workbooks using external app Beyond Compare 4
-                            Compare_Workbook(results_directory, folder, compare_org_filepath, compare_conv_filepath);
+                            Compare_Workbook(results_directory, folder, org_filepath, conv_filepath);
 
                             // Calculate filesize of converted spreadsheet
-                            conv_filesize_kb = Calculate_Filesize(compare_conv_filepath);
+                            int conv_filesize_kb = Calculate_Filesize(conv_filepath);
 
+                            // Calculate filesize of original spreadsheet
+                            int org_filesize_kb = Calculate_Filesize(org_filepath);
+
+                            // Output result in open CSV file
+                            var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{conv_filepath};{conv_filesize_kb};");
+                            csv.AppendLine(newLine1);
                         }
-
-                        // Calculate filesize of original spreadsheet
-                        org_filesize_kb = Calculate_Filesize(compare_org_filepath);
-
-                        // Output result in open CSV file
-                        var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{compare_success};{compare_conv_filepath};{conv_filesize_kb};");
-                        csv.AppendLine(newLine1);
-
                     }
                 }
 
