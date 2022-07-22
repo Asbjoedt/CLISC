@@ -85,7 +85,7 @@ namespace CLISC
         public int Count_XLSX_Transitional(string argument1, string argument3)
         {
 
-                var xlsx_enumeration = new List<string>();
+            var xlsx_enumeration = new List<string>();
 
             // Recurse enumeration of original spreadsheets from input directory
             if (argument3 == "Recurse=Yes")

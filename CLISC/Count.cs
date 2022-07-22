@@ -94,7 +94,7 @@ namespace CLISC
                 Console.WriteLine($"{numXLSB} {file_format[7]} - {file_format_description[7]}");
                 Console.WriteLine($"{numXLSM} {file_format[8]} - {file_format_description[8]}");
                 Console.WriteLine($"{numXLSX} {file_format[9]} - {file_format_description[9]}");
-                Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {file_format[9]} have Office Open XML Transional conformance");
+                Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {file_format[9]} have Office Open XML Transitional conformance");
                 Console.WriteLine($"--> {numXLSX_Strict} of {numXLSX} {file_format[9]} have Office Open XML Strict conformance");
                 if (conformance_count_fail > 0) 
                 {

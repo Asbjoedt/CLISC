@@ -20,7 +20,7 @@ namespace CLISC
         public string error_message = "";
 
         // Convert spreadsheets method
-        public void Convert(string argument1, string results_directory, string argument3, string argument4)
+        public void Convert(string argument1, string results_directory, string argument3, string archive)
         {
 
             Console.WriteLine("CONVERT");

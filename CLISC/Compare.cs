@@ -23,7 +23,7 @@ namespace CLISC
         string[] compare_error_message = { "", "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4" };
 
         // Compare spreadsheets
-        public void Compare(string argument1, string argument2, string argument3, string argument4)
+        public void Compare(string argument1, string argument2, string argument3)
         {
 
             Console.WriteLine("COMPARE");
