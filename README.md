@@ -60,7 +60,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable spreadsheets
-* Validate spreadsheets against their file format standards (Office Open XML and OpenDocument) (feature not working)
+* Validate spreadsheet against its file format standard (Office Open XML) (feature not working)
 * Remove formula linking cells to other local spreadsheets but keep the cell values (feature not working)
 * Remove external data connections but keep snapshot of data (feature not working)
 * Remove RealTimeData (RTD) functions but keep snapshot of data (feature not working)
