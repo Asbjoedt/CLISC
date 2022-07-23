@@ -56,7 +56,7 @@ namespace CLISC
                     case ".xlsm":
                     case ".xlsx":
                     case ".xltx":
-                       valid_file_format = Validate_OOXML(argument1, argument2);
+                       valid_file_format = Validate_OOXML(argument1);
                         break;
                 }
 

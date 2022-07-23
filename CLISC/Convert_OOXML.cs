@@ -14,9 +14,9 @@ namespace CLISC
     {
 
         // Convert to Office Open XML XLSX Transitional conformance
-        public bool Convert_OOXML_Transitional(string copy_filepath, string conv_filepath)
+        public bool Convert_OOXML_Transitional(string org_filepath, string conv_filepath)
         {
-            byte[] byteArray = File.ReadAllBytes(copy_filepath);
+            byte[] byteArray = File.ReadAllBytes(org_filepath);
             using (MemoryStream stream = new MemoryStream())
             {
                 stream.Write(byteArray, 0, (int)byteArray.Length);
@@ -27,14 +27,18 @@ namespace CLISC
                 File.WriteAllBytes(conv_filepath, stream.ToArray());
             }
 
+            // Inform user
+            Console.WriteLine(org_filepath);
+            Console.WriteLine($"--> Conversion {convert_success}");
+
             convert_success = true;
             return convert_success;
         }
 
         // Convert to Office Open XML XLSX Strict conformance - NOT WORKING - IT OUTPUTS TRANSITIONAL
-        public bool Convert_OOXML_Strict(string copy_filepath, string conv_filepath)
+        public bool Convert_OOXML_Strict(string org_filepath, string conv_filepath)
         {
-            byte[] byteArray = File.ReadAllBytes(copy_filepath);
+            byte[] byteArray = File.ReadAllBytes(org_filepath);
             using (MemoryStream stream = new MemoryStream())
             {
                 stream.Write(byteArray, 0, (int)byteArray.Length);
@@ -44,6 +48,10 @@ namespace CLISC
                 }
                 File.WriteAllBytes(conv_filepath, stream.ToArray());
             }
+
+            // Inform user
+            Console.WriteLine(org_filepath);
+            Console.WriteLine($"--> Conversion {convert_success}");
 
             convert_success = true;
             return convert_success;

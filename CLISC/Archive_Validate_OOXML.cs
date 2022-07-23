@@ -20,11 +20,8 @@ namespace CLISC
         public bool valid_file_format = true;
 
         // Validate Open Office XML file formats
-        public bool Validate_OOXML(string argument1, string argument2)
+        public bool Validate_OOXML(string argument1)
         {
-
-            // Filepath to XML error log
-            string XML_error_log = results_directory + "\\validationErrors.xml";
 
             using (var spreadsheet = SpreadsheetDocument.Open(conv_filepath, false))
             {
@@ -65,7 +62,7 @@ namespace CLISC
                     }
 
                     // Close CSV file to log results
-                    string CSV_filepath = file_subdir + "\\validationErrors.csv";
+                    string CSV_filepath = docCollection_subdir + "\\validationErrors.csv";
                     File.WriteAllText(CSV_filepath, csv.ToString());
 
                 }
