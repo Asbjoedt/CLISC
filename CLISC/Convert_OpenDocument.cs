@@ -14,13 +14,13 @@ namespace CLISC
     {
 
         // Convert spreadsheets in OpenDocument file formats
-        public bool Convert_OpenDocument(string argument0, string org_filepath, string docCollection)
+        public bool Convert_OpenDocument(string argument0, string org_filepath, string docCollection_subdir)
         {
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
             Process app = new Process();
             app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
-            app.StartInfo.Arguments = "--headless --convert-to xlsx " + org_filepath + " --outdir " + docCollection;
+            app.StartInfo.Arguments = "--headless --convert-to xlsx " + org_filepath + " --outdir " + docCollection_subdir;
             app.Start();
             app.WaitForExit();
             app.Close();
@@ -28,9 +28,9 @@ namespace CLISC
             // Rename converted spreadsheet according to archiving requirements, because of previous bug
             if (argument0 == "Count&Convert&Compare&Archive")
             {
-                string new_filename = docCollection + "\\1.xlsx";
+                string new_filename = docCollection_subdir + "\\1.xlsx";
                 var conv_file = from file in
-                Directory.EnumerateFiles(docCollection)
+                Directory.EnumerateFiles(docCollection_subdir)
                                 where Path.GetFileName(file).Contains(".xlsx")
                                 select file;
                 foreach (var file in conv_file)

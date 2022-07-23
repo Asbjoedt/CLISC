@@ -20,6 +20,7 @@ namespace CLISC
             string argument2 = Convert.ToString(args[2]);
             string argument3 = Convert.ToString(args[3]);
             string results_directory = "";
+            List<string> docCollection_enumeration = new List<string>();
 
             // Object reference
             Spreadsheet process = new Spreadsheet();
@@ -35,7 +36,7 @@ namespace CLISC
                     switch (args[0])
                     {
                         case "Count":
-                            results_directory = process.Count(argument1, argument2, argument3);
+                            process.Count(argument1, argument2, argument3);
                             break;
 
                         case "Count&Convert":
@@ -45,15 +46,15 @@ namespace CLISC
 
                         case "Count&Convert&Compare":
                             results_directory = process.Count(argument1, argument2, argument3);
-                            process.Convert(argument0, argument1, argument3, results_directory);
-                            process.Compare(argument0, argument1, results_directory);
+                            docCollection_enumeration = process.Convert(argument0, argument1, argument3, results_directory);
+                            process.Compare(argument0, argument1, results_directory, docCollection_enumeration);
                             break;
 
                         case "Count&Convert&Compare&Archive":
                             results_directory = process.Count(argument1, argument2, argument3);
-                            process.Convert(argument0, argument1, argument3, results_directory);
-                            process.Compare(argument0, argument1, results_directory);
-                            process.Archive(argument0, argument1, argument2, results_directory);
+                            docCollection_enumeration = process.Convert(argument0, argument1, argument3, results_directory);
+                            process.Compare(argument0, argument1, results_directory, docCollection_enumeration);
+                            process.Archive(argument0, argument1, argument2, results_directory, docCollection_enumeration);
                             break;
 
                         default:
