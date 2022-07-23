@@ -24,9 +24,7 @@ Count&Convert&Compare 'path to input dir' 'path to output dir' Recurse='Yes'/'No
 ```
 Count&Convert&Compare&Archive 'path to input dir' 'path to output dir' Recurse='Yes'/'No'
 ```
-<sub>*Remove '...' around arguments</sub>
-
-<sub>*You must input arguments in the order above, and you cannot leave out an argument</sub>
+<sub>* Remove '...' around arguments. You must input arguments in the order above, and you cannot leave out an argument</sub>
 
 ## Program behavior
 
@@ -41,26 +39,18 @@ Count&Convert&Compare&Archive 'path to input dir' 'path to output dir' Recurse='
   - Office Open XML file formats of Transitional and Strict conformance can be counted
 
 ### Convert
-Convert any spreadsheet to .xlsx (Excel, Office Open XML Transitional conformance)
-
-* The following file formats are supported
-  - Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance*
-  - Legacy Microsoft Excel with extensions .xls and .xlt* (feature not working)
+* Convert any spreadsheet[^1] to .xlsx (Office Open XML Transitional conformance)
+  - Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance[^2]
+  - Legacy Microsoft Excel with extensions .xls and .xlt
   - OpenDocument with extensions .fods, .ods and .ots
 
-<sub>*.xla and .xlam file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archive directory, if arhciving is selected</sub>
-
-<sub>*.xlsx with Transitional conformance will only be converted if archiving is selected</sub>
-
 ### Compare
-Compare original and converted spreadsheets to log differences* in
+Compare original and converted spreadsheets to log differences[^3] in
 
 * Workbook cell values
 * File size
 
-<sub>*The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.</sub>
-
-### Advanced archival requirements (use argument Archive=Yes)
+### Advanced archival requirements
 The program supports the conversion of spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. Enabling advanced archival requirements will
 
 * Package spreadsheets and metadata in a new archive directory
@@ -83,13 +73,13 @@ Prerequisite software for the program to work with these functions.
   - If you want to convert OpenDocument spreadsheets
   - You need to install program in its default directory
   - The program is free
-* [EPPLUS6](https://www.epplussoftware.com/)
-  - If you want to convert legacy Excel file formats
-  - You do NOT need to install
-  - You need to purchase license
 
 ### Compare
 * [Beyond Compare 4](https://www.scootersoftware.com/)
   - If you want to use the compare function
   - You need to install program in its default directory
   - You need to purchase license
+
+[^1]: File extensions .xla and .xlam are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archive directory, if arhciving is selected.
+[^2]: File extension .xlsx with Transitional conformance will only be converted if archiving is selected.
+[^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
