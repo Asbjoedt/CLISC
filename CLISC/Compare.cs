@@ -29,7 +29,7 @@ namespace CLISC
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Conversion filepath;Conversion filesize (KB); Comparison message");
+            var newLine0 = string.Format($"Original filepath;Original filesize (KB);Conversion filepath;Conversion filesize (KB);Filesize diff;Workbook diff");
             csv.AppendLine(newLine0);
 
             if (argument0 == "Count&Convert&Compare&Archive")
@@ -66,8 +66,19 @@ namespace CLISC
                                 // Calculate filesize of original spreadsheet
                                 int org_filesize_kb = Calculate_Filesize(org_filepath);
 
+                                // File size diff
+                                bool filesize_diff;
+                                if (conv_filesize_kb == org_filesize_kb)
+                                {
+                                    filesize_diff = true;
+                                }
+                                else
+                                {
+                                    filesize_diff = false;
+                                }
+
                                 // Output result in open CSV file
-                                var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{conv_filepath};{conv_filesize_kb};{compare_message}");
+                                var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{conv_filepath};{conv_filesize_kb};{filesize_diff};{compare_message}");
                                 csv.AppendLine(newLine1);
                             }
                         }

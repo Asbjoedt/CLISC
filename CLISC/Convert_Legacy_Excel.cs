@@ -33,6 +33,9 @@ namespace CLISC
             return convert_success;
         }
 
+        // All the methods below are copied from
+        // https://stackoverflow.com/questions/29522173/how-to-save-xls-file-as-xlsx-file-using-npoi-c
+
         public static byte[] NPOI(Stream streamed_spreadsheet)
         {
             var source = new HSSFWorkbook(streamed_spreadsheet);
