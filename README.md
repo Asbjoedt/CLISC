@@ -28,7 +28,7 @@ Count&Convert&Compare&Archive 'path to input dir' 'path to output dir' Recurse='
 
 ## Program behavior
 
-**General**
+:rainbow_flag: **General**
 * Bulk convert spreadsheets in a directory to .xlsx Transitional conformance
 * Include or exclude subdirectories recursively
 * Output results in a new directory with logs in CSV
@@ -46,7 +46,7 @@ Convert any spreadsheet[^1] to .xlsx (Office Open XML Transitional conformance).
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
-:microscope: **Compare**
+:mag: **Compare**
 
 Compare original and converted spreadsheets to log differences.[^3]
 * Workbook cell values
@@ -70,13 +70,13 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 ## Dependencies
 Prerequisite software for the program to work with these functions.
 
-**Convert**
+:warning: **Convert**
 * [LibreOffice](https://www.libreoffice.org/)
   - If you want to convert OpenDocument spreadsheets
   - You need to install program in its default directory
   - The program is free
 
-**Compare**
+:warning: **Compare**
 * [Beyond Compare 4](https://www.scootersoftware.com/)
   - If you want to use the compare function
   - You need to install program in its default directory
