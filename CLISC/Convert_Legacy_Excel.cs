@@ -5,19 +5,38 @@ using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.HSSF.UserModel;
-using Microsoft.Office.Interop;
-using Excel = Microsoft.Office.Interop.Excel;
+//using Microsoft.Office.Interop;
+//using Excel = Microsoft.Office.Interop.Excel; 
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
-        public static byte[] Convert_Legacy_Excel_NPOI(Stream org_filepath, string conv_filepath)
+        public bool Convert_Legacy_Excel_NPOI(string org_filepath, string conv_filepath)
         {
-            var source = new HSSFWorkbook(org_filepath);
-            var destination = new XSSFWorkbook(conv_filepath);
+            // Read the bytes of the original spreadsheet
+            FileStream streamed_spreadsheet = new FileStream(org_filepath, FileMode.Open, FileAccess.Read, FileShare.None);
+            
+            // Write the bytes of the converted spreadsheet
+            byte[] received_spreadsheet = NPOI(streamed_spreadsheet);
+            MemoryStream spreadsheet = new MemoryStream(received_spreadsheet);
+            FileStream save_spreadsheet = new FileStream(conv_filepath, FileMode.Create, FileAccess.Write);
+            spreadsheet.WriteTo(save_spreadsheet);
+            spreadsheet.Close();
+
+            convert_success = true;
+
+            // Inform user
+            Console.WriteLine(org_filepath);
+            Console.WriteLine($"--> Conversion {convert_success}");
+
+            return convert_success;
+        }
+
+        public static byte[] NPOI(Stream streamed_spreadsheet)
+        {
+            var source = new HSSFWorkbook(streamed_spreadsheet);
+            var destination = new XSSFWorkbook();
             for (int i = 0; i < source.NumberOfSheets; i++)
             {
                 var xssfSheet = (XSSFSheet)destination.CreateSheet(source.GetSheetAt(i).SheetName);
@@ -211,7 +230,7 @@ namespace CLISC
             r.LastRow == newMergedRegion.LastRow);
         }
 
-        // Conver legacy Excel files using Microsoft Office Interop Excel. User  must have Excel Version=15.0.0.0 installed (corresponds to Office 2013, an old version of Office)
+        // NOT USED. Convert legacy Excel files using Microsoft Office Interop Excel. User  must have Excel Version=15.0.0.0 installed (corresponds to Office 2013, an old version of Office)
         public bool Convert_Legacy_Excel_OfficeInterop(string org_filepath)
         {
             FileInfo file = new FileInfo(org_filepath);
@@ -226,7 +245,5 @@ namespace CLISC
             convert_success = true;
             return convert_success;
         }
-
     }
-
 }

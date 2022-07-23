@@ -27,11 +27,12 @@ namespace CLISC
                 File.WriteAllBytes(conv_filepath, stream.ToArray());
             }
 
+            convert_success = true;
+
             // Inform user
             Console.WriteLine(org_filepath);
             Console.WriteLine($"--> Conversion {convert_success}");
 
-            convert_success = true;
             return convert_success;
         }
 

@@ -118,16 +118,7 @@ namespace CLISC
                             case ".xls":
                             case ".xlt":
                                 // Conversion code
-                                //convert_success = Convert_Legacy_Excel_NPOI(org_filepath);
-                                numFAILED++;
-                                convert_success = false;
-                                error_message = error_messages[1];
-                                conv_extension = "";
-                                conv_filename = "";
-                                conv_filepath = "";
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                convert_success = Convert_Legacy_Excel_NPOI(org_filepath, conv_filepath);
                                 break;
 
                             // Office Open XML file formats
