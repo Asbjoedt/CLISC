@@ -34,12 +34,11 @@ Count&Convert&Compare&Archive 'path to input dir' 'path to output dir' Recurse='
 * Bulk convert spreadsheets in a directory
 * Include or exclude subdirectories recursively
 * Output results in CSV logs
-* Password protected or otherwise unreadable spreadsheets will not be converted or compared, but they will be copied to the new archivable directory
 
 ### Count
 * Count number of spreadsheets in directory by file format 
   - Accepted file extensions: .fods, .ods, .ots, .xla, .xlam, .xls, .xlsb, .xlsm, .xlsx, .xlt, .xltm, .xltx
-  - Office Open XML file formats of Transitional and Strict conformance can be identified
+  - Office Open XML file formats of Transitional and Strict conformance can be counted
 
 ### Convert
 Convert any spreadsheet to .xlsx (Excel, Office Open XML Transitional conformance)
@@ -48,12 +47,10 @@ Convert any spreadsheet to .xlsx (Excel, Office Open XML Transitional conformanc
   - Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance*
   - Legacy Microsoft Excel with extensions .xls and .xlt* (feature not working)
   - OpenDocument with extensions .fods, .ods and .ots
-* Output all conversions in subdirectories named n+1
-* Rename all conversions n+1.xlsx
 
 <sub>*.xla and .xlam file extensions are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archive directory, if arhciving is selected</sub>
 
-<sub>*.xlsx with Transitional conformance will only be converted if arhciving is selected</sub>
+<sub>*.xlsx with Transitional conformance will only be converted if archiving is selected</sub>
 
 ### Compare
 Compare original and converted spreadsheets to log differences* in
@@ -67,7 +64,9 @@ Compare original and converted spreadsheets to log differences* in
 The program supports the conversion of spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. Enabling advanced archival requirements will
 
 * Package spreadsheets and metadata in a new archive directory
-* Include copies of the original spreadsheets
+* Output all conversions in subdirectories named n+1
+* Rename all conversions n+1.xlsx
+* Include copies of the original spreadsheets, this include password protected or otherwise unreadable spreadsheets
 * Validate spreadsheets against their file format standards (Office Open XML and OpenDocument) (feature not working)
 * Remove formula linking cells to other local spreadsheets but keep the cell values (feature not working)
 * Remove external data connections but keep snapshot of data (feature not working)
