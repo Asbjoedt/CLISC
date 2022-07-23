@@ -6,69 +6,60 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
+        public string validation_message = "";
+        public int invalid_files = 0;
 
         // Validate Open Office XML file formats
-        public string Validate_OOXML(string argument1, string argument2)
+        public string Validate_OOXML(string filepath)
         {
-
-            // Filepath to XML error log
-            string XML_error_log = results_directory + "\\validationErrors.xml";
-            string XML_errors = "";
-
-            try
+            using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                // Use OOXML Validator command line for comparison
-                Process app = new Process();
-                app.StartInfo.FileName = $"C:\\Users\\%USERNAME%\\Desktop\\OOXMLValidatorCLI.exe";
-                app.StartInfo.Arguments = $"\"{argument1}\" --xml > {XML_error_log}";
-                app.Start();
-                app.WaitForExit();
-                app.Close();
+                // Validate
+                var validator = new OpenXmlValidator();
+                var validation_errors = validator.Validate(spreadsheet).ToList();
+                int error_count = validation_errors.Count;
 
-                // Create XML log of errors
-                XML_errors = File.ReadAllText($"@\"{XML_error_log}\"");
-
-                //Contains("IsStrict = "false"")
-
-                ooxml_strict_conformance = true;
-
-                if (ooxml_strict_conformance == false)
+                // If errors
+                if (validation_errors.Any())
                 {
-                    File.Delete(XML_error_log);
+                    // Inform user
+                    Console.WriteLine($"--> Invalid - Spreadsheet has {error_count} validation errors");
+                    Console.WriteLine();
+                    foreach (var error in validation_errors)
+                    {
+                        Console.WriteLine("--> Error");
+                        Console.WriteLine("----> Description: " + error.Description);
+                        Console.WriteLine("----> ErrorType: " + error.ErrorType);
+                        Console.WriteLine("----> Node: " + error.Node);
+                        Console.WriteLine("----> Path: " + error.Path.XPath);
+                        Console.WriteLine("----> Part: " + error.Part.Uri);
+                        if (error.RelatedNode != null)
+                        {
+                            Console.WriteLine("----> Related Node: " + error.RelatedNode);
+                            Console.WriteLine("----> Related Node Inner Text: " + error.RelatedNode.InnerText);
+                        }
+                    }
+                    // Change data type values
+                    invalid_files++;
+                    validation_message = string.Join(Environment.NewLine, validation_errors);
+                    return validation_message;
                 }
-                else
-                {
-                    ooxml_strict_conformance = true;
-                }
 
+                // If no errors, inform user
+                Console.WriteLine(filepath);
+                Console.WriteLine("--> Valid");
 
-
-                // Identify if Strict conformance
-
-
-                // Return string of errors
-                return XML_errors;
-
+                return validation_message = "Valid";
             }
-
-            // If OOXML Validator cannot be found
-            catch (Win32Exception)
-            {
-                // Inform user
-                Console.WriteLine("OOXML Validator CLI executable cannot be found. Make sure the exe is located in directory: C:\\Users\\%USERNAME%\\Desktop");
-
-                // Return error message
-                return "Validation was not performed";
-            }
-
         }
-
     }
-
 }

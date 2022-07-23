@@ -41,6 +41,9 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
+                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3); // Inaccurate method
+                numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
+                // numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail); // Alternative method
                 numXLTM = count.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
 
@@ -60,6 +63,9 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
+                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3); // Inaccurate method
+                numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
+                // numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail); // Alternative method
                 numXLTM = count.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
 
@@ -90,8 +96,12 @@ namespace CLISC
                 Console.WriteLine($"{numXLSB} {file_format[7]} - {file_format_description[7]}");
                 Console.WriteLine($"{numXLSM} {file_format[8]} - {file_format_description[8]}");
                 Console.WriteLine($"{numXLSX} {file_format[9]} - {file_format_description[9]}");
-                Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {file_format[9]} have Office Open XML Transional conformance");
+                Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {file_format[9]} have Office Open XML Transitional conformance");
                 Console.WriteLine($"--> {numXLSX_Strict} of {numXLSX} {file_format[9]} have Office Open XML Strict conformance");
+                if (conformance_count_fail > 0) 
+                {
+                        Console.WriteLine($"--> {conformance_count_fail} of {numXLSX} {file_format[9]} could not be counted because they are password protected or corrupt");
+                }
                 Console.WriteLine($"{numXLTM} {file_format[10]} - {file_format_description[10]}");
                 Console.WriteLine($"{numXLTX} {file_format[11]} - {file_format_description[11]}");
 

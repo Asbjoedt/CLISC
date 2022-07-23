@@ -2,7 +2,7 @@
   "profiles": {
     "CLISC": {
       "commandName": "Project",
-      "commandLineArgs": "Count&Convert&Compare C:\\Users\\%USERNAME%\\Desktop\\Test\\Test_Data C:\\Users\\%USERNAME%\\Desktop\\Test Recurse=Yes Archive=Yes"
+      "commandLineArgs": "Count&Convert&Compare&Archive C:\\Users\\%USERNAME%\\Desktop\\Test_Data C:\\Users\\%USERNAME%\\Desktop Recurse=Yes"
     }
   }
 }

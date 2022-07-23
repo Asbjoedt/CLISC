@@ -8,67 +8,73 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive(string argument1, string argument2, string results_directory)
+        public void Archive(string argument0, string argument1, string argument2, string results_directory, List<string> docCollection_enumeration)
         {
+            Console.WriteLine("ARCHIVE");
+            Console.WriteLine("---");
+
             // Open CSV file to log results
             var csv = new StringBuilder();
             var newLine0 = string.Format($"Original filepath;Original filename;Original checksum;Copy filepath; Copy filename; Conversion identified;Conversion filepath;Conversion filename;Conversion checksum;File format validated, Data quality message");
             csv.AppendLine(newLine0);
 
-            // Create enumeration of original spreadsheets based on input directory
-            List<string> doc_enumeration = Enumerate_docCollection();
-
-            foreach (var file in doc_enumeration)
+            // Create enumeration of files in each folder of docCollection_enumeration
+            foreach (var folder in docCollection_enumeration)
             {
-
-                // Create instance for finding file information
-                FileInfo file_info = new FileInfo(file);
-
-                // Combine data types to original spreadsheets
-                conv_extension = file_info.Extension;
-                conv_filename = file_info.Name;
-                conv_filepath = file_info.FullName;
-
-                // Rename and move converted spreadsheets
-
-                // Copy original spreadsheets
-
-
-                // Validate file format standards
-                string validation_message = "";
-
-                switch (file_info.Extension)
+                var subdir_enumeration = new List<string>();
+                subdir_enumeration = (List<string>)Directory.EnumerateFiles(folder, "*", SearchOption.TopDirectoryOnly)
+                    .ToList();
+                foreach (var file in subdir_enumeration)
                 {
+                    // Create instance for finding file information
+                    FileInfo file_info = new FileInfo(file);
 
-                    // Validate OpenDocument file formats
-                    case ".fods":
-                    case ".ods":
-                    case ".ots":
+                    // Combine data types to original spreadsheets
+                    conv_extension = file_info.Extension;
+                    conv_filename = file_info.Name;
+                    conv_filepath = file_info.FullName;
 
-                        break;
+                    // Rename and move converted spreadsheets
 
-                    // Validate Office Open XML file formats
-                    case ".xlam":
-                    case ".xlsm":
-                    case ".xlsx":
-                    case ".xltx":
-                        validation_message = Validate_OOXML(argument1, argument2);
-                        break;
+                    // Copy original spreadsheets
+
+
+                    // Validate file format standards
+                    switch (file_info.Extension)
+                    {
+
+                        // Validate OpenDocument file formats
+                        case ".fods":
+                        case ".ods":
+                        case ".ots":
+                            break;
+
+                        // Validate Office Open XML file formats
+                        case ".xlam":
+                        case ".xlsm":
+                        case ".xlsx":
+                        case ".xltx":
+                            validation_message = Validate_OOXML(conv_filepath);
+                            break;
+
+                            default:
+                            Console.WriteLine(file_info.FullName);
+                            Console.WriteLine("--> The file format is not supported in validation routine");
+                            break;
+                    }
+
+                    // Calculate checksums
+                    string copy_checksum = Calculate_MD5(org_filepath);
+                    string conv_checksum = Calculate_MD5(conv_filepath);
+
+                    // Check for data quality requirements
+                    string dataquality_message = "";
+
+                    // Output result in open CSV file
+                    //var newLine1 = string.Format($"{org_filepath};{org_filename};{copy_filepath};{copy_filename};{convert_success};{conv_filepath};{conv_filename};{conv_checksum};{validation_message};{dataquality_message}");
+                    //csv.AppendLine(newLine1);
                 }
-
-                // Calculate checksums
-                string copy_checksum = Calculate_MD5(org_filepath);
-                //string conv_checksum = Calculate_MD5(conv_filepath);
-
-                // Check for data quality requirements
-                string dataquality_message = "";
-
-                // Output result in open CSV file
-                //var newLine1 = string.Format($"{org_filepath};{org_filename};{copy_filepath};{copy_filename};{convert_success};{conv_filepath};{conv_filename};{conv_checksum};{validation_message};{dataquality_message}");
-                //csv.AppendLine(newLine1);
-
             }
 
             // Close CSV file to log results
@@ -85,9 +91,6 @@ namespace CLISC
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}"); //Filepath is incorrect. It is not the zipped path
             Console.WriteLine("Archiving finished");
             Console.WriteLine("---");
-
         }
-
     }
-
 }

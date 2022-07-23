@@ -11,24 +11,12 @@ namespace CLISC
     {
 
         // Calculate filesize
-        public int? Calculate_Filesize(string filepath)
+        public int Calculate_Filesize(string filepath)
         {
-            
-            int? filesize = null;
-            int? filesize_kb = null;
-
-            try
             {
-                FileInfo fi = new FileInfo(filepath);
-                filesize = (int)fi.Length;
-                filesize_kb = filesize / 1024;
-                return filesize_kb;
-            }
-
-            // If conversion does not exist, do nothing
-            catch (SystemException)
-            {
-                filesize_kb = null;
+                FileInfo file = new FileInfo(filepath);
+                int filesize = (int)file.Length;
+                int filesize_kb = filesize / 1024;
                 return filesize_kb;
             }
 

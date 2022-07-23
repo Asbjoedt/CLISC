@@ -15,11 +15,12 @@ namespace CLISC
             Console.WriteLine("@Asbjørn Skødt, web: https://github.com/Asbjoedt/CLISC");
             Console.WriteLine("---");
 
+            string argument0 = Convert.ToString(args[0]);
             string argument1 = Convert.ToString(args[1]);
             string argument2 = Convert.ToString(args[2]);
             string argument3 = Convert.ToString(args[3]);
-            string argument4 = Convert.ToString(args[4]);
             string results_directory = "";
+            List<string> docCollection_enumeration = new List<string>();
 
             // Object reference
             Spreadsheet process = new Spreadsheet();
@@ -30,38 +31,35 @@ namespace CLISC
                 // Validate recurse and archive arguments
                 if (argument3 == "Recurse=Yes" || argument3 == "Recurse=No")
                 {
-                    if (argument4 == "Archive=Yes" || argument4 == "Archive=No")
+
+                    // Method references
+                    switch (args[0])
                     {
+                        case "Count":
+                            process.Count(argument1, argument2, argument3);
+                            break;
 
-                        // Method references
-                        switch (args[0])
-                        {
-                            case "Count":
-                                results_directory = process.Count(argument1, argument2, argument3);
-                                break;
+                        case "Count&Convert":
+                            results_directory = process.Count(argument1, argument2, argument3);
+                            process.Convert(argument0, argument1, argument3, results_directory);
+                            break;
 
-                            case "Count&Convert":
-                                results_directory = process.Count(argument1, argument2, argument3);
-                                process.Convert(argument1, results_directory, argument3, argument4);
-                                break;
+                        case "Count&Convert&Compare":
+                            results_directory = process.Count(argument1, argument2, argument3);
+                            docCollection_enumeration = process.Convert(argument0, argument1, argument3, results_directory);
+                            process.Compare(argument0, argument1, results_directory, docCollection_enumeration);
+                            break;
 
-                            case "Count&Convert&Compare":
-                                results_directory = process.Count(argument1, argument2, argument3);
-                                process.Convert(argument1, results_directory, argument3, argument4);
-                                process.Compare(argument1, results_directory, argument3, argument4);
-                                break;
+                        case "Count&Convert&Compare&Archive":
+                            results_directory = process.Count(argument1, argument2, argument3);
+                            docCollection_enumeration = process.Convert(argument0, argument1, argument3, results_directory);
+                            process.Compare(argument0, argument1, results_directory, docCollection_enumeration);
+                            process.Archive(argument0, argument1, argument2, results_directory, docCollection_enumeration);
+                            break;
 
-                            default:
-                                Console.WriteLine("Invalid first argument. First argument must be one these: Count, Count&Convert, Count&Convert&Compare");
-                                break;
-                        }
-
-                    }
-
-                    // Inform user of invalid archive argument
-                    else
-                    {
-                        Console.WriteLine("Invalid archive argument. It must be one of these Archive=Yes or Archive=No");
+                        default:
+                            Console.WriteLine("Invalid first argument. First argument must be one these: Count, Count&Convert, Count&Convert&Compare, Count&Convert&Compare&Archive");
+                            break;
                     }
 
                 }
@@ -82,13 +80,6 @@ namespace CLISC
 
             finally
             {
-
-                // Archive the spreadsheets if argument4 is Archive=Yes
-                if (argument4 == "Archive=Yes")
-                {
-                    process.Archive(argument1, argument2, results_directory);
-                }
-
                 // Inform user of end of CLISC
                 Console.WriteLine("CLISC has finished");
                 Console.WriteLine("---");
