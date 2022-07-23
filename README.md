@@ -28,30 +28,34 @@ Count&Convert&Compare&Archive 'path to input dir' 'path to output dir' Recurse='
 
 ## Program behavior
 
-### General
+### Basic functions
+
+**General**
 * Bulk convert spreadsheets in a directory
 * Include or exclude subdirectories recursively
 * Output results in CSV logs
 
-### Count
-* Count number of spreadsheets in directory by file format 
-  - Accepted file extensions: .fods, .ods, .ots, .xla, .xlam, .xls, .xlsb, .xlsm, .xlsx, .xlt, .xltm, .xltx
-  - Office Open XML file formats of Transitional and Strict conformance can be counted
+:heavy_plus_sign: **Count**
 
-### Convert
-* Convert any spreadsheet[^1] to .xlsx (Office Open XML Transitional conformance)
-  - Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance[^2]
-  - Legacy Microsoft Excel with extensions .xls and .xlt
-  - OpenDocument with extensions .fods, .ods and .ots
+Count number of spreadsheets in directory by file format. Counting supports:
+* Accepted file extensions: .fods, .ods, .ots, .xla, .xlam, .xls, .xlsb, .xlsm, .xlsx, .xlt, .xltm, .xltx
+* Office Open XML file formats of Transitional and Strict conformance can be counted separately
 
-### Compare
-Compare original and converted spreadsheets to log differences[^3] in
+:magic_wand: **Convert**
 
+Convert any spreadsheet[^1] to .xlsx (Office Open XML Transitional conformance). Conversion supports:
+* Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance[^2]
+* Legacy Microsoft Excel with extensions .xls and .xlt
+* OpenDocument with extensions .fods, .ods and .ots
+
+:microscope: **Compare**
+
+Compare original and converted spreadsheets to log differences.[^3] Comparison supports:
 * Workbook cell values
 * File size
 
-### Advanced archival requirements
-The program supports the conversion of spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. Enabling advanced archival requirements will
+### :file_cabinet: Advanced archival requirements
+The program supports the conversion of spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. Enabling advanced archival requirements will:
 
 * Package spreadsheets and metadata in a new archive directory
 * Output all conversions in subdirectories named n+1
@@ -68,13 +72,13 @@ The program supports the conversion of spreadsheets to meet a data quality level
 ## Dependencies
 Prerequisite software for the program to work with these functions.
 
-### Convert
+**Convert**
 * [LibreOffice](https://www.libreoffice.org/)
   - If you want to convert OpenDocument spreadsheets
   - You need to install program in its default directory
   - The program is free
 
-### Compare
+**Compare**
 * [Beyond Compare 4](https://www.scootersoftware.com/)
   - If you want to use the compare function
   - You need to install program in its default directory
