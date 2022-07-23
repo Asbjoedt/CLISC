@@ -1,7 +1,7 @@
-# CLISC<sup>3</sup> - WORK IN PROGRESS
+# CLISC<sup>3</sup>
 **Command Line Interface Spreadsheet Count Convert & Compare (& Archive)**
 
-A small Windows Exe program made in C#. It is as a hobby project. It might have use cases in digital archiving of spreadsheets.
+A small Windows console application made in C#. It is as a hobby project. It might have use cases in digital archiving of spreadsheets.
 
 ## How to use
 Download the executable here. In the terminal change directory to the folder where CLISC.exe is. Then, to execute the program input:
@@ -28,35 +28,33 @@ Count&Convert&Compare&Archive 'path to input dir' 'path to output dir' Recurse='
 
 ## Program behavior
 
-### Basic functions
-
 **General**
-* Bulk convert spreadsheets in a directory
+* Bulk convert spreadsheets in a directory to .xlsx Transitional conformance
 * Include or exclude subdirectories recursively
-* Output results in CSV logs
+* Output results in a new directory with logs in CSV
 
 :heavy_plus_sign: **Count**
 
-Count number of spreadsheets in directory by file format. Counting supports:
+Count number of spreadsheets in directory by file format. 
 * Accepted file extensions: .fods, .ods, .ots, .xla, .xlam, .xls, .xlsb, .xlsm, .xlsx, .xlt, .xltm, .xltx
 * Office Open XML file formats of Transitional and Strict conformance can be counted separately
 
 :magic_wand: **Convert**
 
-Convert any spreadsheet[^1] to .xlsx (Office Open XML Transitional conformance). Conversion supports:
+Convert any spreadsheet[^1] to .xlsx (Office Open XML Transitional conformance).
 * Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance[^2]
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
 :microscope: **Compare**
 
-Compare original and converted spreadsheets to log differences.[^3] Comparison supports:
+Compare original and converted spreadsheets to log differences.[^3]
 * Workbook cell values
 * File size
 
-### :file_cabinet: Advanced archival requirements
-The program supports the conversion of spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. Enabling advanced archival requirements will:
+:file_cabinet: **Archive**
 
+The program can convert, package and describe spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. 
 * Package spreadsheets and metadata in a new archive directory
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
