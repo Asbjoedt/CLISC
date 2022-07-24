@@ -13,14 +13,14 @@ namespace CLISC
         // Public data type needed for Compare.cs
         public string bcscript_filepath = "";
 
-        public string Compare_Workbook(string argument0, string Results_Directory, string docCollection, string Org_Filepath, string Conv_Filepath)
+        public string Compare_Workbook(string argument0, string Results_Directory, string docCollection, string org_filepath, string conv_filepath)
         {
             //Create "Beyond Compare" script file
-            bcscript_filepath = results_directory + "\\bcscript.txt";
+            bcscript_filepath = Results_Directory + "\\bcscript.txt";
             string bcscript_results_filepath = docCollection + "\\comparisonResults.txt";
             using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
             {
-                    bcscript.WriteLine($"data-report layout:interleaved options:display-mismatches output-to:\"{bcscript_results_filepath}\" \"{Org_Filepath}\" \"{Conv_Filepath}\"");
+                    bcscript.WriteLine($"data-report layout:interleaved options:display-mismatches output-to:\"{bcscript_results_filepath}\" \"{org_filepath}\" \"{conv_filepath}\"");
             }
 
             // Use Beyond Compare 4 command line for comparison
@@ -46,7 +46,7 @@ namespace CLISC
                 File.Delete(bcscript_filepath);
             }
 
-            bool comparison_success;
+            bool compare_success;
 
             // If there is workbook differences
             //if (comparison_success == fail)
@@ -72,7 +72,7 @@ namespace CLISC
                 using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
                 {
                     bcscript_results_filepath = docCollection + "\\comparisonResults.html";
-                    bcscript.WriteLine($"data-report layout:interleaved options:display-mismatches title:CLISC_Comparison_Results output-to:\"{bcscript_results_filepath}\" output-options:wrap-word,html-color \"{Org_Filepath}\" \"{Conv_Filepath}\"");
+                    bcscript.WriteLine($"data-report layout:interleaved options:display-mismatches title:CLISC_Comparison_Results output-to:\"{bcscript_results_filepath}\" output-options:wrap-word,html-color \"{org_filepath}\" \"{conv_filepath}\"");
                 }
                 // Use Beyond Compare 4 command line for comparison
                 app = new Process();

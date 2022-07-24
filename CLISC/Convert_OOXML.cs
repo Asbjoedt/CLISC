@@ -25,13 +25,13 @@ namespace CLISC
                 File.WriteAllBytes(Conv_Filepath, stream.ToArray());
             }
 
-            Convert_Success = true;
+            bool convert_success = true;
 
             // Inform user
             Console.WriteLine(Org_Filepath);
-            Console.WriteLine($"--> Conversion {Convert_Success}");
+            Console.WriteLine($"--> Conversion {convert_success}");
 
-            return Convert_Success;
+            return convert_success;
         }
 
         // Convert to Office Open XML XLSX Strict conformance - NOT WORKING - IT OUTPUTS TRANSITIONAL
@@ -48,12 +48,14 @@ namespace CLISC
                 File.WriteAllBytes(conv_filepath, stream.ToArray());
             }
 
+            bool convert_success = true;
+
             // Inform user
             Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {Convert_Success}");
+            Console.WriteLine($"--> Conversion {convert_success}");
 
-            Convert_Success = true;
-            return Convert_Success;
+            convert_success = true;
+            return convert_success;
         }
     }
 }

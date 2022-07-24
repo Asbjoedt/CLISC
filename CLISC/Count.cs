@@ -100,7 +100,7 @@ namespace CLISC
                 Console.WriteLine($"{numXLTX} {FileFormats.Extension[11]} - {FileFormats.Description[11]}");
 
                 // Create new directory to output results in CSV
-                Results_Directory = Create_Directory_Results(argument1, argument2);
+                string Results_Directory = Create_Directory_Results(argument1, argument2);
 
                 // Output results in CSV
                 var csv = new StringBuilder();

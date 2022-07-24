@@ -22,7 +22,6 @@ namespace CLISC
  
             // Object reference
             Spreadsheet process = new Spreadsheet();
-            List<fileIndex> File_List = new List<fileIndex>();
 
             try
             {
@@ -43,7 +42,7 @@ namespace CLISC
 
                         case "Count&Convert&Compare":
                             Results_Directory = process.Count(argument1, argument2, argument3);
-                            File_List = process.Convert(argument0, argument1, argument3, Results_Directory);
+                            List<fileIndex> File_List = process.Convert(argument0, argument1, argument3, Results_Directory);
                             process.Compare(argument0, argument1, Results_Directory, File_List);
                             break;
 

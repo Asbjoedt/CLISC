@@ -9,10 +9,10 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Calculate filesize
-        public int Calculate_Filesize(string Filepath)
+        public int Calculate_Filesize(string filepath)
         {
             {
-                FileInfo file = new FileInfo(Filepath);
+                FileInfo file = new FileInfo(filepath);
                 int filesize = (int)file.Length;
                 int filesize_kb = filesize / 1024;
                 return filesize_kb;

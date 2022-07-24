@@ -44,13 +44,13 @@ namespace CLISC
 
             }
 
-            Convert_Success = true;
+            bool convert_success = true;
 
             // Inform user
             Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {Convert_Success}");
+            Console.WriteLine($"--> Conversion {convert_success}");
 
-            return Convert_Success;
+            return convert_success;
         }
 
     }

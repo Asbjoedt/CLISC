@@ -14,26 +14,24 @@ namespace CLISC
             return value.ToString("yyyy.MM.dd");
         }
         public string dateStamp = GetTimestamp(DateTime.Now);
-
+        
         // Create name for new results directory
-        public string Results_Directory = "";
+        
         public string Create_Directory_Results(string argument1, string argument2)
         {
             // Identify available name for results directory
+            string Results_Directory = "";
             int results_directory_number = 1;
-            Results_Directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
+            Results_Directory = argument2 + "\\CLISC_" + dateStamp;
             while (Directory.Exists(@Results_Directory))
             {
                 results_directory_number++;
                 Results_Directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
             }
-
             // Create results directory
             DirectoryInfo OutputDir = Directory.CreateDirectory(@Results_Directory);
 
             return Results_Directory;
         }
-
     }
-
 }

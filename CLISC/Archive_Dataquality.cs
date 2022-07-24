@@ -12,18 +12,17 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public string Manipulate_Dataquality()
+        public string Manipulate_Dataquality(string conv_filepath)
         {
             string dataquality_message = "";
 
             SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(conv_filepath, false);
 
             // Check for external relationships
-            IEnumerable<string> ddd
-            IEnumerable<string> external_relationships = spreadsheet.ExternalRelationships;
+            //external_relationships = spreadsheet.ExternalRelationships;
 
-            IEnumerable<string> data_parts = spreadsheet.DataParts.ToList;
-            spreadsheet.Close();
+            //data_parts = spreadsheet.DataParts.ToList;
+            //spreadsheet.Close();
 
             
 

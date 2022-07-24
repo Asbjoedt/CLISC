@@ -17,7 +17,7 @@ namespace CLISC
         string compare_message = "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4";
 
         // Compare spreadsheets
-        public void Compare(string argument0, string argument1, string Results_Directory, List<fileIndex> fileIndex)
+        public void Compare(string argument0, string argument1, string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
@@ -31,106 +31,57 @@ namespace CLISC
 
             if (argument0 == "Count&Convert&Compare&Archive")
             {
-                // Loop through docCollection enumeration
-                foreach (var folder in docCollection_enumeration)
+                try
                 {
-                    // Identify converted spreadsheet in folder
-                    var conv_file = from file in
-                    Directory.EnumerateFiles(folder)
-                                    where Path.GetFileName(file).Equals("1.xlsx")
-                                    select file;
-                    try
+                    foreach (fileIndex entry in File_List)
                     {
-                        foreach (var file in conv_file)
+                        // Get information from list
+                        string org_filepath = entry.Org_Filepath;
+                        string conv_filepath = entry.Conv_Filepath;
+                        string folder = entry.File_Folder;
+
+                        // Compare workbook differences
+                        if (File.Exists(conv_filepath))
                         {
-                            Conv_Filepath = file.ToString();
+                            numTOTAL_conv++;
 
-                            // Compare workbook differences
-                            if (File.Exists(Conv_Filepath))
+                            // Inform user of comparison
+                            Console.WriteLine(org_filepath);
+                            Console.WriteLine($"--> Comparing to: {conv_filepath}");
+
+                            // Compare workbooks using external app Beyond Compare 4
+                            Compare_Workbook(argument0, Results_Directory, folder, org_filepath, conv_filepath);
+
+                            // Calculate filesize of converted spreadsheet
+                            int conv_filesize_kb = Calculate_Filesize(conv_filepath);
+
+                            // Calculate filesize of original spreadsheet
+                            int org_filesize_kb = Calculate_Filesize(org_filepath);
+
+                            // File size diff
+                            bool filesize_diff;
+                            if (conv_filesize_kb == org_filesize_kb)
                             {
-                                numTOTAL_conv++;
-
-                                // Inform user of comparison
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Comparing to: {conv_filepath}");
-
-                                // Compare workbooks using external app Beyond Compare 4
-                                Compare_Workbook(argument0, Results_Directory, folder, org_filepath, conv_filepath);
-
-                                // Calculate filesize of converted spreadsheet
-                                int conv_filesize_kb = Calculate_Filesize(conv_filepath);
-
-                                // Calculate filesize of original spreadsheet
-                                int org_filesize_kb = Calculate_Filesize(org_filepath);
-
-                                // File size diff
-                                bool filesize_diff;
-                                if (conv_filesize_kb == org_filesize_kb)
-                                {
-                                    filesize_diff = true;
-                                }
-                                else
-                                {
-                                    filesize_diff = false;
-                                }
-
-                                // Output result in open CSV file
-                                var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{conv_filepath};{conv_filesize_kb};{filesize_diff};{compare_message}");
-                                csv.AppendLine(newLine1);
+                                filesize_diff = true;
                             }
+                            else
+                            {
+                                filesize_diff = false;
+                            }
+
+                            // Output result in open CSV file
+                            var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{conv_filepath};{conv_filesize_kb};{filesize_diff};{compare_message}");
+                            csv.AppendLine(newLine1);
                         }
                     }
-
-                    // Error message if BC is not detected
-                    catch (Win32Exception)
-                    {
-                        Console.WriteLine($"--> {compare_message}");
-                    }
                 }
-            }
 
-            // ordinary comparison, no archiving
-            else
-            {
-                // Identify docCollection path
-                string docCollection = Results_Directory + "\\docCollection";
-
-                // Loop through docCollection enumeration
-                foreach (var file in docCollection_enumeration)
+                // Error message if BC is not detected
+                catch (Win32Exception)
                 {
-                    numTOTAL_conv++;
-
-                    // Inform user of comparison
-                    Console.WriteLine(org_filepath);
-                    Console.WriteLine($"--> Comparing to: {conv_filepath}");
-
-                    // Create instance for finding file information
-                    FileInfo file_info = new FileInfo(file);
-                    conv_filepath = file_info.FullName;
-
-                    // Compare workbook differences
-                    try
-                    {
-                        // Compare workbooks using external app Beyond Compare 4
-                        Compare_Workbook(argument0, Results_Directory, docCollection, org_filepath, conv_filepath);
-
-                        // Calculate filesize of converted spreadsheet
-                        int conv_filesize_kb = Calculate_Filesize(conv_filepath);
-
-                        // Calculate filesize of original spreadsheet
-                        int org_filesize_kb = Calculate_Filesize(org_filepath);
-
-                        // Output result in open CSV file
-                        var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{conv_filepath};{conv_filesize_kb};{compare_message}");
-                        csv.AppendLine(newLine1);
-                    }
-
-                    // Error message if BC is not detected
-                    catch (Win32Exception)
-                    {
-                        Console.WriteLine($"--> {compare_message}");
-                    }
+                    Console.WriteLine($"--> {compare_message}");
                 }
+
             }
 
             // Delete BC script
