@@ -12,17 +12,19 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        // Convert spreadsheets method
-        public List<string> Convert(string argument0, string argument1, string argument3, string results_directory)
-        {
+        // Create data types
+        public bool Convert_Success;
 
+        // Convert spreadsheets method
+        public List<fileIndex> Convert(string argument0, string argument1, string argument3, string Results_Directory)
+        {
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
 
             // Local conversion error messages
             int numCOMPLETE = 0;
             int numFAILED = 0;
-
+            string error_message = "";
             string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format" };
 
             // Open CSV file to log results
@@ -31,26 +33,18 @@ namespace CLISC
             csv.AppendLine(newLine0);
 
             // Create enumeration of original spreadsheets based on input directory
-            List<string> org_enumeration = Enumerate_Original(argument1, argument3);
+            List<fileIndex> File_List = fileIndex.Org_Files(argument1, argument3);
 
             // Create subdirectory (docCollection) for converted spreadsheet files
-            string docCollection = results_directory + "\\docCollection";
+            string docCollection = Results_Directory + "\\docCollection";
             DirectoryInfo Output_Dir = Directory.CreateDirectory(docCollection);
 
             // Convert spreadsheets according to archiving requirements
             if (argument0 == "Count&Convert&Compare&Archive")
             {
                 // Loop spreadsheets based on enumeration
-                foreach (var file in org_enumeration.ToList()) // Is .ToList() necessary?
+                foreach (var file in File_List)
                 {
-                    // Create instance for finding file information
-                    FileInfo file_info = new FileInfo(file);
-
-                    // Combine data types to original spreadsheets
-                    org_extension = file_info.Extension;
-                    org_filename = file_info.Name;
-                    org_filepath = file_info.FullName;
-
                     // Create new subdirectory for the spreadsheet
                     int subdir_number = 1;
                     string docCollection_subdir = docCollection + "\\" + subdir_number;
@@ -62,24 +56,23 @@ namespace CLISC
                     DirectoryInfo Output_Subdir = Directory.CreateDirectory(docCollection_subdir);
 
                     // Create data types for copied original spreadsheets
-                    string copy_extension = org_extension;
-                    string copy_filename = "orgFile_" + org_filename;
+                    string copy_extension = this._Org_Extension;
+                    string copy_filename = "orgFile_" + this._Org_Filename;
                     string copy_filepath = docCollection_subdir + "\\" + copy_filename;
 
                     // Copy spreadsheet
-                    copy_filepath = docCollection_subdir + "\\" + copy_filename; // Is this necessary?
-                    File.Copy(org_filepath, copy_filepath);
+                    File.Copy(this._Org_Filepath, copy_filepath);
 
                     // Create data types for converted spreadsheets
-                    conv_extension = ".xlsx";
-                    conv_filename = "1" + conv_extension;
-                    conv_filepath = docCollection_subdir + "\\" + conv_filename;
+                    string conv_extension = ".xlsx";
+                    string conv_filename = "1" + conv_extension;
+                    string conv_filepath = docCollection_subdir + "\\" + conv_filename;
 
                     // Convert spreadsheet
                     try
                     {
                         // Change conversion method based on file extension
-                        switch (org_extension)
+                        switch (this._Org_Extension)
                         {
                             // OpenDocument file formats
                             case ".fods":
@@ -101,14 +94,14 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
 
                             case ".xls":
                             case ".xlt":
                                 // Conversion code
-                                Convert_Success = Convert_Legacy_Excel_NPOI(org_filepath, conv_filepath);
+                                Convert_Success = Convert_Legacy_Excel_NPOI(this._Org_Filepath, conv_filepath);
                                 break;
 
                             // Office Open XML file formats
@@ -121,7 +114,7 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
 
@@ -134,7 +127,7 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
 
@@ -149,7 +142,7 @@ namespace CLISC
 
                             case ".xlsx":
                                 // No converison
-                                convert_success = true;
+                                Convert_Success = true;
                                 error_message = error_messages[6];
 
                                 // Rename copied spreadsheet
@@ -157,12 +150,10 @@ namespace CLISC
                                 File.Move(copy_filepath, conv_filepath);
 
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
                         }
-                        // Create tuple of org, copy and conv filepaths - IS THIS NECESSARY
-                        Tuple<string, string, string> filepaths = new Tuple<string, string, string>(org_filepath, copy_filepath, conv_filepath);
                     }
 
                     // If spreadsheet is password protected or corrupt
@@ -176,7 +167,7 @@ namespace CLISC
                         conv_filename = "";
                         conv_filepath = "";
                         // Inform user
-                        Console.WriteLine(org_filepath);
+                        Console.WriteLine(this._Org_Filepath);
                         Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                     }
 
@@ -185,19 +176,21 @@ namespace CLISC
                     {
                         numFAILED++;
                         Convert_Success = false;
-                        string error_message = error_messages[3];
+                        error_message = error_messages[3];
                         conv_extension = "";
                         conv_filename = "";
                         conv_filepath = "";
                         // Inform user
-                        Console.WriteLine(org_filepath);
+                        Console.WriteLine(this._Org_Filepath);
                         Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                     }
 
                     finally
                     {
+                        // Add copied and converted spreadsheets file info to index of files
+                        File_List.Add(new Spreadsheet(docCollection_subdir, this.Org_Filepath, this.Org_Filename, this._Org_Extension, copy_filepath, copy_filename, copy_extension, conv_filepath, conv_filename, conv_extension, Convert_Success));
                         // Output result in open CSV file
-                        var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{conv_filepath};{conv_filename};{conv_extension};{Convert_Success};{error_message}");
+                        var newLine2 = string.Format($"{this.Org_Filepath};{this.Org_Filename};{this._Org_Extension};{conv_filepath};{conv_filename};{conv_extension};{Convert_Success};{error_message}");
                         csv.AppendLine(newLine2);
                     }
                 }
@@ -207,31 +200,28 @@ namespace CLISC
             else
             {
                 // Loop spreadsheets based on enumeration
-                foreach (var file in org_enumeration.ToList()) // Is .ToList() necessary?
+                foreach (var file in File_List)
                 {
                     // Create instance for finding file information
                     FileInfo file_info = new FileInfo(file);
 
                     // Create data types for fileinfo
-                    org_extension = file_info.Extension;
-                    org_filename = file_info.Name;
-                    org_filepath = file_info.FullName;
-                    conv_extension = ".xlsx";
-                    conv_filename = Path.GetFileNameWithoutExtension(file_info.Name) + conv_extension;
-                    conv_filepath = docCollection + "\\" + conv_filename;
+                    string conv_extension = ".xlsx";
+                    string conv_filename = Path.GetFileNameWithoutExtension(file_info.Name) + conv_extension;
+                    string conv_filepath = docCollection + "\\" + conv_filename;
 
                     // Try to convert spreadsheet
                     try
                     {
                         // Change conversion method based on file extension
-                        switch (org_extension)
+                        switch (this._Org_Extension)
                         {
                             // OpenDocument file formats
                             case ".fods":
                             case ".ods":
                             case ".ots":
                                 // Conversion code
-                                Convert_Success = Convert_OpenDocument(org_filepath, conv_filepath, docCollection);
+                                Convert_Success = Convert_OpenDocument(this._Org_Filepath, conv_filepath, docCollection);
                                 break;
 
                             // Legacy Microsoft Excel file formats
@@ -244,7 +234,7 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
 
@@ -259,7 +249,7 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
 
@@ -273,7 +263,7 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
 
@@ -286,7 +276,7 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
 
@@ -294,7 +284,7 @@ namespace CLISC
                             case ".xltm":
                             case ".xltx":
                                 // Conversion code
-                                Convert_Success = Convert_OOXML_Transitional(org_filepath, conv_filepath);
+                                Convert_Success = Convert_OOXML_Transitional(this._Org_Filepath, conv_filepath);
                                 break;
 
                             case ".xlsx":
@@ -305,7 +295,7 @@ namespace CLISC
                                 conv_filename = "";
                                 conv_filepath = "";
                                 // Inform user
-                                Console.WriteLine(org_filepath);
+                                Console.WriteLine(this._Org_Filepath);
                                 Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                                 break;
                         }
@@ -319,7 +309,7 @@ namespace CLISC
                         Convert_Success = false;
                         error_message = error_messages[4];
                         // Inform user
-                        Console.WriteLine(org_filepath);
+                        Console.WriteLine(this._Org_Filepath);
                         Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                     }
                     // If LibreOffice is not installed
@@ -327,23 +317,25 @@ namespace CLISC
                     {
                         numFAILED++;
                         Convert_Success = false;
-                        string error_message = error_messages[3];
+                        error_message = error_messages[3];
                         // Inform user
-                        Console.WriteLine(org_filepath);
+                        Console.WriteLine(this._Org_Filepath);
                         Console.WriteLine($"--> Conversion {Convert_Success} - {error_message}");
                     }
 
                     finally
                     {
+                        // Add converted spreadsheets file info to index of files
+                        File_List.Add(new Spreadsheet("", this.Org_Filepath, this.Org_Filename, this._Org_Extension, "", "", "", conv_filepath, conv_filename, conv_extension, Convert_Success));
                         // Output result in open CSV file
-                        var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{conv_filepath};{conv_filename};{conv_extension};{Convert_Success};{error_message}");
+                        var newLine2 = string.Format($"{this._Org_Filepath};{this._Org_Filename};{this._Org_Extension};{conv_filepath};{conv_filename};{conv_extension};{Convert_Success};{error_message}");
                         csv.AppendLine(newLine2);
                     }
                 }
             }
 
             // Close CSV file to log results
-            string CSV_filepath = results_directory + "\\2_Convert_Results.csv";
+            string CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
@@ -355,9 +347,7 @@ namespace CLISC
             Console.WriteLine("Conversion finished");
             Console.WriteLine("---");
 
-            // Create enumeration of docCollection
-            List<string> docCollection_enumeration = Enumerate_docCollection(argument0, docCollection);
-            return docCollection_enumeration;
+            return File_List;
         }
     }
 }

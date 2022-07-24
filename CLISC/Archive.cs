@@ -9,7 +9,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive(string argument0, string argument1, string argument2, string results_directory, List<string> docCollection_enumeration)
+        public void Archive(string argument0, string argument1, string argument2, string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("ARCHIVE");
             Console.WriteLine("---");
@@ -20,20 +20,13 @@ namespace CLISC
             csv.AppendLine(newLine0);
 
             // Create enumeration of files in each folder of docCollection_enumeration
-            foreach (var folder in docCollection_enumeration)
+            foreach (var folder in File_List)
             {
                 var subdir_enumeration = new List<string>();
                 subdir_enumeration = (List<string>)Directory.EnumerateFiles(folder, "*", SearchOption.TopDirectoryOnly)
                     .ToList();
                 foreach (var file in subdir_enumeration)
                 {
-                    // Create instance for finding file information
-                    FileInfo file_info = new FileInfo(file);
-
-                    // Combine data types to original spreadsheets
-                    conv_extension = file_info.Extension;
-                    conv_filename = file_info.Name;
-                    conv_filepath = file_info.FullName;
 
                     // Rename and move converted spreadsheets
 
@@ -41,7 +34,7 @@ namespace CLISC
 
 
                     // Validate file format standards
-                    switch (file_info.Extension)
+                    switch (this._Conv_Extension)
                     {
 
                         // Validate OpenDocument file formats
@@ -78,11 +71,11 @@ namespace CLISC
             }
 
             // Close CSV file to log results
-            string CSV_filepath = results_directory + "\\4_Archive_Results.csv";
+            string CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Zip the output directory
-            ZIP_Directory(results_directory);
+            ZIP_Directory(Results_Directory);
 
             // Inform user of results
             Console.WriteLine("---");

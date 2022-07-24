@@ -17,9 +17,8 @@ namespace CLISC
         string compare_message = "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4";
 
         // Compare spreadsheets
-        public void Compare(string argument0, string argument1, string results_directory, List<string> docCollection_enumeration)
+        public void Compare(string argument0, string argument1, string Results_Directory, List<fileIndex> fileIndex)
         {
-
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
 
@@ -56,7 +55,7 @@ namespace CLISC
                                 Console.WriteLine($"--> Comparing to: {conv_filepath}");
 
                                 // Compare workbooks using external app Beyond Compare 4
-                                Compare_Workbook(argument0, results_directory, folder, org_filepath, conv_filepath);
+                                Compare_Workbook(argument0, Results_Directory, folder, org_filepath, conv_filepath);
 
                                 // Calculate filesize of converted spreadsheet
                                 int conv_filesize_kb = Calculate_Filesize(conv_filepath);
@@ -94,7 +93,7 @@ namespace CLISC
             else
             {
                 // Identify docCollection path
-                string docCollection = results_directory + "\\docCollection";
+                string docCollection = Results_Directory + "\\docCollection";
 
                 // Loop through docCollection enumeration
                 foreach (var file in docCollection_enumeration)
@@ -113,7 +112,7 @@ namespace CLISC
                     try
                     {
                         // Compare workbooks using external app Beyond Compare 4
-                        Compare_Workbook(argument0, results_directory, docCollection, org_filepath, conv_filepath);
+                        Compare_Workbook(argument0, Results_Directory, docCollection, org_filepath, conv_filepath);
 
                         // Calculate filesize of converted spreadsheet
                         int conv_filesize_kb = Calculate_Filesize(conv_filepath);
@@ -141,7 +140,7 @@ namespace CLISC
             }
 
             // Close CSV file to log results
-            string CSV_filepath = results_directory + "\\3_Compare_Results.csv";
+            string CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
