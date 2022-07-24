@@ -39,7 +39,7 @@ namespace CLISC
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
                 numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
-                numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail);
+                numXLSX_Transitional = numXLSX - (numXLSX_Strict + numCONFORM_fail);
                 numXLTM = count.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
 
@@ -60,7 +60,7 @@ namespace CLISC
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
                 numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
-                numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail);
+                numXLSX_Transitional = numXLSX - (numXLSX_Strict + numCONFORM_fail);
                 numXLTM = count.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
 
@@ -91,9 +91,9 @@ namespace CLISC
                 Console.WriteLine($"{numXLSX} {FileFormats.Extension[8]} - {FileFormats.Description[8]}");
                 Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {FileFormats.Extension[8]} have Office Open XML Transitional conformance");
                 Console.WriteLine($"--> {numXLSX_Strict} of {numXLSX} {FileFormats.Extension[8]} have Office Open XML Strict conformance");
-                if (conformance_count_fail > 0) 
+                if (numCONFORM_fail > 0) 
                 {
-                        Console.WriteLine($"--> {conformance_count_fail} of {numXLSX} {FileFormats.Extension[8]} could not be counted because they are password protected or corrupt");
+                        Console.WriteLine($"--> {numCONFORM_fail} of {numXLSX} {FileFormats.Extension[8]} could not be identified because they are password protected or corrupt");
                 }
                 Console.WriteLine($"{numXLT} {FileFormats.Extension[9]} - {FileFormats.Description[9]}");
                 Console.WriteLine($"{numXLTM} {FileFormats.Extension[10]} - {FileFormats.Description[10]}");
@@ -118,12 +118,18 @@ namespace CLISC
                 csv.AppendLine(newLine5);
                 var newLine6 = string.Format($"{numXLS};{FileFormats.Extension[5]};{FileFormats.Description[5]}");
                 csv.AppendLine(newLine6);
-                var newLine7 = string.Format($"{numXLSB};{FileFormats.Extension[6]};{FileFormats.Description[7]}");
+                var newLine7 = string.Format($"{numXLSB};{FileFormats.Extension[6]};{FileFormats.Description[6]}");
                 csv.AppendLine(newLine7);
                 var newLine8 = string.Format($"{numXLSM};{FileFormats.Extension[7]};{FileFormats.Description[7]}");
                 csv.AppendLine(newLine8);
                 var newLine9 = string.Format($"{numXLSX};{FileFormats.Extension[8]};{FileFormats.Description[8]}");
                 csv.AppendLine(newLine9);
+                var newLine13 = string.Format($"{numXLSX_Transitional};.xlsx Transitional;Office Open XML Spreadsheet Transitional conformance");
+                csv.AppendLine(newLine13);
+                var newLine14 = string.Format($"{numXLSX_Strict};.xlsx Strict;Office Open XML Spreadsheet Strict conformance");
+                csv.AppendLine(newLine14);
+                var newLine15 = string.Format($"{numCONFORM_fail};.xlsx unknown;Conformance could not be identified");
+                csv.AppendLine(newLine15);
                 var newLine10 = string.Format($"{numXLT};{FileFormats.Extension[9]};{FileFormats.Description[9]}");
                 csv.AppendLine(newLine10);
                 var newLine11 = string.Format($"{numXLTM};{FileFormats.Extension[10]};{FileFormats.Description[10]}");

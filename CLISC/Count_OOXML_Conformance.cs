@@ -13,7 +13,7 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public int conformance_count_fail = 0;
+        public int numCONFORM_fail = 0;
 
         // Count XLSX Strict conformance
         public int Count_XLSX_Strict(string argument1, string argument3)
@@ -45,11 +45,11 @@ namespace CLISC
             // Catch exceptions, when spreadsheet cannot be opened due to password protection or corruption
             catch (InvalidDataException)
             {
-                conformance_count_fail++;
+                numCONFORM_fail++;
             }
             catch (OpenXmlPackageException)
             {
-                conformance_count_fail++;
+                numCONFORM_fail++;
             }
 
             // Return number of Strict conformant xlsx files

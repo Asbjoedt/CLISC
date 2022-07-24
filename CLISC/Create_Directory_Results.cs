@@ -11,7 +11,7 @@ namespace CLISC
         // Generate date to use in name of new directory
         public static string GetTimestamp(DateTime value)
         {
-            return value.ToString("yyyy.MM.dd");
+            return value.ToString("yyyyMMdd");
         }
         public string dateStamp = GetTimestamp(DateTime.Now);
         
@@ -23,13 +23,13 @@ namespace CLISC
             string Results_Directory = "";
             int results_directory_number = 1;
             Results_Directory = argument2 + "\\CLISC_" + dateStamp;
-            while (Directory.Exists(@Results_Directory))
+            while (Directory.Exists(Results_Directory))
             {
                 results_directory_number++;
-                Results_Directory = argument2 + "\\CLISC_" + dateStamp + "_v" + results_directory_number;
+                Results_Directory = argument2 + "\\CLISC_" + dateStamp + "_" + results_directory_number;
             }
             // Create results directory
-            DirectoryInfo OutputDir = Directory.CreateDirectory(@Results_Directory);
+            DirectoryInfo OutputDir = Directory.CreateDirectory(Results_Directory);
 
             return Results_Directory;
         }

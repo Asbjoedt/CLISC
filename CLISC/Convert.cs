@@ -47,18 +47,17 @@ namespace CLISC
                     // Create new subdirectory for the spreadsheet
                     int subdir_number = 1;
                     string docCollection_subdir = docCollection + "\\" + subdir_number;
-                    do
+                    while (Directory.Exists(docCollection_subdir))
                     {
                         subdir_number++;
-                    } while (Directory.Exists(docCollection_subdir));
-                    docCollection_subdir = docCollection + "\\" + subdir_number;
+                        docCollection_subdir = docCollection + "\\" + subdir_number;
+                    }
                     DirectoryInfo Output_Subdir = Directory.CreateDirectory(docCollection_subdir);
 
                     // Find file information
-                    FileInfo file_info = new FileInfo(entry.Org_Filepath);
-                    string org_extension = file_info.Extension;
-                    string org_filename = file_info.Name;
-                    string org_filepath = file_info.FullName;
+                    string org_extension = entry.Org_Extension;
+                    string org_filename = entry.Org_Filename;
+                    string org_filepath = entry.Org_Filepath;
 
                     // Create data types for copied original spreadsheets
                     string copy_extension = org_extension;
@@ -70,8 +69,8 @@ namespace CLISC
 
                     // Create data types for converted spreadsheets
                     string conv_extension = ".xlsx";
-                    string conv_filename = "1" + conv_extension;
-                    string conv_filepath = docCollection_subdir + "\\" + conv_filename;
+                    string conv_filename = "1.xlsx";
+                    string conv_filepath = docCollection_subdir + "\\1.xlsx";
 
                     // Convert spreadsheet
                     try
@@ -193,7 +192,7 @@ namespace CLISC
                     finally
                     {
                         // Add copied and converted spreadsheets file info to index of files
-                        File_List.Add(new fileIndex{ File_Folder = docCollection_subdir, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = copy_filepath, Copy_Filename = copy_filename, Copy_Extension = copy_extension, Conv_Filepath = conv_filepath, Conv_Filename = conv_filename, Conv_Extension = conv_extension, Convert_Success = convert_success });
+                        File_List.Add(new fileIndex{File_Folder = docCollection_subdir, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = copy_filepath, Copy_Filename = copy_filename, Copy_Extension = copy_extension, Conv_Filepath = conv_filepath, Conv_Filename = conv_filename, Conv_Extension = conv_extension, Convert_Success = convert_success});
                         // Output result in open CSV file
                         var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{conv_filepath};{conv_filename};{conv_extension};{convert_success};{error_message}");
                         csv.AppendLine(newLine2);
@@ -207,15 +206,12 @@ namespace CLISC
                 // Loop spreadsheets based on enumeration
                 foreach (fileIndex entry in Org_File_List)
                 {
-                    // Create instance for finding file information
-                    FileInfo file_info = new FileInfo(entry.Org_Filepath);
-
-                    // Create data types for fileinfo
-                    string org_extension = file_info.Extension;
-                    string org_filename = file_info.Name;
-                    string org_filepath = file_info.FullName;
+                    // Find file information
+                    string org_extension = entry.Org_Extension;
+                    string org_filename = entry.Org_Filename;
+                    string org_filepath = entry.Org_Filepath;
                     string conv_extension = ".xlsx";
-                    string conv_filename = Path.GetFileNameWithoutExtension(file_info.Name) + conv_extension;
+                    string conv_filename = Path.GetFileNameWithoutExtension(entry.Org_Filename) + conv_extension;
                     string conv_filepath = docCollection + "\\" + conv_filename;
 
                     // Try to convert spreadsheet
@@ -333,7 +329,7 @@ namespace CLISC
 
                     finally
                     {
-                        File_List.Add(new fileIndex() { File_Folder = docCollection, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = "", Copy_Filename = "", Copy_Extension = "", Conv_Filepath = conv_filepath, Conv_Filename = conv_filename, Conv_Extension = conv_extension, Convert_Success = convert_success });
+                        File_List.Add(new fileIndex{File_Folder = docCollection, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = "", Copy_Filename = "", Copy_Extension = "", Conv_Filepath = conv_filepath, Conv_Filename = conv_filename, Conv_Extension = conv_extension, Convert_Success = convert_success});
                         // Output result in open CSV file
                         var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{conv_filepath};{conv_filename};{conv_extension};{convert_success};{error_message}");
                         csv.AppendLine(newLine2);
