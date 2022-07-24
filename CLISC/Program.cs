@@ -40,12 +40,12 @@ namespace CLISC
                             break;
 
                         case "Count&Convert":
-                            results_directory = process.Count(argument1, argument2, argument3);
+                            Results_Directory = process.Count(argument1, argument2, argument3);
                             process.Convert(argument0, argument1, argument3, results_directory);
                             break;
 
                         case "Count&Convert&Compare":
-                            results_directory = process.Count(argument1, argument2, argument3);
+                            Results_Directory = process.Count(argument1, argument2, argument3);
                             docCollection_enumeration = process.Convert(argument0, argument1, argument3, results_directory);
                             process.Compare(argument0, argument1, results_directory, docCollection_enumeration);
                             break;

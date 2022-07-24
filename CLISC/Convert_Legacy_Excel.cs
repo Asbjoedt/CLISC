@@ -12,25 +12,25 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public bool Convert_Legacy_Excel_NPOI(string org_filepath, string conv_filepath)
+        public bool Convert_Legacy_Excel_NPOI(string Org_Filepath, string Conv_Filepath)
         {
             // Read the bytes of the original spreadsheet
-            FileStream streamed_spreadsheet = new FileStream(org_filepath, FileMode.Open, FileAccess.Read, FileShare.None);
+            FileStream streamed_spreadsheet = new FileStream(Org_Filepath, FileMode.Open, FileAccess.Read, FileShare.None);
             
             // Write the bytes of the converted spreadsheet
             byte[] received_spreadsheet = NPOI(streamed_spreadsheet);
             MemoryStream spreadsheet = new MemoryStream(received_spreadsheet);
-            FileStream save_spreadsheet = new FileStream(conv_filepath, FileMode.Create, FileAccess.Write);
+            FileStream save_spreadsheet = new FileStream(Conv_Filepath, FileMode.Create, FileAccess.Write);
             spreadsheet.WriteTo(save_spreadsheet);
             spreadsheet.Close();
 
-            convert_success = true;
+            Convert_Success = true;
 
             // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
+            Console.WriteLine(Org_Filepath);
+            Console.WriteLine($"--> Conversion {Convert_Success}");
 
-            return convert_success;
+            return Convert_Success;
         }
 
         // All the methods below are copied from

@@ -9,14 +9,12 @@ using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
         // Convert to Office Open XML XLSX Transitional conformance
-        public bool Convert_OOXML_Transitional(string org_filepath, string conv_filepath)
+        public bool Convert_OOXML_Transitional(string Org_Filepath, string Conv_Filepath)
         {
-            byte[] byteArray = File.ReadAllBytes(org_filepath);
+            byte[] byteArray = File.ReadAllBytes(Org_Filepath);
             using (MemoryStream stream = new MemoryStream())
             {
                 stream.Write(byteArray, 0, (int)byteArray.Length);
@@ -24,16 +22,16 @@ namespace CLISC
                 {
                     spreadsheetDoc.ChangeDocumentType(DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
                 }
-                File.WriteAllBytes(conv_filepath, stream.ToArray());
+                File.WriteAllBytes(Conv_Filepath, stream.ToArray());
             }
 
-            convert_success = true;
+            Convert_Success = true;
 
             // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
+            Console.WriteLine(Org_Filepath);
+            Console.WriteLine($"--> Conversion {Convert_Success}");
 
-            return convert_success;
+            return Convert_Success;
         }
 
         // Convert to Office Open XML XLSX Strict conformance - NOT WORKING - IT OUTPUTS TRANSITIONAL
@@ -52,12 +50,10 @@ namespace CLISC
 
             // Inform user
             Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
+            Console.WriteLine($"--> Conversion {Convert_Success}");
 
-            convert_success = true;
-            return convert_success;
+            Convert_Success = true;
+            return Convert_Success;
         }
-
     }
-
 }

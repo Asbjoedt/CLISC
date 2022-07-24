@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
         // Enumerate docCollection in two different ways
         public List<string> Enumerate_docCollection(string argument0, string docCollection)
         {
-
             // For archiving, return enumeration of folders
             if (argument0 == "Count&Convert&Compare&Archive")
             {

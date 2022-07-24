@@ -10,10 +10,8 @@ using System.ComponentModel;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
         // Comparison data types
         public int numTOTAL_diff = 0;
         string compare_message = "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4";
@@ -46,10 +44,10 @@ namespace CLISC
                     {
                         foreach (var file in conv_file)
                         {
-                            conv_filepath = file.ToString();
+                            Conv_Filepath = file.ToString();
 
                             // Compare workbook differences
-                            if (File.Exists(conv_filepath))
+                            if (File.Exists(Conv_Filepath))
                             {
                                 numTOTAL_conv++;
 

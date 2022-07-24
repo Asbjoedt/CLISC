@@ -10,10 +10,8 @@ using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
         public string Manipulate_Dataquality()
         {
             string dataquality_message = "";
@@ -33,7 +31,5 @@ namespace CLISC
 
             return dataquality_message;
         }
-
     }
-
 }

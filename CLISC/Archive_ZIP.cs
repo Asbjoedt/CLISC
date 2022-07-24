@@ -8,14 +8,11 @@ using System.IO.Compression;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-        
         // Zip the archivable directory
-        public void ZIP_Directory(string results_directory)
+        public void ZIP_Directory(string Results_Directory)
         {
-
             // Zip the folder
             string zip_path = results_directory + ".zip";
             ZipFile.CreateFromDirectory(results_directory, zip_path);
@@ -33,11 +30,8 @@ namespace CLISC
                 string item = folder.ToString();
                 Directory.Delete(item);
             }
-            Directory.Delete(results_directory + "\\docCollection");
-            Directory.Delete(results_directory);
-
+            Directory.Delete(Results_Directory + "\\docCollection");
+            Directory.Delete(Results_Directory);
         }
-
     }
-
 }

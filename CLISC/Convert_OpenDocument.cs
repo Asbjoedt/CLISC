@@ -9,10 +9,8 @@ using System.ComponentModel;
 
 namespace CLISC
 {
-    
     public partial class Spreadsheet
     {
-
         // Convert spreadsheets in OpenDocument file formats
         public bool Convert_OpenDocument(string argument0, string org_filepath, string docCollection_subdir)
         {
@@ -46,13 +44,13 @@ namespace CLISC
 
             }
 
-            convert_success = true;
+            Convert_Success = true;
 
             // Inform user
             Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
+            Console.WriteLine($"--> Conversion {Convert_Success}");
 
-            return convert_success;
+            return Convert_Success;
         }
 
     }
