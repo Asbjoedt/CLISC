@@ -23,6 +23,20 @@ namespace CLISC
             app.WaitForExit();
             app.Close();
 
+            // Because of previous bug, rename converted spreadsheet according to archiving requirements
+            if (argument0 == "Count&Convert&Compare&Archive")
+            {
+                string[] filename = Directory.GetFiles(file_folder, "*.xlsx");
+                string old_filename = filename[0];
+                string new_filename = file_folder + "\\1.xlsx";
+                File.Move(old_filename, new_filename);
+            }
+
+            // Ordinary use
+            else
+            {
+                // Do nothing
+            }
 
 
             bool convert_success = true;

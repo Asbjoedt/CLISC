@@ -61,13 +61,13 @@ namespace CLISC
                 // Inform user of invalid recurse argument
                 else
                 {
-                    Console.WriteLine("Invalid recurse argument. It must be one of these Resurse=Yes or Recurse=No");
+                    Console.WriteLine("Invalid recurse argument. It must be one of these: Resurse=Yes or Recurse=No");
                 }
             }
             // Inform user of argument errors
             catch (IndexOutOfRangeException)
             {
-                Console.WriteLine("The number of arguments are invalid. Consult GitHub documentation");
+                Console.WriteLine("The number of arguments are invalid. Consult documentation at: https://github.com/Asbjoedt/CLISC");
             }
             // Inform user of end of CLISC
             finally

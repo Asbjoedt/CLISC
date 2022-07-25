@@ -189,6 +189,20 @@ namespace CLISC
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                     }
 
+                    // NPOI encryption
+                    catch(NPOI.Util.RecordFormatException)
+                    {
+                        numFAILED++;
+                        convert_success = false;
+                        error_message = error_messages[4];
+                        conv_extension = "";
+                        conv_filename = "";
+                        conv_filepath = "";
+                        // Inform user
+                        Console.WriteLine(org_filepath);
+                        Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                    }
+
                     finally
                     {
                         // Add copied and converted spreadsheets file info to index of files
@@ -322,6 +336,20 @@ namespace CLISC
                         numFAILED++;
                         convert_success = false;
                         error_message = error_messages[3];
+                        // Inform user
+                        Console.WriteLine(org_filepath);
+                        Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                    }
+
+                    // NPOI encryption
+                    catch (NPOI.Util.RecordFormatException)
+                    {
+                        numFAILED++;
+                        convert_success = false;
+                        error_message = error_messages[4];
+                        conv_extension = "";
+                        conv_filename = "";
+                        conv_filepath = "";
                         // Inform user
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");

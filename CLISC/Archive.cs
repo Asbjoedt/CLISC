@@ -29,12 +29,10 @@ namespace CLISC
                 string conv_extension = entry.Conv_Extension;
                 string copy_extension = entry.Copy_Extension;
 
-                // Rename and move converted spreadsheets
-
-                // Copy original spreadsheets
-
-
                 // Validate file format standards
+                Console.WriteLine("--> VALIDATION");
+                Console.WriteLine("---");
+
                 switch (conv_extension)
                 {
 
@@ -57,6 +55,10 @@ namespace CLISC
                         Console.WriteLine("--> The file format is not supported in validation routine");
                         break;
                 }
+                // Inform user of validation results
+                Console.WriteLine($"{valid_files} spreadsheets were valid");
+                Console.WriteLine($"{invalid_files} spreadsheets were invalid");
+                Console.WriteLine("--> VALIDATION finished");
 
                 // Calculate checksums
                 string copy_checksum = Calculate_MD5(org_filepath);
