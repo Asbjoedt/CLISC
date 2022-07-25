@@ -15,13 +15,14 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public string validation_message = "";
         public int valid_files = 0;
         public int invalid_files = 0;
 
         // Validate Open Office XML file formats
         public string Validate_OOXML(string filepath)
         {
+            string validation_message = "";
+
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 // Validate

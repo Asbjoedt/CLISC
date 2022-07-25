@@ -12,7 +12,7 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public string Manipulate_Dataquality(string conv_filepath)
+        public string Manipulate_DataQuality(string conv_filepath)
         {
             string dataquality_message = "";
 
@@ -23,9 +23,6 @@ namespace CLISC
 
             //data_parts = spreadsheet.DataParts.ToList;
             //spreadsheet.Close();
-
-            
-
 
 
             return dataquality_message;
