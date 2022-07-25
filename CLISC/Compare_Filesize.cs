@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
         // Calculate filesize
         public int Calculate_Filesize(string filepath)
         {
@@ -19,9 +17,6 @@ namespace CLISC
                 int filesize_kb = filesize / 1024;
                 return filesize_kb;
             }
-
         }
-
     }
-
 }

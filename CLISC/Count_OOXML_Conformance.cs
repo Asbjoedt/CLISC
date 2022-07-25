@@ -11,160 +11,49 @@ using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
-        public int conformance_count_fail = 0;
-
-        // Count XLSX Transtional conformance
-        public int Count_XLSX_Transitional(string argument1, string argument3)
-        {
-
-            var xlsx_enumeration = new List<string>();
-
-            // Recurse enumeration of original spreadsheets from input directory
-            if (argument3 == "Recurse=Yes")
-            {
-                xlsx_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.xlsx", SearchOption.AllDirectories)
-                    .ToList();
-
-                try
-                {
-                    foreach (var file in xlsx_enumeration)
-                    {
-                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(file, false);
-                        bool? strict = spreadsheet.StrictRelationshipFound;
-                        spreadsheet.Close();
-
-                        if (strict != true)
-                        {
-                            numXLSX_Transitional++;
-                        }
-                    }
-                }
-
-                catch (InvalidDataException)
-                {
-                    conformance_count_fail++;
-                }
-                catch (OpenXmlPackageException)
-                {
-                    conformance_count_fail++;
-                }
-
-                return numXLSX_Transitional;
-            }
-
-            else
-            {
-                xlsx_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.xlsx", SearchOption.TopDirectoryOnly)
-                    .ToList();
-
-                try
-                {
-                    foreach (var file in xlsx_enumeration)
-                    {
-                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(file, false);
-                        bool? strict = spreadsheet.StrictRelationshipFound;
-                        spreadsheet.Close();
-
-                        if (strict != true)
-                        {
-                            numXLSX_Transitional++;
-                        }
-                    }
-                }
-
-                catch (InvalidDataException)
-                {
-                    conformance_count_fail++;
-                }
-                catch(OpenXmlPackageException)
-                {
-                    conformance_count_fail++;
-                }
-
-                return numXLSX_Transitional;
-
-            }
-
-        }
+        public int numCONFORM_fail = 0;
 
         // Count XLSX Strict conformance
         public int Count_XLSX_Strict(string argument1, string argument3)
         {
-
-            var xlsx_enumeration = new List<string>();
-
-            // Recurse enumeration of original spreadsheets from input directory
+            DirectoryInfo count = new DirectoryInfo(argument1);
+            string[] xlsx_files;
             if (argument3 == "Recurse=Yes")
             {
-                xlsx_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.xlsx", SearchOption.AllDirectories)
-                    .ToList();
-
-                try
-                {
-                    foreach (var file in xlsx_enumeration)
-                    {
-                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(file, false);
-                        bool strict = spreadsheet.StrictRelationshipFound;
-                        spreadsheet.Close();
-
-                        if (strict == true)
-                        {
-                            numXLSX_Strict++;
-                        }
-                    }
-                }
-
-                catch (InvalidDataException)
-                {
-                    conformance_count_fail++;
-                }
-                catch (OpenXmlPackageException)
-                {
-                    conformance_count_fail++;
-                }
-
-                return numXLSX_Strict;
+                xlsx_files = Directory.GetFiles(argument1,"*.xlsx", SearchOption.AllDirectories);
             }
-
             else
             {
-                xlsx_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.xlsx", SearchOption.TopDirectoryOnly)
-                    .ToList();
-
-                try
+                xlsx_files = Directory.GetFiles(argument1, "*.xlsx", SearchOption.TopDirectoryOnly);
+            }
+            try
+            {
+                foreach (var xlsx in xlsx_files)
                 {
-                    foreach (var file in xlsx_enumeration)
+                    SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
+                    bool? strict = spreadsheet.StrictRelationshipFound;
+                    spreadsheet.Close();
+                    if (strict == true)
                     {
-                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(file, false);
-                        bool strict = spreadsheet.StrictRelationshipFound;
-                        spreadsheet.Close();
-
-                        if (strict == true)
-                        {
-                            numXLSX_Strict++;
-                        }
+                        numXLSX_Strict++;
                     }
                 }
-
-                catch (InvalidDataException)
-                {
-                    conformance_count_fail++;
-                }
-                catch (OpenXmlPackageException)
-                {
-                    conformance_count_fail++;
-                }
-
-                return numXLSX_Strict;
-
             }
 
+            // Catch exceptions, when spreadsheet cannot be opened due to password protection or corruption
+            catch (InvalidDataException)
+            {
+                numCONFORM_fail++;
+            }
+            catch (OpenXmlPackageException)
+            {
+                numCONFORM_fail++;
+            }
+
+            // Return number of Strict conformant xlsx files
+            return numXLSX_Strict;
         }
-
     }
-
 }

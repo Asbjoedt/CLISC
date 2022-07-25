@@ -9,24 +9,21 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        
-        // Public variables
-        public int numFODS, numODS, numOTS, numXLA, numXLS, numXLT, numXLAM, numXLSB, numXLSM, numXLSX, numXLSX_Strict, numXLSX_Transitional, numXLTM, numXLTX, numTOTAL;
-
-        // Arrays
-        public string[] file_format = { ".fods", ".ods", ".ots", ".xla", ".xls", ".xlt", ".xlam", ".xlsb", ".xlsm", ".xlsx", ".xltm", ".xltx" };
-
-        public string[] file_format_description = { "OpenDocument Flat XML Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet Add-In", "Legacy Microsoft Excel Spreadsheet", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Add-In", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet (Transitional and Strict conformance)", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
+        // Public integers
+        public int numTOTAL, numXLSX_Strict;
 
         // Count spreadsheets
         public string Count(string argument1, string argument2, string argument3)
         {
-
             Console.WriteLine("COUNT");
             Console.WriteLine("---");
 
+            // Integers
+            int numFODS, numODS, numOTS, numXLA, numXLAM, numXLS, numXLSB, numXLSM, numXLSX, numXLSX_Transitional, numXLT, numXLTM, numXLTX;
+
             //Object reference
             DirectoryInfo count = new DirectoryInfo(argument1);
+            FileFormats info = new FileFormats();
 
             // Count spreadsheets recursively
             if (argument3 == "Recurse=Yes")
@@ -41,9 +38,8 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3); // Inaccurate method
                 numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
-                // numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail); // Alternative method
+                numXLSX_Transitional = numXLSX - (numXLSX_Strict + numCONFORM_fail);
                 numXLTM = count.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
 
@@ -63,9 +59,8 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
-                numXLSX_Transitional = Count_XLSX_Transitional(argument1, argument3); // Inaccurate method
                 numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
-                // numXLSX_Transitional = numXLSX - (numXLSX_Strict + conformance_count_fail); // Alternative method
+                numXLSX_Transitional = numXLSX - (numXLSX_Strict + numCONFORM_fail);
                 numXLTM = count.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
 
@@ -80,63 +75,68 @@ namespace CLISC
                 Console.WriteLine("---");
 
                 throw new Exception();
-               
             }
             else
             {
                 // Show count to user
                 Console.WriteLine("# Extension - Name");
-                Console.WriteLine($"{numFODS} {file_format[0]} - {file_format_description[0]}");
-                Console.WriteLine($"{numODS} {file_format[1]} - {file_format_description[1]}");
-                Console.WriteLine($"{numOTS} {file_format[2]} - {file_format_description[2]}");
-                Console.WriteLine($"{numXLA} {file_format[3]} - {file_format_description[3]}");
-                Console.WriteLine($"{numXLS} {file_format[4]} - {file_format_description[4]}");
-                Console.WriteLine($"{numXLT} {file_format[5]} - {file_format_description[5]}");
-                Console.WriteLine($"{numXLAM} {file_format[6]} - {file_format_description[6]}");
-                Console.WriteLine($"{numXLSB} {file_format[7]} - {file_format_description[7]}");
-                Console.WriteLine($"{numXLSM} {file_format[8]} - {file_format_description[8]}");
-                Console.WriteLine($"{numXLSX} {file_format[9]} - {file_format_description[9]}");
-                Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {file_format[9]} have Office Open XML Transitional conformance");
-                Console.WriteLine($"--> {numXLSX_Strict} of {numXLSX} {file_format[9]} have Office Open XML Strict conformance");
-                if (conformance_count_fail > 0) 
+                Console.WriteLine($"{numFODS} {FileFormats.Extension[0]} - {FileFormats.Description[0]}");
+                Console.WriteLine($"{numODS} {FileFormats.Extension[1]} - {FileFormats.Description[1]}");
+                Console.WriteLine($"{numOTS} {FileFormats.Extension[2]} - {FileFormats.Description[2]}");
+                Console.WriteLine($"{numXLA} {FileFormats.Extension[3]} - {FileFormats.Description[3]}");
+                Console.WriteLine($"{numXLAM} {FileFormats.Extension[4]} - {FileFormats.Description[4]}");
+                Console.WriteLine($"{numXLS} {FileFormats.Extension[5]} - {FileFormats.Description[5]}");
+                Console.WriteLine($"{numXLSB} {FileFormats.Extension[6]} - {FileFormats.Description[6]}");
+                Console.WriteLine($"{numXLSM} {FileFormats.Extension[7]} - {FileFormats.Description[7]}");
+                Console.WriteLine($"{numXLSX} {FileFormats.Extension[8]} - {FileFormats.Description[8]}");
+                Console.WriteLine($"--> {numXLSX_Transitional} of {numXLSX} {FileFormats.Extension[8]} have Office Open XML Transitional conformance");
+                Console.WriteLine($"--> {numXLSX_Strict} of {numXLSX} {FileFormats.Extension[8]} have Office Open XML Strict conformance");
+                if (numCONFORM_fail > 0) 
                 {
-                        Console.WriteLine($"--> {conformance_count_fail} of {numXLSX} {file_format[9]} could not be counted because they are password protected or corrupt");
+                        Console.WriteLine($"--> {numCONFORM_fail} of {numXLSX} {FileFormats.Extension[8]} could not be identified because they are password protected or corrupt");
                 }
-                Console.WriteLine($"{numXLTM} {file_format[10]} - {file_format_description[10]}");
-                Console.WriteLine($"{numXLTX} {file_format[11]} - {file_format_description[11]}");
+                Console.WriteLine($"{numXLT} {FileFormats.Extension[9]} - {FileFormats.Description[9]}");
+                Console.WriteLine($"{numXLTM} {FileFormats.Extension[10]} - {FileFormats.Description[10]}");
+                Console.WriteLine($"{numXLTX} {FileFormats.Extension[11]} - {FileFormats.Description[11]}");
 
                 // Create new directory to output results in CSV
-                results_directory = Create_Directory_Results(argument1, argument2);
+                string Results_Directory = Create_Directory_Results(argument1, argument2);
 
                 // Output results in CSV
                 var csv = new StringBuilder();
                 var newLine0 = string.Format("#;Extension;Name");
                 csv.AppendLine(newLine0);
-                var newLine1 = string.Format($"{numFODS};{file_format[0]};{file_format_description[0]}");
+                var newLine1 = string.Format($"{numFODS};{FileFormats.Extension[0]};{FileFormats.Description[0]}");
                 csv.AppendLine(newLine1);
-                var newLine2 = string.Format($"{numODS};{file_format[1]};{file_format_description[1]}");
+                var newLine2 = string.Format($"{numODS};{FileFormats.Extension[1]};{FileFormats.Description[1]}");
                 csv.AppendLine(newLine2);
-                var newLine3 = string.Format($"{numOTS};{file_format[2]};{file_format_description[2]}");
+                var newLine3 = string.Format($"{numOTS};{FileFormats.Extension[2]};{FileFormats.Description[2]}");
                 csv.AppendLine(newLine3);
-                var newLine4 = string.Format($"{numXLA};{file_format[3]};{file_format_description[3]}");
+                var newLine4 = string.Format($"{numXLA};{FileFormats.Extension[3]};{FileFormats.Description[3]}");
                 csv.AppendLine(newLine4);
-                var newLine5 = string.Format($"{numXLS};{file_format[4]};{file_format_description[4]}");
+                var newLine5 = string.Format($"{numXLAM};{FileFormats.Extension[4]};{FileFormats.Description[4]}");
                 csv.AppendLine(newLine5);
-                var newLine6 = string.Format($"{numXLT};{file_format[5]};{file_format_description[5]}");
+                var newLine6 = string.Format($"{numXLS};{FileFormats.Extension[5]};{FileFormats.Description[5]}");
                 csv.AppendLine(newLine6);
-                var newLine7 = string.Format($"{numXLAM};{file_format[6]};{file_format_description[6]}");
+                var newLine7 = string.Format($"{numXLSB};{FileFormats.Extension[6]};{FileFormats.Description[6]}");
                 csv.AppendLine(newLine7);
-                var newLine8 = string.Format($"{numXLSB};{file_format[7]};{file_format_description[7]}");
+                var newLine8 = string.Format($"{numXLSM};{FileFormats.Extension[7]};{FileFormats.Description[7]}");
                 csv.AppendLine(newLine8);
-                var newLine9 = string.Format($"{numXLSM};{file_format[8]};{file_format_description[8]}");
+                var newLine9 = string.Format($"{numXLSX};{FileFormats.Extension[8]};{FileFormats.Description[8]}");
                 csv.AppendLine(newLine9);
-                var newLine10 = string.Format($"{numXLSX};{file_format[9]};{file_format_description[9]}");
+                var newLine13 = string.Format($"{numXLSX_Transitional};.xlsx Transitional;Office Open XML Spreadsheet Transitional conformance");
+                csv.AppendLine(newLine13);
+                var newLine14 = string.Format($"{numXLSX_Strict};.xlsx Strict;Office Open XML Spreadsheet Strict conformance");
+                csv.AppendLine(newLine14);
+                var newLine15 = string.Format($"{numCONFORM_fail};.xlsx unknown;Conformance could not be identified");
+                csv.AppendLine(newLine15);
+                var newLine10 = string.Format($"{numXLT};{FileFormats.Extension[9]};{FileFormats.Description[9]}");
                 csv.AppendLine(newLine10);
-                var newLine11 = string.Format($"{numXLTM};{file_format[10]};{file_format_description[10]}");
+                var newLine11 = string.Format($"{numXLTM};{FileFormats.Extension[10]};{FileFormats.Description[10]}");
                 csv.AppendLine(newLine11);
-                var newLine12 = string.Format($"{numXLTX};{file_format[11]};{file_format_description[11]}");
+                var newLine12 = string.Format($"{numXLTX};{FileFormats.Extension[11]};{FileFormats.Description[11]}");
                 csv.AppendLine(newLine12);
-                string CSV_filepath = results_directory + "\\1_Count_Results.csv";
+                string CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
                 File.WriteAllText(CSV_filepath, csv.ToString());
 
                 // Inform user of results
@@ -146,12 +146,8 @@ namespace CLISC
                 Console.WriteLine("Count finished");
                 Console.WriteLine("---");
 
-                return results_directory;
-
+                return Results_Directory;
             }
-
         }
-
     }
-
 }

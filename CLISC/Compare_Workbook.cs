@@ -8,17 +8,15 @@ using System.ComponentModel;
 
 namespace CLISC
 {
-    
     public partial class Spreadsheet
     {
-        
         // Public data type needed for Compare.cs
         public string bcscript_filepath = "";
 
-        public string Compare_Workbook(string argument0, string results_directory, string docCollection, string org_filepath, string conv_filepath)
+        public string Compare_Workbook(string argument0, string Results_Directory, string docCollection, string org_filepath, string conv_filepath)
         {
             //Create "Beyond Compare" script file
-            bcscript_filepath = results_directory + "\\bcscript.txt";
+            bcscript_filepath = Results_Directory + "\\bcscript.txt";
             string bcscript_results_filepath = docCollection + "\\comparisonResults.txt";
             using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
             {
@@ -48,7 +46,7 @@ namespace CLISC
                 File.Delete(bcscript_filepath);
             }
 
-            bool comparison_success;
+            bool compare_success;
 
             // If there is workbook differences
             //if (comparison_success == fail)

@@ -24,7 +24,7 @@ namespace CLISC
             spreadsheet.WriteTo(save_spreadsheet);
             spreadsheet.Close();
 
-            convert_success = true;
+            bool convert_success = true;
 
             // Inform user
             Console.WriteLine(org_filepath);
@@ -234,7 +234,7 @@ namespace CLISC
         }
 
         // NOT USED. Convert legacy Excel files using Microsoft Office Interop Excel. User  must have Excel Version=15.0.0.0 installed (corresponds to Office 2013, an old version of Office)
-        public bool Convert_Legacy_Excel_OfficeInterop(string org_filepath)
+        public bool Convert_Legacy_Excel_OfficeInterop(string org_filepath, string conv_filepath)
         {
             FileInfo file = new FileInfo(org_filepath);
             var app = new Microsoft.Office.Interop.Excel.Application();
@@ -245,7 +245,7 @@ namespace CLISC
             wb.SaveAs(Filename: xlsx_file, FileFormat: Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook);
             wb.Close();
             app.Quit();
-            convert_success = true;
+            bool convert_success = true;
             return convert_success;
         }
     }

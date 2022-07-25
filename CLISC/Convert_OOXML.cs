@@ -9,10 +9,8 @@ using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
         // Convert to Office Open XML XLSX Transitional conformance
         public bool Convert_OOXML_Transitional(string org_filepath, string conv_filepath)
         {
@@ -27,7 +25,7 @@ namespace CLISC
                 File.WriteAllBytes(conv_filepath, stream.ToArray());
             }
 
-            convert_success = true;
+            bool convert_success = true;
 
             // Inform user
             Console.WriteLine(org_filepath);
@@ -50,6 +48,8 @@ namespace CLISC
                 File.WriteAllBytes(conv_filepath, stream.ToArray());
             }
 
+            bool convert_success = true;
+
             // Inform user
             Console.WriteLine(org_filepath);
             Console.WriteLine($"--> Conversion {convert_success}");
@@ -57,7 +57,5 @@ namespace CLISC
             convert_success = true;
             return convert_success;
         }
-
     }
-
 }

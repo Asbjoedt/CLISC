@@ -7,14 +7,11 @@ using System.Security.Cryptography;
 
 namespace CLISC
 {
-
     public partial class Spreadsheet
     {
-
         // Calculate MD5 checksum to fingerprint the spreadsheet
         public string Calculate_MD5(string filepath)
         {
-
             try
             {
                 using (var md5 = MD5.Create())
@@ -26,7 +23,6 @@ namespace CLISC
                     }
                 }
             }
-
             // If no converted spreadsheet exist
             catch (System.ArgumentException)
             {
@@ -37,9 +33,6 @@ namespace CLISC
             {
                 return "";
             }
-
         }
-
     }
-
 }
