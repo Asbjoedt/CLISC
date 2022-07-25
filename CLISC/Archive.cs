@@ -19,7 +19,6 @@ namespace CLISC
             var newLine0 = string.Format($"Original filepath;Original filename;Original checksum;Copy filepath; Copy filename; Conversion identified;Conversion filepath;Conversion filename;Conversion checksum;File format validated, Data quality message");
             csv.AppendLine(newLine0);
 
-            // Create enumeration of files in each folder of docCollection_enumeration
             foreach (fileIndex entry in File_List)
             {
                 // Get information from list
@@ -56,33 +55,56 @@ namespace CLISC
                         break;
                 }
                 // Inform user of validation results
+                Console.WriteLine("---");
                 Console.WriteLine($"{valid_files} spreadsheets were valid");
                 Console.WriteLine($"{invalid_files} spreadsheets were invalid");
-                Console.WriteLine("--> VALIDATION finished");
+                Console.WriteLine("Validation finished");
+                Console.WriteLine("---");
 
                 // Calculate checksums
                 string copy_checksum = Calculate_MD5(org_filepath);
                 string conv_checksum = Calculate_MD5(conv_filepath);
 
                 // Check for data quality requirements
+
+                // Validate file format standards
+                Console.WriteLine("--> DATA QUALITY");
+                Console.WriteLine("---");
+
                 string dataquality_message = "";
+
+                Console.WriteLine("Data quality finished");
+                Console.WriteLine("---");
 
                 // Output result in open CSV file
                 //var newLine1 = string.Format($"{org_filepath};{org_filename};{copy_filepath};{copy_filename};{convert_success};{conv_filepath};{conv_filename};{conv_checksum};{validation_message};{dataquality_message}");
                 //csv.AppendLine(newLine1);
             }
-            // Close CSV file to log results
+
+            // Close CSV file to log results. Must be before the zip
             string CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Zip the output directory
+            Console.WriteLine("--> ZIP DIRECTORY");
+            Console.WriteLine("---");
+            bool zip = true;
+            try
+            {
             ZIP_Directory(Results_Directory);
+                Console.WriteLine($"Zipped output archive directory saved at: {argument1}");
+                Console.WriteLine("Zip finished");
+            }
+            catch (SystemException)
+            {
+                Console.WriteLine("Zip failed");
+            }
 
             // Inform user of results
             Console.WriteLine("---");
-            Console.WriteLine("X spreadsheets failed file format validation");
+            Console.WriteLine($"{invalid_files} spreadsheets failed file format validation");
             Console.WriteLine($"x out of {numTOTAL} spreadsheets were archived");
-            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}"); //Filepath is incorrect. It is not the zipped path
+            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Archiving finished");
             Console.WriteLine("---");
         }

@@ -11,7 +11,7 @@ namespace CLISC
         // Generate date to use in name of new directory
         public static string GetTimestamp(DateTime value)
         {
-            return value.ToString("yyyyMMdd");
+            return value.ToString("yyyy.MM.dd");
         }
         public string dateStamp = GetTimestamp(DateTime.Now);
         
