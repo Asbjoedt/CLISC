@@ -68,13 +68,18 @@ namespace CLISC
                     File.Copy(org_filepath, copy_filepath);
 
                     // Create data types for converted spreadsheets
-                    string conv_extension = ".xlsx";
-                    string conv_filename = "1.xlsx";
-                    string conv_filepath = docCollection_subdir + "\\1.xlsx";
+                    string conv_extension = "";
+                    string conv_filename = "";
+                    string conv_filepath = "";
 
                     // Convert spreadsheet
                     try
                     {
+                        // Create data types for converted spreadsheets
+                        conv_extension = ".xlsx";
+                        conv_filename = "1.xlsx";
+                        conv_filepath = docCollection_subdir + "\\1.xlsx";
+
                         // Change conversion method based on file extension
                         switch (org_extension)
                         {
@@ -83,7 +88,7 @@ namespace CLISC
                             case ".ods":
                             case ".ots":
                                 // Conversion code
-                                convert_success = Convert_OpenDocument(argument0, copy_filepath, docCollection_subdir);
+                                convert_success = Convert_OpenDocument(argument0, org_filepath, copy_filepath, docCollection_subdir);
                                 break;
 
                             // Legacy Microsoft Excel file formats
@@ -103,7 +108,7 @@ namespace CLISC
                             case ".xls":
                             case ".xlt":
                                 // Conversion code
-                                convert_success = Convert_Legacy_Excel_NPOI(copy_filepath, conv_filepath);
+                                convert_success = Convert_Legacy_Excel_NPOI(org_filepath, copy_filepath, conv_filepath);
                                 break;
 
                             // Office Open XML file formats
@@ -136,10 +141,8 @@ namespace CLISC
                             case ".xlsm":
                             case ".xltm":
                             case ".xltx":
-                                // The next line must exist otherwise the switch will not convert
-                                conv_filepath = docCollection_subdir + "\\1.xlsx";
                                 // Conversion code
-                                convert_success = Convert_OOXML_Transitional(copy_filepath, conv_filepath);
+                                convert_success = Convert_OOXML_Transitional(org_filepath, copy_filepath, conv_filepath);
                                 break;
 
                             case ".xlsx":
@@ -153,7 +156,7 @@ namespace CLISC
 
                                 // Inform user
                                 Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {error_message}");
+                                Console.WriteLine($"--> {error_message}");
                                 break;
                         }
                     }
@@ -165,9 +168,7 @@ namespace CLISC
                         numFAILED++;
                         convert_success = false;
                         error_message = error_messages[4];
-                        conv_extension = "";
-                        conv_filename = "";
-                        conv_filepath = "";
+
                         // Inform user
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
@@ -179,9 +180,7 @@ namespace CLISC
                         numFAILED++;
                         convert_success = false;
                         error_message = error_messages[3];
-                        conv_extension = "";
-                        conv_filename = "";
-                        conv_filepath = "";
+
                         // Inform user
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
@@ -193,9 +192,7 @@ namespace CLISC
                         numFAILED++;
                         convert_success = false;
                         error_message = error_messages[4];
-                        conv_extension = "";
-                        conv_filename = "";
-                        conv_filepath = "";
+
                         // Inform user
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
@@ -222,13 +219,20 @@ namespace CLISC
                     string org_extension = entry.Org_Extension;
                     string org_filename = entry.Org_Filename;
                     string org_filepath = entry.Org_Filepath;
-                    string conv_extension = ".xlsx";
-                    string conv_filename = Path.GetFileNameWithoutExtension(entry.Org_Filename) + conv_extension;
-                    string conv_filepath = docCollection + "\\" + conv_filename;
+
+                    string copy_filepath = "";
+
+                    string conv_extension = "";
+                    string conv_filename = "";
+                    string conv_filepath = "";
 
                     // Try to convert spreadsheet
                     try
                     {
+                        conv_extension = ".xlsx";
+                        conv_filename = Path.GetFileNameWithoutExtension(entry.Org_Filename) + conv_extension;
+                        conv_filepath = docCollection + "\\" + conv_filename;
+
                         // Change conversion method based on file extension
                         switch (org_extension)
                         {
@@ -237,7 +241,7 @@ namespace CLISC
                             case ".ods":
                             case ".ots":
                                 // Conversion code
-                                convert_success = Convert_OpenDocument(org_filepath, conv_filepath, docCollection);
+                                convert_success = Convert_OpenDocument(copy_filepath, org_filepath, conv_filepath, docCollection);
                                 break;
 
                             // Legacy Microsoft Excel file formats
@@ -257,13 +261,11 @@ namespace CLISC
                             case ".xls":
                             case ".xlt":
                                 // Conversion code
-                                //convert_success = Convert_Legacy_Excel_NPOI(org_filepath);
+                                convert_success = Convert_Legacy_Excel_NPOI(copy_filepath, org_filepath, conv_filepath);
                                 numFAILED++;
                                 convert_success = false;
                                 error_message = error_messages[1];
-                                conv_extension = "";
-                                conv_filename = "";
-                                conv_filepath = "";
+
                                 // Inform user
                                 Console.WriteLine(org_filepath);
                                 Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
@@ -275,9 +277,7 @@ namespace CLISC
                                 numFAILED++;
                                 convert_success = false;
                                 error_message = error_messages[2];
-                                conv_extension = "";
-                                conv_filename = "";
-                                conv_filepath = "";
+
                                 // Inform user
                                 Console.WriteLine(org_filepath);
                                 Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
@@ -288,9 +288,7 @@ namespace CLISC
                                 numFAILED++;
                                 convert_success = false;
                                 error_message = error_messages[5];
-                                conv_extension = "";
-                                conv_filename = "";
-                                conv_filepath = "";
+
                                 // Inform user
                                 Console.WriteLine(org_filepath);
                                 Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
@@ -300,19 +298,17 @@ namespace CLISC
                             case ".xltm":
                             case ".xltx":
                                 // Conversion code
-                                convert_success = Convert_OOXML_Transitional(org_filepath, conv_filepath);
+                                convert_success = Convert_OOXML_Transitional(copy_filepath, org_filepath, conv_filepath); ;
                                 break;
 
                             case ".xlsx":
                                 // No converison
                                 convert_success = false;
                                 error_message = error_messages[6];
-                                conv_extension = "";
-                                conv_filename = "";
-                                conv_filepath = "";
+
                                 // Inform user
                                 Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> {error_message}");
+                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                                 break;
                         }
                     }
@@ -361,6 +357,7 @@ namespace CLISC
 
                     finally
                     {
+                        // Add file to fileIndex of File_List
                         File_List.Add(new fileIndex{File_Folder = docCollection, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = "", Copy_Filename = "", Copy_Extension = "", Conv_Filepath = conv_filepath, Conv_Filename = conv_filename, Conv_Extension = conv_extension, Convert_Success = convert_success});
                         // Output result in open CSV file
                         var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{conv_filepath};{conv_filename};{conv_extension};{convert_success};{error_message}");

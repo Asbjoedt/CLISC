@@ -12,7 +12,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Convert spreadsheets in OpenDocument file formats
-        public bool Convert_OpenDocument(string argument0, string input_filepath, string file_folder)
+        public bool Convert_OpenDocument(string argument0, string org_filepath, string input_filepath, string file_folder)
         {
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
@@ -52,10 +52,11 @@ namespace CLISC
             {
                 // Do nothing
             }
+
             // Mark conversion as succesful
             convert_success = true;
             // Inform user
-            Console.WriteLine(input_filepath);
+            Console.WriteLine(org_filepath);
             Console.WriteLine($"--> Conversion {convert_success}");
 
             return convert_success;
