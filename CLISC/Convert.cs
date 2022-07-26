@@ -21,7 +21,7 @@ namespace CLISC
             // Local conversion error messages
             int numCOMPLETE = 0;
             int numFAILED = 0;
-            bool convert_success = false;
+            bool? convert_success = null;
             string error_message = "";
             string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format is not supported", "Spreadsheet is already .xlsx file format" };
 
@@ -84,8 +84,6 @@ namespace CLISC
                             case ".ots":
                                 // Conversion code
                                 convert_success = Convert_OpenDocument(argument0, copy_filepath, docCollection_subdir);
-                                // The next line must exist otherwise CSV will have wrong "conv_new_filepath"
-                                conv_filepath = docCollection_subdir + "\\1.xlsx";
                                 break;
 
                             // Legacy Microsoft Excel file formats
@@ -105,7 +103,7 @@ namespace CLISC
                             case ".xls":
                             case ".xlt":
                                 // Conversion code
-                                convert_success = Convert_Legacy_Excel_NPOI(org_filepath, conv_filepath);
+                                convert_success = Convert_Legacy_Excel_NPOI(copy_filepath, conv_filepath);
                                 break;
 
                             // Office Open XML file formats
@@ -155,7 +153,7 @@ namespace CLISC
 
                                 // Inform user
                                 Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                Console.WriteLine($"--> Conversion {error_message}");
                                 break;
                         }
                     }
@@ -314,7 +312,7 @@ namespace CLISC
                                 conv_filepath = "";
                                 // Inform user
                                 Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                Console.WriteLine($"--> {error_message}");
                                 break;
                         }
                     }
@@ -325,6 +323,9 @@ namespace CLISC
                         // Code to execute
                         numFAILED++;
                         convert_success = false;
+                        conv_filepath = "";
+                        conv_filename = "";
+                        conv_extension = "";
                         error_message = error_messages[4];
                         // Inform user
                         Console.WriteLine(org_filepath);
@@ -335,13 +336,16 @@ namespace CLISC
                     {
                         numFAILED++;
                         convert_success = false;
+                        conv_filepath = "";
+                        conv_filename = "";
+                        conv_extension = "";
                         error_message = error_messages[3];
                         // Inform user
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                     }
 
-                    // NPOI encryption
+                    // NPOI has special exception for handling password protected or corrupt files
                     catch (NPOI.Util.RecordFormatException)
                     {
                         numFAILED++;

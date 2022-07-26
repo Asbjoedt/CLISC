@@ -29,6 +29,6 @@ namespace CLISC
 
         public string Conv_Extension { get; set; }
 
-        public bool Convert_Success { get; set; }
+        public bool? Convert_Success { get; set; }
     }
 }

@@ -65,10 +65,10 @@ namespace CLISC
                 }
             }
             // Inform user of argument errors
-            catch (IndexOutOfRangeException)
-            {
-                Console.WriteLine("The number of arguments are invalid. Consult documentation at: https://github.com/Asbjoedt/CLISC");
-            }
+            //catch (IndexOutOfRangeException)
+            //{
+            //    Console.WriteLine("The number of arguments are invalid. Consult documentation at: https://github.com/Asbjoedt/CLISC");
+            //}
             // Inform user of end of CLISC
             finally
             {

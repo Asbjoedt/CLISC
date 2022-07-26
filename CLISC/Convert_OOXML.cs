@@ -12,9 +12,9 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Convert to Office Open XML XLSX Transitional conformance
-        public bool Convert_OOXML_Transitional(string org_filepath, string conv_filepath)
+        public bool Convert_OOXML_Transitional(string input_filepath, string output_filepath)
         {
-            byte[] byteArray = File.ReadAllBytes(org_filepath);
+            byte[] byteArray = File.ReadAllBytes(input_filepath);
             using (MemoryStream stream = new MemoryStream())
             {
                 stream.Write(byteArray, 0, (int)byteArray.Length);
@@ -22,13 +22,13 @@ namespace CLISC
                 {
                     spreadsheetDoc.ChangeDocumentType(DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
                 }
-                File.WriteAllBytes(conv_filepath, stream.ToArray());
+                File.WriteAllBytes(output_filepath, stream.ToArray());
             }
 
             bool convert_success = true;
 
             // Inform user
-            Console.WriteLine(org_filepath);
+            Console.WriteLine(input_filepath);
             Console.WriteLine($"--> Conversion {convert_success}");
 
             return convert_success;

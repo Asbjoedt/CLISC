@@ -23,50 +23,60 @@ namespace CLISC
         {
             string validation_message = "";
 
-            using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            try
             {
-                // Validate
-                var validator = new OpenXmlValidator();
-                var validation_errors = validator.Validate(spreadsheet).ToList();
-                int error_count = validation_errors.Count;
-                int error_number = 0;
+                using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
+                {
+                    // Validate
+                    var validator = new OpenXmlValidator();
+                    var validation_errors = validator.Validate(spreadsheet).ToList();
+                    int error_count = validation_errors.Count;
+                    int error_number = 0;
 
-                // If errors
-                if (validation_errors.Any())
-                {
-                    // Inform user
-                    Console.WriteLine(filepath);
-                    Console.WriteLine($"--> Invalid - Spreadsheet has {error_count} validation errors");
-                    foreach (var error in validation_errors)
+                    // If errors
+                    if (validation_errors.Any())
                     {
-                        error_number++;
-                        Console.WriteLine($"--> Error {error_number}");
-                        Console.WriteLine("----> Description: " + error.Description);
-                        Console.WriteLine("----> ErrorType: " + error.ErrorType);
-                        Console.WriteLine("----> Node: " + error.Node);
-                        Console.WriteLine("----> Path: " + error.Path.XPath);
-                        Console.WriteLine("----> Part: " + error.Part.Uri);
-                        if (error.RelatedNode != null)
+                        // Inform user
+                        Console.WriteLine(filepath);
+                        Console.WriteLine($"--> Invalid - Spreadsheet has {error_count} validation errors");
+                        foreach (var error in validation_errors)
                         {
-                            Console.WriteLine("----> Related Node: " + error.RelatedNode);
-                            Console.WriteLine("----> Related Node Inner Text: " + error.RelatedNode.InnerText);
+                            error_number++;
+                            Console.WriteLine($"--> Error {error_number}");
+                            Console.WriteLine("----> Description: " + error.Description);
+                            Console.WriteLine("----> ErrorType: " + error.ErrorType);
+                            Console.WriteLine("----> Node: " + error.Node);
+                            Console.WriteLine("----> Path: " + error.Path.XPath);
+                            Console.WriteLine("----> Part: " + error.Part.Uri);
+                            if (error.RelatedNode != null)
+                            {
+                                Console.WriteLine("----> Related Node: " + error.RelatedNode);
+                                Console.WriteLine("----> Related Node Inner Text: " + error.RelatedNode.InnerText);
+                            }
                         }
+                        // Add files to number of invalid spreadsheets
+                        invalid_files++;
+                        // Turn list into string
+                        validation_message = string.Join(Environment.NewLine, validation_errors);
+                        return validation_message;
                     }
-                    // Change data type values
-                    invalid_files++;
-                    validation_message = string.Join(Environment.NewLine, validation_errors);
-                    return validation_message;
-                }
-                else
-                {
-                    // If no errors, inform user
-                    valid_files++;
-                    Console.WriteLine(filepath);
-                    Console.WriteLine("--> Valid");
+                    else
+                    {
+                        // If no errors, inform user
+                        valid_files++;
+                        Console.WriteLine(filepath);
+                        Console.WriteLine("--> Valid");
+                        return validation_message = "Valid";
+                    }
                 }
             }
-
-            return validation_message = "Valid";
+            catch (OpenXmlPackageException)
+            {
+                // If file cannot be opened for XML schema validation
+                Console.WriteLine(filepath);
+                Console.WriteLine("--> Invalid - spreadsheet cannot be opened for XML schema validation.");
+                return validation_message = "Invalid - spreadsheet cannot be opened for XML schema validation";
+            }
         }
     }
 }

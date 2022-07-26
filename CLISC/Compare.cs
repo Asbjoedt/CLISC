@@ -96,7 +96,7 @@ namespace CLISC
 
             // Inform user of results
             Console.WriteLine("---");
-            Console.WriteLine($"{numTOTAL_conv} out of {numTOTAL} spreadsheets were compared");
+            Console.WriteLine($"{numTOTAL_conv} converted spreadsheets were compared");
             //Console.WriteLine($"{numTOTAL_diff} out of {numTOTAL_conv} conversions have workbook differences");
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Comparison finished");
