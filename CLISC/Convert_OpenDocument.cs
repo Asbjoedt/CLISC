@@ -35,10 +35,19 @@ namespace CLISC
                     string old_filename = filename[0];
                     string new_filename = file_folder + "\\1.xlsx";
                     File.Move(old_filename, new_filename);
+
+                    // Mark conversion as succesful
+                    convert_success = true;
+                    // Inform user
+                    Console.WriteLine(org_filepath);
+                    Console.WriteLine($"--> Conversion {convert_success}");
+                    Console.WriteLine($"--> Conversion saved to: {new_filename}");
+
+                    return convert_success;
                 }
                 else
                 {
-                    // Mark conversion as succesful
+                    // Mark conversion as unsuccesful, if converted spreadsheet was not found
                     convert_success = false;
                     // Inform user
                     Console.WriteLine(input_filepath);
@@ -50,16 +59,15 @@ namespace CLISC
             // Bug does not exist in ordinary use
             else
             {
-                // Do nothing
+                // Mark conversion as succesful
+                convert_success = true;
+                // Inform user
+                Console.WriteLine(org_filepath);
+                Console.WriteLine($"--> Conversion {convert_success}");
+                Console.WriteLine($"--> Conversion saved to: {file_folder}");
+
+                return convert_success;
             }
-
-            // Mark conversion as succesful
-            convert_success = true;
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-
-            return convert_success;
         }
     }
 }

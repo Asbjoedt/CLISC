@@ -426,7 +426,7 @@ namespace CLISC
             Console.WriteLine($"{numCOMPLETE} out of {numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"{numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
-            Console.WriteLine("Conversion finished");
+            Console.WriteLine("Conversion ended");
             Console.WriteLine("---");
 
             return File_List;

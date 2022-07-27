@@ -13,8 +13,10 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Comparison data types
+        public static int numTOTAL_conv = 0;
+        public static int numTOTAL_compare = numTOTAL_conv;
         public static int numTOTAL_diff = 0;
-        string compare_message = "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4";
+        string compare_message = "";
 
         // Compare spreadsheets
         public void Compare(string argument0, string argument1, string Results_Directory, List<fileIndex> File_List)
@@ -22,14 +24,12 @@ namespace CLISC
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
 
-            int numTOTAL_conv = 0;
-
             // Open CSV file to log results
             var csv = new StringBuilder();
             var newLine0 = string.Format($"Original filepath;Original filesize (KB);Conversion filepath;Conversion filesize (KB);Filesize diff;Workbook diff");
             csv.AppendLine(newLine0);
 
-            if (argument0 == "Count&Convert&Compare&Archive")
+            if (File.Exists(@"C:\\Program Files\\Beyond Compare 4\\BCompare.exe"))
             {
                 try
                 {
@@ -75,13 +75,16 @@ namespace CLISC
                         }
                     }
                 }
-
                 // Error message if BC is not detected
                 catch (Win32Exception)
                 {
-                    Console.WriteLine($"--> {compare_message}");
+                    compare_message = "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4";
                 }
-
+            }
+            else
+            {
+                Console.WriteLine("Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4");
+                Console.WriteLine("Comparison ended");
             }
 
             // Delete BC script
@@ -98,10 +101,10 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine("COMPARE RESULTS");
             Console.WriteLine("---");
-            Console.WriteLine($"{numTOTAL_conv} converted spreadsheets were compared");
+            Console.WriteLine($"{numTOTAL_compare} out of {numTOTAL_conv} converted spreadsheets were compared");
             //Console.WriteLine($"{numTOTAL_diff} out of {numTOTAL_conv} conversions have workbook differences");
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
-            Console.WriteLine("Comparison finished");
+            Console.WriteLine("Comparison ended");
             Console.WriteLine("---");
 
         }

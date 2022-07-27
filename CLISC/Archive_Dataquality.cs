@@ -20,8 +20,9 @@ namespace CLISC
         {
             string dataquality_message = "";
 
-            // Check for external relationships
             Console.WriteLine(filepath);
+
+            // Check for external relationships
             try
             {
                 // call the methods
@@ -36,7 +37,7 @@ namespace CLISC
 
             catch (ArgumentNullException)
             {
-                // BUG: Method cannot handle null filepaths, so must handle exception to it
+                // BUG: Method cannot handle null filepaths. Must handle exception to it
                 dataquality_message = "";
 
                 return dataquality_message;

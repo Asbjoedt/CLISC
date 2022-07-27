@@ -8,6 +8,8 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
+
+
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive(string argument0, string argument1, string argument2, string Results_Directory, List<fileIndex> File_List)
         {
@@ -57,14 +59,10 @@ namespace CLISC
                         break;
                 }
             }
-            // Inform user of validation results
-            Console.WriteLine("---");
-            Console.WriteLine($"{valid_files} converted spreadsheets were valid");
-            Console.WriteLine($"{invalid_files} converted spreadsheets were invalid");
-            Console.WriteLine("Validation finished");
-            Console.WriteLine("---");
+            Console.WriteLine("Validation ended");
 
             // Perform data quality actions
+            Console.WriteLine("---");
             Console.WriteLine("--> DATA QUALITY REQUIREMENTS");
             Console.WriteLine("---");
             foreach (fileIndex entry in File_List)
@@ -75,14 +73,12 @@ namespace CLISC
                 // Perform data quality actions
                 dataquality_message = Transform_DataQuality(conv_filepath);
             }
-            // Inform user of data quality results
-            Console.WriteLine("---");
-            Console.WriteLine($"{extrels_files} converted spreadsheets had external relationships removed");
-            Console.WriteLine($"{embedobj_files} converted spreadsheets have embedded objects");
-            Console.WriteLine("Data quality requirements finished");
-            Console.WriteLine("---");
+            Console.WriteLine("Data quality requirements ended");
 
             //Calculate checksums
+            Console.WriteLine("---");
+            Console.WriteLine("--> CALCULATE CHECKSUMS");
+            Console.WriteLine("---");
             foreach (fileIndex entry in File_List)
             {
                 // Get information from list
@@ -95,6 +91,8 @@ namespace CLISC
                 copy_checksum = Calculate_MD5(copy_filepath);
                 conv_checksum = Calculate_MD5(conv_filepath);
             }
+            Console.WriteLine("All file checksums were calculated");
+            Console.WriteLine("Calculate checksums ended");
 
             // Output result in open CSV file
             var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{conv_filepath};{conv_checksum};{validation_message};{dataquality_message}");
@@ -105,28 +103,32 @@ namespace CLISC
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Zip the output directory
+            Console.WriteLine("---");
             Console.WriteLine("--> ZIP DIRECTORY");
             Console.WriteLine("---");
             try
             {
                 ZIP_Directory(Results_Directory);
-                Console.WriteLine($"The zipped archive directory was saved at: {argument1}");
-                Console.WriteLine("Zip finished");
+                Console.WriteLine("Zip completed");
+                Console.WriteLine($"\"The zipped archive directory was saved to: \" + {Results_Directory} + \".zip\"");
+                Console.WriteLine("Zip ended");
             }
             catch (SystemException)
             {
                 Console.WriteLine("Zip failed");
+                Console.WriteLine("Zip ended");
             }
 
             // Inform user of archiving results
             Console.WriteLine("---");
             Console.WriteLine("ARCHIVE RESULTS");
             Console.WriteLine("---");
+            Console.WriteLine($"{valid_files} converted spreadsheets were valid");
+            Console.WriteLine($"{invalid_files} converted spreadsheets were invalid");
             Console.WriteLine($"{extrels_files} converted spreadsheets had external relationships. All relationships were removed");
             Console.WriteLine($"{embedobj_files} converted spreadsheets have embedded objects. Nothing was changed");
-            Console.WriteLine($"{invalid_files} spreadsheets failed file format validation");
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
-            Console.WriteLine("Archiving finished");
+            Console.WriteLine("Archiving ended");
             Console.WriteLine("---");
         }
     }

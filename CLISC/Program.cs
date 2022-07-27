@@ -77,7 +77,8 @@ namespace CLISC
                 Console.WriteLine($"{Spreadsheet.numTOTAL} spreadsheet files in total");
                 Console.WriteLine($"{Spreadsheet.numCOMPLETE} out of {Spreadsheet.numTOTAL} spreadsheets completed conversion");
                 Console.WriteLine($"{Spreadsheet.numFAILED} spreadsheets failed conversion");
-                Console.WriteLine("CLISC has finished");
+                Console.WriteLine($"{Spreadsheet.numTOTAL_compare} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets were compared");
+                Console.WriteLine("CLISC ended");
                 Console.WriteLine("---");
             }
         }

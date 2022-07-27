@@ -71,7 +71,7 @@ namespace CLISC
             if (numTOTAL == 0)
             {
                 Console.WriteLine("No spreadsheets identified");
-                Console.WriteLine("Count finished");
+                Console.WriteLine("Count ended");
                 Console.WriteLine("---");
 
                 throw new Exception();
@@ -145,7 +145,7 @@ namespace CLISC
                 Console.WriteLine("---");
                 Console.WriteLine($"{numTOTAL} spreadsheet files in total");
                 Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
-                Console.WriteLine("Count finished");
+                Console.WriteLine("Count ended");
                 Console.WriteLine("---");
 
                 return Results_Directory;
