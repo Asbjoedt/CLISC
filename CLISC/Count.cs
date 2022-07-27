@@ -9,7 +9,7 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        // Public integers
+        // Public data types
         public static int numTOTAL, numXLSX_Strict;
 
         // Count spreadsheets
@@ -140,16 +140,23 @@ namespace CLISC
                 File.WriteAllText(CSV_filepath, csv.ToString());
 
                 // Inform user of results
-                Console.WriteLine("---");
-                Console.WriteLine("COUNT RESULTS");
-                Console.WriteLine("---");
-                Console.WriteLine($"{numTOTAL} spreadsheet files in total");
-                Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
-                Console.WriteLine("Count ended");
-                Console.WriteLine("---");
+                Count_Results();
 
                 return Results_Directory;
             }
+        }
+
+        public void Count_Results()
+        {
+            string CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
+
+            Console.WriteLine("---");
+            Console.WriteLine("COUNT RESULTS");
+            Console.WriteLine("---");
+            Console.WriteLine($"{numTOTAL} spreadsheet files in total");
+            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
+            Console.WriteLine("Count ended");
+            Console.WriteLine("---");
         }
     }
 }

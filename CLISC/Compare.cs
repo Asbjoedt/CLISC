@@ -87,17 +87,18 @@ namespace CLISC
                 Console.WriteLine("Comparison ended");
             }
 
-            // Delete BC script
-            if (File.Exists(bcscript_filepath))
-            {
-                File.Delete(bcscript_filepath);
-            }
-
             // Close CSV file to log results
             string CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
+            Compare_Results();
+        }
+
+        public void Compare_Results()
+        {
+            string CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
+
             Console.WriteLine("---");
             Console.WriteLine("COMPARE RESULTS");
             Console.WriteLine("---");
@@ -106,9 +107,6 @@ namespace CLISC
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Comparison ended");
             Console.WriteLine("---");
-
         }
-
     }
-
 }

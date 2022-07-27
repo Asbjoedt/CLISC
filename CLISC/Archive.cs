@@ -8,8 +8,6 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-
-
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive(string argument0, string argument1, string argument2, string Results_Directory, List<fileIndex> File_List)
         {
@@ -25,12 +23,13 @@ namespace CLISC
             string org_checksum = "";
             string copy_checksum = "";
             string conv_checksum = "";
+            bool? convert_success = null;
             string dataquality_message = "";
             string validation_message = "";
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filename;Original checksum;Copy filepath; Copy filename; Conversion identified;Conversion filepath;Conversion filename;Conversion checksum;File format validated, Data quality message");
+            var newLine0 = string.Format($"Original filepath;Original checksum;Copy filepath; Copy checksum, Conversion exist;Conversion filepath;Conversion checksum;File format validated, Data quality message");
             csv.AppendLine(newLine0);
 
             // Validate file format standards
@@ -95,7 +94,7 @@ namespace CLISC
             Console.WriteLine("Calculate checksums ended");
 
             // Output result in open CSV file
-            var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{conv_filepath};{conv_checksum};{validation_message};{dataquality_message}");
+            var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{convert_success};{conv_filepath};{conv_checksum};{validation_message};{dataquality_message}");
             csv.AppendLine(newLine1);
 
             // Close CSV file to log results. MUST HAPPEN BEFORE ZIP
@@ -108,9 +107,10 @@ namespace CLISC
             Console.WriteLine("---");
             try
             {
-                ZIP_Directory(Results_Directory);
+                // ZIP_Directory(Results_Directory); Commented out zipping for debugging reasons
                 Console.WriteLine("Zip completed");
-                Console.WriteLine($"\"The zipped archive directory was saved to: \" + {Results_Directory} + \".zip\"");
+                string zip_path = Results_Directory + ".zip";
+                Console.WriteLine($"The zipped archive directory was saved to: {zip_path}");
                 Console.WriteLine("Zip ended");
             }
             catch (SystemException)
@@ -120,12 +120,19 @@ namespace CLISC
             }
 
             // Inform user of archiving results
+            Archive_Results();
+        }
+
+        public void Archive_Results()
+        {
+            string CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
+
             Console.WriteLine("---");
             Console.WriteLine("ARCHIVE RESULTS");
             Console.WriteLine("---");
             Console.WriteLine($"{valid_files} converted spreadsheets were valid");
-            Console.WriteLine($"{invalid_files} converted spreadsheets were invalid");
-            Console.WriteLine($"{extrels_files} converted spreadsheets had external relationships. All relationships were removed");
+            Console.WriteLine($"{invalid_files} converted spreadsheets were invalid or could not be read");
+            Console.WriteLine($"{extrels_files} converted spreadsheets had external relationships, that were removed");
             Console.WriteLine($"{embedobj_files} converted spreadsheets have embedded objects. Nothing was changed");
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Archiving ended");

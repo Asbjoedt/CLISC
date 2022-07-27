@@ -20,11 +20,11 @@ namespace CLISC
         {
             string dataquality_message = "";
 
-            Console.WriteLine(filepath);
-
             // Check for external relationships
             try
             {
+                Console.WriteLine(filepath);
+
                 // call the methods
                 string extrels_message = Remove_ExternalRelationships(filepath);
                 string rtdfunctions_message = Remove_RTDFunctions(filepath);
