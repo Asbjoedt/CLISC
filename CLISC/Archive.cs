@@ -9,7 +9,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive(string argument0, string argument1, string argument2, string Results_Directory, List<fileIndex> File_List)
+        public void Archive(string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("ARCHIVE");
             Console.WriteLine("---");

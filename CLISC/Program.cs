@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.CommandLine;
 
 
 namespace CLISC
@@ -54,7 +55,7 @@ namespace CLISC
                             Results_Directory = process.Count(argument1, argument2, argument3);
                             File_List = process.Convert(argument0, argument1, argument3, Results_Directory);
                             process.Compare(argument0, argument1, Results_Directory, File_List);
-                            process.Archive(argument0, argument1, argument2, Results_Directory, File_List);
+                            process.Archive(Results_Directory, File_List);
                             report.Final_Results();
                             break;
 
