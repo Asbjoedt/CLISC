@@ -32,7 +32,7 @@ namespace CLISC
             csv.AppendLine(newLine0);
 
             // Validate file format standards
-            Console.WriteLine("--> VALIDATION");
+            Console.WriteLine("--> FILE FORMAT VALIDATION");
             Console.WriteLine("---");
             foreach (fileIndex entry in File_List)
             {
@@ -72,11 +72,8 @@ namespace CLISC
                 // Get information from list
                 conv_filepath = entry.Conv_Filepath;
 
-                if (File.Exists(conv_filepath))
-                {
-                    // Perform data quality actions
-                    dataquality_message = Transform_DataQuality(conv_filepath);
-                }
+                // Perform data quality actions
+                dataquality_message = Transform_DataQuality(conv_filepath);
             }
             // Inform user of data quality results
             Console.WriteLine("---");
@@ -122,6 +119,8 @@ namespace CLISC
             }
 
             // Inform user of archiving results
+            Console.WriteLine("---");
+            Console.WriteLine("ARCHIVE RESULTS");
             Console.WriteLine("---");
             Console.WriteLine($"{extrels_files} converted spreadsheets had external relationships. All relationships were removed");
             Console.WriteLine($"{embedobj_files} converted spreadsheets have embedded objects. Nothing was changed");

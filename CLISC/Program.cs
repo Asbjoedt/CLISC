@@ -72,6 +72,11 @@ namespace CLISC
             // Inform user of end of CLISC
             finally
             {
+                Console.WriteLine("CLISC RESULTS");
+                Console.WriteLine("---");
+                Console.WriteLine($"{Spreadsheet.numTOTAL} spreadsheet files in total");
+                Console.WriteLine($"{Spreadsheet.numCOMPLETE} out of {Spreadsheet.numTOTAL} spreadsheets completed conversion");
+                Console.WriteLine($"{Spreadsheet.numFAILED} spreadsheets failed conversion");
                 Console.WriteLine("CLISC has finished");
                 Console.WriteLine("---");
             }

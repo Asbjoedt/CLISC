@@ -10,7 +10,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Public integers
-        public int numTOTAL, numXLSX_Strict;
+        public static int numTOTAL, numXLSX_Strict;
 
         // Count spreadsheets
         public string Count(string argument1, string argument2, string argument3)
@@ -140,6 +140,8 @@ namespace CLISC
                 File.WriteAllText(CSV_filepath, csv.ToString());
 
                 // Inform user of results
+                Console.WriteLine("---");
+                Console.WriteLine("COUNT RESULTS");
                 Console.WriteLine("---");
                 Console.WriteLine($"{numTOTAL} spreadsheet files in total");
                 Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");

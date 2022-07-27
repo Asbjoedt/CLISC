@@ -13,7 +13,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Comparison data types
-        public int numTOTAL_diff = 0;
+        public static int numTOTAL_diff = 0;
         string compare_message = "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4";
 
         // Compare spreadsheets
@@ -95,6 +95,8 @@ namespace CLISC
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
+            Console.WriteLine("---");
+            Console.WriteLine("COMPARE RESULTS");
             Console.WriteLine("---");
             Console.WriteLine($"{numTOTAL_conv} converted spreadsheets were compared");
             //Console.WriteLine($"{numTOTAL_diff} out of {numTOTAL_conv} conversions have workbook differences");

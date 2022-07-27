@@ -9,7 +9,7 @@ namespace CLISC
     public class fileIndex
     {
         // Create public data types for use in fileIndex
-        public string File_Folder { get; set; }
+        public string? File_Folder { get; set; }
 
         public string Org_Filepath { get; set; }
 
@@ -17,17 +17,17 @@ namespace CLISC
 
         public string Org_Extension { get; set; }
 
-        public string Copy_Filepath { get; set; }
+        public string? Copy_Filepath { get; set; }
 
-        public string Copy_Filename { get; set; }
+        public string? Copy_Filename { get; set; }
 
-        public string Copy_Extension { get; set; }
+        public string? Copy_Extension { get; set; }
 
-        public string Conv_Filepath { get; set; }
+        public string? Conv_Filepath { get; set; }
 
-        public string Conv_Filename { get; set; }
+        public string? Conv_Filename { get; set; }
 
-        public string Conv_Extension { get; set; }
+        public string? Conv_Extension { get; set; }
 
         public bool? Convert_Success { get; set; }
     }
