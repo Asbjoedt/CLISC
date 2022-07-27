@@ -1,4 +1,4 @@
-# CLISC<sup>3</sup>
+# CLISC
 **Command Line Interface Spreadsheet Count Convert & Compare (& Archive)**
 
 A small Windows console application made in C#. It is as a hobby project. The app might have use cases in digital archiving of spreadsheets.
@@ -60,10 +60,10 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable spreadsheets
-* Validate spreadsheet against its file format standard (Office Open XML) (feature not working)
-* Remove formula linking cells to other local spreadsheets but keep the cell values (feature not working)
-* Remove external data connections but keep snapshot of data (feature not working)
-* Remove RealTimeData (RTD) functions but keep snapshot of data (feature not working)
+* Validate spreadsheet against its file format standard (Office Open XML)
+* Remove formula linking cells to other local spreadsheets but keep snapshot of cell values (feature not working)
+* Remove external data connections but keep snapshot of cell values (feature not working)
+* Remove RealTimeData (RTD) functions but keep snapshot of cell values (feature not working)
 * Alert if spreadsheet has embedded objects (feature not working)
 * Calculate file checksums
 * Zip the archive directory
