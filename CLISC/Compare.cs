@@ -19,7 +19,7 @@ namespace CLISC
         string compare_message = "";
 
         // Compare spreadsheets
-        public void Compare(string argument0, string argument1, string Results_Directory, List<fileIndex> File_List)
+        public void Compare(string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
@@ -50,7 +50,7 @@ namespace CLISC
                             Console.WriteLine($"--> Comparing to: {conv_filepath}");
 
                             // Compare workbooks using external app Beyond Compare 4
-                            Compare_Workbook(argument0, Results_Directory, folder, org_filepath, conv_filepath);
+                            Compare_Workbook(Results_Directory, folder, org_filepath, conv_filepath);
 
                             // Calculate filesize of converted spreadsheet
                             int conv_filesize_kb = Calculate_Filesize(conv_filepath);
@@ -87,17 +87,18 @@ namespace CLISC
                 Console.WriteLine("Comparison ended");
             }
 
-            // Delete BC script
-            if (File.Exists(bcscript_filepath))
-            {
-                File.Delete(bcscript_filepath);
-            }
-
             // Close CSV file to log results
             string CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
+            Compare_Results();
+        }
+
+        public void Compare_Results()
+        {
+            string CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
+
             Console.WriteLine("---");
             Console.WriteLine("COMPARE RESULTS");
             Console.WriteLine("---");
@@ -106,9 +107,6 @@ namespace CLISC
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Comparison ended");
             Console.WriteLine("---");
-
         }
-
     }
-
 }

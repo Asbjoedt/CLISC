@@ -16,17 +16,17 @@ namespace CLISC
         public int numCONFORM_fail = 0;
 
         // Count XLSX Strict conformance
-        public int Count_XLSX_Strict(string argument1, string argument3)
+        public int Count_XLSX_Strict(string inputdir, bool recurse)
         {
-            DirectoryInfo count = new DirectoryInfo(argument1);
+            DirectoryInfo count = new DirectoryInfo(inputdir);
             string[] xlsx_files;
-            if (argument3 == "Recurse=Yes")
+            if (recurse == true)
             {
-                xlsx_files = Directory.GetFiles(argument1,"*.xlsx", SearchOption.AllDirectories);
+                xlsx_files = Directory.GetFiles(inputdir,"*.xlsx", SearchOption.AllDirectories);
             }
             else
             {
-                xlsx_files = Directory.GetFiles(argument1, "*.xlsx", SearchOption.TopDirectoryOnly);
+                xlsx_files = Directory.GetFiles(inputdir, "*.xlsx", SearchOption.TopDirectoryOnly);
             }
             try
             {
