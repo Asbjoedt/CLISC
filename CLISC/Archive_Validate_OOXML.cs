@@ -15,8 +15,8 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public int valid_files = 0;
-        public int invalid_files = 0;
+        public static int valid_files = 0;
+        public static int invalid_files = 0;
 
         // Validate Open Office XML file formats
         public string Validate_OOXML(string filepath)

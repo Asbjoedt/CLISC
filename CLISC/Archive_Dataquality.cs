@@ -11,9 +11,9 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public int extrels_files = 0;
-        public int rtdfunctions_files = 0;
-        public int embedobj_files = 0;
+        public static int extrels_files = 0;
+        public static int rtdfunctions_files = 0;
+        public static int embedobj_files = 0;
 
         // Perform data quality actions
         public string Transform_DataQuality(string filepath)

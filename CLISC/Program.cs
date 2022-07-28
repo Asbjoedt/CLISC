@@ -22,7 +22,7 @@ namespace CLISC
                 .WithNotParsed(errs => Help(parse_args, errs));
         }
 
-        // Show help dialog to user
+        // Show help dialog to users, if errors in arguments
         static void Help<T>(ParserResult<T> result, IEnumerable<Error> errs)
         {
             var helpText = HelpText.AutoBuild(result, h =>
@@ -33,7 +33,7 @@ namespace CLISC
                 h.AutoHelp = false;
                 h.AutoVersion = false;
                 h.MaximumDisplayWidth = 90;
-                h.AddPostOptionsLine("Input new argument:");
+                h.AddPostOptionsLine("Don't let the errors weigh you down. Here's a cool song: https://youtu.be/4Is3D_VpX1Y");
                 return HelpText.DefaultParsingErrorsHandler(result, h);
             }, e => e);
             Console.WriteLine(helpText);

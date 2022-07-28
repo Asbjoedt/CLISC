@@ -58,8 +58,11 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine($"{Spreadsheet.numTOTAL} spreadsheets counted");
             Console.WriteLine($"{Spreadsheet.numCOMPLETE} out of {Spreadsheet.numTOTAL} spreadsheets completed conversion");
-            Console.WriteLine($"--> {Spreadsheet.numFAILED} spreadsheets failed conversion");
+            Console.WriteLine($"{Spreadsheet.numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"{Spreadsheet.numTOTAL_compare} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets were compared");
+            Console.WriteLine($"{Spreadsheet.valid_files} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets have valid file formats");
+            Console.WriteLine($"{Spreadsheet.extrels_files} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets had external relationships - They were removed");
+            Console.WriteLine($"{Spreadsheet.embedobj_files} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets have embedded objects - They were NOT removed");
             Console.WriteLine("CLISC ended");
             Console.WriteLine("---");
         }

@@ -50,7 +50,7 @@ namespace CLISC
                             Console.WriteLine($"--> Comparing to: {conv_filepath}");
 
                             // Compare workbooks using external app Beyond Compare 4
-                            Compare_Workbook(Results_Directory, folder, org_filepath, conv_filepath);
+                            compare_message = Compare_Workbook(Results_Directory, folder, org_filepath, conv_filepath);
 
                             // Calculate filesize of converted spreadsheet
                             int conv_filesize_kb = Calculate_Filesize(conv_filepath);
