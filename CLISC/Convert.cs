@@ -18,7 +18,7 @@ namespace CLISC
         public static int numFAILED = 0;
 
         // Convert spreadsheets method
-        public List<fileIndex> Convert(string argument0, string argument1, string argument3, string Results_Directory)
+        public List<fileIndex> Convert(string function, string inputdir, bool recurse, string Results_Directory)
         {
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
@@ -35,7 +35,7 @@ namespace CLISC
             csv.AppendLine(newLine0);
 
             // Create lists
-            List<orgIndex> Org_File_List = orgIndex.Org_Files(argument1, argument3);
+            List<orgIndex> Org_File_List = orgIndex.Org_Files(inputdir, recurse);
             List<fileIndex> File_List = new List<fileIndex>();
 
             // Create subdirectory (docCollection) for converted spreadsheet files
@@ -48,7 +48,7 @@ namespace CLISC
             string? conv_filepath = null;
 
             // Convert spreadsheets according to archiving requirements
-            if (argument0 == "Count&Convert&Compare&Archive")
+            if (recurse == true)
             {
                 // Loop spreadsheets based on enumeration
                 foreach (var entry in Org_File_List)
@@ -93,7 +93,7 @@ namespace CLISC
                             case ".ods":
                             case ".ots":
                                 // Conversion code
-                                convert_success = Convert_OpenDocument(argument0, org_filepath, copy_filepath, docCollection_subdir);
+                                convert_success = Convert_OpenDocument(function, org_filepath, copy_filepath, docCollection_subdir);
                                 error_message = "";
                                 break;
 

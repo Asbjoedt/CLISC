@@ -13,7 +13,7 @@ namespace CLISC
         public static int numTOTAL, numXLSX_Strict;
 
         // Count spreadsheets
-        public string Count(string argument1, string argument2, string argument3)
+        public string Count(string inputdir, string outputdir, bool recurse)
         {
             Console.WriteLine("COUNT");
             Console.WriteLine("---");
@@ -22,11 +22,11 @@ namespace CLISC
             int numFODS, numODS, numOTS, numXLA, numXLAM, numXLS, numXLSB, numXLSM, numXLSX, numXLSX_Transitional, numXLT, numXLTM, numXLTX;
 
             //Object reference
-            DirectoryInfo count = new DirectoryInfo(argument1);
+            DirectoryInfo count = new DirectoryInfo(inputdir);
             FileFormats info = new FileFormats();
 
             // Count spreadsheets recursively
-            if (argument3 == "Recurse=Yes")
+            if (recurse == true)
             {
                 numFODS = count.GetFiles("*.fods", SearchOption.AllDirectories).Length;
                 numODS = count.GetFiles("*.ods", SearchOption.AllDirectories).Length;
@@ -38,7 +38,7 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.AllDirectories).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.AllDirectories).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.AllDirectories).Length;
-                numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
+                numXLSX_Strict = Count_XLSX_Strict(inputdir, recurse);
                 numXLSX_Transitional = numXLSX - (numXLSX_Strict + numCONFORM_fail);
                 numXLTM = count.GetFiles("*.xltm", SearchOption.AllDirectories).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.AllDirectories).Length;
@@ -59,7 +59,7 @@ namespace CLISC
                 numXLSB = count.GetFiles("*.xlsb", SearchOption.TopDirectoryOnly).Length;
                 numXLSM = count.GetFiles("*.xlsm", SearchOption.TopDirectoryOnly).Length;
                 numXLSX = count.GetFiles("*.xlsx", SearchOption.TopDirectoryOnly).Length;
-                numXLSX_Strict = Count_XLSX_Strict(argument1, argument3);
+                numXLSX_Strict = Count_XLSX_Strict(inputdir, recurse);
                 numXLSX_Transitional = numXLSX - (numXLSX_Strict + numCONFORM_fail);
                 numXLTM = count.GetFiles("*.xltm", SearchOption.TopDirectoryOnly).Length;
                 numXLTX = count.GetFiles("*.xltx", SearchOption.TopDirectoryOnly).Length;
@@ -100,7 +100,7 @@ namespace CLISC
                 Console.WriteLine($"{numXLTX} {FileFormats.Extension[11]} - {FileFormats.Description[11]}");
 
                 // Create new directory to output results in CSV
-                string Results_Directory = Create_Directory_Results(argument1, argument2);
+                string Results_Directory = Create_Directory_Results(outputdir);
 
                 // Output results in CSV
                 var csv = new StringBuilder();

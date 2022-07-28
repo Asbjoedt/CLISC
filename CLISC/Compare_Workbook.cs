@@ -10,7 +10,7 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        public string Compare_Workbook(string argument0, string Results_Directory, string docCollection, string org_filepath, string conv_filepath)
+        public string Compare_Workbook(string Results_Directory, string docCollection, string org_filepath, string conv_filepath)
         {
             //Create "Beyond Compare" script file
             string bcscript_filepath = Results_Directory + "\\bcscript.txt";

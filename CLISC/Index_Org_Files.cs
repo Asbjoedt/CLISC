@@ -16,21 +16,21 @@ namespace CLISC
         public string Org_Extension { get; set; }
 
         // Search input directory to index files with spreadsheet extensions
-        public static List<orgIndex> Org_Files(string argument1, string argument3)
+        public static List<orgIndex> Org_Files(string inputdir, bool recurse)
         {
             // Create new temporary list for enumeration of input directory
             var org_enumeration = new List<string>();
             // Recurse enumeration of original spreadsheets from input directory
-            if (argument3 == "Recurse=Yes")
+            if (recurse == true)
             {
-                org_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.*", SearchOption.AllDirectories)
+                org_enumeration = (List<string>)Directory.EnumerateFiles(inputdir, "*.*", SearchOption.AllDirectories)
                     .Where(file => FileFormats.Extension.Contains(Path.GetExtension(file)))
                     .ToList();
             }
             // No recurse enumeration
             else
             {
-                org_enumeration = (List<string>)Directory.EnumerateFiles(argument1, "*.*", SearchOption.TopDirectoryOnly)
+                org_enumeration = (List<string>)Directory.EnumerateFiles(inputdir, "*.*", SearchOption.TopDirectoryOnly)
                    .Where(file => FileFormats.Extension.Contains(Path.GetExtension(file)))
                    .ToList();
             }

@@ -12,7 +12,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Convert spreadsheets in OpenDocument file formats
-        public bool Convert_OpenDocument(string argument0, string org_filepath, string input_filepath, string file_folder)
+        public bool Convert_OpenDocument(string function, string org_filepath, string input_filepath, string file_folder)
         {
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
@@ -26,7 +26,7 @@ namespace CLISC
             bool convert_success = true;
 
             // Because of previous bug, rename converted spreadsheet according to archiving requirements
-            if (argument0 == "Count&Convert&Compare&Archive")
+            if (function == "count&convert&compare&archive")
             {
                 string[] filename = Directory.GetFiles(file_folder, "*.xlsx");
 
