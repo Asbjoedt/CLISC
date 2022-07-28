@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using CommandLine;
+using CommandLine.Text;
 
 namespace CLISC
 {
@@ -15,20 +15,37 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Parse user arguments
-            var parse_args = Parser.Default.ParseArguments<Program_Args>(args)
+            var parser = new CommandLine.Parser(with => with.HelpWriter = null);
+            var parse_args = parser.ParseArguments<Program_Args>(args);
+                parse_args
                 .WithParsed(Run)
-                .WithNotParsed(HandleParseError);
+                .WithNotParsed(errs => Help(parse_args, errs));
         }
 
-        // Handle errors if args are not parsed
-        static void HandleParseError(IEnumerable<Error> errs)
+        // Show help dialog to user
+        static void Help<T>(ParserResult<T> result, IEnumerable<Error> errs)
         {
-            Console.ReadLine();
+            var helpText = HelpText.AutoBuild(result, h =>
+            {
+                h.AdditionalNewLineAfterOption = false;
+                h.Heading = "Program could not run.";
+                h.Copyright = "";
+                h.AutoHelp = false;
+                h.AutoVersion = false;
+                h.MaximumDisplayWidth = 90;
+                h.AddPostOptionsLine("Input new argument:");
+                return HelpText.DefaultParsingErrorsHandler(result, h);
+            }, e => e);
+            Console.WriteLine(helpText);
         }
 
         // Run program if args are parsed
         static void Run(Program_Args Arg)
         {
+            // Inform user of their input values
+            Console.WriteLine("---");
+            Console.WriteLine("YOUR INPUT");
+            Console.WriteLine("---");
             Console.WriteLine($"Function: {Arg.function}");
             Console.WriteLine($"Inputdir: {Arg.inputdir}");
             Console.WriteLine($"Outputdir: {Arg.outputdir}");
