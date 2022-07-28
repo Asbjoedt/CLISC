@@ -15,7 +15,7 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Parse user arguments
-            var parser = new CommandLine.Parser(with => with.HelpWriter = null);
+            var parser = new Parser(with => with.HelpWriter = null);
             var parse_args = parser.ParseArguments<Program_Args>(args);
                 parse_args
                 .WithParsed(Run)
@@ -43,7 +43,6 @@ namespace CLISC
         static void Run(Program_Args Arg)
         {
             // Inform user of their input values
-            Console.WriteLine("---");
             Console.WriteLine("YOUR INPUT");
             Console.WriteLine("---");
             Console.WriteLine($"Function: {Arg.function}");

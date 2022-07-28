@@ -43,17 +43,7 @@ namespace CLISC
 
                 switch (conv_extension)
                 {
-                    // Validate OpenDocument file formats
-                    case ".fods":
-                    case ".ods":
-                    case ".ots":
-                        break;
-
-                    // Validate Office Open XML file formats
-                    case ".xlam":
-                    case ".xlsm":
                     case ".xlsx":
-                    case ".xltx":
                         validation_message = Validate_OOXML(conv_filepath);
                         break;
                 }
@@ -68,9 +58,15 @@ namespace CLISC
             {
                 // Get information from list
                 conv_filepath = entry.Conv_Filepath;
+                conv_extension = entry.Conv_Extension;
 
                 // Perform data quality actions
-                dataquality_message = Transform_DataQuality(conv_filepath);
+                switch (conv_extension)
+                {
+                    case ".xlsx":
+                        dataquality_message = Transform_DataQuality(conv_filepath);
+                        break;
+                }
             }
             Console.WriteLine("Data quality requirements ended");
 

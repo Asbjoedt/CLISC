@@ -25,17 +25,17 @@ namespace CLISC
 
             bool convert_success = true;
 
-            // Because of previous bug, rename converted spreadsheet according to archiving requirements
+            // Because of previous bug, we must rename converted spreadsheet to meet archiving requirements
             if (function == "count&convert&compare&archive")
             {
                 string[] filename = Directory.GetFiles(file_folder, "*.xlsx");
 
                 if (filename.Length > 0)
                 {
+                    // Rename converted spreadsheet
                     string old_filename = filename[0];
                     string new_filename = file_folder + "\\1.xlsx";
                     File.Move(old_filename, new_filename);
-
                     // Mark conversion as succesful
                     convert_success = true;
                     // Inform user
