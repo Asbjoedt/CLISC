@@ -73,25 +73,25 @@ Create your arguments from the following list:
 --function count&convert&compare
 --function count&convert&compare&archive
 ```
-**Input directory** (required)
+**Input directory** (required, do not end string with \\)
 ```
 --inputdir ["path to input directory"]
 ```
-**Output directory** (required)
+**Output directory** (required, do not end string with \\)
 ```
 --outputdir ["path to output directory"]
 ```
-**Recurse, include subdirectories as part of input directory** (optional)
+**Recurse, include subdirectories as part of input directory** (optional, by default false)
 ```
 --recurse true
 ```
 **Example of full usage**
 ```
-\.clisc.exe --function count&convert&compare&archive --inputdir "c:\users\%USERNAME%\desktop\documents" --outputdir "c:\users\%USERNAME%\desktop" --recurse true
+\.clisc.exe --function count&convert&compare&archive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
 ```
 **or shorter**
 ```
-\.clisc.exe -f count&convert&compare&archive -i "c:\users\%USERNAME%\desktop\documents" -o "c:\users\%USERNAME%\desktop" -r true
+\.clisc.exe -f count&convert&compare&archive -i "c:\my_path" -o "c:\my_path" -r true
 ```
 
 If you wish to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
