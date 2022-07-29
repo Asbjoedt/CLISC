@@ -61,7 +61,7 @@ Prerequisite software for the program to work with these functions.
 Download the executable [here](https://github.com/Asbjoedt/CLISC/releases). In your terminal change directory to the folder where CLISC.exe is. Then, to execute the program input:
 
 ```
-.\CLISC.exe [YOUR_ARGUMENTS]
+.\CLISC.exe [your_arguments]
 ```
 
 Create your arguments from the following list:
@@ -87,14 +87,14 @@ Create your arguments from the following list:
 ```
 **Example of full usage**
 ```
-.\clisc.exe --function count&convert&compare&archive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
+.\CLISC.exe --function count&convert&compare&archive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
 ```
 **or shorter**
 ```
-.\clisc.exe -f count&convert&compare&archive -i "c:\my_path" -o "c:\my_path" -r true
+.\CLISC.exe -f count&convert&compare&archive -i "c:\my_path" -o "c:\my_path" -r true
 ```
 
-If you wish to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
+If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
 
 [^1]: File extensions .xla and .xlam are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archive directory, if archiving is selected.
 [^2]: File extension .xlsx with Transitional conformance will only be converted if archiving is selected.
