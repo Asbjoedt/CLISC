@@ -134,16 +134,13 @@ namespace CLISC
 
                             // Office Open XML file formats
                             case ".xlsb":
-                                // Transform data types
-                                numFAILED++;
-                                convert_success = false;
-                                error_message = error_messages[2];
-                                conv_extension = null;
-                                conv_filename = null;
-                                conv_filepath = null;
+                                // Conversion code using Excel
+                                convert_success = Convert_XLSB(org_filepath, copy_filepath, conv_filepath);
                                 // Inform user
                                 Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                Console.WriteLine($"--> Conversion {convert_success}");
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             case ".xlam":
@@ -364,16 +361,13 @@ namespace CLISC
 
                             // Office Open XML file formats
                             case ".xlsb":
-                                // Transform data types
-                                numFAILED++;
-                                convert_success = false;
-                                error_message = error_messages[2];
-                                conv_extension = null;
-                                conv_filename = null;
-                                conv_filepath = null;
+                                // Conversion code using Excel
+                                convert_success = Convert_XLSB(org_filepath, copy_filepath, conv_filepath);
                                 // Inform user
                                 Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                Console.WriteLine($"--> Conversion {convert_success}");
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             case ".xlam":
@@ -399,17 +393,33 @@ namespace CLISC
                                 break;
 
                             case ".xlsx":
-                                // No converison
-                                // Transform data types
-                                numXLSX_noconversion++;
-                                convert_success = false;
-                                error_message = error_messages[6];
-                                conv_extension = null;
-                                conv_filename = null;
-                                conv_filepath = null;
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                // Conversion code for Transitional to Strict
+                                SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(org_filepath, false);
+                                bool? strict = spreadsheet.StrictRelationshipFound;
+                                spreadsheet.Close();
+                                if (strict == true)
+                                {
+                                    // Conversion code
+                                    convert_success = Convert_OOXML_Transitional(copy_filepath, org_filepath, conv_filepath);
+                                    numCOMPLETE++;
+                                    error_message = "";
+                                    // Inform user
+                                    Console.WriteLine(org_filepath);
+                                    Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                }
+                                else
+                                {
+                                    // Transform data types
+                                    numXLSX_noconversion++;
+                                    convert_success = false;
+                                    error_message = error_messages[6];
+                                    conv_extension = null;
+                                    conv_filename = null;
+                                    conv_filepath = null;
+                                    // Inform user
+                                    Console.WriteLine(org_filepath);
+                                    Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                }
                                 break;
                         }
                     }
