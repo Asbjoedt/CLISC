@@ -104,6 +104,7 @@ namespace CLISC
 
                 // Output results in CSV
                 var csv = new StringBuilder();
+                // Lines
                 var newLine0 = string.Format("#;Extension;Name");
                 csv.AppendLine(newLine0);
                 var newLine1 = string.Format($"{numFODS};{FileFormats.Extension[0]};{FileFormats.Description[0]}");
@@ -136,7 +137,8 @@ namespace CLISC
                 csv.AppendLine(newLine11);
                 var newLine12 = string.Format($"{numXLTX};{FileFormats.Extension[11]};{FileFormats.Description[11]}");
                 csv.AppendLine(newLine12);
-                string CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
+                // Close CSV
+                CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
                 File.WriteAllText(CSV_filepath, csv.ToString());
 
                 // Inform user of results
@@ -148,8 +150,6 @@ namespace CLISC
 
         public void Count_Results()
         {
-            string CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
-
             Console.WriteLine("---");
             Console.WriteLine("COUNT RESULTS");
             Console.WriteLine("---");

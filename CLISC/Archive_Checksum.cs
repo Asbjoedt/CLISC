@@ -28,7 +28,6 @@ namespace CLISC
             {
                 return "";
             }
-
             catch (System.IO.FileNotFoundException)
             {
                 return "";

@@ -20,11 +20,8 @@ namespace CLISC
         {
             string dataquality_message = "";
 
-            // Check for external relationships
             try
             {
-                Console.WriteLine(filepath);
-
                 // call the methods
                 string extrels_message = Remove_ExternalRelationships(filepath);
                 string rtdfunctions_message = Remove_RTDFunctions(filepath);
@@ -47,18 +44,21 @@ namespace CLISC
         // Remove external relationships
         public string Remove_ExternalRelationships(string filepath)
         {
-            string extrels_message;
-
+            // Open spreadsheet and find external relationships
             SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
             var external_relationships = spreadsheet.ExternalRelationships.ToList();
+            spreadsheet.Close();
+
+            // Data types
             int extrels_count = external_relationships.Count;
             int extrel_number = 0;
-            spreadsheet.Close();
+            string extrels_message;
 
             // If errors
             if (external_relationships.Any())
             {
                 // Inform user
+                Console.WriteLine(external_relationships); // To test if any errors are found and added to the list
                 Console.WriteLine($"--> {extrels_count} relationships detected");
                 foreach (var extrel in external_relationships)
                 {
@@ -70,6 +70,7 @@ namespace CLISC
                     Console.WriteLine("----> Relationship external: " + extrel.IsExternal);
                     Console.WriteLine("----> Relationship container: " + extrel.Container);
                 }
+
                 // Open spreadsheet to remove external relationships
                 //spreadsheet = SpreadsheetDocument.Open(filepath, true);
                 //external_relationships.Remove(ExternalRelationship, extrel.Id);
@@ -88,7 +89,7 @@ namespace CLISC
             {
                 // If no errors, inform user
                 Console.WriteLine("--> No external relationships detected");
-                extrels_message = "0 external relationships";
+                extrels_message = $"{extrels_count} external relationships";
 
                 return extrels_message;
             }
@@ -99,6 +100,10 @@ namespace CLISC
         {
             string rtdfunctions_message = "";
 
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+
+            }
 
             return rtdfunctions_message;
         }
@@ -109,49 +114,44 @@ namespace CLISC
         {
             string embedobj_message = "";
 
-            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
-            var embedded_objects = spreadsheet.ExternalRelationships.ToList();
-            int embedobj_count = embedded_objects.Count;
-            int embedobj_number = 0;
-            spreadsheet.Close();
-
-
-            // If errors
-            if (embedded_objects.Any())
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                // Inform user
-                Console.WriteLine($"--> {embedobj_count} relationships detected");
-                foreach (var extrel in embedded_objects)
+                var embedded_objects = spreadsheet.ExternalRelationships.ToList();
+                int embedobj_count = embedded_objects.Count;
+                int embedobj_number = 0;
+
+                // If errors
+                if (embedded_objects.Any())
                 {
-                    embedobj_number++;
-                    Console.WriteLine($"--> External relationship {embedobj_number}");
-                    Console.WriteLine("----> Relationship ID: " + extrel.Id);
-                    Console.WriteLine("----> Relationship type: " + extrel.RelationshipType);
-                    Console.WriteLine("----> Relationship target URI: " + extrel.Uri);
-                    Console.WriteLine("----> Relationship external: " + extrel.IsExternal);
-                    Console.WriteLine("----> Relationship container: " + extrel.Container);
+                    // Inform user
+                    Console.WriteLine($"--> {embedobj_count} embedded objects detected");
+                    foreach (var extrel in embedded_objects)
+                    {
+                        embedobj_number++;
+                        Console.WriteLine($"--> External relationship {embedobj_number}");
+                        Console.WriteLine("----> Relationship ID: " + extrel.Id);
+                        Console.WriteLine("----> Relationship type: " + extrel.RelationshipType);
+                        Console.WriteLine("----> Relationship target URI: " + extrel.Uri);
+                        Console.WriteLine("----> Relationship external: " + extrel.IsExternal);
+                        Console.WriteLine("----> Relationship container: " + extrel.Container);
+                    }
+                    // Add to number of spreadsheets with external relationships
+                    embedobj_files++;
+                    // Turn list into string
+                    embedobj_message = string.Join(Environment.NewLine, embedded_objects);
+
+                    return embedobj_message;
                 }
-                // Open spreadsheet to remove external relationships
-                spreadsheet = SpreadsheetDocument.Open(filepath, true);
-                //external_relationships.Remove(ExternalRelationship, extrel.Id);
-                spreadsheet.Save();
-                spreadsheet.Close();
-                // Inform user
-                //Console.WriteLine($"--> External relationship {extrel_number} removed");
-                // Add to number of spreadsheets with external relationships
-                embedobj_files++;
-                // Turn list into string
-                embedobj_message = string.Join(Environment.NewLine, embedded_objects);
 
-                return embedobj_message;
-            }
-            else
-            {
-                // If no errors, inform user
-                Console.WriteLine("--> No embedded objects detected");
-                embedobj_message = "0 embedded objects relationships";
+                else
+                {
+                    // If no errors, inform user
+                    Console.WriteLine("--> No embedded objects detected");
+                    embedobj_message = $"{embedobj_count} embedded objects relationships";
 
-                return embedobj_message;
+                    return embedobj_message;
+                }
+
             }
         }
     }

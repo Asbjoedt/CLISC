@@ -13,8 +13,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Comparison data types
-        public static int numTOTAL_conv = 0;
-        public static int numTOTAL_compare = numTOTAL_conv;
+        public static int numTOTAL_compare = 0;
         public static int numTOTAL_diff = 0;
         string compare_message = "";
 
@@ -43,7 +42,7 @@ namespace CLISC
                         // Compare workbook differences
                         if (File.Exists(conv_filepath))
                         {
-                            numTOTAL_conv++;
+                            numTOTAL_compare++;
 
                             // Inform user of comparison
                             Console.WriteLine(org_filepath);
@@ -88,7 +87,7 @@ namespace CLISC
             }
 
             // Close CSV file to log results
-            string CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
+            CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
@@ -97,8 +96,6 @@ namespace CLISC
 
         public void Compare_Results()
         {
-            string CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
-
             Console.WriteLine("---");
             Console.WriteLine("COMPARE RESULTS");
             Console.WriteLine("---");

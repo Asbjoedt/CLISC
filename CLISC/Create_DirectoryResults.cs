@@ -8,8 +8,9 @@ namespace CLISC
 {
     public partial class Spreadsheet
     {
-        // Make results directory public
+        // Create public data types
         public string Results_Directory = "";
+        public string CSV_filepath = "";
 
         // Generate date to use in name of new directory
         public static string GetTimestamp(DateTime value)

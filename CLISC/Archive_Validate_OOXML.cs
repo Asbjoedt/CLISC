@@ -35,8 +35,7 @@ namespace CLISC
                 if (validation_errors.Any())
                 {
                     // Inform user
-                    Console.WriteLine(filepath);
-                    Console.WriteLine($"--> Invalid - Spreadsheet has {error_count} validation errors");
+                    Console.WriteLine($"--> File format is invalid - Spreadsheet has {error_count} validation errors");
                     foreach (var error in validation_errors)
                     {
                         error_number++;
@@ -55,15 +54,14 @@ namespace CLISC
                     // Add files to number of invalid spreadsheets
                     invalid_files++;
                     // Turn list into string
-                    validation_message = string.Join(Environment.NewLine, validation_errors);
+                    validation_message = string.Join(",", validation_errors);
                     return validation_message;
                 }
                 else
                 {
                     // If no errors, inform user
                     valid_files++;
-                    Console.WriteLine(filepath);
-                    Console.WriteLine("--> Valid");
+                    Console.WriteLine("--> File format is valid");
                     return validation_message = "Valid";
                 }
             }

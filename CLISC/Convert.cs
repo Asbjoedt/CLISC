@@ -16,6 +16,8 @@ namespace CLISC
         // Public conversion data types
         public static int numCOMPLETE = 0;
         public static int numFAILED = 0;
+        public static int numXLSX_noconversion = 0;
+        public static int numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
 
         // Convert spreadsheets method
         public List<fileIndex> Convert(string function, string inputdir, bool recurse, string Results_Directory)
@@ -96,6 +98,7 @@ namespace CLISC
                                     conv_filename = "1.xlsx";
                                     conv_filepath = docCollection_subdir + "\\1.xlsx";
                                     error_message = "";
+                                    numCOMPLETE++;
                                 }
                                 else
                                 {
@@ -123,9 +126,10 @@ namespace CLISC
                                 conv_extension = ".xlsx";
                                 conv_filename = "1.xlsx";
                                 conv_filepath = docCollection_subdir + "\\1.xlsx";
-                                error_message = "";
                                 // Conversion code
                                 convert_success = Convert_Legacy_Excel_NPOI(org_filepath, copy_filepath, conv_filepath);
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             // Office Open XML file formats
@@ -162,9 +166,10 @@ namespace CLISC
                                 conv_extension = ".xlsx";
                                 conv_filename = "1.xlsx";
                                 conv_filepath = docCollection_subdir + "\\1.xlsx";
-                                error_message = "";
                                 // Conversion code
                                 convert_success = Convert_OOXML_Transitional(org_filepath, copy_filepath, conv_filepath);
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             case ".xlsx":
@@ -175,6 +180,7 @@ namespace CLISC
                                     SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(copy_filepath, false);
                                     spreadsheet.Close();
                                     // Transform data types for converted spreadsheets
+                                    numXLSX_noconversion++;
                                     conv_extension = ".xlsx";
                                     conv_filename = "1.xlsx";
                                     conv_filepath = docCollection_subdir + "\\1.xlsx";
@@ -203,6 +209,7 @@ namespace CLISC
                                 catch (OpenXmlPackageException)
                                 {
                                     // Transform data types
+                                    numFAILED++;
                                     convert_success = false;
                                     conv_extension = null;
                                     conv_filename = null;
@@ -257,7 +264,6 @@ namespace CLISC
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                     }
-
                     // If LibreOffice is not installed
                     catch (Win32Exception)
                     {
@@ -272,7 +278,6 @@ namespace CLISC
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
                     }
-
                     // NPOI encryption
                     catch(NPOI.Util.RecordFormatException)
                     {
@@ -328,6 +333,8 @@ namespace CLISC
                             case ".ots":
                                 // Conversion code
                                 convert_success = Convert_OpenDocument(function, org_filepath, copy_filepath, docCollection);
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             // Legacy Microsoft Excel file formats
@@ -351,6 +358,8 @@ namespace CLISC
                                 // Inform user
                                 Console.WriteLine(org_filepath);
                                 Console.WriteLine($"--> Conversion {convert_success}");
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             // Office Open XML file formats
@@ -384,12 +393,15 @@ namespace CLISC
                             case ".xltm":
                             case ".xltx":
                                 // Conversion code
-                                convert_success = Convert_OOXML_Transitional(copy_filepath, org_filepath, conv_filepath); ;
+                                convert_success = Convert_OOXML_Transitional(copy_filepath, org_filepath, conv_filepath);
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             case ".xlsx":
                                 // No converison
                                 // Transform data types
+                                numXLSX_noconversion++;
                                 convert_success = false;
                                 error_message = error_messages[6];
                                 conv_extension = null;
@@ -485,7 +497,7 @@ namespace CLISC
                 }
             }
             // Close CSV file to log results
-            string CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
+            CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
             File.WriteAllText(CSV_filepath, csv.ToString());
 
             // Inform user of results
@@ -496,13 +508,13 @@ namespace CLISC
 
         public void Convert_Results()
         {
-            string CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
+            numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
 
-            numCOMPLETE = numTOTAL - numFAILED;
             Console.WriteLine("---");
             Console.WriteLine("CONVERT RESULTS");
             Console.WriteLine("---");
             Console.WriteLine($"{numCOMPLETE} out of {numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"{numXLSX_noconversion} spreadsheets were already .xlsx");
             Console.WriteLine($"{numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
             Console.WriteLine("Conversion ended");
