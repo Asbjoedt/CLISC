@@ -29,7 +29,7 @@ namespace CLISC
 
             bool? convert_success = null;
             string error_message = "";
-            string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary XLSB file format is not supported", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed" };
+            string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed" };
 
             // Open CSV file to log results
             var csv = new StringBuilder();
@@ -84,10 +84,12 @@ namespace CLISC
                         // Change conversion method based on file extension
                         switch (org_extension)
                         {
-                            // OpenDocument file formats
+                            // OpenDocument file formats using LibreOffice
                             case ".fods":
                             case ".ods":
                             case ".ots":
+                            // And binary OOXML
+                            case ".xlsb":
                                 // Conversion code
                                 convert_success = Convert_OpenDocument(function, org_filepath, copy_filepath, docCollection_subdir);
                                 error_message = "";
@@ -106,43 +108,8 @@ namespace CLISC
                                 }
                                 break;
 
-                            // Legacy Microsoft Excel file formats
+                            // Microsoft Excel Add-in file formats are not converted
                             case ".xla":
-                                // Transform data types
-                                numFAILED++;
-                                convert_success = false;
-                                error_message = error_messages[5];
-                                conv_extension = null;
-                                conv_filename = null;
-                                conv_filepath = null;
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
-                                break;
-
-                            case ".xls":
-                            case ".xlt":
-                                // Transform data types for converted spreadsheets
-                                conv_extension = ".xlsx";
-                                conv_filename = "1.xlsx";
-                                conv_filepath = docCollection_subdir + "\\1.xlsx";
-                                // Conversion code
-                                convert_success = Convert_Legacy_Excel_NPOI(org_filepath, copy_filepath, conv_filepath);
-                                numCOMPLETE++;
-                                error_message = "";
-                                break;
-
-                            // Office Open XML file formats
-                            case ".xlsb":
-                                // Conversion code using Excel
-                                convert_success = Convert_XLSB(org_filepath, copy_filepath, conv_filepath);
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success}");
-                                numCOMPLETE++;
-                                error_message = "";
-                                break;
-
                             case ".xlam":
                                 // Transform data types
                                 numFAILED++;
@@ -154,6 +121,19 @@ namespace CLISC
                                 // Inform user
                                 Console.WriteLine(org_filepath);
                                 Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                break;
+
+                            // Legacy Microsoft Excel file formats
+                            case ".xls":
+                            case ".xlt":
+                                // Transform data types for converted spreadsheets
+                                conv_extension = ".xlsx";
+                                conv_filename = "1.xlsx";
+                                conv_filepath = docCollection_subdir + "\\1.xlsx";
+                                // Conversion code
+                                convert_success = Convert_Legacy_Excel_NPOI(org_filepath, copy_filepath, conv_filepath);
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             case ".xlsm":
@@ -324,52 +304,20 @@ namespace CLISC
                         // Change conversion method based on file extension
                         switch (org_extension)
                         {
-                            // OpenDocument file formats
+                            // OpenDocument file formats using LibreOffice
                             case ".fods":
                             case ".ods":
                             case ".ots":
+                            // And binary OOXML
+                            case ".xlsb":
                                 // Conversion code
                                 convert_success = Convert_OpenDocument(function, org_filepath, copy_filepath, docCollection);
                                 numCOMPLETE++;
                                 error_message = "";
                                 break;
 
-                            // Legacy Microsoft Excel file formats
+                            // Microsoft Excel Add-in file formats are not converted
                             case ".xla":
-                                // Transform data types
-                                numFAILED++;
-                                convert_success = false;
-                                error_message = error_messages[5];
-                                conv_extension = null;
-                                conv_filename = null;
-                                conv_filepath = null;
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
-                                break;
-
-                            case ".xls":
-                            case ".xlt":
-                                // Conversion code
-                                convert_success = Convert_Legacy_Excel_NPOI(copy_filepath, org_filepath, conv_filepath);
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success}");
-                                numCOMPLETE++;
-                                error_message = "";
-                                break;
-
-                            // Office Open XML file formats
-                            case ".xlsb":
-                                // Conversion code using Excel
-                                convert_success = Convert_XLSB(org_filepath, copy_filepath, conv_filepath);
-                                // Inform user
-                                Console.WriteLine(org_filepath);
-                                Console.WriteLine($"--> Conversion {convert_success}");
-                                numCOMPLETE++;
-                                error_message = "";
-                                break;
-
                             case ".xlam":
                                 // Transform data types
                                 numFAILED++;
@@ -381,6 +329,18 @@ namespace CLISC
                                 // Inform user
                                 Console.WriteLine(org_filepath);
                                 Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                                break;
+
+                            // Legacy Microsoft Excel file formats except .xla
+                            case ".xls":
+                            case ".xlt":
+                                // Conversion code
+                                convert_success = Convert_Legacy_Excel_NPOI(copy_filepath, org_filepath, conv_filepath);
+                                // Inform user
+                                Console.WriteLine(org_filepath);
+                                Console.WriteLine($"--> Conversion {convert_success}");
+                                numCOMPLETE++;
+                                error_message = "";
                                 break;
 
                             case ".xlsm":
@@ -490,6 +450,20 @@ namespace CLISC
                         conv_filepath = null;
                         conv_filename = null;
                         conv_extension = null;
+                        // Inform user
+                        Console.WriteLine(org_filepath);
+                        Console.WriteLine($"--> Conversion {convert_success} - {error_message}");
+                    }
+                    // If Excel is not installed or have the right version 15.0.0.0, to be used for XLSB conversion
+                    catch (FileNotFoundException)
+                    {
+                        // Code to execute
+                        numFAILED++;
+                        convert_success = false;
+                        error_message = error_messages[2];
+                        conv_extension = null;
+                        conv_filename = null;
+                        conv_filepath = null;
                         // Inform user
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Conversion {convert_success} - {error_message}");

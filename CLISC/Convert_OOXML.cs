@@ -64,9 +64,10 @@ namespace CLISC
         // Found code here: https://docs.microsoft.com/en-us/answers/questions/212363/how-to-convert-xlsb-file-to-xlsx.html
         public bool Convert_XLSB(string org_filepath, string input_filepath, string output_filepath)
         {
-
+            // Create object instance
             Excel.Application excelApplication = new Excel.Application();
             Workbooks workbooks = excelApplication.Workbooks;
+
             // open book in any format
             Excel.Workbook workbook = workbooks.Open(input_filepath, XlUpdateLinks.xlUpdateLinksNever, true, Type.Missing, Type.Missing, Type.Missing,
                 Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
@@ -78,14 +79,15 @@ namespace CLISC
             // close workbook
             workbook.Close(false, Type.Missing, Type.Missing);
             excelApplication.Quit();
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(workbooks);
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApplication);
 
-            foreach (System.Diagnostics.Process proc in System.Diagnostics.Process.GetProcessesByName("EXCEL"))
-            {
-                proc.Kill();
-            }
+            //System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+            //System.Runtime.InteropServices.Marshal.ReleaseComObject(workbooks);
+            //System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApplication);
+
+            //foreach (system.diagnostics.process proc in system.diagnostics.process.getprocessesbyname("excel"))
+            //{
+            //    proc.kill();
+            //}
 
             bool convert_success = true;
 
