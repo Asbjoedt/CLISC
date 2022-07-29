@@ -4,7 +4,7 @@
 A small Windows console application made in C#. It is as a hobby project. The app might have use cases in digital archiving of spreadsheets.
 
 :rainbow_flag: **General**
-* Bulk convert spreadsheets in a directory to .xlsx Transitional conformance
+* Bulk convert spreadsheets in a directory to .xlsx (Transitional conformance)
 * Include or exclude subdirectories recursively
 * Output results in a new directory with logs in CSV
 
@@ -16,8 +16,8 @@ Count number of spreadsheets in directory by file format.
 
 :magic_wand: **Convert**
 
-Convert any spreadsheet[^1] to .xlsx (Office Open XML Transitional conformance).
-* Office Open XML with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance[^2]
+Convert any spreadsheet[^1] to .xlsx (Transitional conformance).
+* Office Open XML (Excel) with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance[^2]
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
@@ -66,22 +66,22 @@ Download the executable [here](https://github.com/Asbjoedt/CLISC/releases). In y
 
 Create your arguments from the following list:
 
-**Functions to use** (required)
+**Functions to use** (required, pick one of the four)
 ```
 --function count
 --function count&convert
 --function count&convert&compare
 --function count&convert&compare&archive
 ```
-**Input directory** (required, do not end string with \\ )
+**Input directory** (required)
 ```
 --inputdir ["path to input directory"]
 ```
-**Output directory** (required, do not end string with \\ )
+**Output directory** (required)
 ```
 --outputdir ["path to output directory"]
 ```
-**Recurse, include subdirectories as part of input directory** (optional, by default false)
+**Include subdirectories from input directory** (optional, by default false)
 ```
 --recurse true
 ```
@@ -97,5 +97,5 @@ Create your arguments from the following list:
 If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
 
 [^1]: File extensions .xla and .xlam are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archive directory, if archiving is selected.
-[^2]: File extension .xlsx with Transitional conformance will only be converted if archiving is selected.
+[^2]: Conversion to file extension .xlsx with Strict conformance are currently not supported.
 [^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
