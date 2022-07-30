@@ -26,12 +26,6 @@ namespace CLISC
             save_spreadsheet.Close();
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-            Console.WriteLine($"--> Conversion saved to: {output_filepath}");
-
             return convert_success;
         }
 

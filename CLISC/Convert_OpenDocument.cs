@@ -12,7 +12,7 @@ namespace CLISC
     public partial class Spreadsheet
     {
         // Convert spreadsheets in OpenDocument file formats
-        public bool Convert_OpenDocument(string function, string org_filepath, string input_filepath, string file_folder)
+        public bool Convert_OpenDocument(string input_filepath, string file_folder)
         {
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
@@ -24,50 +24,7 @@ namespace CLISC
             app.Close();
 
             bool convert_success = true;
-
-            // Because of previous bug, we must rename converted spreadsheet to meet archiving requirements
-            if (function == "count&convert&compare&archive")
-            {
-                string[] filename = Directory.GetFiles(file_folder, "*.xlsx");
-
-                if (filename.Length > 0)
-                {
-                    // Rename converted spreadsheet
-                    string old_filename = filename[0];
-                    string new_filename = file_folder + "\\1.xlsx";
-                    File.Move(old_filename, new_filename);
-                    // Mark conversion as succesful
-                    convert_success = true;
-                    // Inform user
-                    Console.WriteLine(org_filepath);
-                    Console.WriteLine($"--> Conversion {convert_success}");
-                    Console.WriteLine($"--> Conversion saved to: {new_filename}");
-
-                    return convert_success;
-                }
-                else
-                {
-                    // Mark conversion as unsuccesful, if converted spreadsheet was not found
-                    convert_success = false;
-                    // Inform user
-                    Console.WriteLine(input_filepath);
-                    Console.WriteLine($"--> Conversion {convert_success}");
-
-                    return convert_success;
-                }
-            }
-            // Bug does not exist in ordinary use
-            else
-            {
-                // Mark conversion as succesful
-                convert_success = true;
-                // Inform user
-                Console.WriteLine(org_filepath);
-                Console.WriteLine($"--> Conversion {convert_success}");
-                Console.WriteLine($"--> Conversion saved to: {file_folder}");
-
-                return convert_success;
-            }
+            return convert_success;
         }
     }
 }

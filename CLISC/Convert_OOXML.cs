@@ -28,17 +28,11 @@ namespace CLISC
             }
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-            Console.WriteLine($"--> Conversion saved to: {output_filepath}");
-
             return convert_success;
         }
 
-        // Convert to Office Open XML XLSX Strict conformance - NOT WORKING - IT OUTPUTS TRANSITIONAL
-        public bool Convert_OOXML_Strict(string org_filepath, string input_filepath, string output_filepath)
+        // Convert to OOXML XLSX Strict conformance - NOT WORKING - IT OUTPUTS TRANSITIONAL
+        public bool Convert_OOXML_Strict(string input_filepath, string output_filepath)
         {
             byte[] byteArray = File.ReadAllBytes(input_filepath);
             using (MemoryStream stream = new MemoryStream())
@@ -52,16 +46,12 @@ namespace CLISC
             }
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-
             return convert_success;
         }
 
         // Convert XLSB using Excel
         // Found code here: https://docs.microsoft.com/en-us/answers/questions/212363/how-to-convert-xlsb-file-to-xlsx.html
+        // NOT USED IN PROGRAM - it needs Excel installed
         public bool Convert_XLSB(string org_filepath, string input_filepath, string output_filepath)
         {
             // Create object instance
@@ -90,11 +80,6 @@ namespace CLISC
             //}
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-
             return convert_success;
         }
     }
