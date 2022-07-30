@@ -110,30 +110,28 @@ namespace CLISC
                                     conv_filepath = file_folder + "\\1.xlsx";
                                     numCOMPLETE++;
                                 }
-                                // If ordinary use, no archiving
-                                else if (convert_success == true)
+                            }
+                            // If ordinary use, no archiving
+                            else if (convert_success == true)
+                            {
+                                conv_extension = ".xlsx";
+                                conv_filename = Path.GetFileNameWithoutExtension(copy_filename) + conv_extension;
+                                string conv_filename_without_ext = Path.GetFileNameWithoutExtension(copy_filename);
+                                conv_filepath = docCollection + "\\" + conv_filename;
+                                // Prevent overriding of existing conversion when moving to docCollection
+                                while (File.Exists(conv_filepath))
                                 {
-                                    conv_extension = ".xlsx";
-                                    string conv_filename_without_ext = Path.GetFileNameWithoutExtension(copy_filename);
-                                    conv_filename = Path.GetFileNameWithoutExtension(copy_filepath) + conv_extension;
-                                    conv_filepath = docCollection + "\\" + conv_filename;
-                                    // Prevent overriding of existing conversion when moving to docCollection
-                                    while (File.Exists(conv_filepath))
-                                    {
-                                        conv_file_number++;
-                                        conv_filepath = docCollection + "\\" + conv_filename_without_ext + "_" + conv_file_number + conv_extension;
-                                    }
-                                    File.Move(copy_filepath, conv_filepath);
-                                    numCOMPLETE++;
+                                    conv_file_number++;
+                                    conv_filepath = docCollection + "\\" + conv_filename_without_ext + "_" + conv_file_number + conv_extension;
                                 }
-                                // If OpenDocument spreadsheet is password protected or corrupt
-                                else if (convert_success == false)
-                                {
-                                    numFAILED++;
-                                    // Inform user
-                                    Console.WriteLine(org_filepath);
-                                    Console.WriteLine($"--> Conversion noget ffff");
-                                }
+                                File.Move(copy_filepath, conv_filepath);
+                                numCOMPLETE++;
+                            }
+                            // If OpenDocument spreadsheet is password protected or corrupt
+                            else if (convert_success == false)
+                            {
+
+                                Console.WriteLine($"--> Inform something is wrong");
                             }
                             break;
 
@@ -239,7 +237,7 @@ namespace CLISC
                                     }
                                     error_message = error_messages[8];
                                     // Conversion code
-                                    convert_success = Convert_OOXML_Strict(copy_filepath, conv_filepath);
+                                    convert_success = Convert_Transitional_to_Strict(copy_filepath, conv_filepath, file_folder);
                                     numCOMPLETE++;
                                 }
                                 else
@@ -337,8 +335,8 @@ namespace CLISC
                     // Delete copied spreadsheet if no archiving
                     if (function != "count&convert&compare&archive")
                     {
-                        File.Delete(copy_filepath);
-                        Directory.Delete(docCollection_subdir);
+                        File.Delete(copy_filepath); // BUG: Does not delete the file
+                        Directory.Delete(docCollection_subdir, true); // To correct bug, written "true" here
                     }
                     // Delete info of copied spreadsheet, if no archiving
                     if (function != "count&convert&compare&archive")
