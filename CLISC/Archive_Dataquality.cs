@@ -16,15 +16,15 @@ namespace CLISC
         public static int embedobj_files = 0;
 
         // Perform data quality actions
-        public string Transform_DataQuality(string filepath)
+        public string Check_DataQuality(string filepath)
         {
             string dataquality_message = "";
 
             try
             {
                 // call the methods
-                string extrels_message = Remove_ExternalRelationships(filepath);
-                string rtdfunctions_message = Remove_RTDFunctions(filepath);
+                string extrels_message = Check_ExternalRelationships(filepath);
+                string rtdfunctions_message = Check_RTDFunctions(filepath);
                 string embedobj_message = Alert_EmbeddedObjects(filepath);
 
                 string messages_combined = "";
@@ -41,8 +41,21 @@ namespace CLISC
             }
         }
 
-        // Remove external relationships
-        public string Remove_ExternalRelationships(string filepath)
+        public void Check_and_Remove_DataQuality(string filepath)
+        {
+            // Check for data to change
+            string any_errors = Check_DataQuality(filepath);
+
+            // If yes, change data
+            if (any_errors != "")
+            {
+                Remove_ExternalRelationships(filepath);
+                Remove_RTDFunctions(filepath);
+            }
+        }
+
+        // Check for external relationships
+        public string Check_ExternalRelationships(string filepath)
         {
             // Open spreadsheet and find external relationships
             SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
@@ -70,14 +83,6 @@ namespace CLISC
                     Console.WriteLine("----> Relationship external: " + extrel.IsExternal);
                     Console.WriteLine("----> Relationship container: " + extrel.Container);
                 }
-
-                // Open spreadsheet to remove external relationships
-                //spreadsheet = SpreadsheetDocument.Open(filepath, true);
-                //external_relationships.Remove(ExternalRelationship, extrel.Id);
-                //spreadsheet.Save();
-                //spreadsheet.Close();
-                // Inform user
-                //Console.WriteLine($"--> External relationship {extrel_number} removed");
                 // Add to number of spreadsheets with external relationships
                 extrels_files++;
                 // Turn list into string
@@ -95,8 +100,25 @@ namespace CLISC
             }
         }
 
-        // Check for embedded objects and return alert
-        public string Remove_RTDFunctions(string filepath)
+        // Remove external relationships
+        public void Remove_ExternalRelationships(string filepath)
+        {
+            // Open spreadsheet and remove external relationships
+            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true);
+            var external_relationships = spreadsheet.ExternalRelationships.ToList();
+
+            //external_relationships.Remove(ExternalRelationship, extrel.Id);
+            //spreadsheet.Save();
+            //spreadsheet.Close();
+            // Inform user
+            //Console.WriteLine($"--> External relationship {extrel_number} removed");
+            // Add to number of spreadsheets with external relationships
+
+            spreadsheet.Close();
+        }
+
+        // Check for RTD functions and return alert
+        public string Check_RTDFunctions(string filepath)
         {
             string rtdfunctions_message = "";
 
@@ -106,6 +128,17 @@ namespace CLISC
             }
 
             return rtdfunctions_message;
+        }
+
+        public void Remove_RTDFunctions(string filepath)
+        {
+            string rtdfunctions_message = "";
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+
+            }
+
         }
 
 

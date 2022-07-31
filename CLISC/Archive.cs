@@ -45,7 +45,7 @@ namespace CLISC
                 ods_conv_extension = entry.ODS_Conv_Extension;
 
                 // Inform user of analyzed filepath
-                if (entry.XLSX_Conv_Extension == ".xlsx")
+                if (xlsx_conv_extension == ".xlsx")
                 {
                     // Inform user
                     Console.WriteLine(xlsx_conv_filepath);
@@ -53,7 +53,7 @@ namespace CLISC
                     xlsx_validation_message = Validate_OOXML(xlsx_conv_filepath);
 
                     // Perform data quality actions
-                    dataquality_message = Transform_DataQuality(xlsx_conv_filepath);
+                    dataquality_message = Check_DataQuality(xlsx_conv_filepath);
 
                     // Calcualte checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
