@@ -17,7 +17,9 @@ namespace CLISC
         public static int numCOMPLETE = 0;
         public static int numFAILED = 0;
         public static int numXLSX_noconversion = 0;
+        public static int numODS_noconversion = 0;
         public static int numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
+        public static bool? convert_success = null;
         static string? file_folder = null;
         static int subdir_number = 1;
         static int copy_file_number = 1;
@@ -28,13 +30,11 @@ namespace CLISC
         static string? conv_extension = null;
         static string? conv_filename = null;
         static string? conv_filepath = null;
-        static bool? convert_success = null;
-        static string docCollection_subdir = "";
         static string? error_message = null;
-        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", "Strict conformance identified" };
+        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified" };
 
         // Convert spreadsheets method
-        public List<fileIndex> Convert_Spreadsheets(string inputdir, bool recurse, string Results_Directory)
+        public List<fileIndex> Convert_Spreadsheets(string function, string inputdir, bool recurse, string Results_Directory)
         {
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
@@ -61,18 +61,18 @@ namespace CLISC
                 string org_filepath = entry.Org_Filepath;
 
                 // Create new subdirectory for the spreadsheet
-                docCollection_subdir = docCollection + "\\" + subdir_number;
-                while (Directory.Exists(docCollection_subdir))
+                file_folder = docCollection + "\\" + subdir_number;
+                while (Directory.Exists(file_folder))
                 {
                     subdir_number++;
-                    docCollection_subdir = docCollection + "\\" + subdir_number;
+                    file_folder = docCollection + "\\" + subdir_number;
                 }
-                DirectoryInfo Output_Subdir = Directory.CreateDirectory(docCollection_subdir);
+                DirectoryInfo Output_Subdir = Directory.CreateDirectory(file_folder);
 
                 // Transform data types for copied original spreadsheet
                 copy_extension = org_extension;
                 copy_filename = "orgFile_" + org_filename;
-                copy_filepath = docCollection_subdir + "\\" + copy_filename;
+                copy_filepath = file_folder + "\\" + copy_filename;
                 string no_ext = Path.GetFileNameWithoutExtension(copy_filepath);
 
                 // Copy spreadsheet 
@@ -92,7 +92,7 @@ namespace CLISC
                         case ".xlsb":
                             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
                             // Conversion code
-                            convert_success = Convert_from_OpenDocument(copy_filepath, docCollection_subdir);
+                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
                             if (convert_success == true)
                             {
                                 conv_extension = ".xlsx";
@@ -105,7 +105,7 @@ namespace CLISC
                                     conv_filepath = docCollection + "\\" + no_ext + "_" + conv_file_number + conv_extension;
                                 }
                                 File.Move(copy_filepath, conv_filepath);
-                                File.Delete(docCollection_subdir + "\\" + no_ext + ".xlsx");
+                                File.Delete(file_folder + "\\" + no_ext + ".xlsx");
                                 numCOMPLETE++;
                             }
                             // If OpenDocument spreadsheet is password protected or corrupt
@@ -185,7 +185,7 @@ namespace CLISC
                                     }
                                     error_message = error_messages[8];
                                     // Conversion code
-                                    convert_success = Convert_Strict_to_Transitional(copy_filepath, conv_filepath, docCollection_subdir);
+                                    convert_success = Convert_Strict_to_Transitional(copy_filepath, conv_filepath, file_folder);
                                     numCOMPLETE++;
                                 }
                                 else
@@ -282,12 +282,12 @@ namespace CLISC
                 {
                     // Delete copied spreadsheet
                     File.Delete(copy_filepath);
-                    Directory.Delete(docCollection_subdir);
+                    Directory.Delete(file_folder);
                     // Delete info of copied spreadsheet
-
                     copy_extension = null;
                     copy_filename = null;
                     copy_filepath = null;
+
                     // Inform user
                     Console.WriteLine(org_filepath);
                     Console.WriteLine($"--> Conversion {convert_success}");
@@ -299,9 +299,10 @@ namespace CLISC
                     {
                         Console.WriteLine(error_message);
                     }
+                    Console.WriteLine("---");
 
                     // Add copied and converted spreadsheets file info to index of files
-                    File_List.Add(new fileIndex { File_Folder = docCollection_subdir, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = copy_filepath, Copy_Filename = copy_filename, Copy_Extension = copy_extension, Conv_Filepath = conv_filepath, Conv_Filename = conv_filename, Conv_Extension = conv_extension, Convert_Success = convert_success });
+                    File_List.Add(new fileIndex { File_Folder = file_folder, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = copy_filepath, Copy_Filename = copy_filename, Copy_Extension = copy_extension, Conv_Filepath = conv_filepath, Conv_Filename = conv_filename, Conv_Extension = conv_extension, Convert_Success = convert_success });
 
                     // Output result in open CSV file
                     var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{conv_filepath};{conv_filename};{conv_extension};{convert_success};{error_message}");
@@ -322,7 +323,6 @@ namespace CLISC
         {
             numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
 
-            Console.WriteLine("---");
             Console.WriteLine("CONVERT RESULTS");
             Console.WriteLine("---");
             Console.WriteLine($"{numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");

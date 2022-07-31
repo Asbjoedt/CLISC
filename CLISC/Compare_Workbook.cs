@@ -29,7 +29,7 @@ namespace CLISC
             app.Close();
 
             // Read logfile to identify differences
-            compare_message = File.ReadAllText(bcscript_results_filepath);
+            var compare_message = File.ReadAllText(bcscript_results_filepath);
 
             // Delete logfile
             //if (File.Exists(bcscript_results_filepath))

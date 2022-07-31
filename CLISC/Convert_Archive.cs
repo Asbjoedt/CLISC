@@ -21,14 +21,14 @@ namespace CLISC
         string? ods_conv_filepath = null;
 
         // Convert spreadsheets method
-        public List<fileIndex> Convert_Spreadsheets_Archive(string inputdir, bool recurse, string Results_Directory)
+        public List<fileIndex> Convert_Spreadsheets_Archive(string function, string inputdir, bool recurse, string Results_Directory)
         {
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original filename;Original file format;Convert filepath;Convert filename;Convert file format;Convert filepath;ODS Convert filename;ODS file format;Convert success;Convert Message");
+            var newLine0 = string.Format($"Original Filepath;Original Filename;Original Fileformat;XLSX Convert Filepath;ODS Convert Filepath;Convert Success;Convert Message");
             csv.AppendLine(newLine0);
 
             // Create lists
@@ -74,37 +74,33 @@ namespace CLISC
                         case ".fods":
                         case ".ods":
                         case ".ots":
-                            // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
-
                             // Convert to XLSX
-                            convert_success = Convert_from_OpenDocument(copy_filepath, file_folder);
-                            // Because of previous bug we must rename converted spreadsheet
+                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
                             if (convert_success == true)
                             {
-                                string[] filename = Directory.GetFiles(file_folder, "*.xlsx");
-                                if (filename.Length > 0)
-                                {
-                                    // Rename converted spreadsheet
-                                    string old_filename = filename[0];
-                                    string new_filename = file_folder + "\\1.xlsx";
-                                    File.Move(old_filename, new_filename);
-                                    // Transform datatypes
-                                    xlsx_conv_extension = ".xlsx";
-                                    xlsx_conv_filename = "1" + xlsx_conv_extension;
-                                    xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                                    numCOMPLETE++;
-                                }
-                                // And make a copy of ODS and rename it 1.ods
+                                xlsx_conv_extension = ".xlsx";
+                                xlsx_conv_filename = "1.xlsx";
+                                xlsx_conv_filepath = file_folder + "\\1.xlsx";
+                                error_message = "";
+                                numCOMPLETE++;
+
+                                // And convert to ODS
+                                convert_success = Convert_to_OpenDocument(function, copy_filepath, file_folder);
                                 ods_conv_extension = ".ods";
                                 ods_conv_filename = "1" + ods_conv_extension;
                                 ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
-                                File.Copy(org_filepath, ods_conv_filepath);
                             }
-                            // If OpenDocument spreadsheet is password protected or corrupt
-                            else if (convert_success == false)
+                            else
                             {
-
-                                Console.WriteLine($"--> something is wrong");
+                                ods_conv_extension = null;
+                                ods_conv_filename = null;
+                                ods_conv_filepath = null;
+                                convert_success = false;
+                                error_message = "Spreadsheet is password protected or corrupt";
+                            }
+                            if (!File.Exists(copy_filepath))
+                            {
+                                File.Copy(org_filepath, copy_filepath);
                             }
                             break;
 
@@ -133,73 +129,24 @@ namespace CLISC
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             convert_success = Convert_from_LegacyExcel(org_filepath, copy_filepath, xlsx_conv_filepath);
                             numCOMPLETE++;
+                            error_message = "";
 
                             // And convert to ODS
-                            convert_success = Convert_to_OpenDocument(xlsx_conv_filepath, file_folder);
-                            // Because of previous bug we must rename converted spreadsheet
-                            if (convert_success == true)
-                            {
-                                string[] filename = Directory.GetFiles(file_folder, "*.ods");
-                                if (filename.Length > 0)
-                                {
-                                    // Rename converted spreadsheet
-                                    string old_filename = filename[0];
-                                    string new_filename = file_folder + "\\1.ods";
-                                    File.Move(old_filename, new_filename);
-                                    // Transform datatypes
-                                    ods_conv_extension = ".ods";
-                                    ods_conv_filename = "1" + ods_conv_extension;
-                                    ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
-                                }
-                            }
+                            convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
+                            ods_conv_extension = ".ods";
+                            ods_conv_filename = "1" + ods_conv_extension;
+                            ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
                             break;
-                        
-                        // Using LibreOffice
+
                         case ".xlsb":
-                            // Convert to XLSX
-                            convert_success = Convert_from_OpenDocument(copy_filepath, file_folder);
-                            // Because of previous bug we must rename converted spreadsheet
-                            if (convert_success == true)
-                            {
-                                string[] filename = Directory.GetFiles(file_folder, "*.xlsx");
-                                if (filename.Length > 0)
-                                {
-                                    // Rename converted spreadsheet
-                                    string old_filename = filename[0];
-                                    string new_filename = file_folder + "\\1.xlsx";
-                                    File.Move(old_filename, new_filename);
-                                    // Transform datatypes
-                                    xlsx_conv_extension = ".xlsx";
-                                    xlsx_conv_filename = "1" + xlsx_conv_extension;
-                                    xlsx_conv_filepath = file_folder + "\\" + xlsx_conv_filename;
-                                    numCOMPLETE++;
-                                }
+                            // Convert to XLSX using LibreOffice
+                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
 
-                                // And convert to ODS
-                                convert_success = Convert_to_OpenDocument(xlsx_conv_filepath, file_folder);
-                                // Because of previous bug we must rename converted spreadsheet
-                                if (convert_success == true)
-                                {
-                                    filename = Directory.GetFiles(file_folder, "*.ods");
-                                    if (filename.Length > 0)
-                                    {
-                                        // Rename converted spreadsheet
-                                        string old_filename = filename[0];
-                                        string new_filename = file_folder + "\\1.ods";
-                                        File.Move(old_filename, new_filename);
-                                        // Transform datatypes
-                                        ods_conv_extension = ".ods";
-                                        ods_conv_filename = "1" + ods_conv_extension;
-                                        ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
-                                    }
-                                }
-                                // If OpenDocument spreadsheet is password protected or corrupt
-                                else if (convert_success == false)
-                                {
-
-                                    Console.WriteLine($"--> something is wrong");
-                                }
-                            }
+                            // And convert to ODS
+                            convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
+                            ods_conv_extension = ".ods";
+                            ods_conv_filename = "1" + ods_conv_extension;
+                            ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
                             break;
 
                         case ".xlsm":
@@ -212,63 +159,47 @@ namespace CLISC
 
                             // Convert to XLSX
                             convert_success = Convert_to_OOXML_Transitional(copy_filepath, xlsx_conv_filepath);
-                            numCOMPLETE++;
-
-                            // And convert to ODS
-                            convert_success = Convert_to_OpenDocument(xlsx_conv_filepath, file_folder);
-                            // Because of previous bug we must rename converted spreadsheet
                             if (convert_success == true)
                             {
-                                string[] filename = Directory.GetFiles(file_folder, "*.ods");
-                                if (filename.Length > 0)
-                                {
-                                    // Rename converted spreadsheet
-                                    string old_filename = filename[0];
-                                    string new_filename = file_folder + "\\1.ods";
-                                    File.Move(old_filename, new_filename);
-                                    // Transform datatypes
-                                    ods_conv_extension = ".ods";
-                                    ods_conv_filename = "1" + ods_conv_extension;
-                                    ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
-                                }
+                                numCOMPLETE++;
+                                error_message = "";
+
+                                // And convert to ODS
+                                convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
+                                ods_conv_extension = ".ods";
+                                ods_conv_filename = "1" + ods_conv_extension;
+                                ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
                             }
                             break;
 
                         case ".xlsx":
+                            // Open to find Strict conformance
+                            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(org_filepath, false);
+                            bool? strict = spreadsheet.StrictRelationshipFound;
+                            spreadsheet.Close();
+                            if (strict != true)
+                            {
+                                error_message = error_messages[6];
+                            }
+                            else
+                            {
+                                error_message = "";
+                            }
 
-                                // Open to find Strict conformance
-                                SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(org_filepath, false);
-                                bool? strict = spreadsheet.StrictRelationshipFound;
-                                spreadsheet.Close();
-                                // No conversion
-                                // Transform data types
-                                numXLSX_noconversion++;
-                                convert_success = null;
-                                error_message = error_messages[6] + " - " + error_messages[9];
-                                xlsx_conv_extension = ".xlsx";
-                                xlsx_conv_filename = "1.xlsx";
-                                xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                                // Copy and rename XLSX
-                                File.Copy(copy_filepath, xlsx_conv_filepath);
+                            // Transform data types
+                            numXLSX_noconversion++;
+                            xlsx_conv_extension = ".xlsx";
+                            xlsx_conv_filename = "1.xlsx";
+                            xlsx_conv_filepath = file_folder + "\\1.xlsx";
 
-                                // And convert to ODS
-                                convert_success = Convert_to_OpenDocument(xlsx_conv_filepath, file_folder);
-                                // Because of previous bug we must rename converted spreadsheet
-                                if (convert_success == true)
-                                {
-                                    string[] filename = Directory.GetFiles(file_folder, "*.ods");
-                                    if (filename.Length > 0)
-                                    {
-                                        // Rename converted spreadsheet
-                                        string old_filename = filename[0];
-                                        string new_filename = file_folder + "\\1.ods";
-                                        File.Move(old_filename, new_filename);
-                                        // Transform datatypes
-                                        ods_conv_extension = ".ods";
-                                        ods_conv_filename = "1" + ods_conv_extension;
-                                        ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
-                                    }
-                                }
+                            // Copy and rename XLSX
+                            File.Copy(copy_filepath, xlsx_conv_filepath);
+
+                            // And convert to ODS
+                            convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
+                            ods_conv_extension = ".ods";
+                            ods_conv_filename = "1" + ods_conv_extension;
+                            ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
                             break;
                     }
                 }
@@ -348,19 +279,20 @@ namespace CLISC
                     Console.WriteLine($"--> Conversion {convert_success}");
                     if (convert_success == true)
                     {
-                        Console.WriteLine($"--> Conversion saved to: {xlsx_conv_filepath}");
-                        Console.WriteLine($"--> Conversion saved to: {ods_conv_filepath}");
+                        Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
+                        Console.WriteLine($"--> File saved to: {ods_conv_filepath}");
                     }
                     else if (error_message != null || error_message == error_messages[6])
                     {
-                        Console.WriteLine($"--> error_message");
+                        Console.WriteLine($"--> {error_message}");
                     }
+                    Console.WriteLine("---");
 
                     // Add copied and converted spreadsheets file info to index of files
                     File_List.Add(new fileIndex { File_Folder = file_folder, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = copy_filepath, Copy_Filename = copy_filename, Copy_Extension = copy_extension, XLSX_Conv_Filepath = xlsx_conv_filepath, XLSX_Conv_Filename = xlsx_conv_filename, XLSX_Conv_Extension = xlsx_conv_extension, ODS_Conv_Filepath = ods_conv_filepath, ODS_Conv_Filename = ods_conv_filename, ODS_Conv_Extension = ods_conv_extension, Convert_Success = convert_success });
 
                     // Output result in open CSV file
-                    var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{xlsx_conv_filepath};{ods_conv_filename};{convert_success};{error_message}");
+                    var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{xlsx_conv_filepath};{ods_conv_filepath};{convert_success};{error_message}");
                     csv.AppendLine(newLine2);
                 }
             }
@@ -378,7 +310,6 @@ namespace CLISC
         {
             numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
 
-            Console.WriteLine("---");
             Console.WriteLine("CONVERT RESULTS");
             Console.WriteLine("---");
             Console.WriteLine($"{numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
