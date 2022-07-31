@@ -13,7 +13,7 @@ using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Archive
     {
         public static int valid_files = 0;
         public static int invalid_files = 0;

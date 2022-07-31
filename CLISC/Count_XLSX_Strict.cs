@@ -11,9 +11,9 @@ using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Count
     {
-        public int numCONFORM_fail = 0;
+        public static int numCONFORM_fail = 0;
 
         // Count XLSX Strict conformance
         public int Count_XLSX_Strict(string inputdir, bool recurse)

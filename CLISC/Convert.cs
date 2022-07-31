@@ -11,35 +11,33 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Conversion
     {
-        // Public conversion data types
+        // Define data types
         public static int numCOMPLETE = 0;
         public static int numFAILED = 0;
         public static int numXLSX_noconversion = 0;
         public static int numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
+        static string? file_folder = null;
+        static int subdir_number = 1;
+        static int copy_file_number = 1;
+        static int conv_file_number = 1;
+        static string? copy_extension = null;
+        static string? copy_filename = null;
+        static string? copy_filepath = null;
+        static string? conv_extension = null;
+        static string? conv_filename = null;
+        static string? conv_filepath = null;
+        static bool? convert_success = null;
+        static string docCollection_subdir = "";
+        static string? error_message = null;
+        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", "Strict conformance identified" };
 
         // Convert spreadsheets method
-        public List<fileIndex> Convert(string function, string inputdir, bool recurse, string Results_Directory)
+        public List<fileIndex> Convert_Spreadsheets(string inputdir, bool recurse, string Results_Directory)
         {
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
-
-            // Create data types
-            string? file_folder = null;
-            int subdir_number = 1;
-            int copy_file_number = 1;
-            int conv_file_number = 1;
-            string? copy_extension = null;
-            string? copy_filename = null;
-            string? copy_filepath = null;
-            string? conv_extension = null;
-            string? conv_filename = null;
-            string? conv_filepath = null;
-            bool? convert_success = null;
-            string docCollection_subdir = "";
-            string? error_message = null;
-            string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance" };
 
             // Open CSV file to log results
             var csv = new StringBuilder();
@@ -66,8 +64,8 @@ namespace CLISC
                 docCollection_subdir = docCollection + "\\" + subdir_number;
                 while (Directory.Exists(docCollection_subdir))
                 {
-                     subdir_number++;
-                     docCollection_subdir = docCollection + "\\" + subdir_number;
+                    subdir_number++;
+                    docCollection_subdir = docCollection + "\\" + subdir_number;
                 }
                 DirectoryInfo Output_Subdir = Directory.CreateDirectory(docCollection_subdir);
 
@@ -94,26 +92,8 @@ namespace CLISC
                         case ".xlsb":
                             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
                             // Conversion code
-                            convert_success = Convert_OpenDocument(copy_filepath, docCollection_subdir);
-                            // If archiving, because of previous bug we must rename converted spreadsheet
-                            if (convert_success == true && function == "count&convert&compare&archive")
-                            {
-                                string[] filename = Directory.GetFiles(docCollection_subdir, "*.xlsx");
-                                if (filename.Length > 0)
-                                {
-                                    // Rename converted spreadsheet
-                                    string old_filename = filename[0];
-                                    string new_filename = file_folder + "\\1.xlsx";
-                                    File.Move(old_filename, new_filename);
-                                    // Transform datatypes
-                                    conv_extension = ".xlsx";
-                                    conv_filename = "1.xlsx";
-                                    conv_filepath = file_folder + "\\1.xlsx";
-                                    numCOMPLETE++;
-                                }
-                            }
-                            // If ordinary use, no archiving
-                            else if (convert_success == true)
+                            convert_success = Convert_from_OpenDocument(copy_filepath, docCollection_subdir);
+                            if (convert_success == true)
                             {
                                 conv_extension = ".xlsx";
                                 conv_filename = Path.GetFileNameWithoutExtension(copy_filename) + conv_extension;
@@ -152,27 +132,17 @@ namespace CLISC
                         case ".xls":
                         case ".xlt":
                             // Transform data types for converted spreadsheets
-                            if (function == "count&convert&compare&archive")
+                            conv_extension = ".xlsx";
+                            conv_filename = Path.GetFileNameWithoutExtension(entry.Org_Filename) + conv_extension;
+                            conv_filepath = docCollection + "\\" + conv_filename;
+                            // Prevent overriding of existing conversion when converting
+                            while (File.Exists(conv_filepath))
                             {
-                                conv_extension = ".xlsx";
-                                conv_filename = "1.xlsx";
-                                conv_filepath = docCollection_subdir + "\\1.xlsx";
-                            }
-                            // No archiving
-                            else
-                            {
-                                conv_extension = ".xlsx";
-                                conv_filename = Path.GetFileNameWithoutExtension(entry.Org_Filename) + conv_extension;
-                                conv_filepath = docCollection + "\\" + conv_filename;
-                                // Prevent overriding of existing conversion when converting
-                                while (File.Exists(conv_filepath))
-                                {
-                                    conv_file_number++;
-                                    conv_filepath = docCollection + "\\" + no_ext + "_" + conv_file_number + conv_extension;
-                                }
+                                conv_file_number++;
+                                conv_filepath = docCollection + "\\" + no_ext + "_" + conv_file_number + conv_extension;
                             }
                             // Conversion code
-                            convert_success = Convert_Legacy_Excel_NPOI(org_filepath, copy_filepath, conv_filepath);
+                            convert_success = Convert_from_LegacyExcel(org_filepath, copy_filepath, conv_filepath);
                             numCOMPLETE++;
                             break;
 
@@ -180,27 +150,17 @@ namespace CLISC
                         case ".xltm":
                         case ".xltx":
                             // Transform data types for converted spreadsheets
-                            if (function == "count&convert&compare&archive")
+                            conv_extension = ".xlsx";
+                            conv_filename = Path.GetFileNameWithoutExtension(entry.Org_Filename) + conv_extension;
+                            conv_filepath = docCollection + "\\" + conv_filename;
+                            // Prevent overriding of existing conversion when converting
+                            while (File.Exists(conv_filepath))
                             {
-                                conv_extension = ".xlsx";
-                                conv_filename = "1.xlsx";
-                                conv_filepath = docCollection_subdir + "\\1.xlsx";
-                            }
-                            // No archiving
-                            else
-                            {
-                                conv_extension = ".xlsx";
-                                conv_filename = Path.GetFileNameWithoutExtension(entry.Org_Filename) + conv_extension;
-                                conv_filepath = docCollection + "\\" + conv_filename;
-                                // Prevent overriding of existing conversion when converting
-                                while (File.Exists(conv_filepath))
-                                {
-                                    conv_file_number++;
-                                    conv_filepath = docCollection + "\\" + no_ext + "_" + conv_file_number + conv_extension;
-                                }
+                                conv_file_number++;
+                                conv_filepath = docCollection + "\\" + no_ext + "_" + conv_file_number + conv_extension;
                             }
                             // Conversion code
-                            convert_success = Convert_OOXML_Transitional(org_filepath, copy_filepath, conv_filepath);
+                            convert_success = Convert_to_OOXML_Transitional(copy_filepath, conv_filepath);
                             numCOMPLETE++;
                             break;
 
@@ -211,20 +171,7 @@ namespace CLISC
                                 SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(org_filepath, false);
                                 bool? strict = spreadsheet.StrictRelationshipFound;
                                 spreadsheet.Close();
-                                // If archiving has been selected
-                                if (function == "count&convert&compare&archive")
-                                {
-                                    // No conversion
-                                    // Transform data types
-                                    numXLSX_noconversion++;
-                                    convert_success = null;
-                                    error_message = error_messages[6];
-                                    conv_extension = ".xlsx";
-                                    conv_filename = "1.xlsx";
-                                    conv_filepath = docCollection_subdir + "\\1.xlsx";
-                                }
-                                // if ordinary usage, no archiving
-                                else if (strict == true)
+                                if (strict == true)
                                 {
                                     // Create data types for converted spreadsheets
                                     conv_extension = ".xlsx";
@@ -333,23 +280,18 @@ namespace CLISC
                 }
                 finally
                 {
-                    // Delete copied spreadsheet if no archiving
-                    if (function != "count&convert&compare&archive")
-                    {
-                        File.Delete(copy_filepath);
-                        Directory.Delete(docCollection_subdir);
-                    }
-                    // Delete info of copied spreadsheet, if no archiving
-                    if (function != "count&convert&compare&archive")
-                    {
-                        copy_extension = null;
-                        copy_filename = null;
-                        copy_filepath = null;
-                    }
+                    // Delete copied spreadsheet
+                    File.Delete(copy_filepath);
+                    Directory.Delete(docCollection_subdir);
+                    // Delete info of copied spreadsheet
+
+                    copy_extension = null;
+                    copy_filename = null;
+                    copy_filepath = null;
                     // Inform user
                     Console.WriteLine(org_filepath);
                     Console.WriteLine($"--> Conversion {convert_success}");
-                    if (convert_success == true) 
+                    if (convert_success == true)
                     {
                         Console.WriteLine($"--> Conversion saved to: {conv_filepath}");
                     }
@@ -367,8 +309,8 @@ namespace CLISC
                 }
             }
             // Close CSV file to log results
-            CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
-            File.WriteAllText(CSV_filepath, csv.ToString());
+            Spreadsheet.CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
             // Inform user of results
             Convert_Results();
@@ -383,10 +325,10 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine("CONVERT RESULTS");
             Console.WriteLine("---");
-            Console.WriteLine($"{numCOMPLETE} out of {numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"{numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"{numXLSX_noconversion} spreadsheets were already .xlsx");
             Console.WriteLine($"{numFAILED} spreadsheets failed conversion");
-            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
             Console.WriteLine("Conversion ended");
             Console.WriteLine("---");
         }

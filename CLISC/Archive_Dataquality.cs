@@ -9,7 +9,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Archive
     {
         public static int extrels_files = 0;
         public static int rtdfunctions_files = 0;

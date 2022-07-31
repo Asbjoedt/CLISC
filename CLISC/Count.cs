@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Count
     {
         // Public data types
         public static int numTOTAL, numXLSX_Strict;
 
         // Count spreadsheets
-        public string Count(string inputdir, string outputdir, bool recurse)
+        public string Count_Spreadsheets(string inputdir, string outputdir, bool recurse)
         {
             Console.WriteLine("COUNT");
             Console.WriteLine("---");
@@ -100,7 +100,8 @@ namespace CLISC
                 Console.WriteLine($"{numXLTX} {FileFormats.Extension[11]} - {FileFormats.Description[11]}");
 
                 // Create new directory to output results in CSV
-                string Results_Directory = Create_Directory_Results(outputdir);
+                Spreadsheet cre = new Spreadsheet();
+                string Results_Directory = cre.Create_Directory_Results(outputdir);
 
                 // Output results in CSV
                 var csv = new StringBuilder();
@@ -138,8 +139,8 @@ namespace CLISC
                 var newLine12 = string.Format($"{numXLTX};{FileFormats.Extension[11]};{FileFormats.Description[11]}");
                 csv.AppendLine(newLine12);
                 // Close CSV
-                CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
-                File.WriteAllText(CSV_filepath, csv.ToString());
+                Spreadsheet.CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
+                File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
                 // Inform user of results
                 Count_Results();
@@ -154,7 +155,7 @@ namespace CLISC
             Console.WriteLine("COUNT RESULTS");
             Console.WriteLine("---");
             Console.WriteLine($"{numTOTAL} spreadsheet files in total");
-            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
             Console.WriteLine("Count ended");
             Console.WriteLine("---");
         }

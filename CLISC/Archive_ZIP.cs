@@ -7,7 +7,7 @@ using System.IO.Compression;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Archive
     {
         // Zip the archive directory
         public void ZIP_Directory(string Results_Directory)

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Archive
     {
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive(string Results_Directory, List<fileIndex> File_List)
+        public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("ARCHIVE");
             Console.WriteLine("---");
@@ -63,11 +63,10 @@ namespace CLISC
                 }
             }
             // Close CSV file to log results. MUST HAPPEN BEFORE ZIP
-            CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
-            File.WriteAllText(CSV_filepath, csv.ToString());
+            Spreadsheet.CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
             // Zip the output directory
-            Console.WriteLine("---");
             Console.WriteLine("--> ZIP DIRECTORY");
             Console.WriteLine("---");
             try
@@ -92,11 +91,11 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine("ARCHIVE RESULTS");
             Console.WriteLine("---");
-            Console.WriteLine($"{valid_files} out of {numTOTAL_conv} converted spreadsheets have valid file formats");
-            Console.WriteLine($"{invalid_files} out of {numTOTAL_conv} converted spreadsheets have invalid file formats");
-            Console.WriteLine($"{extrels_files} out of {numTOTAL_conv} converted spreadsheets had external relationships - They were removed");
-            Console.WriteLine($"{embedobj_files} out of {numTOTAL_conv} converted spreadsheets have embedded objects - They were NOT removed");
-            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
+            Console.WriteLine($"{valid_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have valid file formats");
+            Console.WriteLine($"{invalid_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have invalid file formats");
+            Console.WriteLine($"{extrels_files} out of {Conversion.numTOTAL_conv} converted spreadsheets had external relationships - They were removed");
+            Console.WriteLine($"{embedobj_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have embedded objects - They were NOT removed");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
             Console.WriteLine("Archiving ended");
             Console.WriteLine("---");
         }

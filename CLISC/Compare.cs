@@ -10,18 +10,27 @@ using System.ComponentModel;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Compare
     {
         // Comparison data types
         public static int numTOTAL_compare = 0;
         public static int numTOTAL_diff = 0;
         string compare_message = "";
+        string xlsx_compare_message = "";
+        string ods_compare_message = "";
 
         // Compare spreadsheets
-        public void Compare(string Results_Directory, List<fileIndex> File_List)
+        public void Compare_Spreadsheets(string function, string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
+
+            // Data types
+            int org_filesize_kb;
+            int xlsx_filesize_kb;
+            int ods_filesize_kb;
+            bool xlsx_filesize_diff;
+            bool ods_filesize_diff;
 
             // Open CSV file to log results
             var csv = new StringBuilder();
@@ -36,41 +45,82 @@ namespace CLISC
                     {
                         // Get information from list
                         string org_filepath = entry.Org_Filepath;
-                        string conv_filepath = entry.Conv_Filepath;
+                        string xlsx_filepath = entry.XLSX_Conv_Filepath;
+                        string ods_filepath = entry.ODS_Conv_Filepath;
                         string folder = entry.File_Folder;
 
                         // Compare workbook differences
-                        if (File.Exists(conv_filepath))
+                        if (File.Exists(xlsx_filepath))
                         {
                             numTOTAL_compare++;
 
-                            // Inform user of comparison
-                            Console.WriteLine(org_filepath);
-                            Console.WriteLine($"--> Comparing to: {conv_filepath}");
-
-                            // Compare workbooks using external app Beyond Compare 4
-                            compare_message = Compare_Workbook(Results_Directory, folder, org_filepath, conv_filepath);
-
-                            // Calculate filesize of converted spreadsheet
-                            int conv_filesize_kb = Calculate_Filesize(conv_filepath);
-
-                            // Calculate filesize of original spreadsheet
-                            int org_filesize_kb = Calculate_Filesize(org_filepath);
-
-                            // File size diff
-                            bool filesize_diff;
-                            if (conv_filesize_kb == org_filesize_kb)
+                            if (function == "count&convert&compare&archive")
                             {
-                                filesize_diff = true;
+                                // Compare workbooks using external app Beyond Compare 4
+                                xlsx_compare_message = Compare_Workbook(Results_Directory, folder, org_filepath, xlsx_filepath);
+                                ods_compare_message = Compare_Workbook(Results_Directory, folder, org_filepath, ods_filepath);
+
+                                // Calculate filesizes
+                                org_filesize_kb = Calculate_Filesize(org_filepath);
+                                xlsx_filesize_kb = Calculate_Filesize(xlsx_filepath);
+
+                                ods_filesize_kb = Calculate_Filesize(ods_filepath);
+
+                                // Determine file size diff
+                                if (xlsx_filesize_kb == org_filesize_kb)
+                                {
+                                    xlsx_filesize_diff = true;
+                                }
+                                else
+                                {
+                                    xlsx_filesize_diff = false;
+                                }
+                                if (ods_filesize_kb == org_filesize_kb)
+                                {
+                                    ods_filesize_diff = true;
+                                }
+                                else
+                                {
+                                    ods_filesize_diff = false;
+                                }
+
+                                // Inform user of comparison
+                                Console.WriteLine(org_filepath);
+                                Console.WriteLine($"--> Comparing to: {xlsx_filepath}");
+                                Console.WriteLine($"--> Comparing to: {ods_filepath}");
+
+                                // Output result in open CSV file
+                                var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{xlsx_filepath};{xlsx_filesize_kb};{xlsx_filesize_diff};{xlsx_compare_message};{ods_filepath};{ods_filesize_kb};{ods_filesize_diff};{ods_compare_message}");
+                                csv.AppendLine(newLine1);
                             }
+                            
+                            // No archiving
                             else
                             {
-                                filesize_diff = false;
-                            }
+                                // Compare workbooks using external app Beyond Compare 4
+                                xlsx_compare_message = Compare_Workbook(Results_Directory, folder, org_filepath, xlsx_filepath);
 
-                            // Output result in open CSV file
-                            var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{conv_filepath};{conv_filesize_kb};{filesize_diff};{compare_message}");
-                            csv.AppendLine(newLine1);
+                                // Calculate filesizes
+                                org_filesize_kb = Calculate_Filesize(org_filepath);
+                                xlsx_filesize_kb = Calculate_Filesize(xlsx_filepath);
+
+                                // Determine file size diff
+                                if (xlsx_filesize_kb == org_filesize_kb)
+                                {
+                                    xlsx_filesize_diff = true;
+                                }
+                                else
+                                {
+                                    xlsx_filesize_diff = false;
+                                }
+
+                                // Inform user of comparison
+                                Console.WriteLine(org_filepath);
+                                Console.WriteLine($"--> Comparing to: {xlsx_filepath}");
+
+                                // Output result in open CSV file
+                                var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{xlsx_filepath};{xlsx_filesize_kb};{xlsx_filesize_diff};{xlsx_compare_message};;;;");
+                            }
                         }
                     }
                 }
@@ -87,8 +137,8 @@ namespace CLISC
             }
 
             // Close CSV file to log results
-            CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
-            File.WriteAllText(CSV_filepath, csv.ToString());
+            Spreadsheet.CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
             // Inform user of results
             Compare_Results();
@@ -99,9 +149,9 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine("COMPARE RESULTS");
             Console.WriteLine("---");
-            Console.WriteLine($"{numTOTAL_compare} out of {numTOTAL_conv} converted spreadsheets were compared");
+            Console.WriteLine($"{numTOTAL_compare} out of {Conversion.numTOTAL_conv} converted spreadsheets were compared");
             //Console.WriteLine($"{numTOTAL_diff} out of {numTOTAL_conv} conversions have workbook differences");
-            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
             Console.WriteLine("Comparison ended");
             Console.WriteLine("---");
         }

@@ -8,13 +8,13 @@ using System.ComponentModel;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Compare
     {
-        public string Compare_Workbook(string Results_Directory, string docCollection, string org_filepath, string conv_filepath)
+        public string Compare_Workbook(string Results_Directory, string file_folder, string org_filepath, string conv_filepath)
         {
             //Create "Beyond Compare" script file
             string bcscript_filepath = Results_Directory + "\\bcscript.txt";
-            string bcscript_results_filepath = docCollection + "\\comparisonResults.txt";
+            string bcscript_results_filepath = file_folder + "\\comparisonResults.txt";
             using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
             {
                     bcscript.WriteLine($"data-report layout:interleaved options:display-mismatches output-to:\"{bcscript_results_filepath}\" \"{org_filepath}\" \"{conv_filepath}\"");

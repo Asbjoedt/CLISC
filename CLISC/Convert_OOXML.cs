@@ -12,10 +12,10 @@ using System.IO.Compression; // Use with Transitional to Strict
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Conversion
     {
         // Convert to Office Open XML XLSX Transitional conformance - DOES NOT SUPPORT STRICT TO TRANSITIONAL
-        public bool Convert_OOXML_Transitional(string org_filepath, string input_filepath, string output_filepath)
+        public bool Convert_to_OOXML_Transitional(string input_filepath, string output_filepath)
         {
             byte[] byteArray = File.ReadAllBytes(input_filepath);
             using (MemoryStream stream = new MemoryStream())

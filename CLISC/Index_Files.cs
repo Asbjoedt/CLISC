@@ -29,6 +29,18 @@ namespace CLISC
 
         public string? Conv_Extension { get; set; }
 
+        public string? XLSX_Conv_Filepath { get; set; }
+
+        public string? XLSX_Conv_Filename { get; set; }
+
+        public string? XLSX_Conv_Extension { get; set; }
+
+        public string? ODS_Conv_Filepath { get; set; }
+
+        public string? ODS_Conv_Filename { get; set; }
+
+        public string? ODS_Conv_Extension { get; set; }
+
         public bool? Convert_Success { get; set; }
     }
 }

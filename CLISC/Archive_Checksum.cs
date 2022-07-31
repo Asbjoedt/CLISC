@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Archive
     {
         // Calculate MD5 checksum to fingerprint the spreadsheet
         public string Calculate_MD5(string filepath)
