@@ -82,7 +82,6 @@ namespace CLISC
                         // Microsoft Excel Add-in file formats are not converted
                         case ".xla":
                         case ".xlam":
-                            // No conversion
                             // Transform data types
                             numFAILED++;
                             convert_success = false;
@@ -195,13 +194,6 @@ namespace CLISC
                 }
                 finally
                 {
-                    // Check for dataquality requirements and convert data accordingly
-                    if (xlsx_conv_filepath != null)
-                    {
-                        Archive arc = new Archive();
-                        arc.Check_and_Remove_DataQuality(xlsx_conv_filepath);
-                    }
-
                     if (convert_success == true)
                     {
                         // Transform data types
@@ -209,7 +201,7 @@ namespace CLISC
                         xlsx_conv_extension = ".xlsx";
                         xlsx_conv_filename = "1.xlsx";
                         xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                        
+
                         // Check for original extension already .xlsx
                         if (copy_extension == ".xlsx")
                         {
@@ -236,43 +228,43 @@ namespace CLISC
                             }
                         }
 
+                        // Inform user
+                        Console.WriteLine(org_filepath);
+                        Console.WriteLine($"--> Conversion {convert_success}");
+
+                        // Check for dataquality requirements and convert data accordingly
+                        if (xlsx_conv_filepath != null)
+                        {
+                            Archive arc = new Archive();
+                            arc.Check_and_Remove_DataQuality(xlsx_conv_filepath);
+                        }
+
                         // And convert to ODS
                         convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
                         ods_conv_extension = ".ods";
                         ods_conv_filename = "1" + ods_conv_extension;
                         ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
+                        // To correct for bug, where LibreOffice overwrites the copied original of an .ods spreadsheet
+                        if (!File.Exists(copy_filepath))
+                        {
+                            File.Copy(org_filepath, copy_filepath);
+                        }
+
+                        // Inform user
+                        Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
+                        Console.WriteLine($"--> File saved to: {ods_conv_filepath}");
                     }
                     else
                     {
+                        convert_success = false;
+                        error_message = "Spreadsheet is password protected or corrupt";
                         xlsx_conv_extension = null;
                         xlsx_conv_filename = null;
                         xlsx_conv_filepath = null;
                         ods_conv_extension = null;
                         ods_conv_filename = null;
                         ods_conv_filepath = null;
-                        convert_success = false;
-                        error_message = "Spreadsheet is password protected or corrupt";
                     }
-
-                    // To correct for bug, where LibreOffice overwrites the copied original of an .ods spreadsheet
-                    if (!File.Exists(copy_filepath))
-                    {
-                        File.Copy(org_filepath, copy_filepath);
-                    }
-
-                    // Inform user
-                    Console.WriteLine(org_filepath);
-                    Console.WriteLine($"--> Conversion {convert_success}");
-                    if (convert_success == true)
-                    {
-                        Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
-                        Console.WriteLine($"--> File saved to: {ods_conv_filepath}");
-                    }
-                    else if (error_message != null || error_message == error_messages[6])
-                    {
-                        Console.WriteLine($"--> {error_message}");
-                    }
-                    Console.WriteLine("---");
 
                     // Add copied and converted spreadsheets file info to index of files
                     File_List.Add(new fileIndex { File_Folder = file_folder, Org_Filepath = org_filepath, Org_Filename = org_filename, Org_Extension = org_extension, Copy_Filepath = copy_filepath, Copy_Filename = copy_filename, Copy_Extension = copy_extension, XLSX_Conv_Filepath = xlsx_conv_filepath, XLSX_Conv_Filename = xlsx_conv_filename, XLSX_Conv_Extension = xlsx_conv_extension, ODS_Conv_Filepath = ods_conv_filepath, ODS_Conv_Filename = ods_conv_filename, ODS_Conv_Extension = ods_conv_extension, Convert_Success = convert_success });

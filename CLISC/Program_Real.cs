@@ -24,20 +24,18 @@ namespace CLISC
             {
                 case "count":
                     cou.Count_Spreadsheets(inputdir, outputdir, recurse);
-                    app.Final_Results();
                     break;
 
                 case "count&convert":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    app.Final_Results();
                     break;
 
                 case "count&convert&compare":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     List<fileIndex> fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
                     com.Compare_Spreadsheets(function, resultsDirectory, fileList);
-                    app.Final_Results();
+                    app.Compare_Results();
                     break;
 
                 case "count&convert&compare&archive":
@@ -45,7 +43,7 @@ namespace CLISC
                     fileList = con.Convert_Spreadsheets_Archive(function, inputdir, recurse, resultsDirectory);
                     com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     arc.Archive_Spreadsheets(resultsDirectory, fileList);
-                    app.Final_Results();
+                    app.Archive_Results();
                     break;
 
                 default:
@@ -54,7 +52,20 @@ namespace CLISC
             }
         }
 
-        public void Final_Results()
+        // Nested methods for results reporting
+        public void Compare_Results()
+        {
+            Console.WriteLine("CLISC SUMMARY");
+            Console.WriteLine("---");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheets");
+            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"CONVERT: {Conversion.numXLSX_noconversion} spreadsheets were already .xlsx");
+            Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
+            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numTOTAL_conv} converted spreadsheets were compared");
+            Console.WriteLine("CLISC ended");
+            Console.WriteLine("---");
+        }
+        public void Archive_Results()
         {
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");

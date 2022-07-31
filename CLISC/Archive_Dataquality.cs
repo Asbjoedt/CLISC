@@ -24,7 +24,7 @@ namespace CLISC
             {
                 // call the methods
                 string extrels_message = Check_ExternalRelationships(filepath);
-                string rtdfunctions_message = Check_RTDFunctions(filepath);
+                bool rtdfunctions = Simple_Check_RTDFunctions(filepath);
                 string embedobj_message = Alert_EmbeddedObjects(filepath);
 
                 string messages_combined = "";
@@ -44,17 +44,37 @@ namespace CLISC
         public void Check_and_Remove_DataQuality(string filepath)
         {
             // Check for data to change
-            string any_errors = Check_DataQuality(filepath);
+            bool extrels = Simple_Check_ExternalRelationships(filepath);
+            bool rtdfunctions = Simple_Check_RTDFunctions(filepath);
 
-            // If yes, change data
-            if (any_errors != "")
+            // If true, change data
+            if (extrels == true)
             {
                 Remove_ExternalRelationships(filepath);
+                Console.WriteLine($"--> External relationships removed");
+            }
+            if (rtdfunctions == true)
+            {
                 Remove_RTDFunctions(filepath);
+                Console.WriteLine($"--> RTD functions removed");
             }
         }
 
         // Check for external relationships
+        public static bool Simple_Check_ExternalRelationships(string filepath)
+        {
+            // Open spreadsheet and find external relationships
+            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
+            var external_relationships = spreadsheet.ExternalRelationships.ToList();
+            spreadsheet.Close();
+            bool check = false;
+            if (external_relationships != null)
+            {
+                check = true;
+            }
+            return check;
+        }
+
         public string Check_ExternalRelationships(string filepath)
         {
             // Open spreadsheet and find external relationships
@@ -118,16 +138,20 @@ namespace CLISC
         }
 
         // Check for RTD functions and return alert
-        public string Check_RTDFunctions(string filepath)
+        public static bool Simple_Check_RTDFunctions(string filepath)
         {
-            string rtdfunctions_message = "";
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
+                var rtd_functions = "INSERT SOME CODE TO FIND RTD FUNCTIONS";
 
+                bool check = false;
+                if (rtd_functions != null)
+                {
+                    check = true;
+                }
+                return check;
             }
-
-            return rtdfunctions_message;
         }
 
         public void Remove_RTDFunctions(string filepath)
@@ -137,8 +161,8 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
 
-            }
 
+            }
         }
 
 
