@@ -1,7 +1,7 @@
 # CLISC
 **Command Line Interface Spreadsheet Count Convert & Compare (& Archive)**
 
-A small Windows console application made in C#. It is as a hobby project. The app might have use cases in digital archiving of spreadsheets.
+A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets.
 
 :rainbow_flag: **General**
 * Bulk convert spreadsheets in a directory to .xlsx (Transitional conformance)
@@ -30,9 +30,10 @@ Compare original and converted spreadsheets to log differences.[^3]
 :file_cabinet: **Archive**
 
 The program can convert, package and describe spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. 
+* Convert any spreadsheet[^1] to both .xlsx (Transitional conformance) and .ods
 * Package spreadsheets and metadata in a new archive directory
 * Output all conversions in subdirectories named n+1
-* Rename all conversions n+1.xlsx
+* Rename all conversions n+1.xlsx and n+1.ods
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable spreadsheets
 * Validate spreadsheet against its file format standard (Office Open XML)
 * Remove formula linking cells to other local spreadsheets but keep snapshot of cell values (feature not working)
