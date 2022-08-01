@@ -97,6 +97,13 @@ Create your arguments from the following list:
 
 If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
 
+## Libraries and software used
+* [Beyond Compare 4](https://www.scootersoftware.com/index.php), Copyright (c) 2022 Scooter Software, Inc.
+* [CommandLineParser](https://github.com/commandlineparser/commandline), MIT License, Copyright (c) 2005 - 2015 Giacomo Stelluti Scala & Contributor
+* [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
+* [NPOI](https://github.com/nissl-lab/npoi), Apache License 2.0, no changes
+* [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
+
 [^1]: File extensions .xla and .xlam are Microsoft Excel Add-in files and cannot contain worksheet cell information. Therefore, they are excluded from conversion but will be copied to the new archive directory, if archiving is selected.
 [^2]: Conversion to file extension .xlsx with Strict conformance are currently not supported.
 [^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
