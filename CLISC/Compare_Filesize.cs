@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Compare
     {
         // Calculate filesize
         public int Calculate_Filesize(string filepath)

@@ -10,9 +10,9 @@ using NPOI.HSSF.UserModel;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Conversion
     {
-        public bool Convert_Legacy_Excel_NPOI(string org_filepath, string input_filepath, string output_filepath)
+        public bool Convert_from_LegacyExcel(string org_filepath, string input_filepath, string output_filepath)
         {
             // Read the bytes of the original spreadsheet
             FileStream streamed_spreadsheet = new FileStream(input_filepath, FileMode.Open, FileAccess.Read, FileShare.None);
@@ -26,12 +26,6 @@ namespace CLISC
             save_spreadsheet.Close();
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-            Console.WriteLine($"--> Conversion saved to: {output_filepath}");
-
             return convert_success;
         }
 
@@ -236,7 +230,7 @@ namespace CLISC
         }
 
         // NOT USED. Convert legacy Excel files using Microsoft Office Interop Excel. User  must have Excel Version=15.0.0.0 installed (corresponds to Office 2013, an old version of Office)
-        //public bool Convert_Legacy_Excel_OfficeInterop(string org_filepath, string conv_filepath)
+        //public bool Convert_Legacy_ExcelInterop(string org_filepath, string conv_filepath)
         //{
         //    FileInfo file = new FileInfo(org_filepath);
         //    var app = new Microsoft.Office.Interop.Excel.Application();

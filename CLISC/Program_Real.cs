@@ -10,40 +10,42 @@ namespace CLISC
         public static void Execute(string function, string inputdir, string outputdir, bool recurse)
         {
             // Path to new directory in output directory
-            string Results_Directory = "";
+            string resultsDirectory = "";
 
             // Create object instance
-            Spreadsheet process = new Spreadsheet();
-            Program_Real report = new Program_Real();
-            Program_Args app_arg = new Program_Args();
+            Count cou = new Count();
+            Conversion con = new Conversion();
+            Compare com = new Compare();
+            Archive arc = new Archive();
+            Program_Real app = new Program_Real();
 
             // Method references
             switch (function)
             {
                 case "count":
-                    process.Count(inputdir, outputdir, recurse);
-                    report.Final_Results();
+                    cou.Count_Spreadsheets(inputdir, outputdir, recurse);
+                    app.Count_Results();
                     break;
 
                 case "count&convert":
-                    Results_Directory = process.Count(inputdir, outputdir, recurse);
-                    process.Convert(function, inputdir, recurse, Results_Directory);
-                    report.Final_Results();
+                    resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
+                    con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
+                    app.Convert_Results();
                     break;
 
                 case "count&convert&compare":
-                    Results_Directory = process.Count(inputdir, outputdir, recurse);
-                    List<fileIndex> File_List = process.Convert(function, inputdir, recurse, Results_Directory);
-                    process.Compare(Results_Directory, File_List);
-                    report.Final_Results();
+                    resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
+                    List<fileIndex> fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
+                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
+                    app.Compare_Results();
                     break;
 
                 case "count&convert&compare&archive":
-                    Results_Directory = process.Count(inputdir, outputdir, recurse);
-                    File_List = process.Convert(function, inputdir, recurse, Results_Directory);
-                    process.Compare(Results_Directory, File_List);
-                    process.Archive(Results_Directory, File_List);
-                    report.Final_Results();
+                    resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
+                    fileList = con.Convert_Spreadsheets_Archive(function, inputdir, recurse, resultsDirectory);
+                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
+                    arc.Archive_Spreadsheets(resultsDirectory, fileList);
+                    app.Archive_Results();
                     break;
 
                 default:
@@ -52,18 +54,57 @@ namespace CLISC
             }
         }
 
-        public void Final_Results()
+        // Methods for results reporting
+        void Count_Results()
         {
+            Console.WriteLine("---");
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");
-            Console.WriteLine($"{Spreadsheet.numTOTAL} spreadsheets counted");
-            Console.WriteLine($"{Spreadsheet.numCOMPLETE} out of {Spreadsheet.numTOTAL} spreadsheets completed conversion");
-            Console.WriteLine($"{Spreadsheet.numXLSX_noconversion} spreadsheets were already .xlsx");
-            Console.WriteLine($"{Spreadsheet.numFAILED} spreadsheets failed conversion");
-            Console.WriteLine($"{Spreadsheet.numTOTAL_compare} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets were compared");
-            Console.WriteLine($"{Spreadsheet.valid_files} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets have valid file formats");
-            Console.WriteLine($"{Spreadsheet.extrels_files} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets had external relationships - External relationships were removed");
-            Console.WriteLine($"{Spreadsheet.embedobj_files} out of {Spreadsheet.numTOTAL_conv} converted spreadsheets have embedded objects - Embedded objects were NOT removed");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
+            Console.WriteLine("CLISC ended");
+            Console.WriteLine("---");
+        }
+
+        void Convert_Results()
+        {
+            Console.WriteLine("---");
+            Console.WriteLine("CLISC SUMMARY");
+            Console.WriteLine("---");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
+            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"CONVERT: {Conversion.numXLSX_noconversion} spreadsheets were already .xlsx");
+            Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
+            Console.WriteLine("CLISC ended");
+            Console.WriteLine("---");
+        }
+        void Compare_Results()
+        {
+            Console.WriteLine("---");
+            Console.WriteLine("CLISC SUMMARY");
+            Console.WriteLine("---");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
+            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"CONVERT: {Conversion.numXLSX_noconversion} spreadsheets were already .xlsx");
+            Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
+            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numTOTAL_conv} converted spreadsheets were compared");
+            Console.WriteLine("CLISC ended");
+            Console.WriteLine("---");
+        }
+        void Archive_Results()
+        {
+            Console.WriteLine("---");
+            Console.WriteLine("CLISC SUMMARY");
+            Console.WriteLine("---");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheets");
+            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"CONVERT: {Conversion.numXLSX_noconversion} spreadsheets were already .xlsx");
+            Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
+            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numTOTAL_conv} converted spreadsheets were compared");
+            Console.WriteLine($"ARCHIVE: {Archive.valid_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have valid file formats");
+            Console.WriteLine($"ARCHIVE: {Archive.extrels_files} out of {Conversion.numTOTAL_conv} converted spreadsheets had external relationships - External relationships were removed");
+            Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have embedded objects - Embedded objects were NOT removed");
             Console.WriteLine("CLISC ended");
             Console.WriteLine("---");
         }

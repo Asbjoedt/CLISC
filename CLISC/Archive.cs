@@ -6,27 +6,31 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Archive
     {
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive(string Results_Directory, List<fileIndex> File_List)
+        public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("ARCHIVE");
             Console.WriteLine("---");
 
             string org_filepath = "";
             string copy_filepath = "";
-            string conv_filepath = "";
-            string conv_extension = "";
+            string xlsx_conv_filepath = "";
+            string xlsx_conv_extension = "";
+            string ods_conv_filepath = "";
+            string ods_conv_extension = "";
             string org_checksum = "";
             string copy_checksum = "";
-            string conv_checksum = "";
+            string xlsx_conv_checksum = "";
+            string ods_conv_checksum = "";
+            string xlsx_validation_message = "";
+            string ods_validation_message = "";
             string dataquality_message = "";
-            string validation_message = "";
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original filepath;Original checksum;Copy filepath;Copy checksum;Conversion filepath;Conversion checksum;File format validation;Data quality message");
+            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;XLSX Convert Filepath;XLSX Checksum;XLSX Fileformat Validation;ODS Convert Filepath; ODS checksum; ODS fileformat Validation;Data Quality Message");
             csv.AppendLine(newLine0);
 
             // Loop through each file
@@ -35,36 +39,47 @@ namespace CLISC
                 // Get information from list
                 org_filepath = entry.Org_Filepath;
                 copy_filepath = entry.Copy_Filepath;
-                conv_filepath = entry.Conv_Filepath;
-                conv_extension = entry.Conv_Extension;
+                xlsx_conv_filepath = entry.XLSX_Conv_Filepath;
+                xlsx_conv_extension = entry.XLSX_Conv_Extension;
+                ods_conv_filepath = entry.ODS_Conv_Filepath;
+                ods_conv_extension = entry.ODS_Conv_Extension;
 
-                switch (conv_extension)
+                // Inform user of analyzed filepath
+                if (xlsx_conv_extension == ".xlsx")
                 {
-                    case ".xlsx":
-                        // Inform user of analyzed filepath
-                        Console.WriteLine(conv_filepath);
-                        // Validate
-                        validation_message = Validate_OOXML(conv_filepath);
+                    // Inform user
+                    Console.WriteLine(xlsx_conv_filepath);
+                    // Validate
+                    xlsx_validation_message = Validate_OOXML(xlsx_conv_filepath);
 
-                        // Perform data quality actions
-                        dataquality_message = Transform_DataQuality(conv_filepath);
+                    // Perform data quality actions
+                    dataquality_message = Check_DataQuality(xlsx_conv_filepath);
 
-                        // Calculate checksums
-                        org_checksum = Calculate_MD5(org_filepath);
-                        copy_checksum = Calculate_MD5(copy_filepath);
-                        conv_checksum = Calculate_MD5(conv_filepath);
-                        // Inform user
-                        Console.WriteLine("--> Checksum was calculated");
-
-                        // Output result in open CSV file
-                        var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{conv_filepath};{conv_checksum};{validation_message};{dataquality_message}");
-                        csv.AppendLine(newLine1);
-                        break;
+                    // Calcualte checksum
+                    xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
+                    Console.WriteLine("--> Checksum was calculated");
                 }
+                if (entry.ODS_Conv_Extension == ".ods")
+                {
+                    Console.WriteLine(ods_conv_filepath);
+                    Console.WriteLine("--> Data quality actions or validation are not supported");
+
+                    // Calcualte checksum
+                    ods_conv_checksum = Calculate_MD5(ods_conv_filepath);
+                    Console.WriteLine("--> Checksum was calculated");
+                }
+
+                // Calculate checksums for original and copied files
+                org_checksum = Calculate_MD5(org_filepath);
+                copy_checksum = Calculate_MD5(copy_filepath);
+
+                // Output result in open CSV file
+                var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validation_message};{ods_conv_filepath};{ods_conv_checksum};{ods_validation_message};{dataquality_message}");
+                csv.AppendLine(newLine1);
             }
             // Close CSV file to log results. MUST HAPPEN BEFORE ZIP
-            CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
-            File.WriteAllText(CSV_filepath, csv.ToString());
+            Spreadsheet.CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
             // Zip the output directory
             Console.WriteLine("---");
@@ -82,23 +97,6 @@ namespace CLISC
                 Console.WriteLine("Zip failed");
                 Console.WriteLine("Zip ended");
             }
-
-            // Inform user of archiving results
-            Archive_Results();
-        }
-
-        public void Archive_Results()
-        {
-            Console.WriteLine("---");
-            Console.WriteLine("ARCHIVE RESULTS");
-            Console.WriteLine("---");
-            Console.WriteLine($"{valid_files} out of {numTOTAL_conv} converted spreadsheets have valid file formats");
-            Console.WriteLine($"{invalid_files} out of {numTOTAL_conv} converted spreadsheets have invalid file formats");
-            Console.WriteLine($"{extrels_files} out of {numTOTAL_conv} converted spreadsheets had external relationships - They were removed");
-            Console.WriteLine($"{embedobj_files} out of {numTOTAL_conv} converted spreadsheets have embedded objects - They were NOT removed");
-            Console.WriteLine($"Results saved to CSV log in filepath: {CSV_filepath}");
-            Console.WriteLine("Archiving ended");
-            Console.WriteLine("---");
         }
     }
 }

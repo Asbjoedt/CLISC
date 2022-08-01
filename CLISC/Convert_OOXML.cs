@@ -8,13 +8,14 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Office.Interop.Excel; // Use with XLSB
 using Excel = Microsoft.Office.Interop.Excel; // Use with XLSB
+using System.IO.Compression; // Use with Transitional to Strict
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public partial class Conversion
     {
         // Convert to Office Open XML XLSX Transitional conformance - DOES NOT SUPPORT STRICT TO TRANSITIONAL
-        public bool Convert_OOXML_Transitional(string org_filepath, string input_filepath, string output_filepath)
+        public bool Convert_to_OOXML_Transitional(string input_filepath, string output_filepath)
         {
             byte[] byteArray = File.ReadAllBytes(input_filepath);
             using (MemoryStream stream = new MemoryStream())
@@ -28,40 +29,21 @@ namespace CLISC
             }
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-            Console.WriteLine($"--> Conversion saved to: {output_filepath}");
-
             return convert_success;
         }
 
-        // Convert to Office Open XML XLSX Strict conformance - NOT WORKING - IT OUTPUTS TRANSITIONAL
-        public bool Convert_OOXML_Strict(string org_filepath, string input_filepath, string output_filepath)
+        // Convert XLSX Strict to Transitional conformance - WORK IN PROGRESS
+        public bool Convert_Strict_to_Transitional(string input_filepath, string output_filepath, string file_folder)
         {
-            byte[] byteArray = File.ReadAllBytes(input_filepath);
-            using (MemoryStream stream = new MemoryStream())
-            {
-                stream.Write(byteArray, 0, (int)byteArray.Length);
-                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(stream, true))
-                {
-                    spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
-                }
-                File.WriteAllBytes(output_filepath, stream.ToArray());
-            }
+
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-
             return convert_success;
         }
 
         // Convert XLSB using Excel
         // Found code here: https://docs.microsoft.com/en-us/answers/questions/212363/how-to-convert-xlsb-file-to-xlsx.html
+        // NOT USED IN PROGRAM - it needs Excel installed
         public bool Convert_XLSB(string org_filepath, string input_filepath, string output_filepath)
         {
             // Create object instance
@@ -90,11 +72,6 @@ namespace CLISC
             //}
 
             bool convert_success = true;
-
-            // Inform user
-            Console.WriteLine(org_filepath);
-            Console.WriteLine($"--> Conversion {convert_success}");
-
             return convert_success;
         }
     }
