@@ -193,6 +193,77 @@ namespace CLISC
                     ods_conv_filename = null;
                     ods_conv_filepath = null;
                 }
+                // NPOI can't handle old Excel formats in BIFF format
+                catch (NPOI.HSSF.OldExcelFormatException)
+                {
+                    // Code to execute
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = error_messages[4];
+                    xlsx_conv_extension = null;
+                    xlsx_conv_filename = null;
+                    xlsx_conv_filepath = null;
+                    ods_conv_extension = null;
+                    ods_conv_filename = null;
+                    ods_conv_filepath = null;
+                }
+                // NPOI creates this system exception
+                catch (NotImplementedException)
+                {
+                    // Code to execute
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = error_messages[10];
+                    xlsx_conv_extension = null;
+                    xlsx_conv_filename = null;
+                    xlsx_conv_filepath = null;
+                    ods_conv_extension = null;
+                    ods_conv_filename = null;
+                    ods_conv_filepath = null;
+                }
+                // NPOI exception because of formula range with unused values
+                catch (NPOI.SS.Formula.FormulaParseException)
+                {
+                    // Code to execute
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = error_messages[10];
+                    xlsx_conv_extension = null;
+                    xlsx_conv_filename = null;
+                    xlsx_conv_filepath = null;
+                    ods_conv_extension = null;
+                    ods_conv_filename = null;
+                    ods_conv_filepath = null;
+                }
+                // Another NPOI. Try using libreOffice in the catch
+                catch (System.InvalidOperationException)
+                {
+                    // Code to execute
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = error_messages[10];
+                    xlsx_conv_extension = null;
+                    xlsx_conv_filename = null;
+                    xlsx_conv_filepath = null;
+                    ods_conv_extension = null;
+                    ods_conv_filename = null;
+                    ods_conv_filepath = null;
+                }
+                // Another NPOI but this one gives a generic system exception - Dangerous to catch it here, because it could be used in other contexts
+                catch(System.IndexOutOfRangeException)
+                {
+                    // Code to execute
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = error_messages[10];
+                    xlsx_conv_extension = null;
+                    xlsx_conv_filename = null;
+                    xlsx_conv_filepath = null;
+                    ods_conv_extension = null;
+                    ods_conv_filename = null;
+                    ods_conv_filepath = null;
+                }
+
                 finally
                 {
                     // Inform user

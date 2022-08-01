@@ -67,7 +67,7 @@ namespace CLISC
             SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
             var external_relationships = spreadsheet.ExternalRelationships.ToList();
             spreadsheet.Close();
-            Console.WriteLine($"DEBUG - {external_relationships})";
+            Console.WriteLine($"DEBUG - {external_relationships}");
             bool check = false;
             if (external_relationships.Count == 0)
             {
