@@ -24,11 +24,13 @@ namespace CLISC
             {
                 case "count":
                     cou.Count_Spreadsheets(inputdir, outputdir, recurse);
+                    app.Count_Results();
                     break;
 
                 case "count&convert":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
+                    app.Convert_Results();
                     break;
 
                 case "count&convert&compare":
@@ -52,12 +54,37 @@ namespace CLISC
             }
         }
 
-        // Nested methods for results reporting
-        public void Compare_Results()
+        // Methods for results reporting
+        void Count_Results()
         {
+            Console.WriteLine("---");
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");
-            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheets");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
+            Console.WriteLine("CLISC ended");
+            Console.WriteLine("---");
+        }
+
+        void Convert_Results()
+        {
+            Console.WriteLine("---");
+            Console.WriteLine("CLISC SUMMARY");
+            Console.WriteLine("---");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
+            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"CONVERT: {Conversion.numXLSX_noconversion} spreadsheets were already .xlsx");
+            Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
+            Console.WriteLine("CLISC ended");
+            Console.WriteLine("---");
+        }
+        void Compare_Results()
+        {
+            Console.WriteLine("---");
+            Console.WriteLine("CLISC SUMMARY");
+            Console.WriteLine("---");
+            Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
             Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"CONVERT: {Conversion.numXLSX_noconversion} spreadsheets were already .xlsx");
             Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
@@ -65,8 +92,9 @@ namespace CLISC
             Console.WriteLine("CLISC ended");
             Console.WriteLine("---");
         }
-        public void Archive_Results()
+        void Archive_Results()
         {
+            Console.WriteLine("---");
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheets");

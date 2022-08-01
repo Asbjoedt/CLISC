@@ -355,24 +355,10 @@ namespace CLISC
             Spreadsheet.CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
-            // Inform user of results
-            Convert_Results_Archive();
+            // Calculate the number of completed conversions
+            numTOTAL_conv = numCOMPLETE + numXLSX_noconversion + numODS_noconversion;
 
             return File_List;
-        }
-
-        public static void Convert_Results_Archive()
-        {
-            numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
-
-            Console.WriteLine("CONVERT RESULTS");
-            Console.WriteLine("---");
-            Console.WriteLine($"{numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
-            Console.WriteLine($"{numXLSX_noconversion} spreadsheets were already .xlsx");
-            Console.WriteLine($"{numFAILED} spreadsheets failed conversion");
-            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
-            Console.WriteLine("Conversion ended");
-            Console.WriteLine("---");
         }
     }
 }

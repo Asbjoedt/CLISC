@@ -51,7 +51,7 @@ namespace CLISC
             if (extrels == true)
             {
                 Remove_ExternalRelationships(filepath);
-                Console.WriteLine($"--> External relationships removed");
+                //Console.WriteLine($"--> External relationships removed"); <- UNCOMMENT THIS FOR MESSAGE OF REMOVAL
             }
             if (rtdfunctions == true)
             {

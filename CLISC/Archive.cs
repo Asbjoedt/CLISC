@@ -97,23 +97,6 @@ namespace CLISC
                 Console.WriteLine("Zip failed");
                 Console.WriteLine("Zip ended");
             }
-
-            // Inform user of archiving results
-            Archive_Results();
-        }
-
-        public void Archive_Results()
-        {
-            Console.WriteLine("---");
-            Console.WriteLine("ARCHIVE RESULTS");
-            Console.WriteLine("---");
-            Console.WriteLine($"{valid_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have valid file formats");
-            Console.WriteLine($"{invalid_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have invalid file formats");
-            Console.WriteLine($"{extrels_files} out of {Conversion.numTOTAL_conv} converted spreadsheets had external relationships - They were removed");
-            Console.WriteLine($"{embedobj_files} out of {Conversion.numTOTAL_conv} converted spreadsheets have embedded objects - They were NOT removed");
-            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
-            Console.WriteLine("Archiving ended");
-            Console.WriteLine("---");
         }
     }
 }
