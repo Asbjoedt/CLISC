@@ -11,8 +11,8 @@ A small Windows console application made in C#. It is a hobby project. The app m
 :heavy_plus_sign: **Count**
 
 Count number of spreadsheets in directory by file format. 
-* Accepted file extensions: .fods, .ods, .ots, .xla, .xlam, .xls, .xlsb, .xlsm, .xlsx, .xlt, .xltm, .xltx
-* Office Open XML file formats of Transitional and Strict conformance can be counted separately
+* Accepted file extensions: .gsheet, .fods, .numbers, .ods, .ots, .xla, .xlam, .xls, .xlsb, .xlsm, .xlsx, .xlt, .xltm, .xltx
+* .xlsx of Transitional and Strict conformance can be counted separately
 
 :magic_wand: **Convert**
 
@@ -24,7 +24,7 @@ Convert any spreadsheet[^1] to .xlsx (Transitional conformance).
 :mag: **Compare**
 
 Compare original and converted spreadsheets to log differences.[^3]
-* Workbook cell values
+* Cell values
 * File size
 
 :file_cabinet: **Archive**
@@ -59,7 +59,7 @@ Prerequisite software for the program to work with these functions.
   - You need to purchase license
 
 ## How to use
-Download the executable [here](https://github.com/Asbjoedt/CLISC/releases). In your terminal change directory to the folder where CLISC.exe is. Then, to execute the program input:
+Download the executable version [here](https://github.com/Asbjoedt/CLISC/releases). There's no need to install. In your terminal change directory to the folder where CLISC.exe is. Then, to execute the program input:
 
 ```
 .\CLISC.exe [your_arguments]
