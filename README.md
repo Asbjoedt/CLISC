@@ -1,7 +1,7 @@
 # CLISC
 **Command Line Interface Spreadsheet Count Convert & Compare (& Archive)**
 
-A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets.
+A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki).
 
 :rainbow_flag: **General**
 * Bulk convert spreadsheets in a directory to .xlsx (Transitional conformance)
@@ -34,7 +34,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Package spreadsheets and metadata in a new archive directory
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx and n+1.ods
-* Include copies of the original spreadsheets, this include password protected or otherwise unreadable spreadsheets
+* Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML)
 * Remove formula linking cells to other local spreadsheets but keep snapshot of cell values (feature not working)
 * Remove external data connections but keep snapshot of cell values (feature not working)
@@ -104,6 +104,6 @@ If you want to test the application, a sample dataset is provided [here](https:/
 * [NPOI](https://github.com/nissl-lab/npoi), Apache License 2.0, no changes
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
 
-[^1]: See [list of accepted spreadsheets](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats#clisc-accepted-file-formats)
+[^1]: See [list of accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats#clisc-accepted-file-formats)
 [^2]: Conversion to file extension .xlsx with Strict conformance is currently not supported.
 [^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
