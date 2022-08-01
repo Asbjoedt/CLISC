@@ -31,12 +31,11 @@ namespace CLISC
             // Read logfile to identify differences
             var compare_message = File.ReadAllText(bcscript_results_filepath);
 
-            // Delete logfile
-            //if (File.Exists(bcscript_results_filepath))
-            //{
-            //    File.Delete(bcscript_results_filepath);
-            //}
-
+            // Delete BC4 results file
+            if (File.Exists(bcscript_results_filepath))
+            {
+                File.Delete(bcscript_results_filepath);
+            }
             // Delete BC script
             if (File.Exists(bcscript_filepath))
             {

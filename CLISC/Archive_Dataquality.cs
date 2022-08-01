@@ -67,8 +67,9 @@ namespace CLISC
             SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
             var external_relationships = spreadsheet.ExternalRelationships.ToList();
             spreadsheet.Close();
+            Console.WriteLine($"DEBUG - {external_relationships})";
             bool check = false;
-            if (external_relationships != null)
+            if (external_relationships.Count == 0)
             {
                 check = true;
             }
@@ -143,10 +144,10 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                var rtd_functions = "INSERT SOME CODE TO FIND RTD FUNCTIONS";
+                var rtd_functions = "";
 
                 bool check = false;
-                if (rtd_functions != null)
+                if (rtd_functions != "")
                 {
                     check = true;
                 }

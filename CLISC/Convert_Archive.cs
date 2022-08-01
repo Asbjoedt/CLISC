@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
 using DocumentFormat.OpenXml.Packaging;
+using System.ComponentModel;
 
 namespace CLISC
 {
@@ -167,7 +168,7 @@ namespace CLISC
                 // If LibreOffice is not installed
                 catch (Win32Exception)
                 {
-                    // COde to execute
+                    // Code to execute
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[3];
@@ -194,6 +195,14 @@ namespace CLISC
                 }
                 finally
                 {
+                    // Inform user
+                    Console.WriteLine(org_filepath);
+                    Console.WriteLine($"--> Conversion {convert_success}");
+                    if (convert_success == false)
+                    {
+                        Console.WriteLine($"--> {error_message}");
+                    }
+
                     if (convert_success == true)
                     {
                         // Transform data types
@@ -228,10 +237,6 @@ namespace CLISC
                             }
                         }
 
-                        // Inform user
-                        Console.WriteLine(org_filepath);
-                        Console.WriteLine($"--> Conversion {convert_success}");
-
                         // Check for dataquality requirements and convert data accordingly
                         if (xlsx_conv_filepath != null)
                         {
@@ -253,6 +258,7 @@ namespace CLISC
                         // Inform user
                         Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
                         Console.WriteLine($"--> File saved to: {ods_conv_filepath}");
+
                     }
                     else
                     {
