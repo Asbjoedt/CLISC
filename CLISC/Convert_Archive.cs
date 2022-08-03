@@ -312,7 +312,7 @@ namespace CLISC
                         if (xlsx_conv_filepath != null)
                         {
                             Archive arc = new Archive();
-                            arc.Check_and_Remove_DataQuality(xlsx_conv_filepath);
+                            arc.Simple_Check_and_Remove_DataQuality(xlsx_conv_filepath);
                         }
 
                         // And convert to ODS

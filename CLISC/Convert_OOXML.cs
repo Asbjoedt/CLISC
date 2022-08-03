@@ -32,7 +32,7 @@ namespace CLISC
         // Convert XLSX Strict to Transitional conformance - WORK IN PROGRESS
         public bool Convert_Strict_to_Transitional(string input_filepath, string output_filepath, string file_folder)
         {
-            using (var spreadsheet = SpreadsheetDocument.Open(file, false))
+            using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, false))
             {
                 // Check for Strict conformance class
                 WorkbookPart wbPart = spreadsheet.WorkbookPart;
@@ -44,8 +44,9 @@ namespace CLISC
 
                 }
 
-            bool convert_success = true;
-            return convert_success;
+                bool convert_success = true;
+                return convert_success;
+            }
         }
     }
 }

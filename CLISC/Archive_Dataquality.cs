@@ -16,7 +16,7 @@ namespace CLISC
         public static int embedobj_files = 0;
 
         // Perform data quality actions
-        public string Check_DataQuality(string filepath)
+        public string Check_DataQuality(string filepath) // IT ONLY CHECKS
         {
             string dataquality_message = "";
 
@@ -41,7 +41,7 @@ namespace CLISC
             }
         }
 
-        public void Check_and_Remove_DataQuality(string filepath)
+        public void Simple_Check_and_Remove_DataQuality(string filepath)
         {
             // Check for data to change
             bool extrels = Simple_Check_ExternalRelationships(filepath);
@@ -168,19 +168,29 @@ namespace CLISC
 
         public bool Simple_Alert_EmbeddedObjects(string filepath)
         {
-            using (SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.Open(filepath, true))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                WorksheetPart sourceSheetPart = GetWorksheetPartByName(spreadsheetDoc, "Test");
-
-                var imagePart = sourceSheetPart.AddImagePart(ImagePartType.Emf, "rId1");
-                imagePart.FeedData(File.Open(placeholderImagePath, FileMode.Open));
-
-                var embeddedObject =
-                    sourceSheetPart.AddEmbeddedObjectPart(@"application/vnd.openxmlformats-officedocument.oleObject");
-                embeddedObject.FeedData(File.Open(embeddedFilePath, FileMode.Open));
-
+                var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (var item in list)
+                {
+                    int count_ole = item.EmbeddedObjectParts.Count(); // Register the number of OLE
+                    int count_image = item.ImageParts.Count(); // Register number of images
+                    int count = count_ole + count_image; // Sum
+                    if (count == 0) // If no embedded objects, inform user
+                    {
+                        string embedobj_message = $"--> {count} embedded objects detected";
+                        Console.WriteLine(embedobj_message);
+                        return false;
+                    }
+                    else
+                    {
+                        string embedobj_message = $"--> {count} embedded objects detected";
+                        Console.WriteLine(embedobj_message);
+                        return true;
+                    }
+                }
+                return false;
             }
-            return true;
         }
 
         // Check for embedded objects and return alert
@@ -188,44 +198,46 @@ namespace CLISC
         {
             string embedobj_message = "";
 
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                var embedded_objects = spreadsheet.ExternalRelationships.ToList();
-                int embedobj_count = embedded_objects.Count;
-                int embedobj_number = 0;
-
-                // If errors
-                if (embedded_objects.Any())
+                var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (var item in list)
                 {
-                    // Inform user
-                    Console.WriteLine($"--> {embedobj_count} embedded objects detected");
-                    foreach (var extrel in embedded_objects)
+                    int count_ole = item.EmbeddedObjectParts.Count(); // Register the number of OLE
+                    int count_image = item.ImageParts.Count(); // Register number of images
+                    int count = count_ole + count_image; // Sum
+                    if (count == 0) // If no embedded objects, inform user
                     {
-                        embedobj_number++;
-                        Console.WriteLine($"--> External relationship {embedobj_number}");
-                        Console.WriteLine("----> Relationship ID: " + extrel.Id);
-                        Console.WriteLine("----> Relationship type: " + extrel.RelationshipType);
-                        Console.WriteLine("----> Relationship target URI: " + extrel.Uri);
-                        Console.WriteLine("----> Relationship external: " + extrel.IsExternal);
-                        Console.WriteLine("----> Relationship container: " + extrel.Container);
+                        embedobj_message = $"--> {count} embedded objects detected";
+                        Console.WriteLine(embedobj_message);
+                        return embedobj_message;
                     }
-                    // Add to number of spreadsheets with external relationships
-                    embedobj_files++;
-                    // Turn list into string
-                    embedobj_message = string.Join(Environment.NewLine, embedded_objects);
+                    else
+                    {
+                        embedobj_message = $"--> {count} embedded objects detected";
+                        Console.WriteLine(embedobj_message);
+                        var embed_ole = item.EmbeddedObjectParts.ToList(); // Register each OLE to a list
+                        var embed_image = item.ImageParts.ToList(); // Register each image to a list
+                        int embedobj_no = 0;
+                        foreach (var part in embed_ole) // Inform user of each object
+                        {
+                            embedobj_no++;
+                            Console.WriteLine($"--> Embedded object #{embedobj_no}");
+                            Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
+                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
 
-                    return embedobj_message;
+                        }
+                        foreach (var part in embed_image) // Inform user of each object
+                        {
+                            embedobj_no++;
+                            Console.WriteLine($"--> Embedded object #{embedobj_no}");
+                            Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
+                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        }
+                        return embedobj_message;
+                    }
                 }
-
-                else
-                {
-                    // If no errors, inform user
-                    Console.WriteLine("--> No embedded objects detected");
-                    embedobj_message = $"{embedobj_count} embedded objects relationships";
-
-                    return embedobj_message;
-                }
-
+                return embedobj_message;
             }
         }
 
