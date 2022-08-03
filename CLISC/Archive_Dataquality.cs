@@ -16,18 +16,17 @@ namespace CLISC
         public static int embedobj_files = 0;
 
         // Perform data quality actions
-        public string Check_DataQuality(string filepath) // IT ONLY CHECKS
+        public string Check_DataQuality(string filepath) // Method ONLY checks
         {
             string dataquality_message = "";
 
-            try
+            try // call the methods
             {
-                // call the methods
                 string extrels_message = Check_ExternalRelationships(filepath);
-                bool rtdfunctions = Simple_Check_RTDFunctions(filepath);
                 string embedobj_message = Alert_EmbeddedObjects(filepath);
+                bool rtdfunctions = Simple_Check_RTDFunctions(filepath);
 
-                string messages_combined = "";
+                string messages_combined = extrels_message + ", " + embedobj_message + ", " + rtdfunctions;
 
                 return messages_combined;
             }
@@ -50,8 +49,8 @@ namespace CLISC
             // If true, change data
             if (extrels == true)
             {
-                Remove_ExternalRelationships(filepath);
-                //Console.WriteLine($"--> External relationships removed"); <- UNCOMMENT THIS FOR MESSAGE OF REMOVAL
+                //Remove_ExternalRelationships(filepath);
+                Console.WriteLine($"--> External relationships removed - To prevent data loss, manually handle data and reconvert from original");
             }
             if (rtdfunctions == true)
             {
@@ -63,60 +62,52 @@ namespace CLISC
         // Check for external relationships
         public static bool Simple_Check_ExternalRelationships(string filepath)
         {
-            // Open spreadsheet and find external relationships
-            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
-            var external_relationships = spreadsheet.ExternalRelationships.ToList();
-            spreadsheet.Close();
-            Console.WriteLine($"DEBUG - {external_relationships}");
-            bool check = false;
-            if (external_relationships.Count == 0)
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                check = true;
+                List<ExternalRelationship> extRels = spreadsheet // Find all external relationships
+                .GetAllParts()
+                .SelectMany(p => p.ExternalRelationships)
+                .ToList();
+
+                bool check = false;
+                if (extRels.Count > 0)
+                {
+                    check = true;
+                }
+                return check;
             }
-            return check;
         }
 
         public string Check_ExternalRelationships(string filepath)
         {
-            // Open spreadsheet and find external relationships
-            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false);
-            var external_relationships = spreadsheet.ExternalRelationships.ToList();
-            spreadsheet.Close();
-
-            // Data types
-            int extrels_count = external_relationships.Count;
-            int extrel_number = 0;
-            string extrels_message;
-
-            // If errors
-            if (external_relationships.Any())
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                // Inform user
-                Console.WriteLine(external_relationships); // To test if any errors are found and added to the list
-                Console.WriteLine($"--> {extrels_count} relationships detected");
-                foreach (var extrel in external_relationships)
+                List<ExternalRelationship> extRels = spreadsheet // Find all external relationships
+                .GetAllParts()
+                .SelectMany(p => p.ExternalRelationships)
+                .ToList();
+
+                if (extRels.Count > 0) // If external relationships
                 {
-                    extrel_number++;
-                    Console.WriteLine($"--> External relationship {extrel_number}");
-                    Console.WriteLine("----> Relationship ID: " + extrel.Id);
-                    Console.WriteLine("----> Relationship type: " + extrel.RelationshipType);
-                    Console.WriteLine("----> Relationship target URI: " + extrel.Uri);
-                    Console.WriteLine("----> Relationship external: " + extrel.IsExternal);
-                    Console.WriteLine("----> Relationship container: " + extrel.Container);
+                    int extrel_number = 0;
+                    Console.WriteLine($"--> {extRels.Count} external relationships detected");
+                    foreach (ExternalRelationship rel in extRels)
+                    {
+                        extrel_number++;
+                        Console.WriteLine($"--> #{extrel_number} external relationship detected");
+                        Console.WriteLine($"----> ID: {rel.Id}");
+                        Console.WriteLine($"----> Target URI: {rel.Uri}");
+                        Console.WriteLine($"----> Relationship type: {rel.RelationshipType}");
+                        Console.WriteLine($"----> External: {rel.IsExternal}");
+                        Console.WriteLine($"----> Container: {rel.Container}");
+                    }
                 }
-                // Add to number of spreadsheets with external relationships
-                extrels_files++;
-                // Turn list into string
-                extrels_message = string.Join(Environment.NewLine, external_relationships);
+                else // If no external relationships, inform user
+                {
+                    Console.WriteLine($"--> {extRels.Count} external relationships");
+                }
 
-                return extrels_message;
-            }
-            else
-            {
-                // If no errors, inform user
-                Console.WriteLine("--> No external relationships detected");
-                extrels_message = $"{extrels_count} external relationships";
-
+                string extrels_message = extRels.Count + "external relationships detected";
                 return extrels_message;
             }
         }
@@ -124,18 +115,22 @@ namespace CLISC
         // Remove external relationships
         public void Remove_ExternalRelationships(string filepath)
         {
-            // Open spreadsheet and remove external relationships
-            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true);
-            var external_relationships = spreadsheet.ExternalRelationships.ToList();
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                List<ExternalRelationship> extRels = spreadsheet // Find all external relationships
+                .GetAllParts()
+                .SelectMany(p => p.ExternalRelationships)
+                .ToList();
 
-            //external_relationships.Remove(ExternalRelationship, extrel.Id);
-            //spreadsheet.Save();
-            //spreadsheet.Close();
-            // Inform user
-            //Console.WriteLine($"--> External relationship {extrel_number} removed");
-            // Add to number of spreadsheets with external relationships
+                foreach (ExternalRelationship rel in extRels) // Remove each external relationship
+                {
+                    spreadsheet.DeleteExternalRelationship(rel.Id);
+                }
 
-            spreadsheet.Close();
+                // Save and close spreadsheet
+                spreadsheet.Save();
+                spreadsheet.Close();
+            }
         }
 
         // Check for RTD functions and return alert
@@ -267,8 +262,7 @@ namespace CLISC
                 // Retrieve a reference to the workbook part.
                 WorkbookPart wbPart = document.WorkbookPart;
 
-                // Find the sheet with the supplied name, and then use that 
-                // Sheet object to retrieve a reference to the first worksheet.
+                // Find the sheet with the supplied name, and then use that Sheet object to retrieve a reference to the first worksheet.
                 Sheet theSheet = wbPart.Workbook.Descendants<Sheet>().
                   Where(s => s.Name == sheetName).FirstOrDefault();
 
@@ -281,8 +275,7 @@ namespace CLISC
                 // Retrieve a reference to the worksheet part.
                 WorksheetPart wsPart = (WorksheetPart)(wbPart.GetPartById(theSheet.Id));
 
-                // Use its Worksheet property to get a reference to the cell 
-                // whose address matches the address you supplied.
+                // Use its Worksheet property to get a reference to the cell whose address matches the address you supplied.
                 Cell theCell = wsPart.Worksheet.Descendants<Cell>().
                   Where(c => c.CellReference == addressName).FirstOrDefault();
 
@@ -298,16 +291,12 @@ namespace CLISC
                         {
                             case CellValues.SharedString:
 
-                                // For shared strings, look up the value in the
-                                // shared strings table.
+                                // For shared strings, look up the value in the shared strings table.
                                 var stringTable =
                                     wbPart.GetPartsOfType<SharedStringTablePart>()
                                     .FirstOrDefault();
 
-                                // If the shared string table is missing, something 
-                                // is wrong. Return the index that is in
-                                // the cell. Otherwise, look up the correct text in 
-                                // the table.
+                                // If the shared string table is missing, something is wrong. Return the index that is in the cell. Otherwise, look up the correct text in the table.
                                 if (stringTable != null)
                                 {
                                     value =

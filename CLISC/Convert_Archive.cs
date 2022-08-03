@@ -72,6 +72,18 @@ namespace CLISC
                     // Change conversion method based on file extension
                     switch (org_extension)
                     {
+                        case ".gsheet":
+                            numFAILED++;
+                            convert_success = false;
+                            error_message = error_messages[11];
+                            break;
+
+                        case ".numbers":
+                            numFAILED++;
+                            convert_success = false;
+                            error_message = error_messages[12];
+                            break;
+
                         // OpenDocument file formats using LibreOffice
                         case ".fods":
                         case ".ods":
