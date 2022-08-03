@@ -39,7 +39,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove formula linking cells to other local spreadsheets but keep snapshot of cell values (feature not working)
 * Remove external data connections but keep snapshot of cell values (feature not working)
 * Remove RealTimeData (RTD) functions but keep snapshot of cell values (feature not working)
-* Alert if spreadsheet has embedded objects (feature not working)
+* Alert if spreadsheet has embedded objects
 * Calculate file checksums
 * Zip the archive directory
 
@@ -48,7 +48,7 @@ Prerequisite software for the program to work with these functions.
 
 :warning: **Convert**
 * [LibreOffice](https://www.libreoffice.org/)
-  - If you want to convert OpenDocument spreadsheets
+  - If you want to convert OpenDocument spreadsheets and use the archiving method
   - You need to install program in its default directory
   - The program is free
 
@@ -97,13 +97,16 @@ Create your arguments from the following list:
 
 If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
 
-## Libraries and software
+## Packages and software
+
+The following packages and software are used under license in CLISC. [Read more](https://github.com/Asbjoedt/CLISC/wiki/Dependencies).
+
 * [Beyond Compare 4](https://www.scootersoftware.com/index.php), Copyright (c) 2022 Scooter Software, Inc.
 * [CommandLineParser](https://github.com/commandlineparser/commandline), MIT License, Copyright (c) 2005 - 2015 Giacomo Stelluti Scala & Contributor
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
 * [NPOI](https://github.com/nissl-lab/npoi), Apache License 2.0, no changes
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
 
-[^1]: See [list of accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats#clisc-accepted-file-formats)
+[^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
 [^2]: Conversion to file extension .xlsx with Strict conformance is currently not supported.
 [^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
