@@ -4,7 +4,7 @@
 A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki).
 
 :rainbow_flag: **General**
-* Bulk convert spreadsheets in a directory to .xlsx (Transitional conformance)
+* Batch convert spreadsheets in a directory to .xlsx (Transitional conformance)
 * Include or exclude subdirectories recursively
 * Output results in a new directory with logs in CSV
 
@@ -39,7 +39,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove formula linking cells to other local spreadsheets but keep snapshot of cell values (feature not working)
 * Remove external data connections but keep snapshot of cell values (feature not working)
 * Remove RealTimeData (RTD) functions but keep snapshot of cell values (feature not working)
-* Alert if spreadsheet has embedded objects
+* Alert if spreadsheet has embedded or external objects
 * Calculate file checksums
 * Zip the archive directory
 
