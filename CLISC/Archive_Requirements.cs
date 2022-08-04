@@ -375,26 +375,3 @@ namespace CLISC
         }
     }
 }
-
-
-
-using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
-{
-    List<HyperlinkRelationship> hyperlinks = spreadsheet
-        .GetAllParts()
-        .SelectMany(p => p.HyperlinkRelationships)
-        .ToList();
-    int hyperlinks_count = hyperlinks.Count;
-
-    if (hyperlinks.Count > 0) // If hyperlinks
-    {
-        Console.WriteLine($"--> {hyperlinks_count} hyperlinks detected");
-        int hyperlink_number = 0;
-        foreach (HyperlinkRelationship hyperlink in hyperlinks)
-        {
-            hyperlink_number++;
-            Console.WriteLine($"--> Hyperlink: {hyperlink_number}");
-            Console.WriteLine($"----> Address: {hyperlink.Uri}");
-        }
-    }
-}
