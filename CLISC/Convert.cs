@@ -36,6 +36,7 @@ namespace CLISC
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets(string function, string inputdir, bool recurse, string Results_Directory)
         {
+            Console.WriteLine("---");
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
 

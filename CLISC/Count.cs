@@ -75,9 +75,8 @@ namespace CLISC
             if (numTOTAL == 0)
             {
                 Console.WriteLine("No spreadsheets identified");
-                Console.WriteLine("Count ended");
+                Console.WriteLine("CLISC ended");
                 Console.WriteLine("---");
-
                 throw new Exception();
             }
             else

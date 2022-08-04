@@ -19,6 +19,7 @@ namespace CLISC
         // Compare spreadsheets
         public void Compare_Spreadsheets(string function, string Results_Directory, List<fileIndex> File_List)
         {
+            Console.WriteLine("---");
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
 
@@ -135,21 +136,6 @@ namespace CLISC
             // Close CSV file to log results
             Spreadsheet.CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
-
-            // Inform user of results
-            Compare_Results();
-        }
-
-        public void Compare_Results()
-        {
-            Console.WriteLine("---");
-            Console.WriteLine("COMPARE RESULTS");
-            Console.WriteLine("---");
-            Console.WriteLine($"{numTOTAL_compare} out of {Conversion.numTOTAL_conv} converted spreadsheets were compared");
-            //Console.WriteLine($"{numTOTAL_diff} out of {numTOTAL_conv} conversions have workbook differences");
-            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
-            Console.WriteLine("Comparison ended");
-            Console.WriteLine("---");
         }
     }
 }

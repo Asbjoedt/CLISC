@@ -15,18 +15,19 @@ namespace CLISC
         public static int rtdfunctions_files = 0;
         public static int embedobj_files = 0;
 
-        // Perform data quality actions
-        public string Check_DataQuality(string filepath) // Method ONLY checks
+        
+        public string Check_Requirements(string filepath) // Method ONLY checks archival requirements
         {
             string dataquality_message = "";
 
             try // call the methods
             {
                 string extrels_message = Check_ExternalRelationships(filepath);
-                string embedobj_message = Alert_EmbeddedObjects(filepath);
+                string embedobj_message = Check_EmbeddedObjects(filepath);
                 bool rtdfunctions = Simple_Check_RTDFunctions(filepath);
+                string hyperlinks_message = Check_Hyperlinks(filepath);
 
-                string messages_combined = extrels_message + ", " + embedobj_message + ", " + rtdfunctions;
+                string messages_combined = extrels_message + ", " + embedobj_message + ", " + rtdfunctions + ", " + hyperlinks_message;
 
                 return messages_combined;
             }
@@ -40,7 +41,7 @@ namespace CLISC
             }
         }
 
-        public void Simple_Check_and_Remove_DataQuality(string filepath)
+        public void Simple_Check_and_Remove_Requirements(string filepath)
         {
             // Check for data to change
             bool extrels = Simple_Check_ExternalRelationships(filepath);
@@ -49,13 +50,11 @@ namespace CLISC
             // If true, change data
             if (extrels == true)
             {
-                //Remove_ExternalRelationships(filepath);
-                Console.WriteLine($"--> External relationships removed - To prevent data loss, manually handle data and reconvert from original");
+                Handle_ExternalRelationships(filepath);
             }
             if (rtdfunctions == true)
             {
                 Remove_RTDFunctions(filepath);
-                Console.WriteLine($"--> RTD functions removed");
             }
         }
 
@@ -78,11 +77,13 @@ namespace CLISC
             }
         }
 
-        public string Check_ExternalRelationships(string filepath)
+        public string Check_ExternalRelationships(string filepath) // Find all external relationships
         {
+            string extrels_message = "";
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalRelationship> extRels = spreadsheet // Find all external relationships
+                List<ExternalRelationship> extRels = spreadsheet 
                 .GetAllParts()
                 .SelectMany(p => p.ExternalRelationships)
                 .ToList();
@@ -94,26 +95,21 @@ namespace CLISC
                     foreach (ExternalRelationship rel in extRels)
                     {
                         extrel_number++;
-                        Console.WriteLine($"--> #{extrel_number} external relationship detected");
+                        Console.WriteLine($"--> External relationship {extrel_number}");
                         Console.WriteLine($"----> ID: {rel.Id}");
                         Console.WriteLine($"----> Target URI: {rel.Uri}");
                         Console.WriteLine($"----> Relationship type: {rel.RelationshipType}");
                         Console.WriteLine($"----> External: {rel.IsExternal}");
-                        Console.WriteLine($"----> Container: {rel.Container}");
                     }
-                }
-                else // If no external relationships, inform user
-                {
-                    Console.WriteLine($"--> {extRels.Count} external relationships");
+                    extrels_message = extRels.Count + " external relationships detected";
+                    return extrels_message;
                 }
 
-                string extrels_message = extRels.Count + "external relationships detected";
                 return extrels_message;
             }
         }
 
-        // Remove external relationships
-        public void Remove_ExternalRelationships(string filepath)
+        public void Handle_ExternalRelationships(string filepath) // Handle external relationships
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -122,9 +118,33 @@ namespace CLISC
                 .SelectMany(p => p.ExternalRelationships)
                 .ToList();
 
-                foreach (ExternalRelationship rel in extRels) // Remove each external relationship
+                foreach (ExternalRelationship rel in extRels)
                 {
-                    spreadsheet.DeleteExternalRelationship(rel.Id);
+                    if (rel.IsExternal == true)
+                    {
+                        switch (rel.RelationshipType)
+                        {
+                            // Embed linked cell values and remove relationship
+                            case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath":
+                            case "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath":
+                                // Replace formula values with cell values 
+
+
+                                // Remember to finish with removing relationshipId
+
+
+                                // Inform user
+                                Console.WriteLine("--> Linked cell values detected. All cell values were embedded and the relationship removed");
+                                break;
+
+                            // Alert if the relationship is an OLE object
+                            case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject":
+                            case "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject":
+                                // Inform user
+                                Console.WriteLine("--> External OLE object detected. Handle OLE object manually");
+                                break;
+                        }
+                    }
                 }
 
                 // Save and close spreadsheet
@@ -133,8 +153,7 @@ namespace CLISC
             }
         }
 
-        // Check for RTD functions and return alert
-        public static bool Simple_Check_RTDFunctions(string filepath)
+        public static bool Simple_Check_RTDFunctions(string filepath) // Check for RTD functions and return alert
         {
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
@@ -150,18 +169,18 @@ namespace CLISC
             }
         }
 
-        public void Remove_RTDFunctions(string filepath)
+        public void Remove_RTDFunctions(string filepath) // Remove RTD functions
         {
             string rtdfunctions_message = "";
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
 
-
+                Console.WriteLine($"--> RTD functions removed");
             }
         }
 
-        public bool Simple_Alert_EmbeddedObjects(string filepath)
+        public bool Simple_Check_EmbeddedObjects(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -188,8 +207,7 @@ namespace CLISC
             }
         }
 
-        // Check for embedded objects and return alert
-        public string Alert_EmbeddedObjects(string filepath)
+        public string Check_EmbeddedObjects(string filepath) // Check for embedded objects and return alert
         {
             string embedobj_message = "";
 
@@ -200,39 +218,72 @@ namespace CLISC
                 {
                     int count_ole = item.EmbeddedObjectParts.Count(); // Register the number of OLE
                     int count_image = item.ImageParts.Count(); // Register number of images
-                    int count = count_ole + count_image; // Sum
-                    if (count == 0) // If no embedded objects, inform user
+                    int count_3d = item.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
+                    int count = count_ole + count_image + count_3d; // Sum
+
+                    if (count > 0) // If no embedded objects
                     {
-                        embedobj_message = $"--> {count} embedded objects detected";
-                        Console.WriteLine(embedobj_message);
-                        return embedobj_message;
-                    }
-                    else
-                    {
-                        embedobj_message = $"--> {count} embedded objects detected";
-                        Console.WriteLine(embedobj_message);
+                        Console.WriteLine($"--> {count} embedded objects detected");
                         var embed_ole = item.EmbeddedObjectParts.ToList(); // Register each OLE to a list
                         var embed_image = item.ImageParts.ToList(); // Register each image to a list
-                        int embedobj_no = 0;
-                        foreach (var part in embed_ole) // Inform user of each object
+                        var embed_3d = item.Model3DReferenceRelationshipParts.ToList(); // Register each 3D model to a list
+                        int embedobj_number = 0;
+                        foreach (var part in embed_ole) // Inform user of each OLE object
                         {
-                            embedobj_no++;
-                            Console.WriteLine($"--> Embedded object #{embedobj_no}");
+                            embedobj_number++;
+                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
                             Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
 
                         }
-                        foreach (var part in embed_image) // Inform user of each object
+                        foreach (var part in embed_image) // Inform user of each image object
                         {
-                            embedobj_no++;
-                            Console.WriteLine($"--> Embedded object #{embedobj_no}");
+                            embedobj_number++;
+                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
                             Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                         }
+                        foreach (var part in embed_3d) // Inform user of each 3D object
+                        {
+                            embedobj_number++;
+                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                            Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
+                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        }
+                        embedobj_message = count + " embedded objects detected";
                         return embedobj_message;
                     }
                 }
-                return embedobj_message;
+            }
+            return embedobj_message;
+        }
+
+        public string Check_Hyperlinks(string filepath) // Find all hyperlinks
+        {
+            string hyperlinks_message = "";
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                List<HyperlinkRelationship> hyperlinks = spreadsheet
+                    .GetAllParts()
+                    .SelectMany(p => p.HyperlinkRelationships)
+                    .ToList();
+                int hyperlinks_count = hyperlinks.Count;
+
+                if (hyperlinks.Count > 0) // If hyperlinks
+                {
+                    Console.WriteLine($"--> {hyperlinks_count} hyperlinks detected");
+                    int hyperlink_number = 0;
+                    foreach (HyperlinkRelationship hyperlink in hyperlinks)
+                    {
+                        hyperlink_number++;
+                        Console.WriteLine($"--> Hyperlink: {hyperlink_number}");
+                        Console.WriteLine($"----> Address: {hyperlink.Uri}");
+                    }
+                    hyperlinks_message = hyperlinks_count + " external relationships detected";
+                    return hyperlinks_message;
+                }
+                return hyperlinks_message;
             }
         }
 
@@ -321,6 +372,29 @@ namespace CLISC
                 }
             }
             return value;
+        }
+    }
+}
+
+
+
+using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+{
+    List<HyperlinkRelationship> hyperlinks = spreadsheet
+        .GetAllParts()
+        .SelectMany(p => p.HyperlinkRelationships)
+        .ToList();
+    int hyperlinks_count = hyperlinks.Count;
+
+    if (hyperlinks.Count > 0) // If hyperlinks
+    {
+        Console.WriteLine($"--> {hyperlinks_count} hyperlinks detected");
+        int hyperlink_number = 0;
+        foreach (HyperlinkRelationship hyperlink in hyperlinks)
+        {
+            hyperlink_number++;
+            Console.WriteLine($"--> Hyperlink: {hyperlink_number}");
+            Console.WriteLine($"----> Address: {hyperlink.Uri}");
         }
     }
 }

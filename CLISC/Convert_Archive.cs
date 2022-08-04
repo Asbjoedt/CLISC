@@ -25,6 +25,7 @@ namespace CLISC
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets_Archive(string function, string inputdir, bool recurse, string Results_Directory)
         {
+            Console.WriteLine("---");
             Console.WriteLine("CONVERT");
             Console.WriteLine("---");
 
@@ -280,7 +281,7 @@ namespace CLISC
                 {
                     // Inform user
                     Console.WriteLine(org_filepath);
-                    Console.WriteLine($"--> Conversion {convert_success}");
+                    Console.WriteLine($"--> Conversion: {convert_success}");
                     if (convert_success == false)
                     {
                         Console.WriteLine($"--> {error_message}");
@@ -324,7 +325,7 @@ namespace CLISC
                         if (xlsx_conv_filepath != null)
                         {
                             Archive arc = new Archive();
-                            arc.Simple_Check_and_Remove_DataQuality(xlsx_conv_filepath);
+                            arc.Simple_Check_and_Remove_Requirements(xlsx_conv_filepath);
                         }
 
                         // And convert to ODS

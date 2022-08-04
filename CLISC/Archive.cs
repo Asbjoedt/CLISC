@@ -11,9 +11,11 @@ namespace CLISC
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
         {
+            Console.WriteLine("---");
             Console.WriteLine("ARCHIVE");
             Console.WriteLine("---");
 
+            string file_folder = "";
             string org_filepath = "";
             string copy_filepath = "";
             string xlsx_conv_filepath = "";
@@ -37,6 +39,7 @@ namespace CLISC
             foreach (fileIndex entry in File_List)
             {
                 // Get information from list
+                file_folder = entry.File_Folder;
                 org_filepath = entry.Org_Filepath;
                 copy_filepath = entry.Copy_Filepath;
                 xlsx_conv_filepath = entry.XLSX_Conv_Filepath;
@@ -49,11 +52,12 @@ namespace CLISC
                 {
                     // Inform user
                     Console.WriteLine(xlsx_conv_filepath);
+
                     // Validate
                     xlsx_validation_message = Validate_OOXML(xlsx_conv_filepath);
 
                     // Perform data quality actions
-                    dataquality_message = Check_DataQuality(xlsx_conv_filepath);
+                    dataquality_message = Check_Requirements(xlsx_conv_filepath);
 
                     // Calcualte checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
@@ -61,8 +65,10 @@ namespace CLISC
                 }
                 if (entry.ODS_Conv_Extension == ".ods")
                 {
+                    string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
                     Console.WriteLine(ods_conv_filepath);
-                    Console.WriteLine("--> Data quality actions or validation are not supported");
+                    Console.WriteLine("--> File format validation of .ods is not supported");
+                    Console.WriteLine($"--> Archival requirements acceptance is identical to: {folder_number}\\1.xlsx");
 
                     // Calcualte checksum
                     ods_conv_checksum = Calculate_MD5(ods_conv_filepath);
