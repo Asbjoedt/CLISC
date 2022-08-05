@@ -31,7 +31,6 @@ namespace CLISC
                 int error_count = validation_errors.Count;
                 int error_number = 0;
 
-
                 if (validation_errors.Any()) // If errors
                 {
                     if (error_count == 45)
@@ -48,53 +47,18 @@ namespace CLISC
                     foreach (var error in validation_errors)
                     {
                         // Open XML SDK has 45 bugs, that is incorrectly reported as 45 errors for Strict conformant spreadsheets. The switch suppresses these
-                        switch (error.Path.XPath)
+                        switch (error.Node)
                         {
-                            case "/x:workbook[1]/x:workbookPr[1]":
-                            case "/x:styleSheet[1]/x:borders[1]/x:border[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[3]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:shade[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:lumMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:shade[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:tint[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:lumMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:shade[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:tint[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:solidFill[2]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:bgFillStyleLst[1]/a:solidFill[2]/a:schemeClr[1]/a:tint[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:effectStyleLst[1]/a:effectStyle[3]/a:effectLst[1]/a:outerShdw[1]/a:srgbClr[1]/a:alpha[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:lnStyleLst[1]/a:ln[3]/a:miter[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:lnStyleLst[1]/a:ln[2]/a:miter[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:lnStyleLst[1]/a:ln[1]/a:miter[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[3]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:shade[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:lumMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[2]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:shade[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:lumMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:tint[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:lumMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[2]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[3]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:tint[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[3]/a:schemeClr[1]/a:lumMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:tint[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[2]/a:schemeClr[1]/a:lumMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:tint[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:satMod[1]":
-                            case "/a:theme[1]/a:themeElements[1]/a:fmtScheme[1]/a:fillStyleLst[1]/a:gradFill[1]/a:gsLst[1]/a:gs[1]/a:schemeClr[1]/a:lumMod[1]":
+                            case DocumentFormat.OpenXml.Spreadsheet.Border:
+                            case DocumentFormat.OpenXml.Drawing.FillToRectangle:
+                            case DocumentFormat.OpenXml.Drawing.GradientStop:
+                            case DocumentFormat.OpenXml.Drawing.SaturationModulation:
+                            case DocumentFormat.OpenXml.Drawing.LuminanceModulation:
+                            case DocumentFormat.OpenXml.Drawing.Shade:
+                            case DocumentFormat.OpenXml.Drawing.Tint:
+                            case DocumentFormat.OpenXml.Drawing.Alpha:
+                            case DocumentFormat.OpenXml.Drawing.Miter:
+                            case DocumentFormat.OpenXml.Spreadsheet.WorkbookProperties:
                                 // Do nothing
                                 break;
 
@@ -120,7 +84,7 @@ namespace CLISC
                     }
                     else
                     {
-                        return validation_message = string.Join(",", validation_errors); // Turn list of errors into string;
+                        return validation_message = string.Join(", ", validation_errors); // Turn list of errors into string;
                     }
 
                 }

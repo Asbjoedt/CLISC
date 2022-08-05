@@ -315,7 +315,7 @@ namespace CLISC
 
                             if (strict == true)
                             {
-                                Console.WriteLine("--> Original spreadsheet is already Strict conformant");
+                                Console.WriteLine("--> Spreadsheet is already Strict conformant");
                             }
                             else
                             {
@@ -323,7 +323,7 @@ namespace CLISC
                                 if (convert_success == true)
                                 {
                                     error_message = error_messages[13];
-                                    Console.WriteLine("--> Converted to Strict conformance");
+                                    Console.WriteLine("--> Converted to .xlsx Strict conformance");
                                 }
                                 else
                                 {
@@ -380,9 +380,6 @@ namespace CLISC
             // Close CSV file to log results
             Spreadsheet.CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
-
-            // Calculate the number of completed conversions
-            numTOTAL_conv = numCOMPLETE + numXLSX_noconversion + numODS_noconversion;
 
             return File_List;
         }

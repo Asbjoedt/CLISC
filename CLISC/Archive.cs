@@ -67,7 +67,7 @@ namespace CLISC
                 {
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
                     Console.WriteLine(ods_conv_filepath);
-                    Console.WriteLine("--> File format validation of .ods is not supported");
+                    Console.WriteLine("--> File format validation for .ods is not supported");
                     Console.WriteLine($"--> Archival requirements acceptance is identical to: {folder_number}\\1.xlsx");
 
                     // Calcualte checksum
@@ -93,7 +93,7 @@ namespace CLISC
             Console.WriteLine("---");
             try
             {
-                // ZIP_Directory(Results_Directory); Commented out zipping for debugging reasons
+                ZIP_Directory(Results_Directory);
                 string zip_path = Results_Directory + ".zip";
                 Console.WriteLine($"The zipped archive directory was saved to: {zip_path}");
                 Console.WriteLine("Zip ended");

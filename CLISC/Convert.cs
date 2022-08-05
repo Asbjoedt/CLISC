@@ -16,9 +16,6 @@ namespace CLISC
         // Define data types
         public static int numCOMPLETE = 0;
         public static int numFAILED = 0;
-        public static int numXLSX_noconversion = 0;
-        public static int numODS_noconversion = 0;
-        public static int numTOTAL_conv = numCOMPLETE + numXLSX_noconversion;
         public static bool? convert_success = null;
         static string? file_folder = null;
         static int subdir_number = 1;
@@ -205,7 +202,7 @@ namespace CLISC
                                 {
                                     // No conversion
                                     // Transform data types
-                                    numXLSX_noconversion++;
+                                    numFAILED++;
                                     convert_success = false;
                                     error_message = error_messages[6];
                                     conv_extension = null;
@@ -396,9 +393,6 @@ namespace CLISC
             // Close CSV file to log results
             Spreadsheet.CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
-
-            // Calculate the number of completed conversions
-            numTOTAL_conv = numCOMPLETE + numXLSX_noconversion + numODS_noconversion;
 
             return File_List;
         }
