@@ -4,7 +4,7 @@
 A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki).
 
 :rainbow_flag: **General**
-* Batch convert spreadsheets in a directory to .xlsx (Transitional conformance)
+* Batch convert spreadsheets in a directory to .xlsx
 * Include or exclude subdirectories recursively
 * Output results in a new directory with logs in CSV
 
@@ -30,7 +30,7 @@ Compare original and converted spreadsheets to log differences.[^3]
 :file_cabinet: **Archive**
 
 The program can convert, package and describe spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. 
-* Convert any spreadsheet[^1] to both .xlsx (Transitional conformance) and .ods
+* Convert any spreadsheet[^1] to both .xlsx (Strict conformance) and .ods
 * Package spreadsheets and metadata in a new archive directory
 * Output all conversions in subdirectories named n+1
 * Rename all conversions n+1.xlsx and n+1.ods
@@ -48,7 +48,7 @@ Prerequisite software for the program to work with these functions.
 
 :warning: **Convert**
 * [LibreOffice](https://www.libreoffice.org/)
-  - If you want to convert OpenDocument spreadsheets and use the archiving method
+  - If you want to convert OpenDocument spreadsheets and/or use the archiving method
   - You need to install program in its default directory
   - The program is free
 
@@ -57,6 +57,12 @@ Prerequisite software for the program to work with these functions.
   - If you want to use the compare function
   - You need to install program in its default directory
   - You need to purchase license
+  
+:warning: **Archive**
+* [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)
+  - If you want to use the archiving method, which converts .xlsx conformance from Transitional to Strict
+  - You need to install program in its default directory
+  - You need to purchase
 
 ## How to use
 Download the executable version [here](https://github.com/Asbjoedt/CLISC/releases). There's no need to install. In your terminal change directory to the folder where CLISC.exe is. Then, to execute the program input:
@@ -103,6 +109,7 @@ The following packages and software are used under license in CLISC. [Read more]
 
 * [Beyond Compare 4](https://www.scootersoftware.com/index.php), Copyright (c) 2022 Scooter Software, Inc.
 * [CommandLineParser](https://github.com/commandlineparser/commandline), MIT License, Copyright (c) 2005 - 2015 Giacomo Stelluti Scala & Contributor
+* [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), Copyright (c) Microsoft Corporation
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
 * [NPOI](https://github.com/nissl-lab/npoi), Apache License 2.0, no changes
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
