@@ -41,21 +41,21 @@ namespace CLISC
             }
         }
 
-        public void Simple_Check_and_Remove_Requirements(string filepath)
+        public void Simple_Check_and_Transform_Requirements(string filepath)
         {
-            // Check for data to change
-            bool extrels = Simple_Check_ExternalRelationships(filepath);
-            bool rtdfunctions = Simple_Check_RTDFunctions(filepath);
-
-            // If true, change data
+            bool extrels = Simple_Check_ExternalRelationships(filepath); // Check for external relationships
             if (extrels == true)
             {
                 Handle_ExternalRelationships(filepath);
             }
+
+            bool rtdfunctions = Simple_Check_RTDFunctions(filepath); // Check for RTD functions
             if (rtdfunctions == true)
             {
                 Remove_RTDFunctions(filepath);
             }
+
+            Mark_ReadOnly(filepath); // Mark spreadsheet with read only prompt before enabling editing
         }
 
         // Check for external relationships
@@ -285,6 +285,11 @@ namespace CLISC
                 }
                 return hyperlinks_message;
             }
+        }
+
+        public void Mark_ReadOnly(string filepath)
+        {
+
         }
 
         // Get all worksheets in a spreadsheet

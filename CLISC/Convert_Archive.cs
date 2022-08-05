@@ -305,19 +305,32 @@ namespace CLISC
                             error_message = "";
                         }
 
-                        // Open to identify Strict conformance
+                        // Convert to .xlsx Strict conformance using Excel
                         if (xlsx_conv_extension == ".xlsx")
                         {
+                            // Identify if already Strict
                             SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false);
                             strict = spreadsheet.StrictRelationshipFound;
                             spreadsheet.Close();
-                            if (strict != true)
+
+                            if (strict == true)
                             {
-                                error_message = error_messages[6];
+                                Console.WriteLine("--> Original spreadsheet is already Strict conformant");
                             }
                             else
                             {
-                                error_message = "";
+                                convert_success = Convert_Transitional_to_Strict(xlsx_conv_filepath, xlsx_conv_filepath);
+                                if (convert_success == true)
+                                {
+                                    error_message = error_messages[13];
+                                    Console.WriteLine("--> Converted to Strict conformance");
+                                }
+                                else
+                                {
+                                    error_message = error_messages[14];
+                                    Console.WriteLine("--> " + error_message);
+                                }
+
                             }
                         }
 
@@ -325,7 +338,7 @@ namespace CLISC
                         if (xlsx_conv_filepath != null)
                         {
                             Archive arc = new Archive();
-                            arc.Simple_Check_and_Remove_Requirements(xlsx_conv_filepath);
+                            arc.Simple_Check_and_Transform_Requirements(xlsx_conv_filepath);
                         }
 
                         // And convert to ODS

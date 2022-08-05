@@ -15,4 +15,13 @@
     <PackageReference Include="NPOI" Version="2.5.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Excel">
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Excel\15.0.0.0__71E9BCE111E9429C\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="office">
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\office\15.0.0.0__71E9BCE111E9429C\OFFICE.DLL</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

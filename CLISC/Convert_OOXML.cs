@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace CLISC
 {
@@ -29,7 +30,7 @@ namespace CLISC
             return convert_success;
         }
 
-        // Convert XLSX Strict to Transitional conformance - WORK IN PROGRESS
+        // Convert .xlsx Strict to Transitional conformance - WORK IN PROGRESS
         public bool Convert_Strict_to_Transitional(string input_filepath, string output_filepath, string file_folder)
         {
             using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, false))
@@ -47,6 +48,21 @@ namespace CLISC
                 bool convert_success = true;
                 return convert_success;
             }
+        }
+
+        // Convert .xlsx Transtional to Strict using Excel
+        public bool Convert_Transitional_to_Strict(string input_filepath, string output_filepath)
+        {
+            bool convert_success = false;
+
+            Excel.Application app = new Excel.Application(); // Create Excel object instance
+            app.DisplayAlerts = false; // Don't display any Excel prompts
+            Excel.Workbook excelWorkbook = app.Workbooks.Open(input_filepath); // Create workbook instance and open Excel Workbook for conversion
+            excelWorkbook.SaveAs(output_filepath, 61); // Save file as .xlsx Strict
+            excelWorkbook.Close(); // Close the Workbook
+            app.Quit(); // Quit Excel Application
+            convert_success = true; // Mark as succesful
+            return convert_success; // Report success
         }
     }
 }
