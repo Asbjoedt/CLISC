@@ -69,31 +69,25 @@ namespace CLISC
                     List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
 
                     // Get information from validation list
-                    foreach (Validation entry2 in xlsx_validation_list)
+                    foreach (Validation error in xlsx_validation_list)
                     {
-                        xlsx_validity = entry2.Validity;
-                        int? error_number = entry2.Error_Number;
-                        string? error_description = entry2.Error_Description;
-                        string? error_type = entry2.Error_Type;
-                        string? error_node = entry2.Error_Node;
-                        string? error_path = entry2.Error_Path;
-                        string? error_part = entry2.Error_Part;
-                        string? error_relatednode = entry2.Error_RelatedNode;
-                        string? error_relatedtext = entry2.Error_RelatedNode_InnerText;
+                        xlsx_validity = error.Validity;
+                        int? error_number = error.Error_Number;
+                        string? error_description = error.Error_Description;
+                        string? error_type = error.Error_Type;
+                        string? error_node = error.Error_Node;
+                        string? error_path = error.Error_Path;
+                        string? error_part = error.Error_Part;
+                        string? error_relatednode = error.Error_RelatedNode;
+                        string? error_relatedtext = error.Error_RelatedNode_InnerText;
 
-                        if (xlsx_validity == "Valid")
+                        if (xlsx_validity == "Invalid")
                         {
-                            valid_files++; // Add to count of valid files
-                        }
-                        else 
-                        {
-                            invalid_files++; // Add to count of invalid files
-
                             // If invalid write to CSV validation log
                             var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
                             csv2.AppendLine(newLine2_2);
 
-                            // Reset data types, for correctCSV file output
+                            // Reset data types, for correct CSV file output
                             error_relatednode = null;
                             error_relatedtext = null;
                         }

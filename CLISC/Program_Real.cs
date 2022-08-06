@@ -87,6 +87,7 @@ namespace CLISC
             Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numCOMPLETE} converted spreadsheets were compared");
+            Console.WriteLine($"COMPARE: 0 converted spreadsheets failed comparison");
             Console.WriteLine("CLISC ended");
             Console.WriteLine("---");
         }
@@ -98,8 +99,10 @@ namespace CLISC
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheets");
             Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
-            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numCOMPLETE} converted spreadsheets were compared");
+            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numCOMPLETE} converted spreadsheets completed comparison");
+            Console.WriteLine($"COMPARE: 0 converted spreadsheets failed comparison");
             Console.WriteLine($"ARCHIVE: {Archive.valid_files} out of {Conversion.numCOMPLETE} converted spreadsheets have valid file formats");
+            Console.WriteLine($"ARCHIVE: {Archive.invalid_files} converted spreadsheets have invalid file formats");
             Console.WriteLine($"ARCHIVE: {Archive.extrels_files} out of {Conversion.numCOMPLETE} converted spreadsheets had external relationships - External relationships were removed");
             Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} out of {Conversion.numCOMPLETE} converted spreadsheets have embedded objects - Embedded objects were NOT removed");
             Console.WriteLine("CLISC ended");

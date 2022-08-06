@@ -93,6 +93,8 @@ namespace CLISC
                     }
                     if (error_count == 45)
                     {
+                        Archive.valid_files++; // Add to number of valid files
+
                         foreach (var error in validation_errors)
                         {
                             // Add validation results to list
@@ -103,7 +105,9 @@ namespace CLISC
                     }
                     else
                     {
-                        error_number = 0;
+                        Archive.invalid_files++; // Add to number of invalid files
+                        error_number = 0; //  Must be here because of bug, where int do not begin at 0
+
                         foreach (var error in validation_errors)
                         {
                             error_number++;
@@ -123,6 +127,8 @@ namespace CLISC
                 }
                 else
                 {
+                    Archive.valid_files++; // Add to number of valid files
+
                     // Add validation results to list
                     results.Add(new Validation { Validity = "Valid", Error_Number = null, Error_Description = "", Error_Type = "", Error_Node = "", Error_Path = "", Error_Part = "", Error_RelatedNode = "", Error_RelatedNode_InnerText = "" });
 
