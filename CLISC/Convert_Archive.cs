@@ -14,6 +14,9 @@ namespace CLISC
 {
     public partial class Conversion
     {
+        string org_extension = "";
+        string org_filename = "";
+        string org_filepath = "";
         string? xlsx_conv_extension = null;
         string? xlsx_conv_filename = null;
         string? xlsx_conv_filepath = null;
@@ -46,9 +49,9 @@ namespace CLISC
             foreach (var entry in Org_File_List)
             {
                 // Create data types for original files and connect to list of original files
-                string org_extension = entry.Org_Extension;
-                string org_filename = entry.Org_Filename;
-                string org_filepath = entry.Org_Filepath;
+                org_extension = entry.Org_Extension;
+                org_filename = entry.Org_Filename;
+                org_filepath = entry.Org_Filepath;
 
                 // Create new subdirectory for the spreadsheet
                 file_folder = docCollection + "\\" + subdir_number;

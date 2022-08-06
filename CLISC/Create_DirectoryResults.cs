@@ -25,7 +25,7 @@ namespace CLISC
             // Identify available name for results directory
             int results_directory_number = 1;
             Results_Directory = outputdir + "\\CLISC_" + dateStamp;
-            while (Directory.Exists(Results_Directory))
+            while (Directory.Exists(Results_Directory) || File.Exists(Results_Directory + ".zip"))
             {
                 results_directory_number++;
                 Results_Directory = outputdir + "\\CLISC_" + dateStamp + "_" + results_directory_number;

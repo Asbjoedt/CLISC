@@ -13,15 +13,30 @@ using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
-    public partial class Archive
+    public class Validation
     {
-        public static int valid_files = 0;
-        public static int invalid_files = 0;
+        public string Validity { get; set; }
+
+        public int? Error_Number { get; set; }
+
+        public string? Error_Description { get; set; }
+
+        public string? Error_Type { get; set; }
+
+        public string? Error_Node { get; set; }
+
+        public string? Error_Path { get; set; }
+
+        public string? Error_Part { get; set; }
+
+        public string? Error_RelatedNode { get; set; }
+
+        public string? Error_RelatedNode_InnerText { get; set; }
 
         // Validate Open Office XML file formats
-        public string Validate_OOXML(string filepath)
+        public List<Validation> Validate_OOXML(string org_filepath, string filepath, string Results_Directory)
         {
-            string validation_message = "";
+            List<Validation> results = new List<Validation>();
 
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
@@ -31,16 +46,14 @@ namespace CLISC
                 int error_count = validation_errors.Count;
                 int error_number = 0;
 
-                if (validation_errors.Any()) // If errors
+                if (validation_errors.Any()) // If errors, inform user & return results
                 {
                     if (error_count == 45)
                     {
-                        valid_files++; // Add file to number of valid spreadsheets
                         Console.WriteLine($"--> File format is valid - {error_count} incorrectly reported validation errors have been suppressed"); // Inform user
                     }
                     else
                     {
-                        invalid_files++; // Add file to number of invalid spreadsheets
                         Console.WriteLine($"--> File format is invalid - Spreadsheet has {error_count} validation errors"); // Inform users
                     }
 
@@ -80,19 +93,42 @@ namespace CLISC
                     }
                     if (error_count == 45)
                     {
-                        return validation_message = "Valid";
+                        foreach (var error in validation_errors)
+                        {
+                            // Add validation results to list
+                            results.Add(new Validation { Validity = "Valid", Error_Number = null, Error_Description = "", Error_Type = "", Error_Node = "", Error_Path = "", Error_Part = "", Error_RelatedNode = "", Error_RelatedNode_InnerText = "" });
+                        }
+
+                        return results;
                     }
                     else
                     {
-                        return validation_message = string.Join(", ", validation_errors); // Turn list of errors into string;
-                    }
+                        error_number = 0;
+                        foreach (var error in validation_errors)
+                        {
+                            error_number++;
 
+                            string? er_rel_1 = "";
+                            string? er_rel_2 = "";
+                            if (error.RelatedNode != null)
+                            {
+                                er_rel_1 = error.RelatedNode.ToString();
+                                er_rel_2 = error.RelatedNode.InnerText;
+                            }
+                            // Add validation results to list
+                            results.Add(new Validation { Validity = "Invalid", Error_Number = error_number, Error_Description = error.Description, Error_Type = error.ErrorType.ToString(), Error_Node = error.Node.ToString(), Error_Path = error.Path.XPath.ToString(), Error_Part = error.Part.Uri.ToString(), Error_RelatedNode = er_rel_1, Error_RelatedNode_InnerText = er_rel_2});
+                        }
+                        return results;
+                    }
                 }
                 else
                 {
-                    valid_files++; // Add file to number of valid spreadsheets
-                    Console.WriteLine($"--> File format is valid"); // Inform user
-                    return validation_message = "Valid";
+                    // Add validation results to list
+                    results.Add(new Validation { Validity = "Valid", Error_Number = null, Error_Description = "", Error_Type = "", Error_Node = "", Error_Path = "", Error_Part = "", Error_RelatedNode = "", Error_RelatedNode_InnerText = "" });
+
+                    // Inform user & return list
+                    Console.WriteLine($"--> File format is valid");
+                    return results;
                 }
             }
         }
