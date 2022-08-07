@@ -12,7 +12,7 @@ namespace CLISC
 {
     public partial class Conversion
     {
-        // Convert to Office Open XML XLSX Transitional conformance - DOES NOT SUPPORT STRICT TO TRANSITIONAL
+        // Convert to .xlsx Transitional - DOES NOT SUPPORT STRICT TO TRANSITIONAL
         public bool Convert_to_OOXML_Transitional(string input_filepath, string output_filepath)
         {
             byte[] byteArray = File.ReadAllBytes(input_filepath);

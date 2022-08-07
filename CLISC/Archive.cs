@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
 {
@@ -43,7 +44,7 @@ namespace CLISC
             var csv2 = new StringBuilder();
             var newLine2_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Validity;Error Number;Description;Error Type;Node;Path;Part;Related Node;Related Node Inner Text");
             csv2.AppendLine(newLine2_1);
-  
+
             foreach (fileIndex entry in File_List) // Loop through each file
             {
                 // Get information from File list
@@ -58,9 +59,28 @@ namespace CLISC
 
                 if (File.Exists(xlsx_conv_filepath))
                 {
-                    Console.WriteLine(xlsx_conv_filepath); // Inform user of analyzed filepath
+                    Console.WriteLine(org_filepath); // Inform user of original filepath
+                    Console.WriteLine($"--> Conversion analyzed: {xlsx_conv_filepath}"); // Inform user of analyzed filepath
 
-                    Validation validate = new Validation(); // Validate
+                    // Convert to .xlsx Strict conformance using Excel
+                    bool? strict = null;
+                    using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false))
+                    {
+                        strict = spreadsheet.StrictRelationshipFound; // Identify if already Strict
+                    }
+                    if (strict == true)
+                    {
+                        Console.WriteLine("--> Spreadsheet is already Strict conformant");
+                    }
+                    else
+                    {
+                        Conversion con = new Conversion();
+                        convert_success = con.Convert_Transitional_to_Strict(xlsx_conv_filepath, xlsx_conv_filepath);
+                        Console.WriteLine("--> Converted to Strict conformance");
+                    }
+
+                    // Validate
+                    Validation validate = new Validation();
                     List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
 
                     foreach (Validation error in xlsx_validation_list) // Get information from validation list
@@ -88,7 +108,10 @@ namespace CLISC
                     }
 
                     // Check for archival requirements
-                    dataquality_message = Check_Requirements(org_filepath);
+                    dataquality_message = Check_Requirements(xlsx_conv_filepath);
+
+                    // Check for dataquality requirements and convert data accordingly using Excel
+                    Simple_Transform_Requirements(xlsx_conv_filepath);
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
@@ -97,7 +120,7 @@ namespace CLISC
                 if (entry.ODS_Conv_Extension == ".ods" && File.Exists(ods_conv_filepath))
                 {
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
-                    Console.WriteLine(ods_conv_filepath);
+                    Console.WriteLine($"--> Conversion analyzed: {ods_conv_filepath}");
                     Console.WriteLine("--> File format validation for .ods is not supported");
                     Console.WriteLine($"--> Archival requirements acceptance is identical to: {folder_number}\\1.xlsx");
 

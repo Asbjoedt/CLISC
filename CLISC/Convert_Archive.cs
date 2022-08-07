@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
 using DocumentFormat.OpenXml.Packaging;
-using System.ComponentModel;
 
 namespace CLISC
 {
@@ -23,7 +22,6 @@ namespace CLISC
         string? ods_conv_extension = null;
         string? ods_conv_filename = null;
         string? ods_conv_filepath = null;
-        bool? strict = null;
 
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets_Archive(string function, string inputdir, bool recurse, string Results_Directory)
@@ -88,12 +86,13 @@ namespace CLISC
                             error_message = error_messages[12];
                             break;
 
-                        // OpenDocument file formats using LibreOffice
+                        // OpenDocument file formats
                         case ".fods":
                         case ".ods":
                         case ".ots":
-                            // Convert to XLSX
-                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
+                            // Convert to XLSX Transitional
+                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder); // Using LibreOffice
+
                             break;
 
                         // Microsoft Excel Add-in file formats are not converted
@@ -114,16 +113,16 @@ namespace CLISC
                         // Legacy Microsoft Excel file formats
                         case ".xls":
                         case ".xlt":
-                            // Convert to XLSX
-                            xlsx_conv_extension = ".xlsx";
-                            xlsx_conv_filename = "1.xlsx";
+                            // Transform data types for converted spreadsheets
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                            convert_success = Convert_from_LegacyExcel(org_filepath, copy_filepath, xlsx_conv_filepath);
+                            // Convert to .xlsx Transitional using Excel Interop
+                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, xlsx_conv_filepath);
                             break;
 
                         case ".xlsb":
-                            // Convert to XLSX using LibreOffice
-                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
+                            xlsx_conv_filepath = file_folder + "\\1.xlsx";
+                            // Convert to .xlsx Transitional using Excel Interop
+                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, xlsx_conv_filepath); 
                             break;
 
                         case ".xlsm":
@@ -131,11 +130,8 @@ namespace CLISC
                         case ".xltm":
                         case ".xltx":
                             // Transform data types for converted spreadsheets
-                            xlsx_conv_extension = ".xlsx";
-                            xlsx_conv_filename = "1.xlsx";
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
-
-                            // Convert to XLSX
+                            // Convert to XLSX Transitional
                             convert_success = Convert_to_OOXML_Transitional(copy_filepath, xlsx_conv_filepath);
                             break;
                     }
@@ -195,91 +191,7 @@ namespace CLISC
                     ods_conv_filename = null;
                     ods_conv_filepath = null;
                 }
-                // NPOI encryption
-                catch (NPOI.Util.RecordFormatException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[4];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // NPOI can't handle old Excel formats in BIFF format
-                catch (NPOI.HSSF.OldExcelFormatException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[4];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // NPOI creates this system exception
-                catch (NotImplementedException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[10];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // NPOI exception because of formula range with unused values
-                catch (NPOI.SS.Formula.FormulaParseException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[10];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // Another NPOI. Try using libreOffice in the catch
-                catch (System.InvalidOperationException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[10];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // Another NPOI but this one gives a generic system exception - Dangerous to catch it here, because it could be used in other contexts
-                catch(System.IndexOutOfRangeException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[10];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-
+ 
                 finally
                 {
                     // Inform user
@@ -308,43 +220,7 @@ namespace CLISC
                             error_message = "";
                         }
 
-                        // Check for dataquality requirements and convert data accordingly
-                        if (xlsx_conv_filepath != null)
-                        {
-                            Archive arc = new Archive();
-                            arc.Simple_Check_and_Transform_Requirements(xlsx_conv_filepath);
-                        }
-
-                        // Convert to .xlsx Strict conformance using Excel
-                        if (xlsx_conv_extension == ".xlsx")
-                        {
-                            // Identify if already Strict
-                            SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false);
-                            strict = spreadsheet.StrictRelationshipFound;
-                            spreadsheet.Close();
-
-                            if (strict == true)
-                            {
-                                Console.WriteLine("--> Spreadsheet is already Strict conformant");
-                            }
-                            else
-                            {
-                                convert_success = Convert_Transitional_to_Strict(xlsx_conv_filepath, xlsx_conv_filepath);
-                                if (convert_success == true)
-                                {
-                                    error_message = error_messages[13];
-                                    Console.WriteLine("--> Converted to .xlsx Strict conformance");
-                                }
-                                else
-                                {
-                                    error_message = error_messages[14];
-                                    Console.WriteLine("--> " + error_message);
-                                }
-
-                            }
-                        }
-
-                        // And convert to ODS
+                        // Make a copy in ODS
                         convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
                         ods_conv_extension = ".ods";
                         ods_conv_filename = "1" + ods_conv_extension;

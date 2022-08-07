@@ -42,7 +42,7 @@ namespace CLISC
             }
         }
 
-        public void Simple_Check_and_Transform_Requirements(string filepath)
+        public void Simple_Transform_Requirements(string filepath)
         {
             bool extrels = Simple_Check_ExternalRelationships(filepath); // Check for external relationships
             if (extrels == true)
@@ -56,7 +56,7 @@ namespace CLISC
                 Remove_RTDFunctions(filepath);
             }
 
-            Simple_Interop(filepath); // Use Excel Interop to cheat
+            Simple_Interop(filepath); // Use Excel Interop for the rest
 
             Mark_ReadOnly(filepath); // Mark spreadsheet with read only prompt before enabling editing
         }
@@ -314,14 +314,39 @@ namespace CLISC
                 Console.WriteLine("--> Data connections detected and removed");
             }
 
+            // Find and delete RTD formula
+            bool hasRTD = false;
+
+            foreach(Excel.Worksheet sheet in wb.Sheets)
+            {
+                Excel.Range index = (Excel.Range)sheet.UsedRange;
+
+                foreach (Excel.Range cell in index)
+                {
+                    if (cell.Formula.Equals("=RTD"))
+                    {
+                        var cellvalue = cell.Value; // Store cell value
+                        cell.Formula = ""; // Remove formula
+                        cell.Value = cellvalue; // Transfor stored cell value
+                        hasRTD = true; // Register existence of RTD
+                    }
+                }
+            }
+            if (hasRTD == true)
+            {
+                Console.WriteLine("--> RTD functions detected and removed"); // Inform user
+            }
+
             // Find and delete file property details
-            if (wb.Author != "" || wb.Subject != "" || wb.Comments != "") // Inform user of removal of file property details
+            if (wb.Author != "" || wb.Title != "" || wb.Subject != "" || wb.Keywords != "" || wb.Comments != "") // Inform user of removal of file property details
             {
                 Console.WriteLine("--> Removed file property details");
             }
-
+            //wb.RemovePersonalInformation = true; // What does this do?
             wb.Author = ""; // Remove author information
+            wb.Title = ""; // Remove title information
             wb.Subject = ""; // Remove subject information
+            wb.Keywords = ""; // Remove keywords information
             wb.Comments = ""; // Remove comments information
 
             wb.Save(); // Save workbook

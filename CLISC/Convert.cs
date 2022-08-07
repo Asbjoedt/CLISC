@@ -28,7 +28,7 @@ namespace CLISC
         static string? conv_filename = null;
         static string? conv_filepath = null;
         static string? error_message = null;
-        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in cloud and cannot be converted locally", "Apple Numbers are not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed." };
+        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed." };
 
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets(string function, string inputdir, bool recurse, string Results_Directory)
@@ -152,7 +152,7 @@ namespace CLISC
                                 conv_filepath = docCollection + "\\" + no_ext + "_" + conv_file_number + conv_extension;
                             }
                             // Conversion code
-                            convert_success = Convert_from_LegacyExcel(org_filepath, copy_filepath, conv_filepath);
+                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath);
                             numCOMPLETE++;
                             break;
 
@@ -277,88 +277,7 @@ namespace CLISC
                     conv_filename = null;
                     conv_filepath = null;
                 }
-                // NPOI encryption
-                catch (NPOI.Util.RecordFormatException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[4];
-                    conv_extension = null;
-                    conv_filename = null;
-                    conv_filepath = null;
-                }
-                // NPOI can't handle old Excel formats in BIFF format
-                catch (NPOI.HSSF.OldExcelFormatException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[4];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // NPOI creates this system exception
-                catch (NotImplementedException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[4];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // NPOI exception because of formula range with unused values
-                catch (NPOI.SS.Formula.FormulaParseException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[10];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // Another NPOI. Try using libreOffice in the catch
-                catch (System.InvalidOperationException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[10];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-                // Another NPOI but this one gives a generic system exception - Dangerous to catch it here, because it could be used in other contexts
-                catch (System.IndexOutOfRangeException)
-                {
-                    // Code to execute
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[10];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
-                }
-
+               
                 finally
                 {
                     // Delete copied spreadsheet
