@@ -33,12 +33,13 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Convert any spreadsheet[^1] to both .xlsx (Strict conformance) and .ods
 * Package spreadsheets and metadata in a new archive directory
 * Output all conversions in subdirectories named n+1
-* Rename all conversions n+1.xlsx and n+1.ods
+* Rename all conversions 1.xlsx and 1.ods
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML)
-* Remove formula linking cells to other local spreadsheets but keep snapshot of cell values (feature not working)
-* Remove external data connections but keep snapshot of cell values (feature not working)
-* Remove RealTimeData (RTD) functions but keep snapshot of cell values (feature not working)
+* Remove formula linking cells to other local spreadsheets but keep cell values (feature not working)
+* Remove external data connections but keep cell values
+* Remove RealTimeData (RTD) functions but keep cell values (feature not working)
+* Remove author, subject and comments from file property details and save information in log
 * Alert if spreadsheet has embedded or external objects
 * Calculate file checksums
 * Zip the archive directory
