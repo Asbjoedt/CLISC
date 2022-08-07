@@ -50,17 +50,19 @@ namespace CLISC
             }
         }
 
-        // Convert .xlsx Transtional to Strict using Excel
+        // Convert .xlsx Transtional to Strict using Excel and delete select file properties
         public bool Convert_Transitional_to_Strict(string input_filepath, string output_filepath)
         {
             bool convert_success = false;
 
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel prompts
-            Excel.Workbook excelWorkbook = app.Workbooks.Open(input_filepath); // Create workbook instance and open Excel Workbook for conversion
-            excelWorkbook.SaveAs(output_filepath, 61); // Save file as .xlsx Strict
-            excelWorkbook.Close(); // Close the Workbook
-            app.Quit(); // Quit Excel Application
+            Excel.Workbook wb = app.Workbooks.Open(input_filepath); // Create workbook instance
+
+            wb.SaveAs(output_filepath, 61); // Save workbook as .xlsx Strict
+            wb.Close(); // Close workbook
+            app.Quit(); // Quit Excel application
+
             convert_success = true; // Mark as succesful
             return convert_success; // Report success
         }

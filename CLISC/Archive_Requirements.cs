@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace CLISC
 {
@@ -54,6 +55,8 @@ namespace CLISC
             {
                 Remove_RTDFunctions(filepath);
             }
+
+            Simple_Interop(filepath); // Use Excel Interop to cheat
 
             Mark_ReadOnly(filepath); // Mark spreadsheet with read only prompt before enabling editing
         }
@@ -290,6 +293,40 @@ namespace CLISC
         public void Mark_ReadOnly(string filepath)
         {
 
+        }
+
+        public void Simple_Interop(string filepath)
+        {
+            Excel.Application app = new Excel.Application(); // Create Excel object instance
+            app.DisplayAlerts = false; // Don't display any Excel prompts
+            Excel.Workbook wb = app.Workbooks.Open(filepath); // Create workbook instance
+            
+            // Find and delete data connections
+            int count_conn = wb.Connections.Count;
+            if (count_conn > 0)
+            {
+                for (int i = 1; i <= wb.Connections.Count; i++)
+                {
+                    wb.Connections[i].Delete();
+                    i = i-1;
+                }
+                count_conn = wb.Connections.Count;
+                Console.WriteLine("--> Data connections detected and removed");
+            }
+
+            // Find and delete file property details
+            if (wb.Author != "" || wb.Subject != "" || wb.Comments != "") // Inform user of removal of file property details
+            {
+                Console.WriteLine("--> Removed file property details");
+            }
+
+            wb.Author = ""; // Remove author information
+            wb.Subject = ""; // Remove subject information
+            wb.Comments = ""; // Remove comments information
+
+            wb.Save(); // Save workbook
+            wb.Close(); // Close the workbook
+            app.Quit(); // Quit Excel application
         }
 
         // Get all worksheets in a spreadsheet

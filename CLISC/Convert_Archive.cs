@@ -308,6 +308,13 @@ namespace CLISC
                             error_message = "";
                         }
 
+                        // Check for dataquality requirements and convert data accordingly
+                        if (xlsx_conv_filepath != null)
+                        {
+                            Archive arc = new Archive();
+                            arc.Simple_Check_and_Transform_Requirements(xlsx_conv_filepath);
+                        }
+
                         // Convert to .xlsx Strict conformance using Excel
                         if (xlsx_conv_extension == ".xlsx")
                         {
@@ -335,13 +342,6 @@ namespace CLISC
                                 }
 
                             }
-                        }
-
-                        // Check for dataquality requirements and convert data accordingly
-                        if (xlsx_conv_filepath != null)
-                        {
-                            Archive arc = new Archive();
-                            arc.Simple_Check_and_Transform_Requirements(xlsx_conv_filepath);
                         }
 
                         // And convert to ODS

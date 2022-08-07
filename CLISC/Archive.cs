@@ -43,9 +43,8 @@ namespace CLISC
             var csv2 = new StringBuilder();
             var newLine2_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Validity;Error Number;Description;Error Type;Node;Path;Part;Related Node;Related Node Inner Text");
             csv2.AppendLine(newLine2_1);
-
-            // Loop through each file
-            foreach (fileIndex entry in File_List)
+  
+            foreach (fileIndex entry in File_List) // Loop through each file
             {
                 // Get information from File list
                 file_folder = entry.File_Folder;
@@ -57,19 +56,14 @@ namespace CLISC
                 ods_conv_filepath = entry.ODS_Conv_Filepath;
                 ods_conv_extension = entry.ODS_Conv_Extension;
 
-                // Inform user of analyzed filepath
                 if (File.Exists(xlsx_conv_filepath))
                 {
-                    // Inform user
-                    Console.WriteLine(xlsx_conv_filepath);
+                    Console.WriteLine(xlsx_conv_filepath); // Inform user of analyzed filepath
 
-                    // Validate
-                    Validation validate = new Validation();
-
+                    Validation validate = new Validation(); // Validate
                     List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
 
-                    // Get information from validation list
-                    foreach (Validation error in xlsx_validation_list)
+                    foreach (Validation error in xlsx_validation_list) // Get information from validation list
                     {
                         xlsx_validity = error.Validity;
                         int? error_number = error.Error_Number;
@@ -93,8 +87,8 @@ namespace CLISC
                         }
                     }
 
-                    // Perform data quality actions
-                    dataquality_message = Check_Requirements(xlsx_conv_filepath);
+                    // Check for archival requirements
+                    dataquality_message = Check_Requirements(org_filepath);
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
