@@ -4,6 +4,7 @@
 A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki).
 
 :rainbow_flag: **General**
+
 * Batch convert spreadsheets in a directory to .xlsx
 * Include or exclude subdirectories recursively
 * Output results in a new directory with logs in CSV
@@ -36,10 +37,10 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Rename all conversions 1.xlsx and 1.ods
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML)
+* Check if spreadsheet contains any sheets and any cell values
 * Remove formula linking cells to other local spreadsheets but keep cell values (feature not working)
 * Remove external data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values (feature not working)
-* Remove author, subject and comments from file property details and save information in log
 * Alert if spreadsheet has embedded or external objects
 * Calculate file checksums
 * Zip the archive directory
@@ -83,11 +84,11 @@ Create your arguments from the following list:
 ```
 **Input directory** (required)
 ```
---inputdir ["path to input directory"]
+--inputdir "[path to input directory]"
 ```
 **Output directory** (required)
 ```
---outputdir ["path to output directory"]
+--outputdir "[path to output directory]"
 ```
 **Include subdirectories from input directory** (optional, by default false)
 ```
@@ -112,7 +113,6 @@ The following packages and software are used under license in CLISC. [Read more]
 * [CommandLineParser](https://github.com/commandlineparser/commandline), MIT License, Copyright (c) 2005 - 2015 Giacomo Stelluti Scala & Contributor
 * [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), Copyright (c) Microsoft Corporation
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
-* [NPOI](https://github.com/nissl-lab/npoi), Apache License 2.0, no changes
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
 
 [^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
