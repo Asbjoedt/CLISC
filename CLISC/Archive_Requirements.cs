@@ -16,33 +16,20 @@ namespace CLISC
         public static int rtdfunctions_files = 0;
         public static int embedobj_files = 0;
 
-        
-        public string Check_Requirements(string filepath) // Method ONLY checks archival requirements
+        public Tuple<bool, string, string, string, string> Check_XLSX_Requirements(string filepath) 
         {
-            string dataquality_message = "";
+            bool information = Check_for_Data(filepath);
+            string rtdfunctions = Check_RTDFunctions(filepath);
+            string extrels = Check_ExternalRelationships(filepath);
+            string embedobj = Check_EmbeddedObjects(filepath);
+            string hyperlinks = Check_Hyperlinks(filepath);
 
-            try // call the methods
-            {
-                string extrels_message = Check_ExternalRelationships(filepath);
-                string embedobj_message = Check_EmbeddedObjects(filepath);
-                bool rtdfunctions = Simple_Check_RTDFunctions(filepath);
-                string hyperlinks_message = Check_Hyperlinks(filepath);
+            (bool, string, string, string, string) pidgeon = (information, rtdfunctions, extrels, embedobj, hyperlinks);
 
-                string messages_combined = extrels_message + ", " + embedobj_message + ", " + rtdfunctions + ", " + hyperlinks_message;
-
-                return messages_combined;
-            }
-
-            catch (ArgumentNullException)
-            {
-                // BUG: Method cannot handle null filepaths. Must handle exception to it
-                dataquality_message = "";
-
-                return dataquality_message;
-            }
+            return pidgeon.ToTuple();
         }
 
-        public void Simple_Transform_Requirements(string filepath)
+        public void Transform_Requirements(string filepath)
         {
             bool extrels = Simple_Check_ExternalRelationships(filepath); // Check for external relationships
             if (extrels == true)
@@ -57,8 +44,27 @@ namespace CLISC
             }
 
             Simple_Interop(filepath); // Use Excel Interop for the rest
+        }
 
-            Mark_ReadOnly(filepath); // Mark spreadsheet with read only prompt before enabling editing
+        // Get all worksheets in a spreadsheet
+        public bool Check_for_Data(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                //Check if worksheets exist
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                Sheets theSheets = wbPart.Workbook.Sheets;
+                if (theSheets == null)
+                {
+                    Console.WriteLine("--> Spreadsheet has no information");
+                    return false;
+                }
+
+                // Check if any cells have any value
+
+
+                return true;
+            }
         }
 
         // Check for external relationships
@@ -169,6 +175,14 @@ namespace CLISC
                     check = true;
                 }
                 return check;
+            }
+        }
+
+        public static string Check_RTDFunctions(string filepath) // Check for RTD functions
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                return "";
             }
         }
 
@@ -290,11 +304,6 @@ namespace CLISC
             }
         }
 
-        public void Mark_ReadOnly(string filepath)
-        {
-
-        }
-
         public void Simple_Interop(string filepath)
         {
             Excel.Application app = new Excel.Application(); // Create Excel object instance
@@ -352,20 +361,6 @@ namespace CLISC
             wb.Save(); // Save workbook
             wb.Close(); // Close the workbook
             app.Quit(); // Quit Excel application
-        }
-
-        // Get all worksheets in a spreadsheet
-        // Source: https://docs.microsoft.com/en-us/office/open-xml/how-to-retrieve-a-list-of-the-worksheets-in-a-spreadsheet
-        public static Sheets GetAllWorksheets(string filepath)
-        {
-            Sheets theSheets = null;
-
-            using (SpreadsheetDocument document = SpreadsheetDocument.Open(filepath, false))
-            {
-                WorkbookPart wbPart = document.WorkbookPart;
-                theSheets = wbPart.Workbook.Sheets;
-            }
-            return theSheets;
         }
 
         // Retrieve the value of a cell, given a file name, sheet name, and address name.

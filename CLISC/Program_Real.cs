@@ -29,13 +29,13 @@ namespace CLISC
 
                 case "count&convert":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
-                    con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
+                    con.Convert_Spreadsheets_Archive(function, inputdir, recurse, resultsDirectory);
                     app.Convert_Results();
                     break;
 
                 case "count&convert&compare":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
-                    List<fileIndex> fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
+                    List<fileIndex> fileList = con.Convert_Spreadsheets_Archive(function, inputdir, recurse, resultsDirectory);
                     com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     app.Compare_Results();
                     break;

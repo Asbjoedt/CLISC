@@ -13,15 +13,31 @@ namespace CLISC
 {
     public partial class Conversion
     {
+        // Define data types
+        public static int numCOMPLETE = 0;
+        public static int numFAILED = 0;
+        public static bool? convert_success = null;
+        static string? file_folder = null;
+        static int subdir_number = 1;
+        static int copy_file_number = 1;
+        static int conv_file_number = 1;
         string org_extension = "";
         string org_filename = "";
         string org_filepath = "";
+        static string copy_extension = "";
+        static string copy_filename = "";
+        static string copy_filepath = "";
+        static string? conv_extension = null;
+        static string? conv_filename = null;
+        static string? conv_filepath = null;
         string? xlsx_conv_extension = null;
         string? xlsx_conv_filename = null;
         string? xlsx_conv_filepath = null;
         string? ods_conv_extension = null;
         string? ods_conv_filename = null;
         string? ods_conv_filepath = null;
+        static string? error_message = null;
+        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected, read-only or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed." };
 
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets_Archive(string function, string inputdir, bool recurse, string Results_Directory)
@@ -71,6 +87,15 @@ namespace CLISC
                 // Convert spreadsheet
                 try
                 {
+                    if (function == "count&convert&compare&archive")
+                    {
+                        conv_filepath = file_folder + "\\1.xlsx";
+                    }
+                    else
+                    {
+                        conv_filepath = file_folder + "\\orgFile_" + Path.GetFileNameWithoutExtension(org_filename) + ".xlsx";
+                    }
+
                     // Change conversion method based on file extension
                     switch (org_extension)
                     {
@@ -90,8 +115,8 @@ namespace CLISC
                         case ".fods":
                         case ".ods":
                         case ".ots":
-                            // Convert to XLSX Transitional
-                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder); // Using LibreOffice
+                            // Convert to XLSX Transitional using LibreOffice
+                            convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
 
                             break;
 
@@ -116,13 +141,13 @@ namespace CLISC
                             // Transform data types for converted spreadsheets
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             // Convert to .xlsx Transitional using Excel Interop
-                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, xlsx_conv_filepath);
+                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath);
                             break;
 
                         case ".xlsb":
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             // Convert to .xlsx Transitional using Excel Interop
-                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, xlsx_conv_filepath); 
+                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath); 
                             break;
 
                         case ".xlsm":
@@ -131,8 +156,8 @@ namespace CLISC
                         case ".xltx":
                             // Transform data types for converted spreadsheets
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                            // Convert to XLSX Transitional
-                            convert_success = Convert_to_OOXML_Transitional(copy_filepath, xlsx_conv_filepath);
+                            // Convert to XLSX Transitional using Open XML SDK
+                            convert_success = Convert_to_OOXML_Transitional(copy_filepath, conv_filepath);
                             break;
                     }
                 }
@@ -218,37 +243,64 @@ namespace CLISC
 
                     if (convert_success == true)
                     {
-                        // Transform data types
-                        numCOMPLETE++;
-                        xlsx_conv_extension = ".xlsx";
-                        xlsx_conv_filename = "1.xlsx";
-                        xlsx_conv_filepath = file_folder + "\\1.xlsx";
-
-                        // Check for original extension already .xlsx
-                        if (copy_extension == ".xlsx")
+                        if (function == "count&convert&compare$archive")
                         {
-                            error_message = error_messages[6];
+                            // Transform data types
+                            numCOMPLETE++;
+                            xlsx_conv_extension = ".xlsx";
+                            xlsx_conv_filename = "1.xlsx";
+                            xlsx_conv_filepath = file_folder + "\\1.xlsx";
+
+                            // Check for original extension already .xlsx
+                            if (copy_extension == ".xlsx")
+                            {
+                                error_message = error_messages[6];
+                            }
+                            else
+                            {
+                                error_message = "";
+                            }
+
+                            // Make a copy in ODS
+                            convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
+                            ods_conv_extension = ".ods";
+                            ods_conv_filename = "1" + ods_conv_extension;
+                            ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
+                            // To correct for bug, where LibreOffice overwrites the copied original of an .ods spreadsheet
+                            if (!File.Exists(copy_filepath))
+                            {
+                                File.Copy(org_filepath, copy_filepath);
+                            }
+
+                            // Inform user
+                            Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
+                            Console.WriteLine($"--> File saved to: {ods_conv_filepath}");
                         }
-                        else
+
+                        // Ordinary use, no archiving
+                        else 
                         {
-                            error_message = "";
+                            numCOMPLETE++;
+                            // Delete copied spreadsheet
+                            string new_location = docCollection + "\\" + Path.GetFileName(conv_filepath);
+                            File.Move(conv_filepath, new_location);
+                            if (File.Exists(copy_filepath))
+                            {
+                                File.Delete(copy_filepath);
+                            }
+                            Directory.Delete(file_folder);
+                            copy_extension = "";
+                            copy_filename = "";
+                            copy_filepath = "";
+                            xlsx_conv_extension = ".xlsx";
+                            xlsx_conv_filename = Path.GetFileName(conv_filepath);
+                            xlsx_conv_filepath = conv_filepath;
+                            ods_conv_extension = null;
+                            ods_conv_filename = null;
+                            ods_conv_filepath = null;
+                            // Inform user
+                            Console.WriteLine($"--> File saved to: {conv_filepath}");
                         }
-
-                        // Make a copy in ODS
-                        convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
-                        ods_conv_extension = ".ods";
-                        ods_conv_filename = "1" + ods_conv_extension;
-                        ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
-                        // To correct for bug, where LibreOffice overwrites the copied original of an .ods spreadsheet
-                        if (!File.Exists(copy_filepath))
-                        {
-                            File.Copy(org_filepath, copy_filepath);
-                        }
-
-                        // Inform user
-                        Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
-                        Console.WriteLine($"--> File saved to: {ods_conv_filepath}");
-
                     }
                     else
                     {

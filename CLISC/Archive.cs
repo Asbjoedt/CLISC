@@ -107,11 +107,11 @@ namespace CLISC
                         }
                     }
 
-                    // Check for archival requirements
-                    dataquality_message = Check_Requirements(xlsx_conv_filepath);
+                    // Check .xlsx for archival requirements
+                    Tuple<bool, string, string, string, string> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
 
-                    // Check for dataquality requirements and convert data accordingly using Excel
-                    Simple_Transform_Requirements(xlsx_conv_filepath);
+                    // Transform data according to archiving requirements
+                    Transform_Requirements(xlsx_conv_filepath);
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
