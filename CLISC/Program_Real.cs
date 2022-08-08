@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 using CommandLine;
 
 namespace CLISC
@@ -9,6 +10,10 @@ namespace CLISC
     {
         public static void Execute(string function, string inputdir, string outputdir, bool recurse)
         {
+            // Begin process timer
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             // Path to new directory in output directory
             string resultsDirectory = "";
 
@@ -52,6 +57,14 @@ namespace CLISC
                     Console.WriteLine("Invalid function argument. Function argument must be one these: count, count&convert, count&convert&compare, count&convert&compare&archive");
                     break;
             }
+
+            // Stop process timer
+            timer.Stop();
+            TimeSpan time = timer.Elapsed;
+            string elapsedTime = String.Format($"{time:dd\\:hh\\:mm\\:ss} (days:hrs:min:sec)");
+            Console.WriteLine("Total process time: " + elapsedTime);
+            Console.WriteLine("CLISC ended");
+            Console.WriteLine("---"); 
         }
 
         // Methods for results reporting
@@ -62,8 +75,6 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
             Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
-            Console.WriteLine("CLISC ended");
-            Console.WriteLine("---");
         }
 
         void Convert_Results()
@@ -75,8 +86,6 @@ namespace CLISC
             Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
-            Console.WriteLine("CLISC ended");
-            Console.WriteLine("---");
         }
         void Compare_Results()
         {
@@ -88,8 +97,7 @@ namespace CLISC
             Console.WriteLine($"CONVERT: {Conversion.numFAILED} spreadsheets failed conversion");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numCOMPLETE} converted spreadsheets were compared");
             Console.WriteLine($"COMPARE: 0 converted spreadsheets failed comparison");
-            Console.WriteLine("CLISC ended");
-            Console.WriteLine("---");
+
         }
         void Archive_Results()
         {
@@ -105,8 +113,6 @@ namespace CLISC
             Console.WriteLine($"ARCHIVE: {Archive.invalid_files} converted spreadsheets have invalid file formats");
             Console.WriteLine($"ARCHIVE: {Archive.extrels_files} out of {Conversion.numCOMPLETE} converted spreadsheets had external relationships - External relationships were removed");
             Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} out of {Conversion.numCOMPLETE} converted spreadsheets have embedded objects - Embedded objects were NOT removed");
-            Console.WriteLine("CLISC ended");
-            Console.WriteLine("---");
         }
     }
 }

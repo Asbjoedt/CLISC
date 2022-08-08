@@ -243,7 +243,7 @@ namespace CLISC
 
                     if (convert_success == true)
                     {
-                        if (function == "count&convert&compare$archive")
+                        if (function == "count&convert&compare&archive")
                         {
                             // Transform data types
                             numCOMPLETE++;
