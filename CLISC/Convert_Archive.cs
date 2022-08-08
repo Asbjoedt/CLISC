@@ -191,6 +191,20 @@ namespace CLISC
                     ods_conv_filename = null;
                     ods_conv_filepath = null;
                 }
+                // If spreadsheet is "read-only"
+                catch (System.Runtime.InteropServices.COMException)
+                {
+                    // Code to execute
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = error_messages[3];
+                    xlsx_conv_extension = null;
+                    xlsx_conv_filename = null;
+                    xlsx_conv_filepath = null;
+                    ods_conv_extension = null;
+                    ods_conv_filename = null;
+                    ods_conv_filepath = null;
+                }
  
                 finally
                 {
