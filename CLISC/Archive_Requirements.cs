@@ -323,40 +323,34 @@ namespace CLISC
                 Console.WriteLine("--> Data connections detected and removed");
             }
 
-            // Find and delete RTD formula
+            // Find and replace RTD functions with values
             bool hasRTD = false;
-
             foreach(Excel.Worksheet sheet in wb.Sheets)
             {
-                Excel.Range index = (Excel.Range)sheet.UsedRange;
+                Excel.Range range = (Excel.Range)sheet.UsedRange.SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
 
-                foreach (Excel.Range cell in index)
+                // Find range
+                //Excel.Range range = sheet.get_Range("A1", "XFD1048576").SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
+
+                foreach (Excel.Range cell in range.Cells)
                 {
-                    if (cell.Formula.Equals("=RTD"))
+                    string address = cell.Address;
+                    var value = cell.Value2;
+                    string formula = cell.Formula.ToString();
+                    string hit = formula.Substring(0, 4); // Transfrer first 4 characters to string
+
+                    if (hit == "=RTD")
                     {
-                        var cellvalue = cell.Value; // Store cell value
-                        cell.Formula = ""; // Remove formula
-                        cell.Value = cellvalue; // Transfor stored cell value
-                        hasRTD = true; // Register existence of RTD
+                        hasRTD = true;
+                        cell.Formula = "";
+                        cell.Value2 = value;
                     }
                 }
             }
             if (hasRTD == true)
             {
-                Console.WriteLine("--> RTD functions detected and removed"); // Inform user
+                Console.WriteLine("--> RTD function formulas detected and replaced with cell values"); // Inform user
             }
-
-            // Find and delete file property details
-            if (wb.Author != "" || wb.Title != "" || wb.Subject != "" || wb.Keywords != "" || wb.Comments != "") // Inform user of removal of file property details
-            {
-                Console.WriteLine("--> Removed file property details");
-            }
-            //wb.RemovePersonalInformation = true; // What does this do?
-            wb.Author = ""; // Remove author information
-            wb.Title = ""; // Remove title information
-            wb.Subject = ""; // Remove subject information
-            wb.Keywords = ""; // Remove keywords information
-            wb.Comments = ""; // Remove comments information
 
             wb.Save(); // Save workbook
             wb.Close(); // Close the workbook
