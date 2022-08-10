@@ -63,8 +63,7 @@ namespace CLISC
                             // Calculate filesizes
                             org_filesize_kb = Calculate_Filesize(org_filepath);
                             xlsx_filesize_kb = Calculate_Filesize(xlsx_filepath);
-
-                            ods_filesize_kb = Calculate_Filesize(ods_filepath);
+                            //ods_filesize_kb = Calculate_Filesize(ods_filepath);
 
                             // Determine file size diff
                             if (xlsx_filesize_kb == org_filesize_kb)
@@ -76,14 +75,14 @@ namespace CLISC
                                 xlsx_filesize_diff = false;
                             }
 
-                            if (ods_filesize_kb == org_filesize_kb)
-                            {
+                            // if (ods_filesize_kb == org_filesize_kb)
+                            // {
                                 ods_filesize_diff = true;
-                            }
-                            else
-                            {
-                                ods_filesize_diff = false;
-                            }
+                            // }
+                            //else
+                            //{
+                            //    ods_filesize_diff = false;
+                            //}
 
                             // Inform user of comparison
                             Console.WriteLine(org_filepath);
@@ -91,7 +90,7 @@ namespace CLISC
                             Console.WriteLine(xlsx_compare_message);
 
                             // Output result in open CSV file
-                            var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{xlsx_filepath};{xlsx_filesize_kb};{xlsx_filesize_diff};{xlsx_compare_message};{ods_filepath};{ods_filesize_kb};{ods_filesize_diff};{ods_compare_message}");
+                            var newLine1 = string.Format($"{org_filepath};{org_filesize_kb};{xlsx_filepath};{xlsx_filesize_kb};{xlsx_filesize_diff};{xlsx_compare_message};{ods_filepath};Not supported;{ods_filesize_diff};{ods_compare_message}");
                             csv.AppendLine(newLine1);
                         }
 

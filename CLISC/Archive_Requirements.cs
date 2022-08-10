@@ -16,37 +16,21 @@ namespace CLISC
         public static int rtdfunctions_files = 0;
         public static int embedobj_files = 0;
 
-        public Tuple<bool, int, int, int, int> Check_XLSX_Requirements(string filepath) 
+        public Tuple<bool, int, int, int, int, int> Check_XLSX_Requirements(string filepath) 
         {
-            bool data = Check_for_Data(filepath);
+            bool data = Check_Value(filepath);
+            int connections = Simple_Check_DataConnections(filepath);
             int extrels = Check_ExternalRelationships(filepath);
-            int embedobj = Check_EmbeddedObjects(filepath);
             int rtdfunctions = Check_RTDFunctions(filepath);
+            int embedobj = Check_EmbeddedObjects(filepath);
             int hyperlinks = Check_Hyperlinks(filepath);
 
-            (bool, int, int, int, int) pidgeon = (data, rtdfunctions, extrels, embedobj, hyperlinks);
+            (bool, int, int, int, int, int) pidgeon = (data, connections, extrels, rtdfunctions, embedobj, hyperlinks);
             return pidgeon.ToTuple();
         }
 
-        public void Transform_Requirements(string filepath)
-        {
-            bool extrels = Simple_Check_ExternalRelationships(filepath); // Check for external relationships
-            if (extrels == true)
-            {
-                Handle_ExternalRelationships(filepath);
-            }
-
-            bool rtdfunctions = Simple_Check_RTDFunctions(filepath); // Check for RTD functions
-            if (rtdfunctions == true)
-            {
-                Remove_RTDFunctions(filepath);
-            }
-
-            Simple_Interop(filepath); // Use Excel Interop for the rest
-        }
-
         // Get all worksheets in a spreadsheet
-        public bool Check_for_Data(string filepath)
+        public bool Check_Value(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
@@ -64,6 +48,18 @@ namespace CLISC
 
                 return true;
             }
+        }
+
+        // Check for data connections
+        public int Simple_Check_DataConnections(string filepath) // Using Excel interop
+        {
+            Excel.Application app = new Excel.Application();
+            app.DisplayAlerts = false;
+            Excel.Workbook wb = app.Workbooks.Open(filepath);
+            int count_conn = wb.Connections.Count;
+            wb.Close();
+            app.Quit();
+            return count_conn;
         }
 
         // Check for external relationships
@@ -87,8 +83,6 @@ namespace CLISC
 
         public int Check_ExternalRelationships(string filepath) // Find all external relationships
         {
-            string extrels_message = "";
-
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 List<ExternalRelationship> extrels = spreadsheet 
@@ -297,7 +291,7 @@ namespace CLISC
             }
         }
 
-        public void Simple_Interop(string filepath)
+        public void Transform_Requirements(string filepath)  // Use Excel Interop
         {
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel window prompts
@@ -324,6 +318,7 @@ namespace CLISC
                 try
                 {
                     Excel.Range range = (Excel.Range)sheet.UsedRange.SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
+                    //Excel.Range range = sheet.get_Range("A1", "XFD1048576").SpecialCells(Excel.XlCellType.xlCellTypeFormulas); // Alternative range
 
                     foreach (Excel.Range cell in range.Cells)
                     {

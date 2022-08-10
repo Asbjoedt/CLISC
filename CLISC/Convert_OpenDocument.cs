@@ -13,7 +13,7 @@ namespace CLISC
     public partial class Conversion
     {
         // Convert spreadsheets from OpenDocument file formats using Excel Interop - DOES NOT SUPPORT .FODS
-        public bool Convert_OpenDocument_ExcelInterop(string input_filepath, string output_filepath)
+        public bool Convert_from_OpenDocument_ExcelInterop(string input_filepath, string output_filepath)
         {
             bool convert_success = false;
 
@@ -22,6 +22,23 @@ namespace CLISC
             Excel.Workbook wb = app.Workbooks.Open(input_filepath); // Create workbook instance
 
             wb.SaveAs(output_filepath, 51); // Save workbook as .xlsx Transitional
+            wb.Close(); // Close workbook
+            app.Quit(); // Quit Excel application
+
+            convert_success = true; // Mark as succesful
+            return convert_success; // Report success
+        }
+
+        // Convert spreadsheets to OpenDocument file formats using Excel Interop - DOES NOT SUPPORT .FODS
+        public bool Convert_to_OpenDocument_ExcelInterop(string input_filepath, string output_filepath)
+        {
+            bool convert_success = false;
+
+            Excel.Application app = new Excel.Application(); // Create Excel object instance
+            app.DisplayAlerts = false; // Don't display any Excel prompts
+            Excel.Workbook wb = app.Workbooks.Open(input_filepath); // Create workbook instance
+
+            wb.SaveAs(output_filepath, 60); // Save workbook as .ods
             wb.Close(); // Close workbook
             app.Quit(); // Quit Excel application
 

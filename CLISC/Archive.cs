@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
@@ -34,11 +35,11 @@ namespace CLISC
             string xlsx_validity = "";
             string ods_conv_checksum = "";
             string ods_validation_message = "";
-            string dataquality_message = "";
+            bool archive_req_accept = true;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;Convert Exists;XLSX Convert Filepath;XLSX Checksum;XLSX File Format Validation;ODS Convert Filepath; ODS checksum; ODS fileformat Validation;Data Quality Message");
+            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;Convert Exists;XLSX Convert Filepath;XLSX Checksum;XLSX File Format Validation;ODS Convert Filepath; ODS checksum; ODS file Format Validation;Archival Requirements");
             csv.AppendLine(newLine0);
 
             // Open CSV file to log validation results
@@ -48,7 +49,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Has Data;# Data Connections;# External Relationships;# Embedded Objects;# RTD Functions;# Hyperlinks");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;External Relationships Removed;RTD Functions Removed;Embedded Objects Alert;Hyperlinks Alert");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -66,7 +67,8 @@ namespace CLISC
                 if (File.Exists(xlsx_conv_filepath))
                 {
                     Console.WriteLine(org_filepath); // Inform user of original filepath
-                    Console.WriteLine($"--> Conversion analyzed: {xlsx_conv_filepath}"); // Inform user of analyzed filepath
+                    string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
+                    Console.WriteLine($"--> Conversion analyzed: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
                     // Convert to .xlsx Strict conformance using Excel
                     bool? strict = null;
@@ -114,17 +116,23 @@ namespace CLISC
                     }
 
                     // Check .xlsx for archival requirements
-                    Tuple<bool, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
+                    Tuple<bool, int, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
 
                     // Receive infomration from tuple
                     bool data = pidgeon.Item1;
-                    int rtdfunctions = pidgeon.Item2;
+                    int connections = pidgeon.Item2;
                     int extrels = pidgeon.Item3;
-                    int embedobj = pidgeon.Item4;
-                    int hyperlinks = pidgeon.Item5;
+                    int rtdfunctions = pidgeon.Item4;
+                    int embedobj = pidgeon.Item5;
+                    int hyperlinks = pidgeon.Item6;
+
+                    if (data == false || embedobj > 0)
+                    {
+                        archive_req_accept = false;
+                    }
 
                     // Write to CSV archival requirements log
-                    var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};;{extrels};{embedobj};{rtdfunctions};{hyperlinks}");
+                    var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{extrels};{rtdfunctions};{embedobj};{hyperlinks}");
                     csv3.AppendLine(newLine3_2);
 
                     // Transform data according to archiving requirements
@@ -134,12 +142,16 @@ namespace CLISC
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
                     Console.WriteLine("--> Checksum was calculated");
                 }
-                if (entry.ODS_Conv_Extension == ".ods" && File.Exists(ods_conv_filepath))
+                if (entry.ODS_Conv_Extension == ".ods")
                 {
-                    string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
-                    Console.WriteLine($"--> Conversion analyzed: {ods_conv_filepath}");
+                    // Make an .ods copy
+                    Conversion con = new Conversion();
+                    convert_success = con.Convert_to_OpenDocument_ExcelInterop(xlsx_conv_filepath, ods_conv_filepath);
+                    // Inform user
+                    string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
+                    Console.WriteLine($"--> Conversion analyzed: {folder_number}\\1.ods");
                     Console.WriteLine("--> File format validation for .ods is not supported");
-                    Console.WriteLine($"--> Archival requirements acceptance is identical to: {folder_number}\\1.xlsx");
+                    Console.WriteLine($"--> Archival requirements identical to {folder_number}\\1.xlsx");
 
                     // Calculate checksum
                     ods_conv_checksum = Calculate_MD5(ods_conv_filepath);
@@ -151,7 +163,7 @@ namespace CLISC
                 copy_checksum = Calculate_MD5(copy_filepath);
 
                 // Output result in open CSV validation log
-                var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{convert_success};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validity};{ods_conv_filepath};{ods_conv_checksum};{ods_validation_message};{dataquality_message}");
+                var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{convert_success};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validity};{ods_conv_filepath};{ods_conv_checksum};.ods validation not supported;{archive_req_accept}");
                 csv.AppendLine(newLine1);
 
                 // Reset data types to fix bug in CSV log, if converted spreadsheet does not exist
@@ -161,7 +173,7 @@ namespace CLISC
                 ods_conv_extension = "";
                 xlsx_conv_checksum = "";
                 ods_conv_checksum = "";
-                dataquality_message = "";
+                archive_req_accept = true;
             }
 
             // Close validation CSV file to log results
@@ -169,7 +181,7 @@ namespace CLISC
             File.WriteAllText(Spreadsheet.CSV_filepath, csv2.ToString());
 
             // Close archival requirements CSV file to log results
-            Spreadsheet.CSV_filepath = Results_Directory + "\\4b_ArchivalRequirements_Results.csv";
+            Spreadsheet.CSV_filepath = Results_Directory + "\\4b_Requirements_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv3.ToString());
 
             // Close archive CSV file to log results

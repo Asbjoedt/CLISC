@@ -147,6 +147,8 @@ namespace CLISC
                 csv.AppendLine(newLine16);
                 var newLine17 = string.Format($"{numXLTX};{FileFormats.Extension[13]};{FileFormats.Description[13]}");
                 csv.AppendLine(newLine17);
+                var newLine18 = string.Format($"{numTOTAL};total;spreadsheets");
+                csv.AppendLine(newLine18);
                 // Close CSV
                 Spreadsheet.CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
                 File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());

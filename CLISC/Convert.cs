@@ -156,7 +156,7 @@ namespace CLISC
                         case ".xltx":
                             // Transform data types for converted spreadsheets
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                            // Convert to XLSX Transitional using Open XML SDK
+                            // Convert to .xlsx Transitional using Open XML SDK
                             convert_success = Convert_to_OOXML_Transitional(copy_filepath, conv_filepath);
                             break;
                     }
@@ -168,12 +168,6 @@ namespace CLISC
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[4];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
                 }
                 catch (InvalidDataException)
                 {
@@ -181,12 +175,6 @@ namespace CLISC
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[4];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
                 }
                 // If file is corrupt and cannot be opened for XML schema validation
                 catch (OpenXmlPackageException)
@@ -195,12 +183,6 @@ namespace CLISC
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[7];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
                 }
                 // If LibreOffice is not installed
                 catch (Win32Exception)
@@ -209,12 +191,6 @@ namespace CLISC
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[3];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
                 }
                 // If spreadsheet is "read-only"
                 catch (System.Runtime.InteropServices.COMException)
@@ -223,12 +199,6 @@ namespace CLISC
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[3];
-                    xlsx_conv_extension = null;
-                    xlsx_conv_filename = null;
-                    xlsx_conv_filepath = null;
-                    ods_conv_extension = null;
-                    ods_conv_filename = null;
-                    ods_conv_filepath = null;
                 }
  
                 finally
@@ -250,27 +220,10 @@ namespace CLISC
                             xlsx_conv_extension = ".xlsx";
                             xlsx_conv_filename = "1.xlsx";
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
-
-                            // Check for original extension already .xlsx
-                            if (copy_extension == ".xlsx")
-                            {
-                                error_message = error_messages[6];
-                            }
-                            else
-                            {
-                                error_message = "";
-                            }
-
-                            // Make a copy in ODS
-                            convert_success = Convert_to_OpenDocument(function, xlsx_conv_filepath, file_folder);
                             ods_conv_extension = ".ods";
-                            ods_conv_filename = "1" + ods_conv_extension;
-                            ods_conv_filepath = file_folder + "\\" + ods_conv_filename;
-                            // To correct for bug, where LibreOffice overwrites the copied original of an .ods spreadsheet
-                            if (!File.Exists(copy_filepath))
-                            {
-                                File.Copy(org_filepath, copy_filepath);
-                            }
+                            ods_conv_filename = "1.ods";
+                            ods_conv_filepath = file_folder + "\\1.ods";
+                            error_message = "";
 
                             // Inform user
                             Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
@@ -305,7 +258,6 @@ namespace CLISC
                     else
                     {
                         convert_success = false;
-                        error_message = "Spreadsheet is password protected or corrupt";
                         xlsx_conv_extension = null;
                         xlsx_conv_filename = null;
                         xlsx_conv_filepath = null;
