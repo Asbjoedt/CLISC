@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
@@ -44,6 +45,11 @@ namespace CLISC
             var csv2 = new StringBuilder();
             var newLine2_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Validity;Error Number;Description;Error Type;Node;Path;Part;Related Node;Related Node Inner Text");
             csv2.AppendLine(newLine2_1);
+
+            // Open CSV file to log archival requirements results
+            var csv3 = new StringBuilder();
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Has Data;# Data Connections;# External Relationships;# Embedded Objects;# RTD Functions;# Hyperlinks");
+            csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
             {
@@ -108,7 +114,18 @@ namespace CLISC
                     }
 
                     // Check .xlsx for archival requirements
-                    Tuple<bool, string, string, string, string> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
+                    Tuple<bool, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
+
+                    // Receive infomration from tuple
+                    bool data = pidgeon.Item1;
+                    int rtdfunctions = pidgeon.Item2;
+                    int extrels = pidgeon.Item3;
+                    int embedobj = pidgeon.Item4;
+                    int hyperlinks = pidgeon.Item5;
+
+                    // Write to CSV archival requirements log
+                    var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};;{extrels};{embedobj};{rtdfunctions};{hyperlinks}");
+                    csv3.AppendLine(newLine3_2);
 
                     // Transform data according to archiving requirements
                     Transform_Requirements(xlsx_conv_filepath);
@@ -146,13 +163,18 @@ namespace CLISC
                 ods_conv_checksum = "";
                 dataquality_message = "";
             }
-            // Close CSV file to archive log results. MUST HAPPEN BEFORE ZIP
-            Spreadsheet.CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
-            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
-            // Close CSV file to log validation results.
+            // Close validation CSV file to log results
             Spreadsheet.CSV_filepath = Results_Directory + "\\4a_Validation_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv2.ToString());
+
+            // Close archival requirements CSV file to log results
+            Spreadsheet.CSV_filepath = Results_Directory + "\\4b_ArchivalRequirements_Results.csv";
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv3.ToString());
+
+            // Close archive CSV file to log results
+            Spreadsheet.CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
 
             // Zip the output directory
             Console.WriteLine("---");

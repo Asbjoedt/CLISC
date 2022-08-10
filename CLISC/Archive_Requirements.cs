@@ -16,16 +16,15 @@ namespace CLISC
         public static int rtdfunctions_files = 0;
         public static int embedobj_files = 0;
 
-        public Tuple<bool, string, string, string, string> Check_XLSX_Requirements(string filepath) 
+        public Tuple<bool, int, int, int, int> Check_XLSX_Requirements(string filepath) 
         {
-            bool information = Check_for_Data(filepath);
-            string rtdfunctions = Check_RTDFunctions(filepath);
-            string extrels = Check_ExternalRelationships(filepath);
-            string embedobj = Check_EmbeddedObjects(filepath);
-            string hyperlinks = Check_Hyperlinks(filepath);
+            bool data = Check_for_Data(filepath);
+            int extrels = Check_ExternalRelationships(filepath);
+            int embedobj = Check_EmbeddedObjects(filepath);
+            int rtdfunctions = Check_RTDFunctions(filepath);
+            int hyperlinks = Check_Hyperlinks(filepath);
 
-            (bool, string, string, string, string) pidgeon = (information, rtdfunctions, extrels, embedobj, hyperlinks);
-
+            (bool, int, int, int, int) pidgeon = (data, rtdfunctions, extrels, embedobj, hyperlinks);
             return pidgeon.ToTuple();
         }
 
@@ -56,7 +55,7 @@ namespace CLISC
                 Sheets theSheets = wbPart.Workbook.Sheets;
                 if (theSheets == null)
                 {
-                    Console.WriteLine("--> Spreadsheet has no information");
+                    Console.WriteLine("--> Spreadsheet has no cell information");
                     return false;
                 }
 
@@ -86,22 +85,23 @@ namespace CLISC
             }
         }
 
-        public string Check_ExternalRelationships(string filepath) // Find all external relationships
+        public int Check_ExternalRelationships(string filepath) // Find all external relationships
         {
             string extrels_message = "";
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalRelationship> extRels = spreadsheet 
+                List<ExternalRelationship> extrels = spreadsheet 
                 .GetAllParts()
                 .SelectMany(p => p.ExternalRelationships)
                 .ToList();
+                int extrels_count = extrels.Count;
 
-                if (extRels.Count > 0) // If external relationships
+                if (extrels.Count > 0) // If external relationships
                 {
                     int extrel_number = 0;
-                    Console.WriteLine($"--> {extRels.Count} external relationships detected");
-                    foreach (ExternalRelationship rel in extRels)
+                    Console.WriteLine($"--> {extrels.Count} external relationships detected");
+                    foreach (ExternalRelationship rel in extrels)
                     {
                         extrel_number++;
                         Console.WriteLine($"--> External relationship {extrel_number}");
@@ -110,11 +110,9 @@ namespace CLISC
                         Console.WriteLine($"----> Relationship type: {rel.RelationshipType}");
                         Console.WriteLine($"----> External: {rel.IsExternal}");
                     }
-                    extrels_message = extRels.Count + " external relationships detected";
-                    return extrels_message;
+                    return extrels_count;
                 }
-
-                return extrels_message;
+                return extrels_count;
             }
         }
 
@@ -178,11 +176,11 @@ namespace CLISC
             }
         }
 
-        public static string Check_RTDFunctions(string filepath) // Check for RTD functions
+        public static int Check_RTDFunctions(string filepath) // Check for RTD functions
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                return "";
+                return 0;
             }
         }
 
@@ -209,13 +207,13 @@ namespace CLISC
                     int count = count_ole + count_image; // Sum
                     if (count == 0) // If no embedded objects, inform user
                     {
-                        string embedobj_message = $"--> {count} embedded objects detected";
+                        string embedobj_message = $"--> {count} embedded objects detected. Extract objects manually";
                         Console.WriteLine(embedobj_message);
                         return false;
                     }
                     else
                     {
-                        string embedobj_message = $"--> {count} embedded objects detected";
+                        string embedobj_message = $"--> {count} embedded objects detected. Extract objects manually";
                         Console.WriteLine(embedobj_message);
                         return true;
                     }
@@ -224,10 +222,8 @@ namespace CLISC
             }
         }
 
-        public string Check_EmbeddedObjects(string filepath) // Check for embedded objects and return alert
+        public int Check_EmbeddedObjects(string filepath) // Check for embedded objects and return alert
         {
-            string embedobj_message = "";
-
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
@@ -236,11 +232,11 @@ namespace CLISC
                     int count_ole = item.EmbeddedObjectParts.Count(); // Register the number of OLE
                     int count_image = item.ImageParts.Count(); // Register number of images
                     int count_3d = item.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
-                    int count = count_ole + count_image + count_3d; // Sum
+                    int count_embedobj = count_ole + count_image + count_3d; // Sum
 
-                    if (count > 0) // If no embedded objects
+                    if (count_embedobj > 0) // If embedded objects
                     {
-                        Console.WriteLine($"--> {count} embedded objects detected");
+                        Console.WriteLine($"--> {count_embedobj} embedded objects detected");
                         var embed_ole = item.EmbeddedObjectParts.ToList(); // Register each OLE to a list
                         var embed_image = item.ImageParts.ToList(); // Register each image to a list
                         var embed_3d = item.Model3DReferenceRelationshipParts.ToList(); // Register each 3D model to a list
@@ -267,18 +263,15 @@ namespace CLISC
                             Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                         }
-                        embedobj_message = count + " embedded objects detected";
-                        return embedobj_message;
                     }
+                    return count_embedobj;
                 }
+                return 0;
             }
-            return embedobj_message;
         }
 
-        public string Check_Hyperlinks(string filepath) // Find all hyperlinks
+        public int Check_Hyperlinks(string filepath) // Find all hyperlinks
         {
-            string hyperlinks_message = "";
-
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 List<HyperlinkRelationship> hyperlinks = spreadsheet
@@ -287,7 +280,7 @@ namespace CLISC
                     .ToList();
                 int hyperlinks_count = hyperlinks.Count;
 
-                if (hyperlinks.Count > 0) // If hyperlinks
+                if (hyperlinks_count > 0) // If hyperlinks
                 {
                     Console.WriteLine($"--> {hyperlinks_count} hyperlinks detected");
                     int hyperlink_number = 0;
@@ -297,17 +290,17 @@ namespace CLISC
                         Console.WriteLine($"--> Hyperlink: {hyperlink_number}");
                         Console.WriteLine($"----> Address: {hyperlink.Uri}");
                     }
-                    hyperlinks_message = hyperlinks_count + " external relationships detected";
-                    return hyperlinks_message;
+
+                    return hyperlinks_count;
                 }
-                return hyperlinks_message;
+                return hyperlinks_count;
             }
         }
 
         public void Simple_Interop(string filepath)
         {
             Excel.Application app = new Excel.Application(); // Create Excel object instance
-            app.DisplayAlerts = false; // Don't display any Excel prompts
+            app.DisplayAlerts = false; // Don't display any Excel window prompts
             Excel.Workbook wb = app.Workbooks.Open(filepath); // Create workbook instance
             
             // Find and delete data connections
@@ -321,35 +314,75 @@ namespace CLISC
                 }
                 count_conn = wb.Connections.Count;
                 Console.WriteLine("--> Data connections detected and removed");
+                wb.Save(); // Save workbook
             }
 
-            // Find and replace RTD functions with values
+            // Find and replace RTD functions with cell values
             bool hasRTD = false;
-            foreach(Excel.Worksheet sheet in wb.Sheets)
+            foreach (Excel.Worksheet sheet in wb.Sheets)
             {
-                Excel.Range range = (Excel.Range)sheet.UsedRange.SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
-
-                // Find range
-                //Excel.Range range = sheet.get_Range("A1", "XFD1048576").SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
-
-                foreach (Excel.Range cell in range.Cells)
+                try
                 {
-                    string address = cell.Address;
-                    var value = cell.Value2;
-                    string formula = cell.Formula.ToString();
-                    string hit = formula.Substring(0, 4); // Transfrer first 4 characters to string
+                    Excel.Range range = (Excel.Range)sheet.UsedRange.SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
 
-                    if (hit == "=RTD")
+                    foreach (Excel.Range cell in range.Cells)
                     {
-                        hasRTD = true;
-                        cell.Formula = "";
-                        cell.Value2 = value;
+                        var value = cell.Value2;
+                        string formula = cell.Formula.ToString();
+                        string hit = formula.Substring(0, 4); // Transfer first 4 characters to string
+
+                        if (hit == "=RTD")
+                        {
+                            hasRTD = true;
+                            cell.Formula = "";
+                            cell.Value2 = value;
+                        }
+                    }
+                    if (hasRTD == true)
+                    {
+                        Console.WriteLine("--> RTD function formulas detected and replaced with cell values"); // Inform user
+                        wb.Save(); // Save workbook
                     }
                 }
+                catch (System.Runtime.InteropServices.COMException) // Catch if no formulas in range
+                {
+                    // Do nothing
+                }
             }
-            if (hasRTD == true)
+
+            // Find and replace external cell chains with cell values
+            bool hasChain = false;
+            foreach (Excel.Worksheet sheet in wb.Sheets)
             {
-                Console.WriteLine("--> RTD function formulas detected and replaced with cell values"); // Inform user
+                try
+                {
+                    Excel.Range range = (Excel.Range)sheet.UsedRange.SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
+                    //Excel.Range range = sheet.get_Range("A1", "XFD1048576").SpecialCells(Excel.XlCellType.xlCellTypeFormulas); // Alternative range
+
+                    foreach (Excel.Range cell in range.Cells)
+                    {
+                        string address = cell.Address;
+                        var value = cell.Value2;
+                        string formula = cell.Formula.ToString();
+                        string hit = formula.Substring(0, 2); // Transfer first 2 characters to string
+
+                        if (hit == "='")
+                        {
+                            hasChain = true;
+                            cell.Formula = "";
+                            cell.Value2 = value;
+                        }
+                    }
+                    if (hasChain == true)
+                    {
+                        Console.WriteLine("--> External cell chains detected and replaced with cell values"); // Inform user
+                        wb.Save(); // Save workbook
+                    }
+                }
+                catch (System.Runtime.InteropServices.COMException) // Catch if no formulas in range
+                {
+                    // Do nothing
+                }
             }
 
             wb.Save(); // Save workbook
