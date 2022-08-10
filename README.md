@@ -22,7 +22,7 @@ Convert any spreadsheet[^1] to .xlsx (Transitional conformance).
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
-:mag: **Compare**
+:mag: **Compare** (work in progress)
 
 Compare original and converted spreadsheets to log differences.[^3]
 * Cell values
@@ -38,9 +38,10 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML)
 * Check if spreadsheet contains any sheets and any cell values
-* Remove formula linking cells to other local spreadsheets but keep cell values (feature not working)
+* Remove formula linking cells to other local spreadsheets but keep cell values
 * Remove external data connections but keep cell values
-* Remove RealTimeData (RTD) functions but keep cell values (feature not working)
+* Remove RealTimeData (RTD) functions but keep cell values
+* Remove printer settings (feature not working)
 * Alert if spreadsheet has embedded or external objects
 * Calculate file checksums
 * Zip the archive directory
