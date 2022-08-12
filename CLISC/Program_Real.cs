@@ -10,6 +10,11 @@ namespace CLISC
     {
         public static void Execute(string function, string inputdir, string outputdir, bool recurse)
         {
+            if (!Directory.Exists(inputdir))
+            {
+                throw new DirectoryNotFoundException("Input directory does not exist");
+            }
+
             // Begin process timer
             Stopwatch timer = new Stopwatch();
             timer.Start();

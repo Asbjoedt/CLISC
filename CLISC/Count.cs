@@ -103,6 +103,7 @@ namespace CLISC
                 Console.WriteLine($"{numXLT} {FileFormats.Extension[11]} - {FileFormats.Description[11]}");
                 Console.WriteLine($"{numXLTM} {FileFormats.Extension[12]} - {FileFormats.Description[12]}");
                 Console.WriteLine($"{numXLTX} {FileFormats.Extension[13]} - {FileFormats.Description[13]}");
+                Console.WriteLine($"{numTOTAL} spreadsheets in total");
 
                 // Create new directory to output results in CSV
                 Spreadsheet cre = new Spreadsheet();

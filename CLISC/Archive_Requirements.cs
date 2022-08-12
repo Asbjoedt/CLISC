@@ -296,7 +296,36 @@ namespace CLISC
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel window prompts
             Excel.Workbook wb = app.Workbooks.Open(filepath); // Create workbook instance
-            
+
+            // Find any cell value
+            int used_cells_count = 0;
+            foreach (Excel.Worksheet sheet in wb.Sheets)
+            {
+                try
+                {
+                    Excel.Range range = (Excel.Range)sheet.UsedRange;
+                    foreach (Excel.Range cell in range.Cells)
+                    {
+                        var value = cell.Value2;
+                        if (value != null)
+                        {
+                            used_cells_count++;
+                        }
+                    }
+                }
+                catch (System.Runtime.InteropServices.COMException) // Catch if cell has no value
+                {
+                    // Do nothing
+                }
+                finally
+                {
+                    if (used_cells_count == 0)
+                    {
+                        Console.WriteLine("--> No cell values detected. Exempt spreadsheet from archiving");
+                    }
+                }
+            }
+
             // Find and delete data connections
             int count_conn = wb.Connections.Count;
             if (count_conn > 0)
@@ -340,6 +369,10 @@ namespace CLISC
                     }
                 }
                 catch (System.Runtime.InteropServices.COMException) // Catch if no formulas in range
+                {
+                    // Do nothing
+                }
+                catch (System.ArgumentOutOfRangeException) // Catch if formula has less than 4 characters
                 {
                     // Do nothing
                 }

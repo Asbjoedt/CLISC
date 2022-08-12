@@ -45,14 +45,14 @@ namespace CLISC
             // Inform user of their input values
             Console.WriteLine("YOUR INPUT");
             Console.WriteLine("---");
-            Console.WriteLine($"Function: {Arg.function}");
-            Console.WriteLine($"Inputdir: {Arg.inputdir}");
-            Console.WriteLine($"Outputdir: {Arg.outputdir}");
-            Console.WriteLine($"Recurse: {Arg.recurse}");
+            Console.WriteLine($"Function: {Arg.Function}");
+            Console.WriteLine($"Inputdir: {Arg.Inputdir}");
+            Console.WriteLine($"Outputdir: {Arg.Outputdir}");
+            Console.WriteLine($"Recurse: {Arg.Recurse}");
             Console.WriteLine("---");
 
             // Execute the real program with arguments
-            Program_Real.Execute(Arg.function, Arg.inputdir, Arg.outputdir, Arg.recurse);
+            Program_Real.Execute(Arg.Function, Arg.Inputdir, Arg.Outputdir, Arg.Recurse);
         }
     }
 }

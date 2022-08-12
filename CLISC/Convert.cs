@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+
 
 namespace CLISC
 {
@@ -37,7 +39,7 @@ namespace CLISC
         string? ods_conv_filename = null;
         string? ods_conv_filepath = null;
         static string? error_message = null;
-        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet is password protected, read-only or corrupt", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed." };
+        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet cannot be read", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed.", "Conversion of file has exceeded 5 min. Handle file manually" };
 
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets(string function, string inputdir, bool recurse, string Results_Directory)
@@ -48,7 +50,7 @@ namespace CLISC
 
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original Filepath;Original Filename;Original Fileformat;XLSX Convert Filepath;ODS Convert Filepath;Convert Success;Convert Message");
+            var newLine0 = string.Format($"Original Filepath;Original Filename;Original File Format;XLSX Convert Filepath;ODS Convert Filepath;Convert Success;Convert Message");
             csv.AppendLine(newLine0);
 
             // Create lists
@@ -147,7 +149,7 @@ namespace CLISC
                         case ".xlsb":
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             // Convert to .xlsx Transitional using Excel Interop
-                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath); 
+                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath);
                             break;
 
                         case ".xlsm":
@@ -164,14 +166,12 @@ namespace CLISC
                 // If spreadsheet is password protected or corrupt
                 catch (FileFormatException)
                 {
-                    // Code to execute
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[4];
                 }
                 catch (InvalidDataException)
                 {
-                    // Code to execute
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[4];
@@ -179,28 +179,32 @@ namespace CLISC
                 // If file is corrupt and cannot be opened for XML schema validation
                 catch (OpenXmlPackageException)
                 {
-                    // Code to execute
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[7];
                 }
-                // If LibreOffice is not installed
+                // If .LibreOffice is not installed
                 catch (Win32Exception)
                 {
-                    // Code to execute
                     numFAILED++;
                     convert_success = false;
-                    error_message = error_messages[3];
+                    error_message = error_messages[4];
                 }
-                // If spreadsheet is "read-only"
+                // If files used by Excel Interop are password protected or corrupt
                 catch (System.Runtime.InteropServices.COMException)
                 {
-                    // Code to execute
                     numFAILED++;
                     convert_success = false;
-                    error_message = error_messages[3];
+                    error_message = error_messages[4];
                 }
- 
+                // If file conversion exceeds 5 min
+                catch (TimeoutException)
+                {
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = error_messages[13];
+                }
+
                 finally
                 {
                     // Inform user
@@ -231,7 +235,7 @@ namespace CLISC
                         }
 
                         // Ordinary use, no archiving
-                        else 
+                        else
                         {
                             numCOMPLETE++;
                             // Delete copied spreadsheet
