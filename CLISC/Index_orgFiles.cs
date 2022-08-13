@@ -44,7 +44,7 @@ namespace CLISC
                 FileInfo file_info = new FileInfo(entry);
                 if (FileFormats.Extension.Contains(file_info.Extension) || FileFormats.Extension_Upper.Contains(file_info.Extension))
                 {
-                    string extension = file_info.Extension;
+                    string extension = file_info.Extension.ToLower();
                     string filename = file_info.Name;
                     string filepath = file_info.FullName;
                     Org_File_List.Add(new orgIndex() { Org_Filepath = filepath, Org_Filename = filename, Org_Extension = extension });

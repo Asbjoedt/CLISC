@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Timers;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Threading;
 
 
 namespace CLISC
@@ -16,6 +18,7 @@ namespace CLISC
     public partial class Conversion
     {
         // Define data types
+        private static System.Timers.Timer timeout;
         public static int numCOMPLETE = 0;
         public static int numFAILED = 0;
         public static bool? convert_success = null;
@@ -129,12 +132,6 @@ namespace CLISC
                             numFAILED++;
                             convert_success = false;
                             error_message = error_messages[5];
-                            xlsx_conv_extension = null;
-                            xlsx_conv_filename = null;
-                            xlsx_conv_filepath = null;
-                            ods_conv_extension = null;
-                            ods_conv_filename = null;
-                            ods_conv_filepath = null;
                             break;
 
                         // Legacy Microsoft Excel file formats
@@ -197,8 +194,8 @@ namespace CLISC
                     convert_success = false;
                     error_message = error_messages[4];
                 }
-                // If file conversion exceeds 5 min
-                catch (TimeoutException)
+                // If file conversion exceeds time limit
+                catch (System.TimeoutException)
                 {
                     numFAILED++;
                     convert_success = false;

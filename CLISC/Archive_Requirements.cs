@@ -389,7 +389,6 @@ namespace CLISC
 
                     foreach (Excel.Range cell in range.Cells)
                     {
-                        string address = cell.Address;
                         var value = cell.Value2;
                         string formula = cell.Formula.ToString();
                         string hit = formula.Substring(0, 2); // Transfer first 2 characters to string
@@ -411,7 +410,14 @@ namespace CLISC
                 {
                     // Do nothing
                 }
+                catch (System.ArgumentOutOfRangeException) // Catch if formula has less than 2 characters
+                {
+                    // Do nothing
+                }
             }
+
+            // Make first sheet active sheet
+            ((Excel.Worksheet)app.ActiveWorkbook.Sheets[1]).Select(Type.Missing);
 
             wb.Save(); // Save workbook
             wb.Close(); // Close the workbook

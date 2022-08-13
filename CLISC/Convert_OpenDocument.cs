@@ -19,7 +19,7 @@ namespace CLISC
 
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel prompts
-            Excel.Workbook wb = app.Workbooks.Open(input_filepath); // Create workbook instance
+            Excel.Workbook wb = app.Workbooks.Open(input_filepath, Password: "'"); // Create workbook instance
 
             wb.SaveAs(output_filepath, 51); // Save workbook as .xlsx Transitional
             wb.Close(); // Close workbook
@@ -36,7 +36,7 @@ namespace CLISC
 
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel prompts
-            Excel.Workbook wb = app.Workbooks.Open(input_filepath); // Create workbook instance
+            Excel.Workbook wb = app.Workbooks.Open(input_filepath, Password: "'"); // Create workbook instance
 
             wb.SaveAs(output_filepath, 60); // Save workbook as .ods
             wb.Close(); // Close workbook
@@ -88,7 +88,6 @@ namespace CLISC
                     }
                 }
             }
-
             convert_success = false;
             return convert_success;
         }
@@ -132,7 +131,6 @@ namespace CLISC
                 }
 
             }
-
             convert_success = false;
             return convert_success;
         }

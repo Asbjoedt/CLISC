@@ -2,7 +2,7 @@
   "profiles": {
     "CLISC": {
       "commandName": "Project",
-      "commandLineArgs": "--function count&convert&compare&archive --inputdir \"C:\\Users\\%USERNAME%\\Desktop\\SampleData\" --outputdir \"C:\\Users\\%USERNAME%\\Desktop\" --recurse true"
+      "commandLineArgs": "--function count&convert&compare&archive --inputdir \"C:\\DB\\_Testdata\\Regneark\\RA-regneark\" --outputdir \"C:\\Users\\%USERNAME%\\Desktop\" --recurse true"
     }
   }
 }
