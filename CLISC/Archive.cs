@@ -13,6 +13,11 @@ namespace CLISC
     {
         public static int valid_files = 0;
         public static int invalid_files = 0;
+        public static int cellvalue_files = 0;
+        public static int connections_files = 0;
+        public static int extrels_files = 0;
+        public static int rtdfunctions_files = 0;
+        public static int embedobj_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
@@ -44,7 +49,7 @@ namespace CLISC
 
             // Open CSV file to log validation results
             var csv2 = new StringBuilder();
-            var newLine2_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Validity;Error Number;Description;Error Type;Node;Path;Part;Related Node;Related Node Inner Text");
+            var newLine2_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Validity;Error Number;Id;Description;Type;Node;Path;Part;Related Node;Related Node Inner Text");
             csv2.AppendLine(newLine2_1);
 
             // Open CSV file to log archival requirements results
@@ -91,22 +96,23 @@ namespace CLISC
                     Validation validate = new Validation();
                     List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
 
-                    foreach (Validation error in xlsx_validation_list) // Get information from validation list
+                    foreach (Validation info in xlsx_validation_list) // Get information from validation list
                     {
-                        xlsx_validity = error.Validity;
-                        int? error_number = error.Error_Number;
-                        string? error_description = error.Error_Description;
-                        string? error_type = error.Error_Type;
-                        string? error_node = error.Error_Node;
-                        string? error_path = error.Error_Path;
-                        string? error_part = error.Error_Part;
-                        string? error_relatednode = error.Error_RelatedNode;
-                        string? error_relatedtext = error.Error_RelatedNode_InnerText;
+                        xlsx_validity = info.Validity;
+                        int? error_number = info.Error_Number;
+                        string? error_id = info.Error_Id;
+                        string? error_description = info.Error_Description;
+                        string? error_type = info.Error_Type;
+                        string? error_node = info.Error_Node;
+                        string? error_path = info.Error_Path;
+                        string? error_part = info.Error_Part;
+                        string? error_relatednode = info.Error_RelatedNode;
+                        string? error_relatedtext = info.Error_RelatedNode_InnerText;
 
                         if (xlsx_validity == "Invalid")
                         {
                             // If invalid write to CSV validation log
-                            var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
+                            var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_id};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
                             csv2.AppendLine(newLine2_2);
 
                             // Reset data types, for correct CSV file output
@@ -126,9 +132,30 @@ namespace CLISC
                     int embedobj = pidgeon.Item5;
                     int hyperlinks = pidgeon.Item6;
 
+                    // Transform data types based on information
                     if (data == false || embedobj > 0)
                     {
                         archive_req_accept = false;
+                    }
+                    if (data == false)
+                    {
+                        cellvalue_files++;
+                    }
+                    if (connections > 0)
+                    {
+                        connections_files++;
+                    }
+                    if (extrels > 0)
+                    {
+                        extrels_files++;
+                    }
+                    if (rtdfunctions > 0)
+                    {
+                        rtdfunctions_files++;
+                    }
+                    if (embedobj > 0)
+                    {
+                        embedobj_files++;
                     }
 
                     // Write to CSV archival requirements log
@@ -173,6 +200,7 @@ namespace CLISC
                 ods_conv_extension = "";
                 xlsx_conv_checksum = "";
                 ods_conv_checksum = "";
+                xlsx_validity = "";
                 archive_req_accept = true;
             }
 

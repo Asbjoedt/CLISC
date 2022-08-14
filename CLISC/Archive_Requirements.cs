@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
+using Microsoft.Office.Interop.Excel;
 
 namespace CLISC
 {
     public partial class Archive
     {
-        public static int extrels_files = 0;
-        public static int rtdfunctions_files = 0;
-        public static int embedobj_files = 0;
-
         public Tuple<bool, int, int, int, int, int> Check_XLSX_Requirements(string filepath) 
         {
             bool data = Check_Value(filepath);
@@ -29,25 +27,37 @@ namespace CLISC
             return pidgeon.ToTuple();
         }
 
-        // Get all worksheets in a spreadsheet
+        // Check for any values by checking if sheets and cell values exist
         public bool Check_Value(string filepath)
         {
+            bool hascellvalue = false;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 //Check if worksheets exist
                 WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                Sheets theSheets = wbPart.Workbook.Sheets;
-                if (theSheets == null)
+                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
+                if (allSheets == null)
                 {
-                    Console.WriteLine("--> Spreadsheet has no cell information");
-                    return false;
+                    Console.WriteLine("--> No cell values detected");
+                    return hascellvalue;
                 }
-
                 // Check if any cells have any value
-
-
-                return true;
+                foreach (Sheet aSheet in allSheets)
+                {
+                    WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
+                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = wsp.Worksheet;
+                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    int row_count = rows.Count(); // Count number of rows
+                    if (row_count > 0) // If any rows exist, this means cells exist
+                    {
+                        hascellvalue = true;
+                        return hascellvalue;
+                    }
+                }
             }
+            Console.WriteLine("--> No cell values detected");
+            return hascellvalue;
         }
 
         // Check for data connections
@@ -147,35 +157,71 @@ namespace CLISC
                         }
                     }
                 }
-
                 // Save and close spreadsheet
                 spreadsheet.Save();
                 spreadsheet.Close();
             }
         }
 
-        public static bool Simple_Check_RTDFunctions(string filepath) // Check for RTD functions and return alert
+        public static bool Simple_Check_RTDFunctions(string filepath) // Check for RTD functions
         {
+            bool rtd_functions = false;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                var rtd_functions = "";
-
-                bool check = false;
-                if (rtd_functions != "")
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
+                foreach (Sheet aSheet in allSheets)
                 {
-                    check = true;
+                    WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
+                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = wsp.Worksheet;
+                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    foreach (var row in rows)
+                    {
+                        var cells = row.Elements<Cell>();
+                        foreach (Cell cell in cells)
+                        {
+
+                        }
+                    }
                 }
-                return check;
             }
+            return rtd_functions;
         }
 
         public static int Check_RTDFunctions(string filepath) // Check for RTD functions
         {
+            int rtd_functions = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                return 0;
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
+                foreach (Sheet aSheet in allSheets)
+                {
+                    WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
+                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = wsp.Worksheet;
+                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    foreach (var row in rows)
+                    {
+                        var cells = row.Elements<Cell>();
+                        foreach (Cell cell in cells)
+                        {
+                            if (cell.CellFormula != null)
+                            {
+                                string formula = cell.CellFormula.InnerText;
+                                string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
+                                if (hit == "RTD")
+                                {
+                                    rtd_functions++;
+                                    Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} detected");
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            return rtd_functions;
         }
 
         public void Remove_RTDFunctions(string filepath) // Remove RTD functions
@@ -297,35 +343,6 @@ namespace CLISC
             app.DisplayAlerts = false; // Don't display any Excel window prompts
             Excel.Workbook wb = app.Workbooks.Open(filepath); // Create workbook instance
 
-            // Find any cell value
-            int used_cells_count = 0;
-            foreach (Excel.Worksheet sheet in wb.Sheets)
-            {
-                try
-                {
-                    Excel.Range range = (Excel.Range)sheet.UsedRange;
-                    foreach (Excel.Range cell in range.Cells)
-                    {
-                        var value = cell.Value2;
-                        if (value != null)
-                        {
-                            used_cells_count++;
-                        }
-                    }
-                }
-                catch (System.Runtime.InteropServices.COMException) // Catch if cell has no value
-                {
-                    // Do nothing
-                }
-                finally
-                {
-                    if (used_cells_count == 0)
-                    {
-                        Console.WriteLine("--> No cell values detected. Exempt spreadsheet from archiving");
-                    }
-                }
-            }
-
             // Find and delete data connections
             int count_conn = wb.Connections.Count;
             if (count_conn > 0)
@@ -422,79 +439,11 @@ namespace CLISC
             wb.Save(); // Save workbook
             wb.Close(); // Close the workbook
             app.Quit(); // Quit Excel application
-        }
-
-        // Retrieve the value of a cell, given a file name, sheet name, and address name.
-        // Source: https://docs.microsoft.com/en-us/office/open-xml/how-to-retrieve-the-values-of-cells-in-a-spreadsheet
-        public static string GetCellValue(string fileName, string sheetName, string addressName)
-        {
-            string value = null;
-
-            // Open the spreadsheet document for read-only access.
-            using (SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, false))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
             {
-                // Retrieve a reference to the workbook part.
-                WorkbookPart wbPart = document.WorkbookPart;
-
-                // Find the sheet with the supplied name, and then use that Sheet object to retrieve a reference to the first worksheet.
-                Sheet theSheet = wbPart.Workbook.Descendants<Sheet>().
-                  Where(s => s.Name == sheetName).FirstOrDefault();
-
-                // Throw an exception if there is no sheet.
-                if (theSheet == null)
-                {
-                    throw new ArgumentException("sheetName");
-                }
-
-                // Retrieve a reference to the worksheet part.
-                WorksheetPart wsPart = (WorksheetPart)(wbPart.GetPartById(theSheet.Id));
-
-                // Use its Worksheet property to get a reference to the cell whose address matches the address you supplied.
-                Cell theCell = wsPart.Worksheet.Descendants<Cell>().
-                  Where(c => c.CellReference == addressName).FirstOrDefault();
-
-                // If the cell does not exist, return an empty string.
-                if (theCell.InnerText.Length > 0)
-                {
-                    value = theCell.InnerText;
-
-                    // If the cell represents an integer number, you are done. For dates, this code returns the serialized value that represents the date. The code handles strings and Booleans individually. For shared strings, the code looks up the corresponding value in the shared string table. For Booleans, the code converts the value into the words TRUE or FALSE.
-                    if (theCell.DataType != null)
-                    {
-                        switch (theCell.DataType.Value)
-                        {
-                            case CellValues.SharedString:
-
-                                // For shared strings, look up the value in the shared strings table.
-                                var stringTable =
-                                    wbPart.GetPartsOfType<SharedStringTablePart>()
-                                    .FirstOrDefault();
-
-                                // If the shared string table is missing, something is wrong. Return the index that is in the cell. Otherwise, look up the correct text in the table.
-                                if (stringTable != null)
-                                {
-                                    value =
-                                        stringTable.SharedStringTable
-                                        .ElementAt(int.Parse(value)).InnerText;
-                                }
-                                break;
-
-                            case CellValues.Boolean:
-                                switch (value)
-                                {
-                                    case "0":
-                                        value = "FALSE";
-                                        break;
-                                    default:
-                                        value = "TRUE";
-                                        break;
-                                }
-                                break;
-                        }
-                    }
-                }
+                Marshal.ReleaseComObject(wb); // Delete workbook task in task manager
+                Marshal.ReleaseComObject(app); // Delete Excel task in task manager
             }
-            return value;
         }
     }
 }

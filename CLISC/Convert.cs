@@ -41,8 +41,8 @@ namespace CLISC
         string? ods_conv_extension = null;
         string? ods_conv_filename = null;
         string? ods_conv_filepath = null;
-        static string? error_message = null;
-        static string[] error_messages = { "", "Legacy Excel file formats are not supported", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "Spreadsheet cannot be read", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed.", "Conversion of file has exceeded 5 min. Handle file manually" };
+        static string error_message = "";
+        static string[] error_messages = { "", "Spreadsheet cannot be read", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed.", "Conversion of file has exceeded 5 min. Handle file manually" };
 
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets(string function, string inputdir, bool recurse, string Results_Directory)
@@ -165,34 +165,34 @@ namespace CLISC
                 {
                     numFAILED++;
                     convert_success = false;
-                    error_message = error_messages[4];
+                    error_message = error_messages[1];
                 }
                 catch (InvalidDataException)
                 {
                     numFAILED++;
                     convert_success = false;
-                    error_message = error_messages[4];
+                    error_message = error_messages[1];
                 }
                 // If file is corrupt and cannot be opened for XML schema validation
                 catch (OpenXmlPackageException)
                 {
                     numFAILED++;
                     convert_success = false;
-                    error_message = error_messages[7];
+                    error_message = error_messages[1];
                 }
                 // If .LibreOffice is not installed
                 catch (Win32Exception)
                 {
                     numFAILED++;
                     convert_success = false;
-                    error_message = error_messages[4];
+                    error_message = error_messages[1];
                 }
                 // If files used by Excel Interop are password protected or corrupt
                 catch (System.Runtime.InteropServices.COMException)
                 {
                     numFAILED++;
                     convert_success = false;
-                    error_message = error_messages[4];
+                    error_message = error_messages[1];
                 }
                 // If file conversion exceeds time limit
                 catch (System.TimeoutException)
@@ -224,7 +224,7 @@ namespace CLISC
                             ods_conv_extension = ".ods";
                             ods_conv_filename = "1.ods";
                             ods_conv_filepath = file_folder + "\\1.ods";
-                            error_message = "";
+                            error_message = error_messages[0];
 
                             // Inform user
                             Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
