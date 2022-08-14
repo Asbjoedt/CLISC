@@ -210,11 +210,14 @@ namespace CLISC
                             if (cell.CellFormula != null)
                             {
                                 string formula = cell.CellFormula.InnerText;
-                                string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
-                                if (hit == "RTD")
+                                if (formula.Length > 2) 
                                 {
-                                    rtd_functions++;
-                                    Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} detected");
+                                    string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
+                                    if (hit == "RTD")
+                                    {
+                                        rtd_functions++;
+                                        Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} detected");
+                                    }
                                 }
                             }
                         }
