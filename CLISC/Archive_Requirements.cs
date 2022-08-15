@@ -165,7 +165,7 @@ namespace CLISC
 
         public static bool Simple_Check_RTDFunctions(string filepath) // Check for RTD functions
         {
-            bool rtd_functions = false;
+            bool check = false;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
@@ -181,12 +181,24 @@ namespace CLISC
                         var cells = row.Elements<Cell>();
                         foreach (Cell cell in cells)
                         {
-
+                            if (cell.CellFormula != null)
+                            {
+                                string formula = cell.CellFormula.InnerText;
+                                if (formula.Length > 2)
+                                {
+                                    string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
+                                    if (hit == "RTD")
+                                    {
+                                        check = true;
+                                        return check;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-            return rtd_functions;
+            return check;
         }
 
         public static int Check_RTDFunctions(string filepath) // Check for RTD functions
@@ -227,15 +239,45 @@ namespace CLISC
             return rtd_functions;
         }
 
-        public void Remove_RTDFunctions(string filepath) // Remove RTD functions
+        public int Remove_RTDFunctions(string filepath) // Remove RTD functions
         {
-            string rtdfunctions_message = "";
+            int rtd_functions = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-
-                Console.WriteLine($"--> RTD functions removed");
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
+                foreach (Sheet aSheet in allSheets)
+                {
+                    WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
+                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = wsp.Worksheet;
+                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    foreach (var row in rows)
+                    {
+                        var cells = row.Elements<Cell>();
+                        foreach (Cell cell in cells)
+                        {
+                            if (cell.CellFormula != null)
+                            {
+                                string formula = cell.CellFormula.InnerText;
+                                if (formula.Length > 2)
+                                {
+                                    string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
+                                    if (hit == "RTD")
+                                    {
+                                        var cellvalue = cell.CellValue;
+                                        cell.CellFormula = null;
+                                        cell.CellValue = cellvalue;
+                                        Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} removed");
+                                        rtd_functions++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            return rtd_functions;
         }
 
         public bool Simple_Check_EmbeddedObjects(string filepath)
