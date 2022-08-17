@@ -79,10 +79,10 @@ namespace CLISC
                                     break;
                                 default:
                                     error_number++;
-                                    Console.WriteLine($"--> Error {error_number}");
+                                    Console.WriteLine("--> Error " + error_number);
                                     Console.WriteLine("----> Id: " + error.Id);
                                     Console.WriteLine("----> Description: " + error.Description);
-                                    Console.WriteLine("----> ErrorType: " + error.ErrorType);
+                                    Console.WriteLine("----> Error type: " + error.ErrorType);
                                     Console.WriteLine("----> Node: " + error.Node);
                                     Console.WriteLine("----> Path: " + error.Path.XPath);
                                     Console.WriteLine("----> Part: " + error.Part.Uri);

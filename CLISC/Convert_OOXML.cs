@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
@@ -62,6 +63,12 @@ namespace CLISC
             wb.SaveAs(output_filepath, 61); // Save workbook as .xlsx Strict
             wb.Close(); // Close workbook
             app.Quit(); // Quit Excel application
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
+            {
+                Marshal.ReleaseComObject(wb); // Delete workbook task in task manager
+                Marshal.ReleaseComObject(app); // Delete Excel task in task manager
+            }
 
             convert_success = true; // Mark as succesful
             return convert_success; // Report success

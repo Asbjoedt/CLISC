@@ -163,7 +163,8 @@ namespace CLISC
                     csv3.AppendLine(newLine3_2);
 
                     // Transform data according to archiving requirements
-                    Transform_Requirements(xlsx_conv_filepath);
+                    Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
+                    //Transform_XLSX_Requirements(xlsx_conv_filepath);
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);

@@ -8,7 +8,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
-using Microsoft.Office.Interop.Excel;
+using System.Runtime.CompilerServices;
 
 namespace CLISC
 {
@@ -17,7 +17,7 @@ namespace CLISC
         public Tuple<bool, int, int, int, int, int> Check_XLSX_Requirements(string filepath) 
         {
             bool data = Check_Value(filepath);
-            int connections = Simple_Check_DataConnections(filepath);
+            int connections = Check_DataConnections(filepath);
             int extrels = Check_ExternalRelationships(filepath);
             int rtdfunctions = Check_RTDFunctions(filepath);
             int embedobj = Check_EmbeddedObjects(filepath);
@@ -25,6 +25,25 @@ namespace CLISC
 
             (bool, int, int, int, int, int) pidgeon = (data, connections, extrels, rtdfunctions, embedobj, hyperlinks);
             return pidgeon.ToTuple();
+        }
+
+        public void Transform_XLSX_Requirements(string filepath)
+        {
+            int connections = Check_DataConnections(filepath);
+            if (connections > 0)
+            {
+                Remove_DataConnections(filepath);
+            }
+            int extrels = Check_ExternalRelationships(filepath);
+            if (extrels > 0)
+            {
+                Handle_ExternalRelationships(filepath);
+            }
+            int rtdfunctions = Check_RTDFunctions(filepath);
+            if (rtdfunctions > 0)
+            {
+                Remove_RTDFunctions(filepath);
+            }
         }
 
         // Check for any values by checking if sheets and cell values exist
@@ -61,15 +80,37 @@ namespace CLISC
         }
 
         // Check for data connections
-        public int Simple_Check_DataConnections(string filepath) // Using Excel interop
+        public int Check_DataConnections(string filepath)
         {
-            Excel.Application app = new Excel.Application();
-            app.DisplayAlerts = false;
-            Excel.Workbook wb = app.Workbooks.Open(filepath);
-            int count_conn = wb.Connections.Count;
-            wb.Close();
-            app.Quit();
-            return count_conn;
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                int conn_count = wbPart.ConnectionsPart.Connections.Count();
+                if (conn_count > 0)
+                {
+                    Console.WriteLine($"--> {conn_count} data connections detected and removed");
+                }
+                return conn_count;
+            }
+        }
+
+        // Remove data connections
+        public void Remove_DataConnections(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                var conn_list = wbPart.ConnectionsPart.Connections.ToList();
+                if (conn_list.Any())
+                {
+                    foreach (Connection conn in conn_list)
+                    {
+                        wbPart.DeleteReferenceRelationship(conn.Id);
+                        conn.Deleted = true;
+                        conn.Remove();
+                    }
+                }
+            }
         }
 
         // Check for external relationships
@@ -140,12 +181,13 @@ namespace CLISC
                             case "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath":
                                 // Replace formula values with cell values 
 
+    
 
                                 // Remember to finish with removing relationshipId
 
 
                                 // Inform user
-                                Console.WriteLine("--> Linked cell values detected. All cell values were embedded and the relationship removed");
+                                Console.WriteLine("--> External cell values detected. All cell values were embedded and the relationship removed");
                                 break;
 
                             // Alert if the relationship is an OLE object
@@ -243,7 +285,7 @@ namespace CLISC
         {
             int rtd_functions = 0;
 
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 WorkbookPart wbPart = spreadsheet.WorkbookPart;
                 DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
@@ -382,7 +424,7 @@ namespace CLISC
             }
         }
 
-        public void Transform_Requirements(string filepath)  // Use Excel Interop
+        public void Transform_Requirements_ExcelInterop(string filepath)  // Use Excel Interop
         {
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel window prompts
@@ -398,7 +440,6 @@ namespace CLISC
                     i = i-1;
                 }
                 count_conn = wb.Connections.Count;
-                Console.WriteLine("--> Data connections detected and removed");
                 wb.Save(); // Save workbook
             }
 
@@ -479,7 +520,7 @@ namespace CLISC
             }
 
             // Make first sheet active sheet
-            ((Excel.Worksheet)app.ActiveWorkbook.Sheets[1]).Select(Type.Missing);
+            ((Excel.Worksheet)app.ActiveWorkbook.Sheets[1]).Select();
 
             wb.Save(); // Save workbook
             wb.Close(); // Close the workbook

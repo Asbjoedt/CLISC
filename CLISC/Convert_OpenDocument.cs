@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace CLISC
 {
@@ -25,6 +26,12 @@ namespace CLISC
             wb.Close(); // Close workbook
             app.Quit(); // Quit Excel application
 
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
+            {
+                Marshal.ReleaseComObject(wb); // Delete workbook task in task manager
+                Marshal.ReleaseComObject(app); // Delete Excel task in task manager
+            }
+
             convert_success = true; // Mark as succesful
             return convert_success; // Report success
         }
@@ -41,6 +48,12 @@ namespace CLISC
             wb.SaveAs(output_filepath, 60); // Save workbook as .ods
             wb.Close(); // Close workbook
             app.Quit(); // Quit Excel application
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
+            {
+                Marshal.ReleaseComObject(wb); // Delete workbook task in task manager
+                Marshal.ReleaseComObject(app); // Delete Excel task in task manager
+            }
 
             convert_success = true; // Mark as succesful
             return convert_success; // Report success
