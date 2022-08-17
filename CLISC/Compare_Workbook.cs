@@ -10,9 +10,9 @@ namespace CLISC
 {
     public partial class Compare
     {
-        public string Compare_Workbook(string Results_Directory, string file_folder, string org_filepath, string conv_filepath)
+        public bool Compare_Workbook(string Results_Directory, string file_folder, string org_filepath, string conv_filepath)
         {
-            //Create "Beyond Compare" script file
+            //Create "Beyond Compare 4" script file
             string bcscript_filepath = Results_Directory + "\\bcscript.txt";
             string bcscript_results_filepath = file_folder + "\\comparisonResults.txt";
             using (StreamWriter bcscript = File.CreateText(bcscript_filepath))
@@ -30,6 +30,7 @@ namespace CLISC
 
             // Read logfile to identify differences
             var compare_message = File.ReadAllText(bcscript_results_filepath);
+            Console.WriteLine(compare_message);
 
             // Delete BC4 results file
             if (File.Exists(bcscript_results_filepath))
@@ -42,26 +43,14 @@ namespace CLISC
                 File.Delete(bcscript_filepath);
             }
 
-            bool compare_success;
+            bool compare_success = true;
 
-            // If there is workbook differences
-            //if (comparison_success == fail)
-            //{
-            //    numTOTAL_diff++;
-            //
-            //    // Inform user
-            //    Console.WriteLine(compare_conv_filepath);
-            //    Console.WriteLine($"--> Comparison {success} - Workbook differences identified");
-            //}
-
-            // No workbook differences
-            //else
-            //{
-            //    // Inform user
-            //    Console.WriteLine($"--> Comparison {success}");
-            //}
-
-            return compare_message;
+            //If there is workbook differences
+            if (compare_success == false)
+            {
+                numTOTAL_diff++;
+            }
+            return compare_success;
         }
     }
 }
