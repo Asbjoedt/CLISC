@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <StartupObject></StartupObject>
+    <Authors>Asbjørn Skødt</Authors>
+    <PackageProjectUrl>https://github.com/Asbjoedt/CLISC</PackageProjectUrl>
+    <Title>CLISC</Title>
+    <Description>Command Line Interface Spreadsheet Count, Convert, Compare &amp; Archive</Description>
+    <Copyright>Asbjørn Skødt</Copyright>
+    <RepositoryUrl>https://github.com/Asbjoedt/CLISC</RepositoryUrl>
+    <PackageTags>excel;conversion; xlsx;archive;spreadsheets;compare-files;opendocument-spreadsheet;ooxml-workbooks</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

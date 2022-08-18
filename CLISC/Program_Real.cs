@@ -37,29 +37,29 @@ namespace CLISC
                     app.Count_Results();
                     break;
 
-                case "count&convert":
+                case "countconvert":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
                     app.Convert_Results();
                     break;
 
-                case "count&convert&compare":
+                case "countconvertcompare":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     List<fileIndex> fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
+                    com.Compare_Spreadsheets(resultsDirectory, fileList);
                     app.Compare_Results();
                     break;
 
-                case "count&convert&compare&archive":
+                case "countconvertcomparearchive":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
+                    com.Compare_Spreadsheets(resultsDirectory, fileList);
                     arc.Archive_Spreadsheets(resultsDirectory, fileList);
                     app.Archive_Results();
                     break;
 
                 default:
-                    Console.WriteLine("Invalid function argument. Function argument must be one these: count, count&convert, count&convert&compare, count&convert&compare&archive");
+                    Console.WriteLine("Invalid function argument. Function argument must be one these: count, countconvert, countconvertcompare, countconvertcomparearchive");
                     break;
             }
 

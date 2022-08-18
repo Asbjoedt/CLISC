@@ -17,7 +17,7 @@ namespace CLISC
         public static int numTOTAL_diff = 0;
 
         // Compare spreadsheets
-        public void Compare_Spreadsheets(string function, string Results_Directory, List<fileIndex> File_List)
+        public void Compare_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("---");
             Console.WriteLine("COMPARE");

@@ -92,7 +92,7 @@ namespace CLISC
                 // Convert spreadsheet
                 try
                 {
-                    if (function == "count&convert&compare&archive")
+                    if (function == "countconvertcomparearchive")
                     {
                         conv_filepath = file_folder + "\\1.xlsx";
                     }
@@ -214,7 +214,7 @@ namespace CLISC
 
                     if (convert_success == true)
                     {
-                        if (function == "count&convert&compare&archive")
+                        if (function == "countconvertcomparearchive")
                         {
                             // Transform data types
                             numCOMPLETE++;
