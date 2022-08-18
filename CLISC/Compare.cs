@@ -36,6 +36,7 @@ namespace CLISC
 
                 foreach (fileIndex entry in File_List)
                 {
+                    bool compare_success = false;
                     // Get information from list
                     string org_filepath = entry.Org_Filepath;
                     string xlsx_filepath = entry.XLSX_Conv_Filepath;
@@ -45,14 +46,30 @@ namespace CLISC
                     // Compare workbook differences
                     if (File.Exists(xlsx_filepath))
                     {
-                        numTOTAL_compare++;
                         // Compare workbooks using external app Beyond Compare 4
-                        bool compare_success = Compare_Workbook(Results_Directory, folder, org_filepath, xlsx_filepath);
+                        int return_code = Compare_Workbook(Results_Directory, folder, org_filepath, xlsx_filepath);
 
                         // Inform user of comparison
                         Console.WriteLine(org_filepath);
                         Console.WriteLine($"--> Comparing to: {xlsx_filepath}");
-                        Console.WriteLine("Spreadsheets identical: " + compare_success);
+                        if (return_code == 0 || return_code == 1 || return_code == 2)
+                        {
+                            numTOTAL_compare++;
+                            compare_success = true;
+                            Console.WriteLine("--> Spreadsheets identical: " + compare_success);
+                        }
+                        if (return_code == 12 || return_code == 13 || return_code == 14)
+                        {
+                            numTOTAL_compare++;
+                            numTOTAL_diff++;
+                            compare_success = false;
+                            Console.WriteLine("--> Spreadsheets identical: " + compare_success);
+                        }
+                        if (return_code == 11)
+                        {
+                            compare_success = false;
+                            Console.WriteLine("--> Original file is a .fods, .ods, .ots or .xlsb spreadsheet and cannot be compared");
+                        }
 
                         // Output result in open CSV file
                         var newLine1 = string.Format($"{org_filepath};{xlsx_filepath};{compare_success}");

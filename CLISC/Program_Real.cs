@@ -98,7 +98,8 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
             Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
-            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numCOMPLETE} converted spreadsheets were compared");
+            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numCOMPLETE} converted spreadsheets completed comparison");
+            Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} out of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
 
         }
         void Archive_Results()
@@ -109,6 +110,7 @@ namespace CLISC
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheets");
             Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} out of {Count.numTOTAL} spreadsheets completed conversion");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} out of {Conversion.numCOMPLETE} converted spreadsheets completed comparison");
+            Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} out of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
             Console.WriteLine($"ARCHIVE: {Archive.invalid_files} out of {Conversion.numCOMPLETE} converted spreadsheets have invalid file formats");
             Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} out of {Conversion.numCOMPLETE} converted spreadsheets had no cell values - Manually exempt spreadsheets from archiving");
             Console.WriteLine($"ARCHIVE: {Archive.connections_files} out of {Conversion.numCOMPLETE} converted spreadsheets had data connections - Data connections were removed");
