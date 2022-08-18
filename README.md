@@ -22,11 +22,10 @@ Convert any spreadsheet[^1] to .xlsx (Transitional conformance).
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
-:mag: **Compare** (work in progress)
+:mag: **Compare**
 
 Compare original and converted spreadsheets to log differences.[^3]
 * Cell values
-* File size
 
 :file_cabinet: **Archive**
 
