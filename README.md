@@ -103,7 +103,7 @@ Create your arguments from the following list:
 .\CLISC.exe -f count&convert&compare&archive -i "c:\my_path" -o "c:\my_path" -r true
 ```
 
-If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
+If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Sample%20data).
 
 ## Packages and software
 
