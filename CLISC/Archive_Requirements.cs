@@ -82,16 +82,18 @@ namespace CLISC
         // Check for data connections
         public int Check_DataConnections(string filepath)
         {
+            int conn_count = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                int conn_count = wbPart.ConnectionsPart.Connections.Count();
-                if (conn_count > 0)
+                ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
+                if (conn != null)
                 {
+                    conn_count = conn.Connections.Count();
                     Console.WriteLine($"--> {conn_count} data connections detected and removed");
                 }
-                return conn_count;
             }
+            return conn_count;
         }
 
         // Remove data connections
@@ -99,16 +101,11 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                var conn_list = wbPart.ConnectionsPart.Connections.ToList();
-                if (conn_list.Any())
+                ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
+                if (conn != null)
                 {
-                    foreach (Connection conn in conn_list)
-                    {
-                        wbPart.DeleteReferenceRelationship(conn.Id);
-                        conn.Deleted = true;
-                        conn.Remove();
-                    }
+                    //conn.Connections.RemoveAllChildren();
+                    bool success = conn.DeletePart(conn);
                 }
             }
         }

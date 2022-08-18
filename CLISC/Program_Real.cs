@@ -53,7 +53,7 @@ namespace CLISC
                 case "count&convert&compare&archive":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    //com.Compare_Spreadsheets(function, resultsDirectory, fileList);
+                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     arc.Archive_Spreadsheets(resultsDirectory, fileList);
                     app.Archive_Results();
                     break;
