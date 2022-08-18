@@ -22,11 +22,10 @@ Convert any spreadsheet[^1] to .xlsx (Transitional conformance).
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
-:mag: **Compare** (work in progress)
+:mag: **Compare**
 
 Compare original and converted spreadsheets to log differences.[^3]
 * Cell values
-* File size
 
 :file_cabinet: **Archive**
 
@@ -79,9 +78,9 @@ Create your arguments from the following list:
 **Functions to use** (required, pick one of the four)
 ```
 --function count
---function count&convert
---function count&convert&compare
---function count&convert&compare&archive
+--function countconvert
+--function countconvertcompare
+--function countconvertcomparearchive
 ```
 **Input directory** (required)
 ```
@@ -97,14 +96,14 @@ Create your arguments from the following list:
 ```
 **Example of full usage**
 ```
-.\CLISC.exe --function count&convert&compare&archive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
+.\CLISC.exe --function countconvertcomparearchive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
 ```
 **or shorter**
 ```
-.\CLISC.exe -f count&convert&compare&archive -i "c:\my_path" -o "c:\my_path" -r true
+.\CLISC.exe -f countconvertcomparearchive -i "c:\my_path" -o "c:\my_path" -r true
 ```
 
-If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Test_Data).
+If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Sample%20data).
 
 ## Packages and software
 
