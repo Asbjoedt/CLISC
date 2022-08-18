@@ -1,5 +1,5 @@
 # CLISC
-**Command Line Interface Spreadsheet Count Convert & Compare (& Archive)**
+**Command Line Interface Spreadsheet Count, Convert, Compare & Archive**
 
 A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki).
 
