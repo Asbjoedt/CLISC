@@ -174,7 +174,7 @@ namespace CLISC
                     error_message = error_messages[1];
                 }
                 // If file is corrupt and cannot be opened for XML schema validation
-                catch (OpenXmlPackageException)
+                catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
                 {
                     numFAILED++;
                     convert_success = false;

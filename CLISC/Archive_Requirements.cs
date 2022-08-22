@@ -516,12 +516,20 @@ namespace CLISC
                 }
             }
 
-            // Make first cell in first sheet active
-            if (app.Sheets.Count > 0)
+            try
             {
-                Excel.Worksheet firstSheet = (Excel.Worksheet)app.ActiveWorkbook.Sheets[1];
-                firstSheet.Activate();
-                firstSheet.Select();
+                // Make first cell in first sheet active
+                if (app.Sheets.Count > 0)
+                {
+                    Excel.Worksheet firstSheet = (Excel.Worksheet)app.ActiveWorkbook.Sheets[1];
+                    firstSheet.Activate();
+                    firstSheet.Select();
+                }
+            }
+            // For some reason an exception is thrown in some spreadsheets when trying to make the first sheet active
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                // Do nothing
             }
 
             wb.Save(); // Save workbook

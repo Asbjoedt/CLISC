@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Bibliography;
@@ -38,13 +40,13 @@ namespace CLISC
             string copy_checksum = "";
             string xlsx_conv_checksum = "";
             string xlsx_validity = "";
+            int xlsx_errors_count = 0;
             string ods_conv_checksum = "";
-            string ods_validation_message = "";
             bool archive_req_accept = true;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;Convert Exists;XLSX Convert Filepath;XLSX Checksum;XLSX File Format Validation;ODS Convert Filepath; ODS checksum; ODS file Format Validation;Archival Requirements");
+            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;Convert Exists;XLSX Convert Filepath;XLSX Checksum;XLSX File Format Validation;Validation Errors;ODS Convert Filepath; ODS checksum; ODS file Format Validation;Validation Errors;Archival Requirements");
             csv.AppendLine(newLine0);
 
             // Open CSV file to log validation results
@@ -75,96 +77,111 @@ namespace CLISC
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
                     Console.WriteLine($"--> Conversion analyzed: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
-                    // Convert to .xlsx Strict conformance using Excel
-                    bool? strict = null;
-                    using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false))
+                    try
                     {
-                        strict = spreadsheet.StrictRelationshipFound; // Identify if already Strict
-                    }
-                    if (strict == true)
-                    {
-                        Console.WriteLine("--> Spreadsheet is already Strict conformant");
-                    }
-                    else
-                    {
-                        Conversion con = new Conversion();
-                        convert_success = con.Convert_Transitional_to_Strict(xlsx_conv_filepath, xlsx_conv_filepath);
-                        Console.WriteLine("--> Converted to Strict conformance");
-                    }
-
-                    // Validate
-                    Validation validate = new Validation();
-                    List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
-
-                    foreach (Validation info in xlsx_validation_list) // Get information from validation list
-                    {
-                        xlsx_validity = info.Validity;
-                        int? error_number = info.Error_Number;
-                        string? error_id = info.Error_Id;
-                        string? error_description = info.Error_Description;
-                        string? error_type = info.Error_Type;
-                        string? error_node = info.Error_Node;
-                        string? error_path = info.Error_Path;
-                        string? error_part = info.Error_Part;
-                        string? error_relatednode = info.Error_RelatedNode;
-                        string? error_relatedtext = info.Error_RelatedNode_InnerText;
-
-                        if (xlsx_validity == "Invalid")
+                        // Convert to .xlsx Strict conformance using Excel
+                        bool? strict = null;
+                        using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false))
                         {
-                            // If invalid write to CSV validation log
-                            var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_id};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
-                            csv2.AppendLine(newLine2_2);
-
-                            // Reset data types, for correct CSV file output
-                            error_relatednode = null;
-                            error_relatedtext = null;
+                            strict = spreadsheet.StrictRelationshipFound; // Identify if already Strict
                         }
+                        if (strict == true)
+                        {
+                            Console.WriteLine("--> Spreadsheet is already Strict conformant");
+                        }
+                        else
+                        {
+                            Conversion con = new Conversion();
+                            convert_success = con.Convert_Transitional_to_Strict(xlsx_conv_filepath, xlsx_conv_filepath);
+                            Console.WriteLine("--> Converted to Strict conformance");
+                        }
+
+                        // Validate
+                        Validation validate = new Validation();
+                        List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
+
+                        xlsx_errors_count = xlsx_validation_list.Count;
+
+                        foreach (Validation info in xlsx_validation_list) // Get information from validation list
+                        {
+                            xlsx_validity = info.Validity;
+                            int? error_number = info.Error_Number;
+                            string? error_id = info.Error_Id;
+                            string? error_description = info.Error_Description;
+                            string? error_type = info.Error_Type;
+                            string? error_node = info.Error_Node;
+                            string? error_path = info.Error_Path;
+                            string? error_part = info.Error_Part;
+                            string? error_relatednode = info.Error_RelatedNode;
+                            string? error_relatedtext = info.Error_RelatedNode_InnerText;
+
+                            if (xlsx_validity == "Invalid")
+                            {
+                                // If invalid write to CSV validation log
+                                var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_id};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
+                                csv2.AppendLine(newLine2_2);
+
+                                // Reset data types, for correct CSV file output
+                                error_relatednode = null;
+                                error_relatedtext = null;
+                            }
+                        }
+
+                        // Check .xlsx for archival requirements
+                        Tuple<bool, int, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
+
+                        // Receive infomration from tuple
+                        bool data = pidgeon.Item1;
+                        int connections = pidgeon.Item2;
+                        int extrels = pidgeon.Item3;
+                        int rtdfunctions = pidgeon.Item4;
+                        int embedobj = pidgeon.Item5;
+                        int hyperlinks = pidgeon.Item6;
+
+                        // Transform data types based on information
+                        if (data == false || embedobj > 0)
+                        {
+                            archive_req_accept = false;
+                        }
+                        if (data == false)
+                        {
+                            cellvalue_files++;
+                        }
+                        if (connections > 0)
+                        {
+                            connections_files++;
+                        }
+                        if (extrels > 0)
+                        {
+                            extrels_files++;
+                        }
+                        if (rtdfunctions > 0)
+                        {
+                            rtdfunctions_files++;
+                        }
+                        if (embedobj > 0)
+                        {
+                            embedobj_files++;
+                        }
+
+                        // Write to CSV archival requirements log
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{extrels};{rtdfunctions};{embedobj};{hyperlinks}");
+                        csv3.AppendLine(newLine3_2);
+
+                        // Transform data according to archiving requirements
+                        Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
+                        //Transform_XLSX_Requirements(xlsx_conv_filepath);
                     }
-
-                    // Check .xlsx for archival requirements
-                    Tuple<bool, int, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
-
-                    // Receive infomration from tuple
-                    bool data = pidgeon.Item1;
-                    int connections = pidgeon.Item2;
-                    int extrels = pidgeon.Item3;
-                    int rtdfunctions = pidgeon.Item4;
-                    int embedobj = pidgeon.Item5;
-                    int hyperlinks = pidgeon.Item6;
-
-                    // Transform data types based on information
-                    if (data == false || embedobj > 0)
+                    // If spreadsheet is malformed because it previously had a macro
+                    catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
                     {
+                        // Write to CSV archival requirements log
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};;;;;;");
+                        csv3.AppendLine(newLine3_2);
+
+                        xlsx_validity = "Invalid";
                         archive_req_accept = false;
                     }
-                    if (data == false)
-                    {
-                        cellvalue_files++;
-                    }
-                    if (connections > 0)
-                    {
-                        connections_files++;
-                    }
-                    if (extrels > 0)
-                    {
-                        extrels_files++;
-                    }
-                    if (rtdfunctions > 0)
-                    {
-                        rtdfunctions_files++;
-                    }
-                    if (embedobj > 0)
-                    {
-                        embedobj_files++;
-                    }
-
-                    // Write to CSV archival requirements log
-                    var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{extrels};{rtdfunctions};{embedobj};{hyperlinks}");
-                    csv3.AppendLine(newLine3_2);
-
-                    // Transform data according to archiving requirements
-                    Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
-                    //Transform_XLSX_Requirements(xlsx_conv_filepath);
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
@@ -192,7 +209,7 @@ namespace CLISC
                 copy_checksum = Calculate_MD5(copy_filepath);
 
                 // Output result in open CSV validation log
-                var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{convert_success};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validity};{ods_conv_filepath};{ods_conv_checksum};.ods validation not supported;{archive_req_accept}");
+                var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{convert_success};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validity};{xlsx_errors_count};{ods_conv_filepath};{ods_conv_checksum};.ods validation not supported;.ods validation not supported;{archive_req_accept}");
                 csv.AppendLine(newLine1);
 
                 // Reset data types to fix bug in CSV log, if converted spreadsheet does not exist
