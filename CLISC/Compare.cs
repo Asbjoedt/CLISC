@@ -35,7 +35,7 @@ namespace CLISC
             {
                 foreach (fileIndex entry in File_List)
                 {
-                    bool compare_success = false;
+                    bool? compare_success = null;
                     // Get information from list
                     string org_filepath = entry.Org_Filepath;
                     string copy_filepath = entry.Copy_Filepath;
@@ -73,8 +73,18 @@ namespace CLISC
                         }
                         if (return_code == 11)
                         {
-                            compare_success = false;
+                            compare_success = null;
                             Console.WriteLine("--> Original file is a .fods, .ods, .ots or .xlsb spreadsheet and cannot be compared");
+                        }
+                        if (return_code == 100)
+                        {
+                            compare_success = null;
+                            Console.WriteLine("--> Unknown error");
+                        }
+                        if (return_code == 104)
+                        {
+                            compare_success = null;
+                            Console.WriteLine("--> Beyond Compare 4 trial period expired");
                         }
 
                         // Output result in open CSV file
