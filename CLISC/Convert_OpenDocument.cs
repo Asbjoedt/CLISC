@@ -72,7 +72,7 @@ namespace CLISC
             app.Close();
 
             bool convert_success;
-            
+
             // Because of previous bug, we must rename converted spreadsheet to meet archiving requirements
             if (function == "count&convert&compare&archive")
             {
@@ -106,7 +106,7 @@ namespace CLISC
         }
 
         // Convert spreadsheets to OpenDocument file formats using LibreOffice
-        public bool Convert_to_OpenDocument(string function, string input_filepath, string file_folder)
+        public bool Convert_to_OpenDocument(string input_filepath, string file_folder)
         {
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
@@ -120,29 +120,25 @@ namespace CLISC
             bool convert_success;
 
             // Because of previous bug, we must rename converted spreadsheet to meet archiving requirements
-            if (function == "count&convert&compare&archive")
+            string[] filename = Directory.GetFiles(file_folder, "*.ods");
+            if (filename.Length > 0)
             {
-                string[] filename = Directory.GetFiles(file_folder, "*.ods");
-                if (filename.Length > 0)
+                // Rename converted spreadsheet
+                string old_filename = filename[0];
+                string new_filename = file_folder + "\\1.ods";
+                File.Move(old_filename, new_filename);
+
+                // Report success if file exists - BUG: password protected ODS are returned as true, if not for below check
+                if (File.Exists(new_filename))
                 {
-                    // Rename converted spreadsheet
-                    string old_filename = filename[0];
-                    string new_filename = file_folder + "\\1.ods";
-                    File.Move(old_filename, new_filename);
-
-                    // Report success if file exists - BUG: password protected ODS are returned as true, if not for below check
-                    if (File.Exists(new_filename))
-                    {
-                        convert_success = true;
-                        return convert_success;
-                    }
-                    else
-                    {
-                        convert_success = false;
-                        return convert_success;
-                    }
+                    convert_success = true;
+                    return convert_success;
                 }
-
+                else
+                {
+                    convert_success = false;
+                    return convert_success;
+                }
             }
             convert_success = false;
             return convert_success;

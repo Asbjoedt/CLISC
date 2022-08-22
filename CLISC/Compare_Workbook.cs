@@ -10,7 +10,7 @@ namespace CLISC
 {
     public partial class Compare
     {
-        public int Compare_Workbook(string Results_Directory, string file_folder, string org_filepath, string conv_filepath)
+        public int Compare_Workbook(string org_filepath, string conv_filepath)
         {
             // Use Beyond Compare 4 command line for comparison
             Process app = new Process();

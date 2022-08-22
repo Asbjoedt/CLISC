@@ -516,8 +516,13 @@ namespace CLISC
                 }
             }
 
-            // Make first sheet active sheet
-            ((Excel.Worksheet)app.ActiveWorkbook.Sheets[1]).Select();
+            // Make first cell in first sheet active
+            if (app.Sheets.Count > 0)
+            {
+                Excel.Worksheet firstSheet = (Excel.Worksheet)app.ActiveWorkbook.Sheets[1];
+                firstSheet.Activate();
+                firstSheet.Select();
+            }
 
             wb.Save(); // Save workbook
             wb.Close(); // Close the workbook

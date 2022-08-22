@@ -46,14 +46,14 @@ namespace CLISC
                 case "countconvertcompare":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     List<fileIndex> fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    com.Compare_Spreadsheets(resultsDirectory, fileList);
+                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     app.Compare_Results();
                     break;
 
                 case "countconvertcomparearchive":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    com.Compare_Spreadsheets(resultsDirectory, fileList);
+                    //com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     arc.Archive_Spreadsheets(resultsDirectory, fileList);
                     app.Archive_Results();
                     break;

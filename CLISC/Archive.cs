@@ -174,7 +174,8 @@ namespace CLISC
                 {
                     // Make an .ods copy
                     Conversion con = new Conversion();
-                    convert_success = con.Convert_to_OpenDocument_ExcelInterop(xlsx_conv_filepath, ods_conv_filepath);
+                    convert_success = con.Convert_to_OpenDocument(xlsx_conv_filepath, file_folder);
+
                     // Inform user
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
                     Console.WriteLine($"--> Conversion analyzed: {folder_number}\\1.ods");

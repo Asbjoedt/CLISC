@@ -17,7 +17,7 @@ namespace CLISC
         public static int numTOTAL_diff = 0;
 
         // Compare spreadsheets
-        public void Compare_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
+        public void Compare_Spreadsheets(string function, string Results_Directory, List<fileIndex> File_List)
         {
             Console.WriteLine("---");
             Console.WriteLine("COMPARE");
@@ -33,21 +33,27 @@ namespace CLISC
 
             if (File.Exists(@"C:\\Program Files\\Beyond Compare 4\\BCompare.exe"))
             {
-
                 foreach (fileIndex entry in File_List)
                 {
                     bool compare_success = false;
                     // Get information from list
                     string org_filepath = entry.Org_Filepath;
+                    string copy_filepath = entry.Copy_Filepath;
                     string xlsx_filepath = entry.XLSX_Conv_Filepath;
-                    string ods_filepath = entry.ODS_Conv_Filepath;
-                    string folder = entry.File_Folder;
 
                     // Compare workbook differences
                     if (File.Exists(xlsx_filepath))
                     {
-                        // Compare workbooks using external app Beyond Compare 4
-                        int return_code = Compare_Workbook(Results_Directory, folder, org_filepath, xlsx_filepath);
+                        int return_code;
+                        if (function == "countconvertcomparearchive")
+                        {
+                            // Compare workbooks using external app Beyond Compare 4
+                            return_code = Compare_Workbook(copy_filepath, xlsx_filepath);
+                        }
+                        else
+                        {
+                            return_code = Compare_Workbook(org_filepath, xlsx_filepath);
+                        }
 
                         // Inform user of comparison
                         Console.WriteLine(org_filepath);
