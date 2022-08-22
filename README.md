@@ -42,6 +42,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove printer settings (feature not working)
 * Alert if spreadsheet has embedded or external objects
+* Make first sheet the active sheet
 * Calculate file checksums
 * Zip the archive directory
 
@@ -58,7 +59,7 @@ Prerequisite software for the program to work with these functions.
 * [Beyond Compare 4](https://www.scootersoftware.com/)
   - If you want to use the compare function
   - You need to install program in its default directory
-  - You need to purchase license
+  - You need to purchase license, trial period is 30 days
   
 :warning: **Archive**
 * [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)
