@@ -19,6 +19,7 @@ namespace CLISC
         public static int connections_files = 0;
         public static int extrels_files = 0;
         public static int rtdfunctions_files = 0;
+        public static int printersettings_files = 0;
         public static int embedobj_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
@@ -56,7 +57,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;External Relationships Removed;RTD Functions Removed;Embedded Objects Alert;Hyperlinks Alert");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;External Relationships Removed;RTD Functions Removed;Printersettings Alert;Embedded Objects Alert;Hyperlinks Alert");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -128,15 +129,16 @@ namespace CLISC
                         }
 
                         // Check .xlsx for archival requirements
-                        Tuple<bool, int, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
+                        Tuple<bool, int, int, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
 
                         // Receive infomration from tuple
                         bool data = pidgeon.Item1;
                         int connections = pidgeon.Item2;
                         int extrels = pidgeon.Item3;
                         int rtdfunctions = pidgeon.Item4;
-                        int embedobj = pidgeon.Item5;
-                        int hyperlinks = pidgeon.Item6;
+                        int printersettings = pidgeon.Item5;
+                        int embedobj = pidgeon.Item6;
+                        int hyperlinks = pidgeon.Item7;
 
                         // Transform data types based on information
                         if (data == false || embedobj > 0)
@@ -159,13 +161,17 @@ namespace CLISC
                         {
                             rtdfunctions_files++;
                         }
+                        if (printersettings > 0)
+                        {
+                            printersettings_files++;
+                        }
                         if (embedobj > 0)
                         {
                             embedobj_files++;
                         }
 
                         // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{extrels};{rtdfunctions};{embedobj};{hyperlinks}");
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{extrels};{rtdfunctions};{printersettings};{embedobj};{hyperlinks}");
                         csv3.AppendLine(newLine3_2);
 
                         // Transform data according to archiving requirements
