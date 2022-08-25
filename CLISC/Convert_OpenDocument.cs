@@ -65,7 +65,15 @@ namespace CLISC
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
             Process app = new Process();
-            app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
+            string? dir = Environment.GetEnvironmentVariable("LibreOffice");
+            if (dir != null)
+            {
+                app.StartInfo.FileName = dir;
+            }
+            else
+            {
+                app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
+            }
             app.StartInfo.Arguments = "--headless --convert-to xlsx " + input_filepath + " --outdir " + file_folder;
             app.Start();
             app.WaitForExit();
@@ -111,7 +119,15 @@ namespace CLISC
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
             Process app = new Process();
-            app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
+            string? dir = Environment.GetEnvironmentVariable("LibreOffice");
+            if (dir != null)
+            {
+                app.StartInfo.FileName = dir;
+            }
+            else
+            {
+                app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
+            }
             app.StartInfo.Arguments = "--headless --convert-to ods " + input_filepath + " --outdir " + file_folder;
             app.Start();
             app.WaitForExit();

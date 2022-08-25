@@ -122,7 +122,6 @@ namespace CLISC
                         case ".ots":
                             // Convert to XLSX Transitional using LibreOffice
                             convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
-
                             break;
 
                         // Microsoft Excel Add-in file formats are not converted
@@ -194,13 +193,6 @@ namespace CLISC
                     convert_success = false;
                     error_message = error_messages[1];
                 }
-                // If file conversion exceeds time limit
-                catch (System.TimeoutException)
-                {
-                    numFAILED++;
-                    convert_success = false;
-                    error_message = error_messages[13];
-                }
 
                 finally
                 {
@@ -209,6 +201,7 @@ namespace CLISC
                     Console.WriteLine($"--> Conversion: {convert_success}");
                     if (convert_success == false)
                     {
+                        error_message = error_messages[1];
                         Console.WriteLine($"--> {error_message}");
                     }
 
@@ -228,7 +221,6 @@ namespace CLISC
 
                             // Inform user
                             Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
-                            Console.WriteLine($"--> File saved to: {ods_conv_filepath}");
                         }
 
                         // Ordinary use, no archiving

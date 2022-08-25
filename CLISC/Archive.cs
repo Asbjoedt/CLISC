@@ -46,7 +46,7 @@ namespace CLISC
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;Convert Exists;XLSX Convert Filepath;XLSX Checksum;XLSX File Format Validation;Validation Errors;ODS Convert Filepath; ODS checksum; ODS file Format Validation;Validation Errors;Archival Requirements");
+            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;Convert Exists;XLSX Convert Filepath;XLSX Checksum (MD5);XLSX File Format Validation;Validation Errors;ODS Convert Filepath; ODS checksum (MD5); ODS file Format Validation;Validation Errors;Archival Requirements");
             csv.AppendLine(newLine0);
 
             // Open CSV file to log validation results
@@ -185,7 +185,7 @@ namespace CLISC
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
-                    Console.WriteLine("--> Checksum was calculated");
+                    Console.WriteLine("--> Checksum (MD5) was calculated");
                 }
                 if (entry.ODS_Conv_Extension == ".ods")
                 {
@@ -195,13 +195,14 @@ namespace CLISC
 
                     // Inform user
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
-                    Console.WriteLine($"--> Conversion analyzed: {folder_number}\\1.ods");
+                    Console.WriteLine($"--> File saved to: {folder_number}\\1.ods");
+                    Console.WriteLine($"--> Analyzing: {folder_number}\\1.ods");
                     Console.WriteLine("--> File format validation for .ods is not supported");
                     Console.WriteLine($"--> Archival requirements identical to {folder_number}\\1.xlsx");
 
                     // Calculate checksum
                     ods_conv_checksum = Calculate_MD5(ods_conv_filepath);
-                    Console.WriteLine("--> Checksum was calculated");
+                    Console.WriteLine("--> Checksum (MD5) was calculated");
                 }
 
                 // Calculate checksums for original and copied files
