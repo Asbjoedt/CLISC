@@ -74,7 +74,7 @@ namespace CLISC
                         if (return_code == 11)
                         {
                             compare_success = null;
-                            Console.WriteLine("--> Original file is a .fods, .ods, .ots or .xlsb spreadsheet and cannot be compared");
+                            Console.WriteLine("--> Original file cannot be compared");
                         }
                         if (return_code == 100)
                         {

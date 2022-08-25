@@ -10,7 +10,7 @@ namespace CLISC
         static void Main(string[] args)
         {
             // Inform user of beginning of program
-            Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count Convert & Compare v1.0.0beta");
+            Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert, Compare & Archive v1.0.0beta");
             Console.WriteLine("@Asbjørn Skødt, web: https://github.com/Asbjoedt/CLISC");
             Console.WriteLine("---");
 
