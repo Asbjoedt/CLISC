@@ -7,10 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
-using System.Timers;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System.Threading;
 
 
 namespace CLISC
@@ -18,7 +14,6 @@ namespace CLISC
     public partial class Conversion
     {
         // Define data types
-        private static System.Timers.Timer timeout;
         public static int numCOMPLETE = 0;
         public static int numFAILED = 0;
         public static bool? convert_success = null;

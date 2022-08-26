@@ -78,13 +78,15 @@ namespace CLISC
         // Check for external relationships
         public int Check_ExternalRelationships(string filepath) // Find all external relationships
         {
+            int extrels_count = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 List<ExternalRelationship> extrels = spreadsheet 
                 .GetAllParts()
                 .SelectMany(p => p.ExternalRelationships)
                 .ToList();
-                int extrels_count = extrels.Count;
+                extrels_count = extrels.Count;
 
                 if (extrels.Count > 0) // If external relationships
                 {
@@ -94,6 +96,10 @@ namespace CLISC
                     {
                         extrel_number++;
                         Console.WriteLine($"--> External relationship {extrel_number}");
+                        if (rel.RelationshipType == "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject" || rel.RelationshipType == "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject")
+                        {
+                            Console.WriteLine("--> External OLE object detected. Handle OLE object manually");
+                        }
                         Console.WriteLine($"----> ID: {rel.Id}");
                         Console.WriteLine($"----> Target URI: {rel.Uri}");
                         Console.WriteLine($"----> Relationship type: {rel.RelationshipType}");
@@ -102,50 +108,6 @@ namespace CLISC
                     return extrels_count;
                 }
                 return extrels_count;
-            }
-        }
-
-        public void Handle_ExternalRelationships(string filepath) // Handle external relationships
-        {
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                List<ExternalRelationship> extRels = spreadsheet // Find all external relationships
-                .GetAllParts()
-                .SelectMany(p => p.ExternalRelationships)
-                .ToList();
-
-                foreach (ExternalRelationship rel in extRels)
-                {
-                    if (rel.IsExternal == true)
-                    {
-                        switch (rel.RelationshipType)
-                        {
-                            // Embed linked cell values and remove relationship
-                            case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath":
-                            case "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath":
-                                // Replace formula values with cell values 
-
-    
-
-                                // Remember to finish with removing relationshipId
-
-
-                                // Inform user
-                                Console.WriteLine("--> External cell values detected. All cell values were embedded and the relationship removed");
-                                break;
-
-                            // Alert if the relationship is an OLE object
-                            case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject":
-                            case "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject":
-                                // Inform user
-                                Console.WriteLine("--> External OLE object detected. Handle OLE object manually");
-                                break;
-                        }
-                    }
-                }
-                // Save and close spreadsheet
-                spreadsheet.Save();
-                spreadsheet.Close();
             }
         }
 
@@ -176,7 +138,7 @@ namespace CLISC
                                     if (hit == "RTD")
                                     {
                                         rtd_functions++;
-                                        Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} detected");
+                                        Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} detected and removed");
                                     }
                                 }
                             }
@@ -189,6 +151,8 @@ namespace CLISC
 
         public int Check_EmbeddedObjects(string filepath) // Check for embedded objects and return alert
         {
+            int count_embedobj = 0;
+
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
@@ -197,7 +161,7 @@ namespace CLISC
                     int count_ole = item.EmbeddedObjectParts.Count(); // Register the number of OLE
                     int count_image = item.ImageParts.Count(); // Register number of images
                     int count_3d = item.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
-                    int count_embedobj = count_ole + count_image + count_3d; // Sum
+                    count_embedobj = count_ole + count_image + count_3d; // Sum
 
                     if (count_embedobj > 0) // If embedded objects
                     {
@@ -229,21 +193,22 @@ namespace CLISC
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                         }
                     }
-                    return count_embedobj;
                 }
-                return 0;
             }
+            return count_embedobj;
         }
 
         public int Check_Hyperlinks(string filepath) // Find all hyperlinks
         {
+            int hyperlinks_count = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 List<HyperlinkRelationship> hyperlinks = spreadsheet
                     .GetAllParts()
                     .SelectMany(p => p.HyperlinkRelationships)
                     .ToList();
-                int hyperlinks_count = hyperlinks.Count;
+                hyperlinks_count = hyperlinks.Count;
 
                 if (hyperlinks_count > 0) // If hyperlinks
                 {
@@ -255,11 +220,9 @@ namespace CLISC
                         Console.WriteLine($"--> Hyperlink: {hyperlink_number}");
                         Console.WriteLine($"----> Address: {hyperlink.Uri}");
                     }
-
-                    return hyperlinks_count;
                 }
-                return hyperlinks_count;
             }
+            return hyperlinks_count;
         }
 
         // Check for printer settings

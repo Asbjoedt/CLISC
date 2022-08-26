@@ -7,59 +7,27 @@ using System.Text;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 namespace CLISC
 {
     public partial class Archive
     {
-        public void Transform_XLSX_Requirements(string filepath)
-        {
-            int connections = Check_DataConnections(filepath);
-            if (connections > 0)
-            {
-                Remove_DataConnections(filepath);
-            }
-            int extrels = Check_ExternalRelationships(filepath);
-            if (extrels > 0)
-            {
-                Handle_ExternalRelationships(filepath);
-            }
-            int rtdfunctions = Check_RTDFunctions(filepath);
-            if (rtdfunctions > 0)
-            {
-                Remove_RTDFunctions(filepath);
-            }
-            int printersettings = Check_PrinterSettings(filepath);
-            if (printersettings > 0)
-            {
-                Remove_PrinterSettings(filepath);
-            }
-        }
-
         // Remove data connections
-        public void Remove_DataConnections(string filepath)
+        public static void Remove_DataConnections(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
-                if (conn != null)
-                {
-                    //conn.Connections.RemoveAllChildren();
-                    bool success = conn.DeletePart(conn);
-                }
+                spreadsheet.WorkbookPart.DeletePart(conn);
             }
         }
 
         // Remove RTD functions
-        public int Remove_RTDFunctions(string filepath) // Remove RTD functions
+        public static void Remove_RTDFunctions(string filepath)
         {
-            int rtd_functions = 0;
-
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
+                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = spreadsheet.WorkbookPart.Workbook.Sheets;
                 foreach (Sheet aSheet in allSheets)
                 {
                     WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
@@ -78,25 +46,38 @@ namespace CLISC
                                     string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
                                     if (hit == "RTD")
                                     {
-                                        var cellvalue = cell.CellValue;
-                                        cell.CellFormula = null;
-                                        cell.CellValue = cellvalue;
-                                        Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} removed");
-                                        rtd_functions++;
+                                        CellValue cellvalue = cell.CellValue; // Save current cell value
+                                        cell.CellFormula = null; // Remove RTD formula
+                                        // If cellvalue does not have a real value
+                                        if (cellvalue.Text == "#N/A")
+                                        {
+                                            cell.DataType = CellValues.String;
+                                            cell.CellValue = new CellValue("Invalid data removed");
+                                        }
+                                        else
+                                        {
+                                            cell.CellValue = cellvalue; // Insert saved cell value
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+                // Delete calculation chain
+                CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
+                spreadsheet.WorkbookPart.DeletePart(calc);
+
+                // Delete volatile dependencies
+                VolatileDependenciesPart vol = spreadsheet.WorkbookPart.VolatileDependenciesPart;
+                spreadsheet.WorkbookPart.DeletePart(vol);
             }
-            return rtd_functions;
         }
 
-        // Remove printersettings
-        public void Remove_PrinterSettings(string filepath)
+        // Remove printer settings
+        public static void Remove_PrinterSettings(string filepath)
         {
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (var item in list)
@@ -110,7 +91,43 @@ namespace CLISC
             }
         }
 
+        // Remove external relationships
+        public static void Remove_ExternalRelationships(string filepath) 
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                List<ExternalRelationship> extRels = spreadsheet // Find all external relationships
+                .GetAllParts()
+                .SelectMany(p => p.ExternalRelationships)
+                .ToList();
 
+                foreach (ExternalRelationship rel in extRels)
+                {
+                    if (rel.IsExternal == true)
+                    {
+                        switch (rel.RelationshipType)
+                        {
+                            // Embed linked cell values and remove relationship
+                            case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath":
+                            case "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath":
+                                // Replace formula values with cell values 
+
+
+
+                                // Remember to finish with removing relationshipId
+
+
+                                break;
+                        }
+                    }
+                }
+                // Save and close spreadsheet
+                spreadsheet.Save();
+                spreadsheet.Close();
+            }
+        }
+
+        // Transform data using Excel Interop
         public void Transform_Requirements_ExcelInterop(string filepath)  // Use Excel Interop
         {
             Excel.Application app = new Excel.Application(); // Create Excel object instance

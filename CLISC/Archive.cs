@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
@@ -140,7 +137,7 @@ namespace CLISC
                         int embedobj = pidgeon.Item6;
                         int hyperlinks = pidgeon.Item7;
 
-                        // Transform data types based on information
+                        // Transform data based on information from pidgeon
                         if (data == false || embedobj > 0)
                         {
                             archive_req_accept = false;
@@ -152,18 +149,22 @@ namespace CLISC
                         if (connections > 0)
                         {
                             connections_files++;
+                            Archive.Remove_DataConnections(xlsx_conv_filepath);
                         }
                         if (extrels > 0)
                         {
                             extrels_files++;
+                            Archive.Remove_ExternalRelationships(xlsx_conv_filepath);
                         }
                         if (rtdfunctions > 0)
                         {
                             rtdfunctions_files++;
+                            Archive.Remove_RTDFunctions(xlsx_conv_filepath);
                         }
                         if (printersettings > 0)
                         {
                             printersettings_files++;
+                            Archive.Remove_PrinterSettings(xlsx_conv_filepath);
                         }
                         if (embedobj > 0)
                         {
@@ -175,8 +176,7 @@ namespace CLISC
                         csv3.AppendLine(newLine3_2);
 
                         // Transform data according to archiving requirements
-                        Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
-                        //Transform_XLSX_Requirements(xlsx_conv_filepath);
+                        //Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
                     }
                     // If spreadsheet is malformed because it previously had a macro
                     catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
