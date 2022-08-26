@@ -1,7 +1,11 @@
 # CLISC
 **Command Line Interface Spreadsheet Count, Convert, Compare & Archive**
 
-A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki). For graphical user interface, see child repository [GUISC](https://github.com/Asbjoedt/GUISC).
+A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. 
+
+* For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki)
+* For graphical user interface, see repository [GUISC](https://github.com/Asbjoedt/GUISC)
+* For simple archival workflow conversion tool, see repository [convert-spreadsheets](https://github.com/Asbjoedt/convert-spreadsheets)
 
 :rainbow_flag: **General**
 
@@ -52,13 +56,13 @@ Prerequisite software for the program to work with these functions.
 :warning: **Convert**
 * [LibreOffice](https://www.libreoffice.org/)
   - If you want to convert OpenDocument spreadsheets and/or use the archiving method
-  - You need to install program in its default directory
+  - You need to install program in its default directory, or create environment variable "LibreOffice" with path to your installation
   - The program is free
 
 :warning: **Compare**
 * [Beyond Compare 4](https://www.scootersoftware.com/)
   - If you want to use the compare function
-  - You need to install program in its default directory
+  - You need to install program in its default directory, or create environment variable "BeyondCompare" with path to your installation
   - You need to purchase license, trial period is 30 days
   
 :warning: **Archive**
