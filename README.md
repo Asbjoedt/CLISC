@@ -44,7 +44,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove formula linking cells to other local spreadsheets but keep cell values
 * Remove external data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values
-* Remove printer settings (feature not working)
+* Remove printer settings
 * Alert if spreadsheet has embedded or external objects
 * Make first sheet the active sheet
 * Calculate file checksums
