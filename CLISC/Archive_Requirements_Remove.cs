@@ -7,31 +7,54 @@ using System.Text;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using Microsoft.Office.Interop.Excel;
+using DocumentFormat.OpenXml.Office2016.Excel;
 
 namespace CLISC
 {
-    public partial class Archive
+    public partial class Archive_Requirements
     {
         // Remove data connections
-        public static void Remove_DataConnections(string filepath)
+        public void Remove_DataConnections(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
+                // Delete connection
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
                 spreadsheet.WorkbookPart.DeletePart(conn);
+
+                var dnList = spreadsheet.WorkbookPart.Workbook.DefinedNames.ToList();
+                foreach (DefinedName dn in dnList)
+                {
+                    Console.WriteLine(dn.Name);
+                    dn.Remove();
+                    Console.WriteLine(dn.Name);
+                }
+                Console.WriteLine(dnList.Count);
+
+                // Delete querytable
+                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart part in worksheetparts)
+                {
+                    Console.WriteLine(part.QueryTableParts.Count());
+                    if (part.QueryTableParts == null)
+                    {
+                        Console.WriteLine("du er dejlig");
+                    }
+                }
+
             }
         }
 
         // Remove RTD functions
-        public static void Remove_RTDFunctions(string filepath)
+        public void Remove_RTDFunctions(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = spreadsheet.WorkbookPart.Workbook.Sheets;
-                foreach (Sheet aSheet in allSheets)
+                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart part in worksheetparts)
                 {
-                    WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
-                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = wsp.Worksheet;
+                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = part.Worksheet;
                     var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     foreach (var row in rows)
                     {
@@ -75,7 +98,7 @@ namespace CLISC
         }
 
         // Remove printer settings
-        public static void Remove_PrinterSettings(string filepath)
+        public void Remove_PrinterSettings(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -85,14 +108,14 @@ namespace CLISC
                     var printerList = item.SpreadsheetPrinterSettingsParts.ToList();
                     foreach (var part in printerList)
                     {
-
+                        item.DeletePart(part);
                     }
                 }
             }
         }
 
         // Remove external relationships
-        public static void Remove_ExternalRelationships(string filepath) 
+        public void Remove_ExternalRelationships(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -116,14 +139,21 @@ namespace CLISC
 
                                 // Remember to finish with removing relationshipId
 
-
                                 break;
                         }
                     }
                 }
-                // Save and close spreadsheet
-                spreadsheet.Save();
-                spreadsheet.Close();
+            }
+        }
+
+        // Make first sheet active sheet
+        public void Activate_FirstSheet(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
+                // Remove bookview and thereby remove custom active tab
+                bookViews.Remove();
             }
         }
 

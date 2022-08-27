@@ -65,7 +65,11 @@ namespace CLISC
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
             Process app = new Process();
-            string? dir = Environment.GetEnvironmentVariable("LibreOffice");
+            string? dir = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
+            {
+                dir = Environment.GetEnvironmentVariable("LibreOffice");
+            }
             if (dir != null)
             {
                 app.StartInfo.FileName = dir;
@@ -119,7 +123,11 @@ namespace CLISC
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so direct filepath to new converted spreadsheet cannot be specified. Only the folder can be specified
             Process app = new Process();
-            string? dir = Environment.GetEnvironmentVariable("LibreOffice");
+            string? dir = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
+            {
+                dir = Environment.GetEnvironmentVariable("LibreOffice");
+            }
             if (dir != null)
             {
                 app.StartInfo.FileName = dir;

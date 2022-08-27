@@ -6,12 +6,30 @@ using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Office2013.Excel;
 
 namespace CLISC
 {
-    public partial class Archive
+    public partial class Archive_Requirements
     {
-        public Tuple<bool, int, int, int, int, int, int> Check_XLSX_Requirements(string filepath) 
+        public bool Data { get; set; }
+
+        public int Connections { get; set; }
+
+        public int ExtRels { get; set; }
+
+        public int RTDFunctions { get; set; }
+
+        public int PrinterSettings { get; set; }
+
+        public int EmbedObj { get; set; }
+
+        public int Hyperlinks { get; set; }
+
+        public bool ActiveSheet { get; set; }
+
+
+        public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
             bool data = Check_Value(filepath);
             int connections = Check_DataConnections(filepath);
@@ -20,9 +38,12 @@ namespace CLISC
             int printersettings = Check_PrinterSettings(filepath);
             int embedobj = Check_EmbeddedObjects(filepath);
             int hyperlinks = Check_Hyperlinks(filepath);
+            bool activesheet = Check_ActiveSheet(filepath);
 
-            (bool, int, int, int, int, int, int) pidgeon = (data, connections, extrels, rtdfunctions, printersettings, embedobj, hyperlinks);
-            return pidgeon.ToTuple();
+            // Add information to list and return it
+            List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
+            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, ExtRels = extrels, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet});
+            return Arc_Req;
         }
 
         // Check for any values by checking if sheets and cell values exist
@@ -82,7 +103,7 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalRelationship> extrels = spreadsheet 
+                List<ExternalRelationship> extrels = spreadsheet
                 .GetAllParts()
                 .SelectMany(p => p.ExternalRelationships)
                 .ToList();
@@ -132,7 +153,7 @@ namespace CLISC
                             if (cell.CellFormula != null)
                             {
                                 string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 2) 
+                                if (formula.Length > 2)
                                 {
                                     string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
                                     if (hit == "RTD")
@@ -212,13 +233,10 @@ namespace CLISC
 
                 if (hyperlinks_count > 0) // If hyperlinks
                 {
-                    Console.WriteLine($"--> {hyperlinks_count} hyperlinks detected");
-                    int hyperlink_number = 0;
+                    Console.WriteLine($"--> {hyperlinks_count} hyperlinks detected. Hyperlinks were not removed");
                     foreach (HyperlinkRelationship hyperlink in hyperlinks)
                     {
-                        hyperlink_number++;
-                        Console.WriteLine($"--> Hyperlink: {hyperlink_number}");
-                        Console.WriteLine($"----> Address: {hyperlink.Uri}");
+                        Console.WriteLine($"----> Hyperlink address: {hyperlink.Uri}");
                     }
                 }
             }
@@ -238,7 +256,7 @@ namespace CLISC
                     var printerList = item.SpreadsheetPrinterSettingsParts.ToList();
                     if (printerList.Count > 0)
                     {
-                        Console.WriteLine("--> Printersettings detected");
+                        Console.WriteLine("--> Printersettings detected and removed");
                     }
                     foreach (var part in printerList)
                     {
@@ -247,6 +265,28 @@ namespace CLISC
                 }
             }
             return printersettings;
+        }
+
+        // Check for active sheet
+        public bool Check_ActiveSheet(string filepath)
+        {
+            bool activeSheet = false;
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
+                WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
+                if (workbookView.ActiveTab != null)
+                {
+                    var activeSheetId = workbookView.ActiveTab.Value;
+                    if (activeSheetId > 0)
+                    {
+                        Console.WriteLine("--> First sheet is not active sheet detected and changed");
+                        activeSheet = true;
+                    }
+                }
+            }
+            return activeSheet;
         }
     }
 }
