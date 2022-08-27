@@ -40,9 +40,9 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Rename all conversions 1.xlsx and 1.ods
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML)
-* Check if spreadsheet contains any sheets and any cell values
-* Remove formula linking cells to other local spreadsheets but keep cell values
-* Remove external data connections but keep cell values
+* Check if any cell values exists
+* Remove cell links to other local spreadsheets but keep cell values
+* Remove data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove printer settings
 * Alert if spreadsheet has embedded or external objects
