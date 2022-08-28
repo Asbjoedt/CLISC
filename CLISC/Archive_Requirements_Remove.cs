@@ -9,6 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Excel;
 using DocumentFormat.OpenXml.Office2016.Excel;
+using DocumentFormat.OpenXml.Office2013.ExcelAc;
 
 namespace CLISC
 {
@@ -23,15 +24,6 @@ namespace CLISC
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
                 spreadsheet.WorkbookPart.DeletePart(conn);
 
-                var dnList = spreadsheet.WorkbookPart.Workbook.DefinedNames.ToList();
-                foreach (DefinedName dn in dnList)
-                {
-                    Console.WriteLine(dn.Name);
-                    dn.Remove();
-                    Console.WriteLine(dn.Name);
-                }
-                Console.WriteLine(dnList.Count);
-
                 // Delete querytable
                 List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart part in worksheetparts)
@@ -42,7 +34,6 @@ namespace CLISC
                         Console.WriteLine("du er dejlig");
                     }
                 }
-
             }
         }
 
@@ -114,35 +105,34 @@ namespace CLISC
             }
         }
 
-        // Remove external relationships
-        public void Remove_ExternalRelationships(string filepath)
+        // Remove external cell references
+        public void Remove_CellReferences(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<ExternalRelationship> extRels = spreadsheet // Find all external relationships
-                .GetAllParts()
-                .SelectMany(p => p.ExternalRelationships)
-                .ToList();
-
-                foreach (ExternalRelationship rel in extRels)
+                List<ExternalWorkbookPart> externalworkbookparts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
+                foreach (ExternalWorkbookPart externalworkbookpart in externalworkbookparts)
                 {
-                    if (rel.IsExternal == true)
+                    if (externalworkbookpart.RelationshipType == "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath" || externalworkbookpart.RelationshipType == "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath")
                     {
-                        switch (rel.RelationshipType)
-                        {
-                            // Embed linked cell values and remove relationship
-                            case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath":
-                            case "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath":
-                                // Replace formula values with cell values 
+                        // Delete cell reference formula
 
-
-
-                                // Remember to finish with removing relationshipId
-
-                                break;
-                        }
+                        // Delete cell references part
+                        spreadsheet.WorkbookPart.DeletePart(externalworkbookpart);
                     }
                 }
+                // Delete calculation chain
+                CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
+                spreadsheet.WorkbookPart.DeletePart(calc);
+            }
+        }
+
+        // Remove external object references
+        public void Remove_ExternalObjects(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+
             }
         }
 
@@ -152,8 +142,19 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
-                // Remove bookview and thereby remove custom active tab
-                bookViews.Remove();
+                bookViews.Remove(); // Remove bookview and thereby remove custom active tab
+            }
+        }
+
+        // Remove absolute path to local directory
+        public void Remove_AbsolutePath(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url != null)
+                {
+                    spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url = "";
+                }
             }
         }
 
@@ -175,44 +176,6 @@ namespace CLISC
                 }
                 count_conn = wb.Connections.Count;
                 wb.Save(); // Save workbook
-            }
-
-            // Find and replace RTD functions with cell values
-            bool hasRTD = false;
-            foreach (Excel.Worksheet sheet in wb.Sheets)
-            {
-                try
-                {
-                    Excel.Range range = (Excel.Range)sheet.UsedRange.SpecialCells(Excel.XlCellType.xlCellTypeFormulas);
-                    //Excel.Range range = sheet.get_Range("A1", "XFD1048576").SpecialCells(Excel.XlCellType.xlCellTypeFormulas); // Alternative range
-
-                    foreach (Excel.Range cell in range.Cells)
-                    {
-                        var value = cell.Value2;
-                        string formula = cell.Formula.ToString();
-                        string hit = formula.Substring(0, 4); // Transfer first 4 characters to string
-
-                        if (hit == "=RTD")
-                        {
-                            hasRTD = true;
-                            cell.Formula = "";
-                            cell.Value2 = value;
-                        }
-                    }
-                    if (hasRTD == true)
-                    {
-                        Console.WriteLine("--> RTD function formulas detected and replaced with cell values"); // Inform user
-                        wb.Save(); // Save workbook
-                    }
-                }
-                catch (System.Runtime.InteropServices.COMException) // Catch if no formulas in range
-                {
-                    // Do nothing
-                }
-                catch (System.ArgumentOutOfRangeException) // Catch if formula has less than 4 characters
-                {
-                    // Do nothing
-                }
             }
 
             // Find and replace external cell chains with cell values
@@ -251,22 +214,6 @@ namespace CLISC
                 {
                     // Do nothing
                 }
-            }
-
-            try
-            {
-                // Make first cell in first sheet active
-                if (app.Sheets.Count > 0)
-                {
-                    Excel.Worksheet firstSheet = (Excel.Worksheet)app.ActiveWorkbook.Sheets[1];
-                    firstSheet.Activate();
-                    firstSheet.Select();
-                }
-            }
-            // For some reason an exception is thrown in some spreadsheets when trying to make the first sheet active
-            catch (System.Runtime.InteropServices.COMException)
-            {
-                // Do nothing
             }
 
             wb.Save(); // Save workbook

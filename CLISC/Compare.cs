@@ -42,7 +42,7 @@ namespace CLISC
                     if (File.Exists(xlsx_filepath))
                     {
                         int return_code;
-                        if (function == "countconvertcomparearchive")
+                        if (function == "CountConvertCompareArchive")
                         {
                             // Compare workbooks using external app Beyond Compare 4
                             return_code = Compare_Workbook(copy_filepath, xlsx_filepath);

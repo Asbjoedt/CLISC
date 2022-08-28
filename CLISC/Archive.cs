@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
@@ -15,12 +16,14 @@ namespace CLISC
         public static int invalid_files = 0;
         public static int cellvalue_files = 0;
         public static int connections_files = 0;
-        public static int extrels_files = 0;
+        public static int cellreferences_files = 0;
         public static int rtdfunctions_files = 0;
         public static int printersettings_files = 0;
+        public static int extobj_files = 0;
         public static int embedobj_files = 0;
         public static int hyperlinks_files = 0;
         public static int activesheet_files = 0;
+        public static int absolutepath_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
@@ -46,12 +49,14 @@ namespace CLISC
             bool archive_req_accept = false;
             bool data = false;
             int connections = 0;
-            int extrels = 0;
+            int cellreferences = 0;
             int rtdfunctions = 0;
             int printersettings = 0;
+            int extobj = 0;
             int embedobj = 0;
             int hyperlinks = 0;
             bool activesheet = false;
+            bool absolutepath = false;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
@@ -65,7 +70,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;External Relationships Removed;RTD Functions Removed;Printersettings Removed;Embedded Objects Alert;Hyperlinks Alert;Active Sheet changed");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;Cell References Removed;RTD Functions Removed;Printersettings Removed;External Objects Removed;Embedded Objects Alert;Hyperlinks Alert;Active Sheet changed;Absolute Path Removed");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -141,15 +146,17 @@ namespace CLISC
                         List<Archive_Requirements> pidgeon = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
                         foreach (var item in pidgeon)
                         {
-                            // Receive infomration
+                            // Receive information
                             data = item.Data;
                             connections = item.Connections;
-                            extrels = item.ExtRels;
+                            cellreferences = item.CellReferences;
                             rtdfunctions = item.RTDFunctions;
                             printersettings = item.PrinterSettings;
+                            extobj = item.ExternalObj;
                             embedobj = item.EmbedObj;
                             hyperlinks = item.Hyperlinks;
                             activesheet = item.ActiveSheet;
+                            absolutepath = item.AbsolutePath;
                         }
                         // Transform data based on information from pidgeon
                         if (data != true && embedobj == 0)
@@ -165,10 +172,10 @@ namespace CLISC
                             connections_files++;
                             arc.Remove_DataConnections(xlsx_conv_filepath);
                         }
-                        if (extrels > 0)
+                        if (cellreferences > 0)
                         {
-                            extrels_files++;
-                            arc.Remove_ExternalRelationships(xlsx_conv_filepath);
+                            cellreferences_files++;
+                            arc.Remove_CellReferences(xlsx_conv_filepath);
                         }
                         if (rtdfunctions > 0)
                         {
@@ -179,6 +186,11 @@ namespace CLISC
                         {
                             printersettings_files++;
                             arc.Remove_PrinterSettings(xlsx_conv_filepath);
+                        }
+                        if (extobj > 0)
+                        {
+                            extobj_files++;
+                            arc.Remove_ExternalObjects(xlsx_conv_filepath);
                         }
                         if (embedobj > 0)
                         {
@@ -193,9 +205,14 @@ namespace CLISC
                             activesheet_files++;
                             arc.Activate_FirstSheet(xlsx_conv_filepath);
                         }
+                        if (absolutepath == true)
+                        {
+                            absolutepath_files++;
+                            arc.Remove_AbsolutePath(xlsx_conv_filepath);
+                        }
 
                         // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{extrels};{rtdfunctions};{printersettings};{embedobj};{hyperlinks};{activesheet}");
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{embedobj};{hyperlinks};{activesheet}");
                         csv3.AppendLine(newLine3_2);
 
                         // Transform data according to archiving requirements

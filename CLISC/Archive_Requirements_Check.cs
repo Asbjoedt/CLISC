@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Office2013.Excel;
 
 namespace CLISC
 {
@@ -16,11 +15,13 @@ namespace CLISC
 
         public int Connections { get; set; }
 
-        public int ExtRels { get; set; }
+        public int CellReferences { get; set; }
 
         public int RTDFunctions { get; set; }
 
         public int PrinterSettings { get; set; }
+
+        public int ExternalObj { get; set; }
 
         public int EmbedObj { get; set; }
 
@@ -28,21 +29,25 @@ namespace CLISC
 
         public bool ActiveSheet { get; set; }
 
+        public bool AbsolutePath { get; set; }
 
+        // Perform check of archival requirements
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
             bool data = Check_Value(filepath);
             int connections = Check_DataConnections(filepath);
-            int extrels = Check_ExternalRelationships(filepath);
+            int cellreferences = Check_CellReferences(filepath);
             int rtdfunctions = Check_RTDFunctions(filepath);
             int printersettings = Check_PrinterSettings(filepath);
+            int extobjects = Check_ExternalObjects(filepath);
             int embedobj = Check_EmbeddedObjects(filepath);
             int hyperlinks = Check_Hyperlinks(filepath);
             bool activesheet = Check_ActiveSheet(filepath);
+            bool absolutepath = Check_AbsolutePath(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, ExtRels = extrels, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet});
+            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath });
             return Arc_Req;
         }
 
@@ -65,7 +70,7 @@ namespace CLISC
                 foreach (Sheet aSheet in allSheets)
                 {
                     WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
-                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = wsp.Worksheet;
+                    Worksheet worksheet = wsp.Worksheet;
                     var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     int row_count = rows.Count(); // Count number of rows
                     if (row_count > 0) // If any rows exist, this means cells exist
@@ -97,53 +102,63 @@ namespace CLISC
         }
 
         // Check for external relationships
-        public int Check_ExternalRelationships(string filepath) // Find all external relationships
+        public int Check_CellReferences(string filepath) // Find all external relationships
         {
-            int extrels_count = 0;
+            int cellreferences_count = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalRelationship> extrels = spreadsheet
-                .GetAllParts()
-                .SelectMany(p => p.ExternalRelationships)
-                .ToList();
-                extrels_count = extrels.Count;
-
-                if (extrels.Count > 0) // If external relationships
+                List<ExternalWorkbookPart> extwbpart = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
+                if (extwbpart.Count > 0)
                 {
-                    int extrel_number = 0;
-                    Console.WriteLine($"--> {extrels.Count} external relationships detected");
-                    foreach (ExternalRelationship rel in extrels)
+                    foreach (ExternalWorkbookPart ext in extwbpart)
                     {
-                        extrel_number++;
-                        Console.WriteLine($"--> External relationship {extrel_number}");
-                        if (rel.RelationshipType == "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject" || rel.RelationshipType == "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject")
+                        List<ExternalRelationship> extrels = ext.ExternalRelationships.ToList();
+                        foreach (ExternalRelationship extrel in extrels)
                         {
-                            Console.WriteLine("--> External OLE object detected. Handle OLE object manually");
+                            Console.WriteLine(extrel.RelationshipType);
+                            if (ext.RelationshipType == "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath" || ext.RelationshipType == "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath")
+                            {
+                                Console.WriteLine("dd");
+                                var cellreferences = ext.ExternalLink.ToList();
+                                foreach (var cellreference in cellreferences)
+                                {
+                                    Console.WriteLine(cellreference.LocalName);
+                                    cellreferences_count++;
+                                }
+                            }
                         }
-                        Console.WriteLine($"----> ID: {rel.Id}");
-                        Console.WriteLine($"----> Target URI: {rel.Uri}");
-                        Console.WriteLine($"----> Relationship type: {rel.RelationshipType}");
-                        Console.WriteLine($"----> External: {rel.IsExternal}");
                     }
-                    return extrels_count;
                 }
-                return extrels_count;
             }
+            return cellreferences_count;
         }
 
+        // Check for external object references
+        public int Check_ExternalObjects(string filepath)
+        {
+            int extobjects_count = 0;
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+
+            }
+            return extobjects_count;
+        }
+
+        // Check for RTD functions
         public static int Check_RTDFunctions(string filepath) // Check for RTD functions
         {
-            int rtd_functions = 0;
+            int rtd_functions_count = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
+                Sheets allSheets = wbPart.Workbook.Sheets;
                 foreach (Sheet aSheet in allSheets)
                 {
                     WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
-                    DocumentFormat.OpenXml.Spreadsheet.Worksheet worksheet = wsp.Worksheet;
+                    Worksheet worksheet = wsp.Worksheet;
                     var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     foreach (var row in rows)
                     {
@@ -158,7 +173,7 @@ namespace CLISC
                                     string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
                                     if (hit == "RTD")
                                     {
-                                        rtd_functions++;
+                                        rtd_functions_count++;
                                         Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} detected and removed");
                                     }
                                 }
@@ -167,12 +182,13 @@ namespace CLISC
                     }
                 }
             }
-            return rtd_functions;
+            return rtd_functions_count;
         }
 
+        // Check for embedded objects
         public int Check_EmbeddedObjects(string filepath) // Check for embedded objects and return alert
         {
-            int count_embedobj = 0;
+            int embedobj_count = 0;
 
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
@@ -182,11 +198,11 @@ namespace CLISC
                     int count_ole = item.EmbeddedObjectParts.Count(); // Register the number of OLE
                     int count_image = item.ImageParts.Count(); // Register number of images
                     int count_3d = item.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
-                    count_embedobj = count_ole + count_image + count_3d; // Sum
+                    embedobj_count = count_ole + count_image + count_3d; // Sum
 
-                    if (count_embedobj > 0) // If embedded objects
+                    if (embedobj_count > 0) // If embedded objects
                     {
-                        Console.WriteLine($"--> {count_embedobj} embedded objects detected");
+                        Console.WriteLine($"--> {embedobj_count} embedded objects detected");
                         var embed_ole = item.EmbeddedObjectParts.ToList(); // Register each OLE to a list
                         var embed_image = item.ImageParts.ToList(); // Register each image to a list
                         var embed_3d = item.Model3DReferenceRelationshipParts.ToList(); // Register each 3D model to a list
@@ -216,9 +232,10 @@ namespace CLISC
                     }
                 }
             }
-            return count_embedobj;
+            return embedobj_count;
         }
 
+        // Check for hyperlinks
         public int Check_Hyperlinks(string filepath) // Find all hyperlinks
         {
             int hyperlinks_count = 0;
@@ -246,25 +263,26 @@ namespace CLISC
         // Check for printer settings
         public int Check_PrinterSettings(string filepath)
         {
-            int printersettings = 0;
+            int printersettings_count = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
-                foreach (var item in list)
+                var worksheetpartslist = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                List<SpreadsheetPrinterSettingsPart> printerList = new List<SpreadsheetPrinterSettingsPart>();
+                foreach (WorksheetPart worksheetpart in worksheetpartslist)
                 {
-                    var printerList = item.SpreadsheetPrinterSettingsParts.ToList();
-                    if (printerList.Count > 0)
-                    {
-                        Console.WriteLine("--> Printersettings detected and removed");
-                    }
-                    foreach (var part in printerList)
-                    {
-                        printersettings++;
-                    }
+                    printerList = worksheetpart.SpreadsheetPrinterSettingsParts.ToList();
+                }
+                foreach (SpreadsheetPrinterSettingsPart printer in printerList)
+                {
+                    printersettings_count++;
+                }
+                if (printerList.Count > 0)
+                {
+                    Console.WriteLine($"--> {printersettings_count} printersettings detected and removed");
                 }
             }
-            return printersettings;
+            return printersettings_count;
         }
 
         // Check for active sheet
@@ -287,6 +305,24 @@ namespace CLISC
                 }
             }
             return activeSheet;
+        }
+
+        // Check for absolute path
+        public bool Check_AbsolutePath(string filepath)
+        {
+            bool absolutepath = false;
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url == null)
+                {
+                    string path = spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url;
+                    Console.WriteLine(path);
+                    Console.WriteLine("--> Absolute path from local directory detected and removed");
+                    absolutepath = true;
+                }
+            }
+            return absolutepath;
         }
     }
 }
