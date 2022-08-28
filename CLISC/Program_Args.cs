@@ -7,7 +7,7 @@ namespace CLISC
     public class Program_Args
     {
         // Parameter function
-        [Option('f', "function", Required = true, HelpText = "Specify the function you want to use: count, countconvert, countconvertcompare or countconvertcomparearchive")]
+        [Option('f', "function", Required = true, HelpText = "Specify the function you want to use: Count, CountConvert, CountConvertCompare or CountConvertCompareArchive")]
         public string Function { get; set; }
 
         // Parameter input directory

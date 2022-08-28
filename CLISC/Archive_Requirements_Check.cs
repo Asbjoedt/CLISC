@@ -43,11 +43,11 @@ namespace CLISC
             int embedobj = Check_EmbeddedObjects(filepath);
             int hyperlinks = Check_Hyperlinks(filepath);
             bool activesheet = Check_ActiveSheet(filepath);
-            bool absolutepath = Check_AbsolutePath(filepath);
+            //bool absolutepath = Check_AbsolutePath(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath });
+            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet });
             return Arc_Req;
         }
 
@@ -108,28 +108,33 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalWorkbookPart> extwbpart = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
-                if (extwbpart.Count > 0)
+                List<ExternalWorkbookPart> extwbPart = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
+                if (extwbPart.Count > 0)
                 {
-                    foreach (ExternalWorkbookPart ext in extwbpart)
+                    foreach (ExternalWorkbookPart ext in extwbPart)
                     {
-                        List<ExternalRelationship> extrels = ext.ExternalRelationships.ToList();
-                        foreach (ExternalRelationship extrel in extrels)
+                        List<ExternalRelationship> extrels_Transitional = ext.ExternalRelationships.Where(p => p.RelationshipType.Equals("http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath")).ToList();
+
+                        List<ExternalRelationship> extrels_Strict = ext.ExternalRelationships.Where(p => p.RelationshipType.Equals("http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath")).ToList();
+
+                        if (extrels_Transitional.Count > 0 || extrels_Strict.Count > 0)
                         {
-                            Console.WriteLine(extrel.RelationshipType);
-                            if (ext.RelationshipType == "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath" || ext.RelationshipType == "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath")
+                            var cellreferenceFiles = ext.ExternalLink.ToList();
+                            foreach (ExternalBook externalBook in cellreferenceFiles)
                             {
-                                Console.WriteLine("dd");
-                                var cellreferences = ext.ExternalLink.ToList();
+                                var cellreferences = externalBook.SheetDataSet.ChildElements.ToList();
                                 foreach (var cellreference in cellreferences)
                                 {
-                                    Console.WriteLine(cellreference.LocalName);
                                     cellreferences_count++;
                                 }
                             }
                         }
                     }
                 }
+            }
+            if (cellreferences_count > 0)
+            {
+                Console.WriteLine($"--> {cellreferences_count} external cell references detected and removed");
             }
             return cellreferences_count;
         }
@@ -312,13 +317,11 @@ namespace CLISC
         {
             bool absolutepath = false;
 
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url == null)
+                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url != null)
                 {
-                    string path = spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url;
-                    Console.WriteLine(path);
-                    Console.WriteLine("--> Absolute path from local directory detected and removed");
+                    Console.WriteLine("--> Absolute path to local directory detected and removed");
                     absolutepath = true;
                 }
             }
