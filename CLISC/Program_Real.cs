@@ -32,25 +32,25 @@ namespace CLISC
             // Method references
             switch (function)
             {
-                case "count":
+                case "Count":
                     cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     app.Count_Results();
                     break;
 
-                case "countconvert":
+                case "CountConvert":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
                     app.Convert_Results();
                     break;
 
-                case "countconvertcompare":
+                case "CountConvertCompare":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     List<fileIndex> fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
                     com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     app.Compare_Results();
                     break;
 
-                case "countconvertcomparearchive":
+                case "CountConvertCompareArchive":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
                     com.Compare_Spreadsheets(function, resultsDirectory, fileList);
@@ -59,7 +59,7 @@ namespace CLISC
                     break;
 
                 default:
-                    Console.WriteLine("Invalid function argument. Function argument must be one these: count, countconvert, countconvertcompare, countconvertcomparearchive");
+                    Console.WriteLine("Invalid function argument. Function argument must be one these: Count, CountConvert, CountConvertCompare, CountConvertCompareArchive");
                     break;
             }
 
@@ -112,10 +112,13 @@ namespace CLISC
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} of {Conversion.numCOMPLETE} converted spreadsheets completed comparison");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
             Console.WriteLine($"ARCHIVE: {Archive.invalid_files} of {Conversion.numCOMPLETE} converted spreadsheets have invalid file formats");
-            Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} of {Conversion.numCOMPLETE} converted spreadsheets had no cell values - Manually exempt spreadsheets from archiving");
+            Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} of {Conversion.numCOMPLETE} converted spreadsheets had no cell values - Handle manually!");
             Console.WriteLine($"ARCHIVE: {Archive.connections_files} of {Conversion.numCOMPLETE} converted spreadsheets had data connections - Data connections were removed");
-            Console.WriteLine($"ARCHIVE: {Archive.extrels_files} of {Conversion.numCOMPLETE} converted spreadsheets had external relationships - External relationships were removed");
+            Console.WriteLine($"ARCHIVE: {Archive.cellreferences_files} of {Conversion.numCOMPLETE} converted spreadsheets had external cell references - External cell references were removed");
             Console.WriteLine($"ARCHIVE: {Archive.rtdfunctions_files} of {Conversion.numCOMPLETE} converted spreadsheets had RTD functions - RTD functions were removed");
+            Console.WriteLine($"ARCHIVE: {Archive.printersettings_files} of {Conversion.numCOMPLETE} converted spreadsheets had printer settings - Printer settings were removed");
+            Console.WriteLine($"ARCHIVE: {Archive.activesheet_files} of {Conversion.numCOMPLETE} converted spreadsheets had not first sheet as active sheet - Active sheet was changed");
+            Console.WriteLine($"ARCHIVE: {Archive.extobj_files} of {Conversion.numCOMPLETE} converted spreadsheets had external object references - External object references were removed");
             Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} of {Conversion.numCOMPLETE} converted spreadsheets have embedded objects - Embedded objects were NOT removed. Handle manually!");
         }
     }

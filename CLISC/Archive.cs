@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Math;
+using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
@@ -17,10 +16,14 @@ namespace CLISC
         public static int invalid_files = 0;
         public static int cellvalue_files = 0;
         public static int connections_files = 0;
-        public static int extrels_files = 0;
+        public static int cellreferences_files = 0;
         public static int rtdfunctions_files = 0;
         public static int printersettings_files = 0;
+        public static int extobj_files = 0;
         public static int embedobj_files = 0;
+        public static int hyperlinks_files = 0;
+        public static int activesheet_files = 0;
+        public static int absolutepath_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
@@ -43,7 +46,17 @@ namespace CLISC
             string xlsx_validity = "";
             int xlsx_errors_count = 0;
             string ods_conv_checksum = "";
-            bool archive_req_accept = true;
+            bool archive_req_accept = false;
+            bool data = false;
+            int connections = 0;
+            int cellreferences = 0;
+            int rtdfunctions = 0;
+            int printersettings = 0;
+            int extobj = 0;
+            int embedobj = 0;
+            int hyperlinks = 0;
+            bool activesheet = false;
+            bool absolutepath = false;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
@@ -57,7 +70,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;External Relationships Removed;RTD Functions Removed;Printersettings Alert;Embedded Objects Alert;Hyperlinks Alert");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;Cell References Removed;RTD Functions Removed;Printersettings Removed;External Objects Removed;Embedded Objects Alert;Hyperlinks Alert;Active Sheet changed");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -129,21 +142,26 @@ namespace CLISC
                         }
 
                         // Check .xlsx for archival requirements
-                        Tuple<bool, int, int, int, int, int, int> pidgeon = Check_XLSX_Requirements(xlsx_conv_filepath);
-
-                        // Receive infomration from tuple
-                        bool data = pidgeon.Item1;
-                        int connections = pidgeon.Item2;
-                        int extrels = pidgeon.Item3;
-                        int rtdfunctions = pidgeon.Item4;
-                        int printersettings = pidgeon.Item5;
-                        int embedobj = pidgeon.Item6;
-                        int hyperlinks = pidgeon.Item7;
-
-                        // Transform data types based on information
-                        if (data == false || embedobj > 0)
+                        Archive_Requirements arc = new Archive_Requirements();
+                        List<Archive_Requirements> pidgeon = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
+                        foreach (var item in pidgeon)
                         {
-                            archive_req_accept = false;
+                            // Receive information
+                            data = item.Data;
+                            connections = item.Connections;
+                            cellreferences = item.CellReferences;
+                            rtdfunctions = item.RTDFunctions;
+                            printersettings = item.PrinterSettings;
+                            extobj = item.ExternalObj;
+                            embedobj = item.EmbedObj;
+                            hyperlinks = item.Hyperlinks;
+                            activesheet = item.ActiveSheet;
+                            absolutepath = item.AbsolutePath;
+                        }
+                        // Transform data based on information from pidgeon
+                        if (data != true && embedobj == 0)
+                        {
+                            archive_req_accept = true;
                         }
                         if (data == false)
                         {
@@ -152,31 +170,53 @@ namespace CLISC
                         if (connections > 0)
                         {
                             connections_files++;
+                            arc.Remove_DataConnections(xlsx_conv_filepath);
                         }
-                        if (extrels > 0)
+                        if (cellreferences > 0)
                         {
-                            extrels_files++;
+                            cellreferences_files++;
+                            arc.Remove_CellReferences(xlsx_conv_filepath);
                         }
                         if (rtdfunctions > 0)
                         {
                             rtdfunctions_files++;
+                            arc.Remove_RTDFunctions(xlsx_conv_filepath);
                         }
                         if (printersettings > 0)
                         {
                             printersettings_files++;
+                            arc.Remove_PrinterSettings(xlsx_conv_filepath);
+                        }
+                        if (extobj > 0)
+                        {
+                            extobj_files++;
+                            arc.Remove_ExternalObjects(xlsx_conv_filepath);
                         }
                         if (embedobj > 0)
                         {
                             embedobj_files++;
                         }
+                        if (hyperlinks > 0)
+                        {
+                            hyperlinks_files++;
+                        }
+                        if (activesheet == true)
+                        {
+                            activesheet_files++;
+                            arc.Activate_FirstSheet(xlsx_conv_filepath);
+                        }
+                        if (absolutepath == true)
+                        {
+                            absolutepath_files++;
+                            arc.Remove_AbsolutePath(xlsx_conv_filepath);
+                        }
 
                         // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{extrels};{rtdfunctions};{printersettings};{embedobj};{hyperlinks}");
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{embedobj};{hyperlinks};{activesheet}");
                         csv3.AppendLine(newLine3_2);
 
                         // Transform data according to archiving requirements
-                        Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
-                        //Transform_XLSX_Requirements(xlsx_conv_filepath);
+                        //Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
                     }
                     // If spreadsheet is malformed because it previously had a macro
                     catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)

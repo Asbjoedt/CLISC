@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace CLISC
 {
@@ -14,7 +15,11 @@ namespace CLISC
         {
             // Use Beyond Compare 4 command line for comparison
             Process app = new Process();
-            string? dir = Environment.GetEnvironmentVariable("BeyondCompare");
+            string? dir = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
+            {
+                dir = Environment.GetEnvironmentVariable("BeyondCompare");
+            }
             if (dir != null)
             {
                 app.StartInfo.FileName = dir;

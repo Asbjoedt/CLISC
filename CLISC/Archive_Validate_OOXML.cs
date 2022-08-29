@@ -10,7 +10,6 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Validation;
-using Microsoft.Office.Interop.Excel;
 
 namespace CLISC
 {
