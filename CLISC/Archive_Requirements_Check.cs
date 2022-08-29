@@ -108,24 +108,28 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalWorkbookPart> extwbPart = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
-                if (extwbPart.Count > 0)
+                List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
+                if (extwbParts.Count > 0)
                 {
-                    foreach (ExternalWorkbookPart ext in extwbPart)
+                    foreach (ExternalWorkbookPart ext in extwbParts)
                     {
-                        List<ExternalRelationship> extrels_Transitional = ext.ExternalRelationships.Where(p => p.RelationshipType.Equals("http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath")).ToList();
-
-                        List<ExternalRelationship> extrels_Strict = ext.ExternalRelationships.Where(p => p.RelationshipType.Equals("http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath")).ToList();
-
-                        if (extrels_Transitional.Count > 0 || extrels_Strict.Count > 0)
+                        var elements = ext.ExternalLink.ChildElements.ToList();
+                        foreach (var element in elements)
                         {
-                            var cellreferenceFiles = ext.ExternalLink.ToList();
-                            foreach (ExternalBook externalBook in cellreferenceFiles)
+                            if (element.LocalName == "externalBook")
                             {
-                                var cellreferences = externalBook.SheetDataSet.ChildElements.ToList();
-                                foreach (var cellreference in cellreferences)
+                                var externalLink = ext.ExternalLink.ToList();
+                                foreach (ExternalBook externalBook in externalLink)
                                 {
-                                    cellreferences_count++;
+                                    var cellreferences = externalBook.SheetDataSet.ChildElements.ToList();
+                                    foreach (var cellreference in cellreferences)
+                                    {
+                                        var cells = cellreference.InnerText.ToList();
+                                        foreach (var cell in cells)
+                                        {
+                                            cellreferences_count++;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -142,13 +146,35 @@ namespace CLISC
         // Check for external object references
         public int Check_ExternalObjects(string filepath)
         {
-            int extobjects_count = 0;
+            int extobj_count = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-
+                List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
+                if (extwbParts.Count > 0)
+                {
+                    foreach (ExternalWorkbookPart ext in extwbParts)
+                    {
+                        var elements = ext.ExternalLink.ChildElements.ToList();
+                        foreach (var element in elements)
+                        {
+                            if (element.LocalName == "oleLink")
+                            {
+                                var externalLink = ext.ExternalLink.ToList();
+                                foreach (OleLink oleLink in externalLink)
+                                {
+                                    extobj_count++;
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            return extobjects_count;
+            if (extobj_count > 0)
+            {
+                Console.WriteLine($"--> {extobj_count} external objects detected and removed");
+            }
+            return extobj_count;
         }
 
         // Check for RTD functions
