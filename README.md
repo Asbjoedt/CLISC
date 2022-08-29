@@ -6,6 +6,7 @@ A small Windows console application made in C#. It is a hobby project. The app m
 * For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki)
 * For graphical user interface, see repository [GUISC](https://github.com/Asbjoedt/GUISC)
 * For simple archival workflow conversion tool, see repository [convert-spreadsheets](https://github.com/Asbjoedt/convert-spreadsheets)
+* For simple archival workflow validation tool, see repository [validate-spreadsheets](https://github.com/Asbjoedt/validate-spreadsheets)
 
 :rainbow_flag: **General**
 
@@ -41,11 +42,12 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML)
 * Check if any cell values exists
-* Remove cell links to other local spreadsheets but keep cell values
+* Remove cell references to other spreadsheets but keep cell values
 * Remove data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove printer settings
-* Alert if spreadsheet has embedded or external objects
+* Remove external objects
+* Alert if spreadsheet has embedded objects
 * Make first sheet the active sheet
 * Calculate file checksums
 * Zip the archive directory
