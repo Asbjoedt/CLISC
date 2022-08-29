@@ -97,11 +97,11 @@ Create your arguments from the following list:
 ```
 **Example of full usage**
 ```
-.\CLISC.exe --function countconvertcomparearchive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
+.\CLISC.exe --function CountConvertCompareArchive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
 ```
 **or shorter**
 ```
-.\CLISC.exe -f countconvertcomparearchive -i "c:\my_path" -o "c:\my_path" -r true
+.\CLISC.exe -f CountConvertCompareArchive -i "c:\my_path" -o "c:\my_path" -r true
 ```
 
 If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Sample%20data).
