@@ -39,7 +39,7 @@ namespace CLISC
                     string xlsx_filepath = entry.XLSX_Conv_Filepath;
 
                     // Compare workbook differences
-                    if (File.Exists(xlsx_filepath))
+                    if (File.Exists(xlsx_filepath) && Path.GetExtension(org_filepath).ToLower() != ".xlsb")
                     {
                         int return_code;
                         if (function == "CountConvertCompareArchive")

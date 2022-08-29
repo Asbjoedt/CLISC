@@ -110,37 +110,6 @@ namespace CLISC
                             Console.WriteLine("--> Converted to Strict conformance");
                         }
 
-                        // Validate
-                        Validation validate = new Validation();
-                        List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
-
-                        xlsx_errors_count = xlsx_validation_list.Count;
-
-                        foreach (Validation info in xlsx_validation_list) // Get information from validation list
-                        {
-                            xlsx_validity = info.Validity;
-                            int? error_number = info.Error_Number;
-                            string? error_id = info.Error_Id;
-                            string? error_description = info.Error_Description;
-                            string? error_type = info.Error_Type;
-                            string? error_node = info.Error_Node;
-                            string? error_path = info.Error_Path;
-                            string? error_part = info.Error_Part;
-                            string? error_relatednode = info.Error_RelatedNode;
-                            string? error_relatedtext = info.Error_RelatedNode_InnerText;
-
-                            if (xlsx_validity == "Invalid")
-                            {
-                                // If invalid write to CSV validation log
-                                var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_id};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
-                                csv2.AppendLine(newLine2_2);
-
-                                // Reset data types, for correct CSV file output
-                                error_relatednode = null;
-                                error_relatedtext = null;
-                            }
-                        }
-
                         // Check .xlsx for archival requirements
                         Archive_Requirements arc = new Archive_Requirements();
                         List<Archive_Requirements> pidgeon = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
@@ -158,7 +127,7 @@ namespace CLISC
                             activesheet = item.ActiveSheet;
                             absolutepath = item.AbsolutePath;
                         }
-                        // Transform data based on information from pidgeon
+                        // Transform data according to archiving requirements
                         if (data != true && embedobj == 0)
                         {
                             archive_req_accept = true;
@@ -215,10 +184,41 @@ namespace CLISC
                         var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{embedobj};{hyperlinks};{activesheet}");
                         csv3.AppendLine(newLine3_2);
 
-                        // Transform data according to archiving requirements
-                        //Transform_Requirements_ExcelInterop(xlsx_conv_filepath);
+                        // Validate
+                        Validation validate = new Validation();
+                        if (File.Exists(xlsx_conv_filepath))
+                        {
+                            List<Validation> xlsx_validation_list = validate.Validate_OOXML(org_filepath, xlsx_conv_filepath, Results_Directory);
+
+                            xlsx_errors_count = xlsx_validation_list.Count;
+
+                            foreach (Validation info in xlsx_validation_list) // Get information from validation list
+                            {
+                                xlsx_validity = info.Validity;
+                                int? error_number = info.Error_Number;
+                                string? error_id = info.Error_Id;
+                                string? error_description = info.Error_Description;
+                                string? error_type = info.Error_Type;
+                                string? error_node = info.Error_Node;
+                                string? error_path = info.Error_Path;
+                                string? error_part = info.Error_Part;
+                                string? error_relatednode = info.Error_RelatedNode;
+                                string? error_relatedtext = info.Error_RelatedNode_InnerText;
+
+                                if (xlsx_validity == "Invalid")
+                                {
+                                    // If invalid write to CSV validation log
+                                    var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_id};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
+                                    csv2.AppendLine(newLine2_2);
+
+                                    // Reset data types, for correct CSV file output
+                                    error_relatednode = null;
+                                    error_relatedtext = null;
+                                }
+                            }
+                        }
                     }
-                    // If spreadsheet is malformed because it previously had a macro
+                    // If spreadsheet is malformed
                     catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
                     {
                         // Write to CSV archival requirements log

@@ -59,8 +59,7 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 //Check if worksheets exist
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                DocumentFormat.OpenXml.Spreadsheet.Sheets allSheets = wbPart.Workbook.Sheets;
+                Sheets allSheets = spreadsheet.WorkbookPart.Workbook.Sheets;
                 if (allSheets == null)
                 {
                     Console.WriteLine("--> No cell values detected");
@@ -101,8 +100,8 @@ namespace CLISC
             return conn_count;
         }
 
-        // Check for external relationships
-        public int Check_CellReferences(string filepath) // Find all external relationships
+        // Check for external cell references
+        public int Check_CellReferences(string filepath)
         {
             int cellreferences_count = 0;
 
