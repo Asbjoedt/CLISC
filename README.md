@@ -51,10 +51,9 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Zip the archive directory
 
 ## Dependencies
-Prerequisite software for the program to work with these functions.
 
 :warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
-* f you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
+* If you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
 * You need to install program in its default directory
 * You need to purchase
 
