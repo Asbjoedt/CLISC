@@ -53,23 +53,20 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 ## Dependencies
 Prerequisite software for the program to work with these functions.
 
-:warning: **Convert**
-* [LibreOffice](https://www.libreoffice.org/)
-  - If you want to convert OpenDocument spreadsheets and/or use the archiving method
-  - You need to install program in its default directory, or create environment variable "LibreOffice" with path to your installation
-  - The program is free
+:warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
+* f you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
+* You need to install program in its default directory
+* You need to purchase
 
-:warning: **Compare**
-* [Beyond Compare 4](https://www.scootersoftware.com/)
-  - If you want to use the compare function
-  - You need to install program in its default directory, or create environment variable "BeyondCompare" with path to your installation
-  - You need to purchase license, trial period is 30 days
-  
-:warning: **Archive**
-* [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)
-  - If you want to use the archiving method, which converts .xlsx conformance from Transitional to Strict
-  - You need to install program in its default directory
-  - You need to purchase
+:warning: **[LibreOffice](https://www.libreoffice.org/)**
+* If you want to convert OpenDocument spreadsheets and/or use the archiving method
+* You need to install program in its default directory, or create environment variable "LibreOffice" with path to your installation
+* The program is free
+
+:warning: **[Beyond Compare 4](https://www.scootersoftware.com/)**
+* If you want to use the compare function
+* You need to install program in its default directory, or create environment variable "BeyondCompare" with path to your installation
+* You need to purchase license, trial period is 30 days
 
 ## How to use
 Download the executable version [here](https://github.com/Asbjoedt/CLISC/releases). There's no need to install. In your terminal change directory to the folder where CLISC.exe is. Then, to execute the program input:
@@ -82,10 +79,10 @@ Create your arguments from the following list:
 
 **Functions to use** (required, pick one of the four)
 ```
---function count
---function countconvert
---function countconvertcompare
---function countconvertcomparearchive
+--function Count
+--function CountConvert
+--function CountConvertCompare
+--function CountConvertCompareArchive
 ```
 **Input directory** (required)
 ```
