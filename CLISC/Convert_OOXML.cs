@@ -31,28 +31,66 @@ namespace CLISC
             return convert_success;
         }
 
-        // Convert .xlsx Strict to Transitional conformance - WORK IN PROGRESS
-        public bool Convert_Strict_to_Transitional(string input_filepath, string output_filepath, string file_folder)
+        // Convert .xlsx Strict to Transitional conformance
+        public bool Convert_Strict_to_Transitional(string input_filepath, string output_filepath)
         {
-            using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, false))
-            {
-                // Check for Strict conformance class
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                var conformance = wbPart.Workbook.Conformance;
+            string namespace_xmlns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+            string namespace_xmlns_r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
+            using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
+            {
+                Workbook workbook = spreadsheet.WorkbookPart.Workbook;
                 // If Strict, transform
-                if (conformance != null || conformance == "transitional")
+                if (workbook.Conformance != null || workbook.Conformance != "transitional")
                 {
+                    // Change conformance class
+                    workbook.Conformance.InnerText = "transitional";
+                    // Change namespaces in Workbook
+                    workbook.RemoveNamespaceDeclaration("xmlns");
+                    workbook.AddNamespaceDeclaration("xmlns", namespace_xmlns);
+                    workbook.RemoveNamespaceDeclaration("xmlns:r");
+                    workbook.AddNamespaceDeclaration("xmlns:r", namespace_xmlns_r);
+                    // Change namespaces in worksheets
+                    List<WorksheetPart> worksheets = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                    foreach (WorksheetPart worksheet in worksheets)
+                    {
+                        worksheet.Worksheet.RemoveNamespaceDeclaration("xmlns");
+                        worksheet.Worksheet.AddNamespaceDeclaration("xmlns", namespace_xmlns);
+                        worksheet.Worksheet.RemoveNamespaceDeclaration("xmlns:r");
+                        worksheet.Worksheet.AddNamespaceDeclaration("xmlns:r", namespace_xmlns_r);
+                        worksheet.Worksheet.RemoveNamespaceDeclaration("xmlns:v");
+                    }
+                    // Change namespaces in stylesheet
 
                 }
-
                 bool convert_success = true;
                 return convert_success;
             }
         }
 
-        // Convert .xlsx Transtional to Strict using Excel and delete select file properties
+        // Convert .xlsx Transtional to Strict
         public bool Convert_Transitional_to_Strict(string input_filepath, string output_filepath)
+        {
+            string namespace_xmlns = "http://purl.oclc.org/ooxml/spreadsheetml/main";
+            string namespace_xmlns_r = "http://purl.oclc.org/ooxml/officeDocument/relationships";
+
+            using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
+            {
+                Workbook workbook = spreadsheet.WorkbookPart.Workbook;
+                // If Transitional, transform
+                if (workbook.Conformance == null || workbook.Conformance == "transitional")
+                {
+                    // Change conformance class
+                    workbook.Conformance.InnerText = "strict";
+
+                }
+            }
+            bool convert_success = true;
+            return convert_success;
+        }
+
+            // Convert .xlsx Transtional to Strict using Excel
+            public bool Convert_Transitional_to_Strict_ExcelInterop(string input_filepath, string output_filepath)
         {
             bool convert_success = false;
 
