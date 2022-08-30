@@ -3,10 +3,10 @@
 
 A small Windows console application made in C#. It is a hobby project. The app might have use cases in digital archiving of spreadsheets. 
 
-* For more information, see the [wiki](https://github.com/Asbjoedt/CLISC/wiki)
-* For graphical user interface, see repository [GUISC](https://github.com/Asbjoedt/GUISC)
-* For simple archival workflow conversion tool, see repository [convert-spreadsheets](https://github.com/Asbjoedt/convert-spreadsheets)
-* For simple archival workflow validation tool, see repository [validate-spreadsheets](https://github.com/Asbjoedt/validate-spreadsheets)
+* For more information, see the **[wiki](https://github.com/Asbjoedt/CLISC/wiki)**
+* For graphical user interface, see repository **[GUISC](https://github.com/Asbjoedt/GUISC)**
+* For simple archival workflow conversion tool, see repository **[convert-spreadsheets](https://github.com/Asbjoedt/convert-spreadsheets)**
+* For simple archival workflow validation tool, see repository **[validate-spreadsheets](https://github.com/Asbjoedt/validate-spreadsheets)**
 
 :rainbow_flag: **General**
 
