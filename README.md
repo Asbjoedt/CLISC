@@ -102,7 +102,7 @@ Create your arguments from the following list:
 .\CLISC.exe -f CountConvertCompareArchive -i "c:\my_path" -o "c:\my_path" -r true
 ```
 
-If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/tree/master/Sample%20data).
+If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/blob/master/Docs/SampleData.zip).
 
 ## Packages and software
 
@@ -114,6 +114,6 @@ The following packages and software are used under license in CLISC. [Read more]
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
 
-[^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/blob/master/Docs/SampleData.zip).
+[^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
 [^2]: Conversion to file extension .xlsx with Strict conformance is currently not supported.
 [^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
