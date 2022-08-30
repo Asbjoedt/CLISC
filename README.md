@@ -56,8 +56,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 
 :warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
 * If you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
-* You need to install program in its default directory
-* You need to purchase
+* You need to purchase license
 
 :warning: **[LibreOffice](https://www.libreoffice.org/)**
 * If you want to convert OpenDocument spreadsheets and/or use the archiving method
