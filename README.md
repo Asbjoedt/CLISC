@@ -23,13 +23,13 @@ Count number of spreadsheets in directory by file format.
 :magic_wand: **Convert**
 
 Convert any spreadsheet[^1] to .xlsx (Transitional conformance).
-* Office Open XML (Excel) with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance[^2]
+* Office Open XML (Excel) with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
 :mag: **Compare**
 
-Compare original and converted spreadsheets to log differences.[^3]
+Compare original and converted spreadsheets to log differences.[^2]
 * Cell values
 
 :file_cabinet: **Archive**
@@ -115,5 +115,4 @@ The following packages and software are used under license in CLISC. [Read more]
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
 
 [^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
-[^2]: Conversion to file extension .xlsx with Strict conformance is currently not supported.
-[^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
+[^2]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
