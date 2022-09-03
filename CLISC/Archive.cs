@@ -60,7 +60,7 @@ namespace CLISC
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;Convert Exists;XLSX Convert Filepath;XLSX Checksum (MD5);XLSX File Format Validation;Validation Errors;ODS Convert Filepath; ODS checksum (MD5); ODS file Format Validation;Validation Errors;Archival Requirements");
+            var newLine0 = string.Format($"Original Filepath;Original Checksum;Copy Filepath;Copy Checksum;XLSX Convert Filepath;XLSX Checksum (MD5);XLSX File Format Validation;Validation Errors;ODS Convert Filepath; ODS checksum (MD5); ODS file Format Validation;Validation Errors;Archival Requirements");
             csv.AppendLine(newLine0);
 
             // Open CSV file to log validation results
@@ -106,7 +106,8 @@ namespace CLISC
                         else
                         {
                             Conversion con = new Conversion();
-                            convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
+                            //convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
+                            con.Convert_Transitional_to_Strict(xlsx_conv_filepath);
                             Console.WriteLine("--> Converted to Strict conformance");
                         }
 
@@ -255,8 +256,8 @@ namespace CLISC
                 org_checksum = Calculate_MD5(org_filepath);
                 copy_checksum = Calculate_MD5(copy_filepath);
 
-                // Output result in open CSV validation log
-                var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{convert_success};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validity};{xlsx_errors_count};{ods_conv_filepath};{ods_conv_checksum};.ods validation not supported;.ods validation not supported;{archive_req_accept}");
+                // Output result in open CSV archive results log
+                var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validity};{xlsx_errors_count};{ods_conv_filepath};{ods_conv_checksum};.ods validation not supported;.ods validation not supported;{archive_req_accept}");
                 csv.AppendLine(newLine1);
 
                 // Reset data types to fix bug in CSV log, if converted spreadsheet does not exist
