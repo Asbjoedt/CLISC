@@ -53,6 +53,7 @@ namespace CLISC
             string namespace_externallink_externallinkpath = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
             string namespace_externallink_oleobject = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject";
             string namespace_drawing_xmlns_xdr = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing";
+            string namespaces_xmlns_ds = "http://schemas.openxmlformats.org/officeDocument/2006/customXml";
 
             using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
             {
@@ -122,6 +123,14 @@ namespace CLISC
                         wbPart.CalculationChainPart.CalculationChain.RemoveNamespaceDeclaration("x");
                         wbPart.CalculationChainPart.CalculationChain.AddNamespaceDeclaration("x", namespace_xmlns);
                     }
+                    // Change namespaces in /xl/queryTables/queryTable[n+1].xml
+
+                    // Change namespaces in /xl/tables/table[n+1].xml
+
+                    // Change namespaces in /xl/connections.xml
+                    wbPart.ConnectionsPart.Connections.RemoveNamespaceDeclaration("x");
+                    wbPart.ConnectionsPart.Connections.AddNamespaceDeclaration("x", namespace_xmlns);
+                    // Change namespaces in /customXml/itemProps[n+1].xml
                 }
             }
         }
@@ -147,6 +156,7 @@ namespace CLISC
             string namespace_externallink_externallinkpath = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath";
             string namespace_externallink_oleobject = "";
             string namespace_drawing_xmlns_xdr = "http://purl.oclc.org/ooxml/drawingml/spreadsheetDrawing";
+            string namespaces_xmlns_ds = "";
 
             using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
             {
@@ -216,6 +226,14 @@ namespace CLISC
                         wbPart.CalculationChainPart.CalculationChain.RemoveNamespaceDeclaration("x");
                         wbPart.CalculationChainPart.CalculationChain.AddNamespaceDeclaration("x", namespace_xmlns);
                     }
+                    // Change namespaces in /xl/queryTables/queryTable[n+1].xml
+
+                    // Change namespaces in /xl/tables/table[n+1].xml
+
+                    // Change namespaces in /xl/connections.xml
+                    wbPart.ConnectionsPart.Connections.RemoveNamespaceDeclaration("x");
+                    wbPart.ConnectionsPart.Connections.AddNamespaceDeclaration("x", namespace_xmlns);
+                    // Change namespaces in /customXml/itemProps[n+1].xml
                 }
             }
         }

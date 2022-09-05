@@ -89,28 +89,10 @@ namespace CLISC
                 {
                     Console.WriteLine(org_filepath); // Inform user of original filepath
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
-                    Console.WriteLine($"--> Conversion analyzed: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
+                    Console.WriteLine($"--> Analyzing: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
                     try
                     {
-                        // Convert to .xlsx Strict conformance using Excel
-                        bool? strict = null;
-                        using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false))
-                        {
-                            strict = spreadsheet.StrictRelationshipFound; // Identify if already Strict
-                        }
-                        if (strict == true)
-                        {
-                            Console.WriteLine("--> Spreadsheet is already Strict conformant");
-                        }
-                        else
-                        {
-                            Conversion con = new Conversion();
-                            convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
-                            //con.Convert_Transitional_to_Strict(xlsx_conv_filepath);
-                            Console.WriteLine("--> Converted to Strict conformance");
-                        }
-
                         // Check .xlsx for archival requirements
                         Archive_Requirements arc = new Archive_Requirements();
                         List<Archive_Requirements> pidgeon = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
@@ -184,6 +166,24 @@ namespace CLISC
                         // Write to CSV archival requirements log
                         var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{embedobj};{hyperlinks};{activesheet}");
                         csv3.AppendLine(newLine3_2);
+
+                        // Convert to .xlsx Strict conformance
+                        bool? strict = null;
+                        using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false))
+                        {
+                            strict = spreadsheet.StrictRelationshipFound; // Identify if already Strict
+                        }
+                        if (strict == true)
+                        {
+                            Console.WriteLine("--> Spreadsheet is already Strict conformant");
+                        }
+                        else
+                        {
+                            Conversion con = new Conversion();
+                            convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
+                            //con.Convert_Transitional_to_Strict(xlsx_conv_filepath);
+                            Console.WriteLine("--> Converted to Strict conformance");
+                        }
 
                         // Validate
                         Validation validate = new Validation();

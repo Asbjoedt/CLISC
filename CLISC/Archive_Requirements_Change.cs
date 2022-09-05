@@ -25,11 +25,20 @@ namespace CLISC
                 List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart part in worksheetparts)
                 {
-                    if (part.QueryTableParts == null)
+                    int qtables = part.QueryTableParts.Count();
+                    Console.WriteLine(qtables);
+
+                    List<QueryTablePart> queryTables = part.QueryTableParts.ToList();
+                    foreach (QueryTablePart qtp in queryTables)
                     {
-                        Console.WriteLine("du er dejlig");
+                        spreadsheet.WorkbookPart.DeletePart(qtp);
                     }
+
+                    qtables = part.QueryTableParts.Count();
+                    Console.WriteLine(qtables);
                 }
+
+                List<Table> table = spreadsheet.WorkbookPart.
             }
         }
 
@@ -196,8 +205,11 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
-                bookViews.Remove(); // Remove bookview and thereby remove custom active tab
+                if (spreadsheet.WorkbookPart.Workbook.BookViews != null)
+                {
+                    BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
+                    bookViews.Remove(); // Remove bookview and thereby remove custom active tab
+                }
             }
         }
 
