@@ -50,8 +50,8 @@ namespace CLISC
             string namespace_rel_sharedstrings = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings";
             string namespace_rel_externallink = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink";
             string namespace_rel_workbook = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
+            string namespace_rel_oleobject = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject";
             string namespace_externallink_externallinkpath = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
-            string namespace_externallink_oleobject = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject";
             string namespace_drawing_xmlns_xdr = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing";
             string namespaces_xmlns_ds = "http://schemas.openxmlformats.org/officeDocument/2006/customXml";
 
@@ -131,6 +131,8 @@ namespace CLISC
                     wbPart.ConnectionsPart.Connections.RemoveNamespaceDeclaration("x");
                     wbPart.ConnectionsPart.Connections.AddNamespaceDeclaration("x", namespace_xmlns);
                     // Change namespaces in /customXml/itemProps[n+1].xml
+
+                    // Change namespaces in pivottables
                 }
             }
         }
@@ -153,8 +155,8 @@ namespace CLISC
             string namespace_rel_sharedstrings = "http://purl.oclc.org/ooxml/officeDocument/relationships/sharedStrings";
             string namespace_rel_externallink = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLink";
             string namespace_rel_workbook = "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument";
+            string namespace_rel_oleobject = "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject";
             string namespace_externallink_externallinkpath = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath";
-            string namespace_externallink_oleobject = "";
             string namespace_drawing_xmlns_xdr = "http://purl.oclc.org/ooxml/drawingml/spreadsheetDrawing";
             string namespaces_xmlns_ds = "";
 

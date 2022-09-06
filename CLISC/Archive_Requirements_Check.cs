@@ -219,44 +219,77 @@ namespace CLISC
         public int Check_EmbeddedObjects(string filepath) // Check for embedded objects and return alert
         {
             int embedobj_count = 0;
+            int embedobj_number = 0;
+            int count_ole = 0;
+            int count_package = 0;
+            int count_image = 0;
+            int count_drawing_image = 0;
+            int count_3d = 0;
 
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
-                foreach (var item in list)
+                List<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    int count_ole = item.EmbeddedObjectParts.Count(); // Register the number of OLE
-                    int count_image = item.ImageParts.Count(); // Register number of images
-                    int count_3d = item.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
-                    embedobj_count = count_ole + count_image + count_3d; // Sum
+                    count_ole = worksheetPart.EmbeddedObjectParts.Count(); // Register the number of OLE
+                    count_package = worksheetPart.EmbeddedPackageParts.Count(); // Register the number of packages
+                    count_image = worksheetPart.ImageParts.Count(); // Register number of images
+                    if (worksheetPart.DrawingsPart != null)
+                    {
+                        count_drawing_image = worksheetPart.DrawingsPart.ImageParts.Count();
+                        count_image = count_image + count_drawing_image;
+                    }
+                    count_3d = worksheetPart.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
+                    embedobj_count = count_ole + count_package + count_vml + count_image + count_3d; // Sum
 
                     if (embedobj_count > 0) // If embedded objects
                     {
                         Console.WriteLine($"--> {embedobj_count} embedded objects detected");
-                        var embed_ole = item.EmbeddedObjectParts.ToList(); // Register each OLE to a list
-                        var embed_image = item.ImageParts.ToList(); // Register each image to a list
-                        var embed_3d = item.Model3DReferenceRelationshipParts.ToList(); // Register each 3D model to a list
-                        int embedobj_number = 0;
-                        foreach (var part in embed_ole) // Inform user of each OLE object
+
+                        List<EmbeddedObjectPart> embed_ole = worksheetPart.EmbeddedObjectParts.ToList();
+                        List<EmbeddedPackagePart> embedobj_package = worksheetPart.EmbeddedPackageParts.ToList();
+                        List<ImagePart> embed_image = worksheetPart.ImageParts.ToList();
+                        List<ImagePart> embed_drawing_image = new List<ImagePart>();
+                        if (count_drawing_image > 0)
+                        {
+                            embed_drawing_image = worksheetPart.DrawingsPart.ImageParts.ToList();
+                        }
+                        List<Model3DReferenceRelationshipPart> embed_3d = worksheetPart.Model3DReferenceRelationshipParts.ToList();
+
+                        foreach (EmbeddedObjectPart part in embed_ole) // Inform user of each OLE object
                         {
                             embedobj_number++;
                             Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
+                            Console.WriteLine($"----> Content Type: OLE object");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
 
                         }
-                        foreach (var part in embed_image) // Inform user of each image object
+                        foreach (EmbeddedPackagePart part in embedobj_package) // Inform user of each package object
                         {
                             embedobj_number++;
                             Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
+                            Console.WriteLine($"----> Content Type: Package object");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                         }
-                        foreach (var part in embed_3d) // Inform user of each 3D object
+                        foreach (ImagePart part in embed_image) // Inform user of each .emf image object
                         {
                             embedobj_number++;
                             Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: {part.ContentType.ToString()}");
+                            Console.WriteLine($"----> Content Type: Image object");
+                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        }
+                        foreach (ImagePart part in embed_drawing_image) // Inform user of each image object
+                        {
+                            embedobj_number++;
+                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                            Console.WriteLine($"----> Content Type: Image object");
+                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        }
+                        foreach (Model3DReferenceRelationshipPart part in embed_3d) // Inform user of each 3D object
+                        {
+                            embedobj_number++;
+                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                            Console.WriteLine($"----> Content Type: 3D model object");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                         }
                     }
