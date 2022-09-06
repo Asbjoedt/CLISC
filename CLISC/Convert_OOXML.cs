@@ -8,6 +8,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Office.Interop.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -54,6 +55,25 @@ namespace CLISC
             string namespace_externallink_externallinkpath = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
             string namespace_drawing_xmlns_xdr = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing";
             string namespaces_xmlns_ds = "http://schemas.openxmlformats.org/officeDocument/2006/customXml";
+
+            // Fetch namespace information
+            List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
+            // Create data types to store namespace information
+            string prefix = "";
+            string transitional = "";
+            string strict = "";
+            // Transfer namespace information to data types
+            foreach (namespaceIndex name in namespaces)
+            {
+                prefix = name.Prefix;
+                transitional = name.Transitional;
+                strict = name.Strict;
+            }
+
+            // Reset namespaces
+            prefix = "";
+            transitional = "";
+            strict = "";
 
             using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
             {
@@ -159,6 +179,8 @@ namespace CLISC
             string namespace_externallink_externallinkpath = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath";
             string namespace_drawing_xmlns_xdr = "http://purl.oclc.org/ooxml/drawingml/spreadsheetDrawing";
             string namespaces_xmlns_ds = "";
+
+            List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
 
             using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
             {
