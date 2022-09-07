@@ -67,7 +67,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 
 :warning: **[ODF Validator 0.10.0](https://odftoolkit.org/conformance/ODFValidator.html)**
 * If you want to validate .ods spreadsheets
-* You need to install program in "C:\Program Files\ODF Validator", or create environment variable "ODFValidator" with path to your installation
+* You need to install program in "C:\Program Files\ODF Validator" and name program "odfvalidator-0.10.0-jar-with-dependencies.jar", or create environment variable "ODFValidator" with path to your installation
 * ODF Validator needs latest version of Java Development Kit installed
 
 ## How to use
