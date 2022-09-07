@@ -4,6 +4,7 @@ using System.IO.Enumeration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 
 namespace CLISC
 {
@@ -21,14 +22,14 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Data types
-            string error_message = "Beyond Compare 4 is not installed in filepath: C:\\Program Files\\Beyond Compare 4";
+            string error_message = "Beyond Compare 4 is not installed";
 
             // Open CSV file to log results
             var csv = new StringBuilder();
             var newLine0 = string.Format($"Original Filepath;XLSX Filepath;Comparison Success");
             csv.AppendLine(newLine0);
 
-            if (File.Exists(@"C:\\Program Files\\Beyond Compare 4\\BCompare.exe"))
+            try 
             {
                 foreach (fileIndex entry in File_List)
                 {
@@ -90,7 +91,7 @@ namespace CLISC
                     }
                 }
             }
-            else
+            catch (Win32Exception)
             {
                 Console.WriteLine(error_message);
                 Console.WriteLine("Comparison ended");

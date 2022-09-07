@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml.Office2016.Excel;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Threading;
 
 namespace CLISC
 {
@@ -17,17 +18,18 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                // Delete connection
+                // Delete all connections
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
                 spreadsheet.WorkbookPart.DeletePart(conn);
 
-                // Delete querytable
+                // Delete all query tables - DOES NOT WORK
                 List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart part in worksheetparts)
                 {
-                    if (part.QueryTableParts == null)
+                    List<QueryTablePart> queryTables = part.QueryTableParts.ToList();
+                    foreach (QueryTablePart qtp in queryTables)
                     {
-                        Console.WriteLine("du er dejlig");
+                        spreadsheet.WorkbookPart.DeletePart(qtp);
                     }
                 }
             }
@@ -159,8 +161,8 @@ namespace CLISC
                         }
                     }
                 }
-            // Delete calculation chain
-            CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
+                // Delete calculation chain
+                CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
                 spreadsheet.WorkbookPart.DeletePart(calc);
             }
         }
@@ -191,24 +193,85 @@ namespace CLISC
             }
         }
 
+        public void Remove_EmbeddedObjects(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                var worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart worksheetPart in worksheetParts)
+                {
+                    List<EmbeddedObjectPart> embedobj_ole_list = worksheetPart.EmbeddedObjectParts.ToList();
+                    List<EmbeddedPackagePart> embedobj_package_list = worksheetPart.EmbeddedPackageParts.ToList();
+                    List<ImagePart> embedobj_image_list = worksheetPart.ImageParts.ToList();
+                    List<ImagePart> embedobj_drawing_image_list = new List<ImagePart>();
+                    if (worksheetPart.DrawingsPart != null)
+                    {
+                        embedobj_drawing_image_list = worksheetPart.DrawingsPart.ImageParts.ToList();
+                    }
+                    List<Model3DReferenceRelationshipPart> embedobj_3d_list = worksheetPart.Model3DReferenceRelationshipParts.ToList();
+
+                    if (embedobj_ole_list.Count() > 0)
+                    {
+                        foreach (EmbeddedObjectPart ole in embedobj_ole_list)
+                        {
+                            worksheetPart.DeletePart(ole);
+                        }
+                    }
+
+                    if (embedobj_package_list.Count() > 0)
+                    {
+                        foreach (EmbeddedPackagePart package in embedobj_package_list)
+                        {
+                            worksheetPart.DeletePart(package);
+                        }
+                    }
+                    if (embedobj_image_list.Count() > 0)
+                    {
+                        foreach (ImagePart image in embedobj_image_list)
+                        {
+                            worksheetPart.DeletePart(image);
+                        }
+                    }
+                    if (embedobj_drawing_image_list.Count() > 0)
+                    {
+                        foreach (ImagePart drawing_image in embedobj_drawing_image_list)
+                        {
+                            worksheetPart.DrawingsPart.DeletePart(drawing_image);
+                        }
+                    }
+                    if (embedobj_3d_list.Count() > 0)
+                    {
+                        foreach (Model3DReferenceRelationshipPart threeD in embedobj_3d_list)
+                        {
+                            worksheetPart.DeletePart(threeD);
+                        }
+                    }
+                }
+            }
+        }
+
         // Make first sheet active sheet
         public void Activate_FirstSheet(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
-                bookViews.Remove(); // Remove bookview and thereby remove custom active tab
+                if (spreadsheet.WorkbookPart.Workbook.BookViews != null)
+                {
+                    BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
+                    bookViews.Remove(); // Remove bookview and thereby remove custom active tab
+                }
             }
         }
 
-        // Remove absolute path to local directory
+        // Remove absolute path to local directory - DOES NOT WORK
         public void Remove_AbsolutePath(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url != null)
                 {
-                    spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url = "";
+                    AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
+                    absPath.Remove();
                 }
             }
         }

@@ -13,7 +13,7 @@ using DocumentFormat.OpenXml.Validation;
 
 namespace CLISC
 {
-    public class Validation
+    public partial class Validation
     {
         public string Validity { get; set; }
 
