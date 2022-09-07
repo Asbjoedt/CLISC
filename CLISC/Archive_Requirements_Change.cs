@@ -275,7 +275,8 @@ namespace CLISC
             {
                 if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url != null)
                 {
-                    spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url = "";
+                    AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
+                    absPath.Remove();
                 }
             }
         }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Office2013.ExcelAc;
 
 namespace CLISC
 {
@@ -43,11 +44,11 @@ namespace CLISC
             int embedobj = Check_EmbeddedObjects(filepath);
             int hyperlinks = Check_Hyperlinks(filepath);
             bool activesheet = Check_ActiveSheet(filepath);
-            //bool absolutepath = Check_AbsolutePath(filepath);
+            bool absolutepath = Check_AbsolutePath(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet });
+            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath });
             return Arc_Req;
         }
 
@@ -240,7 +241,7 @@ namespace CLISC
                         count_image = count_image + count_drawing_image;
                     }
                     count_3d = worksheetPart.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
-                    embedobj_count = count_ole + count_package + count_vml + count_image + count_3d; // Sum
+                    embedobj_count = count_ole + count_package + count_image + count_3d; // Sum
 
                     if (embedobj_count > 0) // If embedded objects
                     {
@@ -375,9 +376,9 @@ namespace CLISC
         {
             bool absolutepath = false;
 
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url != null)
+                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
                 {
                     Console.WriteLine("--> Absolute path to local directory detected and removed");
                     absolutepath = true;
