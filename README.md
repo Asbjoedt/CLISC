@@ -46,9 +46,10 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove printer settings
-* Remove external objects
-* Alert if spreadsheet has embedded objects
+* Remove external and embedded objects
+* Remove absolute path to local directory (not working)
 * Make first sheet the active sheet
+* Alert if hyperlinks detected
 * Calculate file checksums
 * Zip the archive directory
 
