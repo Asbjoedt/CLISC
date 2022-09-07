@@ -22,9 +22,9 @@ namespace CLISC
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/spreadsheetml/2006/main", Strict = "http://purl.oclc.org/ooxml/spreadsheetml/main" });
             // docProps/
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties", Strict = "http://purl.oclc.org/ooxml/officeDocument/extendedProperties" });
-            // docProps/
+            // docProps/vt
             list.Add(new namespaceIndex() { Prefix = "vt", Transitional = "http://purl.oclc.org/ooxml/officeDocument/docPropsVTypes", Strict = "http://purl.oclc.org/ooxml/officeDocument/docPropsVTypes" });
-            // relationships
+            // relationships/r
             list.Add(new namespaceIndex() { Prefix = "r", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships" });
             // relationship/styles
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/styles" });
@@ -34,19 +34,19 @@ namespace CLISC
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/worksheet" });
             // relationship/sharedstrings
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/sharedStrings" });
-            // relationship/externallink
+            // relationship/externalLink
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLink" });
-            // relationship/officedocument
+            // relationship/officeDocument
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument" });
-            // relationship/externallink/externallinkpath
+            // relationship/externallink/externalLinkPath
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath" });
-            // relationship/oleobject
+            // relationship/oleObject
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject" });
             // relationship/image
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/image" });
-            // drawingML/a
+            // drawingml/a
             list.Add(new namespaceIndex() { Prefix = "a", Transitional = "http://schemas.openxmlformats.org/drawingml/2006/main", Strict = "http://purl.oclc.org/ooxml/drawingml/main" });
-            // drawingML/xdr
+            // drawingml/xdr
             list.Add(new namespaceIndex() { Prefix = "xdr", Transitional = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing", Strict = "http://purl.oclc.org/ooxml/drawingml/spreadsheetDrawing" });
             // customXml/ds
             list.Add(new namespaceIndex() { Prefix = "ds", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/customXml", Strict = "" });

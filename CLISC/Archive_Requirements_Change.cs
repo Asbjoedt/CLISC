@@ -22,20 +22,15 @@ namespace CLISC
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
                 spreadsheet.WorkbookPart.DeletePart(conn);
 
+                // Delete all query tables - DOES NOT WORK
                 List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart part in worksheetparts)
                 {
-                    int qtables = part.QueryTableParts.Count();
-                    Console.WriteLine(qtables);
-
                     List<QueryTablePart> queryTables = part.QueryTableParts.ToList();
                     foreach (QueryTablePart qtp in queryTables)
                     {
                         spreadsheet.WorkbookPart.DeletePart(qtp);
                     }
-
-                    qtables = part.QueryTableParts.Count();
-                    Console.WriteLine(qtables);
                 }
             }
         }
@@ -268,7 +263,7 @@ namespace CLISC
             }
         }
 
-        // Remove absolute path to local directory
+        // Remove absolute path to local directory - DOES NOT WORK
         public void Remove_AbsolutePath(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
