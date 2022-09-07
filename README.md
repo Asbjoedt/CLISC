@@ -40,7 +40,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Output all conversions in subdirectories named n+1
 * Rename all conversions 1.xlsx and 1.ods
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
-* Validate spreadsheet against its file format standard (Office Open XML)
+* Validate spreadsheet against its file format standard (Office Open XML and OpenDocument)
 * Check if any cell values exists
 * Remove cell references to other spreadsheets but keep cell values
 * Remove data connections but keep cell values
@@ -54,16 +54,21 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 
 ## Dependencies
 
-:warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
-* If you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
+:warning: **[Beyond Compare 4](https://www.scootersoftware.com/)**
+* If you want to use the compare function
+* You need to install program in its default directory, or create environment variable "BeyondCompare" with path to your installation
 
 :warning: **[LibreOffice](https://www.libreoffice.org/)**
 * If you want to convert OpenDocument spreadsheets and/or use the archiving method
 * You need to install program in its default directory, or create environment variable "LibreOffice" with path to your installation
 
-:warning: **[Beyond Compare 4](https://www.scootersoftware.com/)**
-* If you want to use the compare function
-* You need to install program in its default directory, or create environment variable "BeyondCompare" with path to your installation
+:warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
+* If you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
+
+:warning: **[ODF Validator 0.10.0](https://odftoolkit.org/conformance/ODFValidator.html)**
+* If you want to validate .ods spreadsheets
+* You need to install program in "C:\Program Files\ODF Validator", or create environment variable "ODFValidator" with path to your installation
+* ODF Validator needs latest version of Java Development Kit installed
 
 ## How to use
 Download the executable version [here](https://github.com/Asbjoedt/CLISC/releases). There's no need to install. In your terminal change directory to the folder where CLISC.exe is. Then, to execute the program input:
@@ -110,8 +115,9 @@ The following packages and software are used under license in CLISC. [Read more]
 
 * [Beyond Compare 4](https://www.scootersoftware.com/index.php), Copyright (c) 2022 Scooter Software, Inc.
 * [CommandLineParser](https://github.com/commandlineparser/commandline), MIT License, Copyright (c) 2005 - 2015 Giacomo Stelluti Scala & Contributor
-* [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), Copyright (c) Microsoft Corporation
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
+* [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), Copyright (c) Microsoft Corporation
+* [ODF Validator 0.10.0](https://odftoolkit.org/conformance/ODFValidator.html), Apache License, [copyright info](https://github.com/tdf/odftoolkit/blob/master/NOTICE)
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
 
 [^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
