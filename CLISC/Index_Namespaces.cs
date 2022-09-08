@@ -43,11 +43,19 @@ namespace CLISC
             // relationship/oleObject
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject" });
             // relationship/image
-            list.Add(new namespaceIndex() { Prefix = "", Transitional = "", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/image" });
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/image" });
+            // relationship/video
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/video" });
+            // relationship/pivotCacheDefininition
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/pivotCacheDefinition" });
+            // relationship/pivotCache Records
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/pivotCacheRecords" });
             // drawingml/a
             list.Add(new namespaceIndex() { Prefix = "a", Transitional = "http://schemas.openxmlformats.org/drawingml/2006/main", Strict = "http://purl.oclc.org/ooxml/drawingml/main" });
             // drawingml/xdr
             list.Add(new namespaceIndex() { Prefix = "xdr", Transitional = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing", Strict = "http://purl.oclc.org/ooxml/drawingml/spreadsheetDrawing" });
+            // drawingml/chart
+            list.Add(new namespaceIndex() { Prefix = "c", Transitional = "http://schemas.openxmlformats.org/drawingml/2006/chart", Strict = "http://purl.oclc.org/ooxml/drawingml/chart" });
             // customXml/ds
             list.Add(new namespaceIndex() { Prefix = "ds", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/customXml", Strict = "" });
             // urn for Strict - NO NAMESPACE FOR TRANSITIONAL
