@@ -130,14 +130,6 @@ namespace CLISC
                             absolutepath = item.AbsolutePath;
                         }
                         // Transform data according to archiving requirements
-                        if (data != true && embedobj == 0)
-                        {
-                            archive_req_accept = true;
-                        }
-                        if (data == false)
-                        {
-                            cellvalue_files++;
-                        }
                         if (connections > 0)
                         {
                             connections_files++;
@@ -166,7 +158,7 @@ namespace CLISC
                         if (embedobj > 0)
                         {
                             embedobj_files++;
-                            //arc.Remove_EmbeddedObjects(xlsx_conv_filepath);
+                            arc.Remove_EmbeddedObjects(xlsx_conv_filepath);
                         }
                         if (hyperlinks > 0)
                         {
@@ -181,6 +173,11 @@ namespace CLISC
                         {
                             absolutepath_files++;
                             arc.Remove_AbsolutePath(xlsx_conv_filepath);
+                        }
+                        if (data == false)
+                        {
+                            cellvalue_files++;
+                            archive_req_accept = true;
                         }
 
                         // Write to CSV archival requirements log
