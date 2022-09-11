@@ -129,6 +129,7 @@ namespace CLISC
                             activesheet = item.ActiveSheet;
                             absolutepath = item.AbsolutePath;
                         }
+
                         // Transform data according to archiving requirements
                         if (connections > 0)
                         {
@@ -153,7 +154,7 @@ namespace CLISC
                         if (extobj > 0)
                         {
                             extobj_files++;
-                            arc.Remove_ExternalObjects(xlsx_conv_filepath);
+                            //arc.Remove_ExternalObjects(xlsx_conv_filepath);
                         }
                         if (embedobj > 0)
                         {

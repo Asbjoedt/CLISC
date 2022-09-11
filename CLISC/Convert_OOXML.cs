@@ -53,21 +53,6 @@ namespace CLISC
 
                     // Remove vml urn namespace from workbook.xml
                     workbook.RemoveNamespaceDeclaration("v");
-
-                    // Create dictionary of existing namespaces
-                    Dictionary<string, string> existingNamespaces = workbook.NamespaceDeclarations.ToDictionary();
-
-                    // Change namespaces
-                    foreach (KeyValuePair<string, string> existingNamespace in existingNamespaces)
-                    {
-                        foreach (namespaceIndex name in namespaces)
-                        {
-                            if (name.Strict == existingNamespace.Value)
-                            {
-                                //existingNamespace.Value = name.Transitional;
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -90,21 +75,6 @@ namespace CLISC
 
                     // Add vml urn namespace to workbook.xml
                     workbook.AddNamespaceDeclaration("v", "urn:schemas-microsoft-com:vml");
-
-                    // Create dictionary of existing namespaces
-                    Dictionary<string, string> existingNamespaces = workbook.NamespaceDeclarations.ToDictionary();
-
-                    // Change namespaces
-                    foreach (KeyValuePair<string, string> existingNamespace in existingNamespaces)
-                    {
-                        foreach (namespaceIndex name in namespaces)
-                        {
-                            if (name.Transitional == existingNamespace.Value)
-                            {
-                                //existingNamespace.Value = name.Strict;
-                            }
-                        }
-                    }
                 }
             }
         }

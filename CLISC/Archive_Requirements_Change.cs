@@ -268,7 +268,7 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url != null)
+                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
                 {
                     AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
                     absPath.Remove();
