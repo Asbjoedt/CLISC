@@ -154,7 +154,7 @@ namespace CLISC
                         if (extobj > 0)
                         {
                             extobj_files++;
-                            //arc.Remove_ExternalObjects(xlsx_conv_filepath);
+                            arc.Remove_ExternalObjects(xlsx_conv_filepath);
                         }
                         if (embedobj > 0)
                         {
