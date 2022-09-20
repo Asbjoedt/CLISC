@@ -42,7 +42,12 @@ namespace CLISC
                     // Compare workbook differences
                     if (File.Exists(xlsx_filepath) && Path.GetExtension(org_filepath).ToLower() != ".xlsb")
                     {
+                        // Inform user of comparison
+                        Console.WriteLine(org_filepath);
+                        Console.WriteLine($"--> Comparing to: {xlsx_filepath}");
+
                         int return_code;
+
                         if (function == "CountConvertCompareArchive")
                         {
                             // Compare workbooks using external app Beyond Compare 4
@@ -53,9 +58,6 @@ namespace CLISC
                             return_code = Compare_Workbook(org_filepath, xlsx_filepath);
                         }
 
-                        // Inform user of comparison
-                        Console.WriteLine(org_filepath);
-                        Console.WriteLine($"--> Comparing to: {xlsx_filepath}");
                         if (return_code == 0 || return_code == 1 || return_code == 2)
                         {
                             numTOTAL_compare++;

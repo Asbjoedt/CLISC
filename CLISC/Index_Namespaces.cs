@@ -19,9 +19,9 @@ namespace CLISC
         { 
             List<namespaceIndex> list = new List<namespaceIndex>();
 
-            // xmlns
+            // xmlns (is prefix "x"?)
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/spreadsheetml/2006/main", Strict = "http://purl.oclc.org/ooxml/spreadsheetml/main" });
-            // docProps/
+            // docProps
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties", Strict = "http://purl.oclc.org/ooxml/officeDocument/extendedProperties" });
             // docProps/vt
             list.Add(new namespaceIndex() { Prefix = "vt", Transitional = "http://purl.oclc.org/ooxml/officeDocument/docPropsVTypes", Strict = "http://purl.oclc.org/ooxml/officeDocument/docPropsVTypes" });
