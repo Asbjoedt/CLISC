@@ -12,7 +12,7 @@ A Windows console application made in C#. It is a prototype project for digital 
 
 * Batch convert spreadsheets in a directory to .xlsx
 * Include or exclude subdirectories recursively
-* Output results in a new directory with logs in CSV
+* Output results in a new directory with logs in .csv
 
 :heavy_plus_sign: **Count**
 
@@ -97,15 +97,15 @@ Create your arguments from the following list:
 ```
 **Include subdirectories from input directory** (optional, by default false)
 ```
---recurse true
+--recurse
 ```
 **Example of full usage**
 ```
-.\CLISC.exe --function CountConvertCompareArchive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse true
+.\CLISC.exe --function CountConvertCompareArchive --inputdir "c:\my_path" --outputdir "c:\my_path" --recurse
 ```
 **or shorter**
 ```
-.\CLISC.exe -f CountConvertCompareArchive -i "c:\my_path" -o "c:\my_path" -r true
+.\CLISC.exe -f CountConvertCompareArchive -i "c:\my_path" -o "c:\my_path" -r
 ```
 
 If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/blob/master/Docs/SampleData.zip).
