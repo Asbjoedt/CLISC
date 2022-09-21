@@ -27,9 +27,10 @@ namespace CLISC
                 foreach (WorksheetPart part in worksheetparts)
                 {
                     List<QueryTablePart> queryTables = part.QueryTableParts.ToList();
+                    Console.WriteLine(queryTables.Count);
                     foreach (QueryTablePart qtp in queryTables)
                     {
-                        spreadsheet.WorkbookPart.DeletePart(qtp);
+                        part.DeletePart(qtp);
                     }
                 }
             }

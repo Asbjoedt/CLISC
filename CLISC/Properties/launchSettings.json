@@ -2,7 +2,7 @@
   "profiles": {
     "CLISC": {
       "commandName": "Project",
-      "commandLineArgs": "--function CountConvertCompareArchive --inputdir \"C:\\Users\\%USERNAME%\\Desktop\\SampleData\" --outputdir \"C:\\Users\\%USERNAME%\\Desktop\" --recurse true"
+      "commandLineArgs": "--function CountConvertCompareArchive --inputdir \"C:\\Users\\B046804\\Desktop\\SampleData\" --outputdir \"C:\\Users\\%USERNAME%\\Desktop\" --recurse"
     }
   }
 }

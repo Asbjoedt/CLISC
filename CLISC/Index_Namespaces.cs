@@ -41,6 +41,8 @@ namespace CLISC
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument" });
             // relationship/externallink/externalLinkPath
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLinkPath" });
+            // relationship/hyperlink
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/hyperlink" });
             // relationship/oleObject
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject" });
             // relationship/image
@@ -51,6 +53,16 @@ namespace CLISC
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/pivotCacheDefinition" });
             // relationship/pivotCache Records
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/pivotCacheRecords" });
+            // relationship/vmlDrawing - NO NAMESPACE FOR STRICT
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing", Strict = "" });
+            // relationship/drawing
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/drawing" });
+            // relationship/queryTable
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/queryTable", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/queryTable" });
+            // relationship/printerSettings
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/printerSettings", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/printerSettings" });
+            // relationship/comments
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/comments" });
             // drawingml/a
             list.Add(new namespaceIndex() { Prefix = "a", Transitional = "http://schemas.openxmlformats.org/drawingml/2006/main", Strict = "http://purl.oclc.org/ooxml/drawingml/main" });
             // drawingml/xdr

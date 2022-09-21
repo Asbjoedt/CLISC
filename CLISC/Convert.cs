@@ -83,6 +83,7 @@ namespace CLISC
 
                 // Copy spreadsheet 
                 File.Copy(org_filepath, copy_filepath);
+                File.SetAttributes(copy_filepath, FileAttributes.Normal); // Remove file attributes on copied spreadsheet
 
                 // Convert spreadsheet
                 try

@@ -19,7 +19,7 @@ namespace CLISC
         public string Outputdir { get; set; }
 
         // Parameter to include subdirectories in input directory
-        [Option('r', "recurse", Required = false, HelpText = "Specify true if input directory should include subdirectories.", Default = false)]
+        [Option('r', "recurse", Required = false, HelpText = "Specify if input directory should include subdirectories.", Default = false)]
         public bool Recurse { get; set; }
     }
 }
