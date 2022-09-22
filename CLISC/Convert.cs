@@ -88,6 +88,9 @@ namespace CLISC
                 // Convert spreadsheet
                 try
                 {
+                    // Inform user of original filepath
+                    Console.WriteLine(org_filepath);
+
                     if (function == "CountConvertCompareArchive")
                     {
                         conv_filepath = file_folder + "\\1.xlsx";
@@ -193,7 +196,6 @@ namespace CLISC
                 finally
                 {
                     // Inform user
-                    Console.WriteLine(org_filepath);
                     Console.WriteLine($"--> Conversion: {convert_success}");
                     if (convert_success == false)
                     {

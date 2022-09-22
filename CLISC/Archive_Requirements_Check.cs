@@ -331,7 +331,7 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                var worksheetpartslist = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                List<WorksheetPart> worksheetpartslist = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 List<SpreadsheetPrinterSettingsPart> printerList = new List<SpreadsheetPrinterSettingsPart>();
                 foreach (WorksheetPart worksheetpart in worksheetpartslist)
                 {

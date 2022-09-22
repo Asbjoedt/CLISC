@@ -22,12 +22,11 @@ namespace CLISC
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
                 spreadsheet.WorkbookPart.DeletePart(conn);
 
-                // Delete all query tables - DOES NOT WORK
+                // Delete all query tables
                 List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart part in worksheetparts)
                 {
                     List<QueryTablePart> queryTables = part.QueryTableParts.ToList();
-                    Console.WriteLine(queryTables.Count);
                     foreach (QueryTablePart qtp in queryTables)
                     {
                         part.DeletePart(qtp);
@@ -92,13 +91,13 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                var list = spreadsheet.WorkbookPart.WorksheetParts.ToList();
-                foreach (var item in list)
+                List<WorksheetPart> wsParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart wsPart in wsParts)
                 {
-                    var printerList = item.SpreadsheetPrinterSettingsParts.ToList();
-                    foreach (var part in printerList)
+                    List<SpreadsheetPrinterSettingsPart> printerList = wsPart.SpreadsheetPrinterSettingsParts.ToList();
+                    foreach (SpreadsheetPrinterSettingsPart printer in printerList)
                     {
-                        item.DeletePart(part);
+                        wsPart.DeletePart(printer);
                     }
                 }
             }
@@ -198,7 +197,7 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                var worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                List<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
                     List<EmbeddedObjectPart> embedobj_ole_list = worksheetPart.EmbeddedObjectParts.ToList();

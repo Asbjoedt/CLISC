@@ -276,11 +276,11 @@ namespace CLISC
             }
 
             // Close validation CSV file to log results
-            Spreadsheet.CSV_filepath = Results_Directory + "\\4a_Validation_Results.csv";
+            Spreadsheet.CSV_filepath = Results_Directory + "\\4a_StandardValidation_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv2.ToString());
 
             // Close archival requirements CSV file to log results
-            Spreadsheet.CSV_filepath = Results_Directory + "\\4b_Requirements_Results.csv";
+            Spreadsheet.CSV_filepath = Results_Directory + "\\4b_RequirementsValidation_Results.csv";
             File.WriteAllText(Spreadsheet.CSV_filepath, csv3.ToString());
 
             // Close archive CSV file to log results

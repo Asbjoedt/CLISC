@@ -62,14 +62,14 @@ namespace CLISC
                         {
                             numTOTAL_compare++;
                             compare_success = true;
-                            Console.WriteLine("--> Spreadsheets identical: " + compare_success);
+                            Console.WriteLine("--> Cell values identical: " + compare_success);
                         }
                         if (return_code == 12 || return_code == 13 || return_code == 14)
                         {
                             numTOTAL_compare++;
                             numTOTAL_diff++;
                             compare_success = false;
-                            Console.WriteLine("--> Spreadsheets identical: " + compare_success);
+                            Console.WriteLine("--> Cell values identical: " + compare_success);
                         }
                         if (return_code == 11)
                         {

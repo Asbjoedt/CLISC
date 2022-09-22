@@ -84,32 +84,43 @@ namespace CLISC
 
         void Convert_Results()
         {
+            // Calculate fails
+            int fail_conversion = Count.numTOTAL - Conversion.numCOMPLETE;
+
             Console.WriteLine("---");
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
-            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} of {Count.numTOTAL} spreadsheets completed conversion");
+            Console.WriteLine($"CONVERT: {fail_conversion} of {Count.numTOTAL} spreadsheets failed conversion");
             Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
         }
         void Compare_Results()
         {
+            // Calculate fails
+            int fail_conversion = Count.numTOTAL - Conversion.numCOMPLETE;
+            int fail_comparison = Conversion.numCOMPLETE - Compare.numTOTAL_compare;
+
             Console.WriteLine("---");
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
-            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} of {Count.numTOTAL} spreadsheets completed conversion");
-            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} of {Conversion.numCOMPLETE} converted spreadsheets completed comparison");
+            Console.WriteLine($"CONVERT: {fail_conversion} of {Count.numTOTAL} spreadsheets failed conversion");
+            Console.WriteLine($"COMPARE: {fail_comparison} of {Conversion.numCOMPLETE} converted spreadsheets failed comparison");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
 
         }
         void Archive_Results()
         {
+            // Calculate fails
+            int fail_conversion = Count.numTOTAL - Conversion.numCOMPLETE;
+            int fail_comparison = Conversion.numCOMPLETE - Compare.numTOTAL_compare;
+
             Console.WriteLine("---");
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheets");
-            Console.WriteLine($"CONVERT: {Conversion.numCOMPLETE} of {Count.numTOTAL} spreadsheets completed conversion");
-            Console.WriteLine($"COMPARE: {Compare.numTOTAL_compare} of {Conversion.numCOMPLETE} converted spreadsheets completed comparison");
+            Console.WriteLine($"CONVERT: {fail_conversion} of {Count.numTOTAL} spreadsheets failed conversion");
+            Console.WriteLine($"COMPARE: {fail_comparison} of {Conversion.numCOMPLETE} converted spreadsheets failed comparison");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
             Console.WriteLine($"ARCHIVE: {Archive.invalid_files} of {Conversion.numCOMPLETE} converted spreadsheets have invalid file formats");
             Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} of {Conversion.numCOMPLETE} converted spreadsheets had no cell values - Handle manually!");
