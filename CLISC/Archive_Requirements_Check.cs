@@ -184,12 +184,10 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                Sheets allSheets = wbPart.Workbook.Sheets;
-                foreach (Sheet aSheet in allSheets)
+                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart part in worksheetparts)
                 {
-                    WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
-                    Worksheet worksheet = wsp.Worksheet;
+                    Worksheet worksheet = part.Worksheet;
                     var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     foreach (var row in rows)
                     {
