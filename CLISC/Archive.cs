@@ -24,6 +24,7 @@ namespace CLISC
         public static int hyperlinks_files = 0;
         public static int activesheet_files = 0;
         public static int absolutepath_files = 0;
+        public static int vbaproject_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
@@ -58,6 +59,7 @@ namespace CLISC
             int hyperlinks = 0;
             bool activesheet = false;
             bool absolutepath = false;
+            bool vbaprojects = false;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
@@ -110,7 +112,15 @@ namespace CLISC
                             Conversion con = new Conversion();
                             convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
                             //con.Convert_Transitional_to_Strict(xlsx_conv_filepath);
-                            Console.WriteLine("--> Converted to Strict conformance");
+                            if (convert_success == true)
+                            {
+                                Console.WriteLine("--> Converted to Strict conformance");
+                            }
+                            else
+                            {
+                                Console.WriteLine("--> Failed to convert to Strict conformance");
+                            }
+                            
                         }
 
                         // Check .xlsx for archival requirements
@@ -129,6 +139,7 @@ namespace CLISC
                             hyperlinks = item.Hyperlinks;
                             activesheet = item.ActiveSheet;
                             absolutepath = item.AbsolutePath;
+                            vbaprojects = item.VBAProjects;
                         }
 
                         // Transform data according to archiving requirements
@@ -180,6 +191,11 @@ namespace CLISC
                         {
                             cellvalue_files++;
                             archive_req_accept = true;
+                        }
+                        if (vbaprojects == true)
+                        {
+                            vbaproject_files++;
+                            arc.Remove_VBA(xlsx_conv_filepath);
                         }
 
                         // Write to CSV archival requirements log

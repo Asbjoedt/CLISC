@@ -25,12 +25,23 @@ namespace CLISC
             using (MemoryStream stream = new MemoryStream())
             {
                 stream.Write(byteArray, 0, (int)byteArray.Length);
-                using (SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.Open(stream, true))
+                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(stream, true))
                 {
-                    spreadsheetDoc.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
+                    spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
                 }
                 File.WriteAllBytes(output_filepath, stream.ToArray());
             }
+
+            // Remove VBA project (if present) due to error in Open XML SDK
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
+            {
+                VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
+                if (vba != null)
+                {
+                    spreadsheet.WorkbookPart.DeletePart(vba);
+                }
+            }
+
             bool convert_success = true;
             return convert_success;
         }
@@ -99,6 +110,7 @@ namespace CLISC
             }
 
             convert_success = true; // Mark as succesful
+
             return convert_success; // Report success
         }
     }

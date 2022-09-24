@@ -32,6 +32,8 @@ namespace CLISC
 
         public bool AbsolutePath { get; set; }
 
+        public bool VBAProjects { get; set; }
+
         // Perform check of archival requirements
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
@@ -45,10 +47,11 @@ namespace CLISC
             int hyperlinks = Check_Hyperlinks(filepath);
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
+            bool vbaprojects = Check_VBA(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath });
+            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath, VBAProjects = vbaprojects });
             return Arc_Req;
         }
 
@@ -66,11 +69,12 @@ namespace CLISC
                     Console.WriteLine("--> No cell values detected");
                     return hascellvalue;
                 }
+
                 // Check if any cells have any value
-                foreach (Sheet aSheet in allSheets)
+                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart part in worksheetparts)
                 {
-                    WorksheetPart wsp = (WorksheetPart)spreadsheet.WorkbookPart.GetPartById(aSheet.Id);
-                    Worksheet worksheet = wsp.Worksheet;
+                    Worksheet worksheet = part.Worksheet;
                     var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     int row_count = rows.Count(); // Count number of rows
                     if (row_count > 0) // If any rows exist, this means cells exist
@@ -203,7 +207,7 @@ namespace CLISC
                                     if (hit == "RTD")
                                     {
                                         rtd_functions_count++;
-                                        Console.WriteLine($"--> RTD function in sheet \"{aSheet.Name}\" cell {cell.CellReference} detected and removed");
+                                        Console.WriteLine($"--> RTD function in sheet {part.Uri} cell {cell.CellReference} detected and removed");
                                     }
                                 }
                             }
@@ -383,6 +387,23 @@ namespace CLISC
                 }
             }
             return absolutepath;
+        }
+
+        // Check for VBA projects
+        public bool Check_VBA(string filepath)
+        {
+            bool vba = false;
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                VbaProjectPart found = spreadsheet.WorkbookPart.VbaProjectPart;
+                if (found != null)
+                {
+                    Console.WriteLine("--> VBA project found and removed");
+                    vba = true;
+                }
+            }
+            return vba;
         }
     }
 }

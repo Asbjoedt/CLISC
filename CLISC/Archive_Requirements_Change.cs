@@ -275,5 +275,18 @@ namespace CLISC
                 }
             }
         }
+
+        // Remove VBA projects
+        public void Remove_VBA(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
+                if (vba != null)
+                {
+                    spreadsheet.WorkbookPart.DeletePart(vba);
+                }
+            }
+        }
     }
 }
