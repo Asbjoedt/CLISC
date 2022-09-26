@@ -112,27 +112,26 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
-                if (extwbParts.Count > 0)
+                // Delete all cell references in worksheet
+                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart part in worksheetparts)
                 {
-                    foreach (ExternalWorkbookPart ext in extwbParts)
+                    Worksheet worksheet = part.Worksheet;
+                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    foreach (var row in rows)
                     {
-                        var elements = ext.ExternalLink.ChildElements.ToList();
-                        foreach (var element in elements)
+                        var cells = row.Elements<Cell>();
+                        foreach (Cell cell in cells)
                         {
-                            if (element.LocalName == "externalBook")
+                            if (cell.CellFormula != null)
                             {
-                                var externalLink = ext.ExternalLink.ToList();
-                                foreach (ExternalBook externalBook in externalLink)
+                                string formula = cell.CellFormula.InnerText;
+                                if (formula.Length > 0)
                                 {
-                                    var cellreferences = externalBook.SheetDataSet.ChildElements.ToList();
-                                    foreach (var cellreference in cellreferences)
+                                    string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
+                                    if (hit == "[")
                                     {
-                                        var cells = cellreference.InnerText.ToList();
-                                        foreach (var cell in cells)
-                                        {
-                                            cellreferences_count++;
-                                        }
+                                        cellreferences_count++;
                                     }
                                 }
                             }

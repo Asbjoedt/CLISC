@@ -32,13 +32,33 @@ namespace CLISC
                 File.WriteAllBytes(output_filepath, stream.ToArray());
             }
 
-            // Remove VBA project (if present) due to error in Open XML SDK
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
+            if (System.IO.Path.GetExtension(input_filepath) == ".xlsm" || System.IO.Path.GetExtension(input_filepath) == ".XLSM")
             {
-                VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
-                if (vba != null)
+                // Remove VBA project (if present) due to error in Open XML SDK
+                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
                 {
-                    spreadsheet.WorkbookPart.DeletePart(vba);
+                    VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
+                    if (vba != null)
+                    {
+                        Console.WriteLine("VBA");
+                        spreadsheet.WorkbookPart.DeletePart(vba);
+                    }
+                }
+
+                // Remove Excel 4.0 Get.Cell function (if present) due to error in Open XML SDK
+                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
+                {
+                    if (spreadsheet.WorkbookPart.Workbook.DefinedNames != null)
+                    {
+                        var definednames = spreadsheet.WorkbookPart.Workbook.DefinedNames.ToList();
+                        foreach (DocumentFormat.OpenXml.Spreadsheet.DefinedName definedname in definednames)
+                        {
+                            if (definedname.InnerXml.Contains("GET.CELL"))
+                            {
+                                definedname.Remove();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -97,7 +117,7 @@ namespace CLISC
 
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel prompts
-            Excel.Workbook wb = app.Workbooks.Open(input_filepath); // Create workbook instance
+            Excel.Workbook wb = app.Workbooks.Open(input_filepath, ReadOnly: false, Password: "'", WriteResPassword: "'", IgnoreReadOnlyRecommended: true, Notify: false); // Create workbook instance
 
             wb.SaveAs(output_filepath, 61); // Save workbook as .xlsx Strict
             wb.Close(); // Close workbook
