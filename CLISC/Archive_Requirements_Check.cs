@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
+using System.IO.Packaging;
 
 namespace CLISC
 {
@@ -34,6 +35,8 @@ namespace CLISC
 
         public bool VBAProjects { get; set; }
 
+        public bool Metadata { get; set; }
+
         // Perform check of archival requirements
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
@@ -48,10 +51,11 @@ namespace CLISC
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
             bool vbaprojects = Check_VBA(filepath);
+            bool metadata = Check_Metadata(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath, VBAProjects = vbaprojects });
+            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath, VBAProjects = vbaprojects, Metadata = metadata });
             return Arc_Req;
         }
 
@@ -344,7 +348,7 @@ namespace CLISC
                 }
                 if (printerList.Count > 0)
                 {
-                    Console.WriteLine($"--> {printersettings_count} printersettings detected and removed");
+                    Console.WriteLine($"--> {printersettings_count} printer settings detected and removed");
                 }
             }
             return printersettings_count;
@@ -403,6 +407,54 @@ namespace CLISC
                 }
             }
             return vba;
+        }
+
+        // Check for metadata in file properties
+        public bool Check_Metadata(string filepath)
+        {
+            bool metadata = false;
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                PackageProperties property = spreadsheet.Package.PackageProperties;
+
+                if (property.Category != null)
+                {
+                    metadata = true;
+                    return metadata;
+                }
+                if (property.Creator != null)
+                {
+                    metadata = true;
+                    return metadata;
+                }
+                if (property.Keywords != null)
+                {
+                    metadata = true;
+                    return metadata;
+                }
+                if (property.Description != null)
+                {
+                    metadata = true;
+                    return metadata;
+                }
+                if (property.Title != null)
+                {
+                    metadata = true;
+                    return metadata;
+                }
+                if (property.Subject != null)
+                {
+                    metadata = true;
+                    return metadata;
+                }
+                if (property.LastModifiedBy != null)
+                {
+                    metadata = true;
+                    return metadata;
+                }
+            }
+            return metadata;
         }
     }
 }

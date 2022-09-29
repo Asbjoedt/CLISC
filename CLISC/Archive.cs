@@ -25,6 +25,7 @@ namespace CLISC
         public static int activesheet_files = 0;
         public static int absolutepath_files = 0;
         public static int vbaproject_files = 0;
+        public static int metadata_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
@@ -60,6 +61,7 @@ namespace CLISC
             bool activesheet = false;
             bool absolutepath = false;
             bool vbaprojects = false;
+            bool metadata = false;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
@@ -140,6 +142,7 @@ namespace CLISC
                             activesheet = item.ActiveSheet;
                             absolutepath = item.AbsolutePath;
                             vbaprojects = item.VBAProjects;
+                            metadata = item.Metadata;
                         }
 
                         // Transform data according to archiving requirements
@@ -196,6 +199,11 @@ namespace CLISC
                         {
                             vbaproject_files++;
                             arc.Remove_VBA(xlsx_conv_filepath);
+                        }
+                        if (metadata == true)
+                        {
+                            metadata_files++;
+                            //arc.Remove_Metadata(xlsx_conv_filepath);
                         }
 
                         // Write to CSV archival requirements log
@@ -265,7 +273,7 @@ namespace CLISC
 
                     // Validate .ods
                     Validation val = new Validation();
-                    ods_validity = val.Validate_OpenDocument(ods_conv_filepath);
+                    //ods_validity = val.Validate_OpenDocument(ods_conv_filepath);
 
                     // Calculate checksum
                     ods_conv_checksum = Calculate_MD5(ods_conv_filepath);

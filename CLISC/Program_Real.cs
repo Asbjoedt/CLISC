@@ -53,7 +53,7 @@ namespace CLISC
                 case "CountConvertCompareArchive":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
+                    //com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     arc.Archive_Spreadsheets(resultsDirectory, fileList);
                     app.Archive_Results();
                     break;
@@ -131,6 +131,7 @@ namespace CLISC
             Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} of {Conversion.numCOMPLETE} converted spreadsheets had embedded objects  - Embedded objects were removed");
             Console.WriteLine($"ARCHIVE: {Archive.printersettings_files} of {Conversion.numCOMPLETE} converted spreadsheets had printer settings - Printer settings were removed");
             Console.WriteLine($"ARCHIVE: {Archive.activesheet_files} of {Conversion.numCOMPLETE} converted spreadsheets did not have first sheet as active sheet - Active sheet was changed");
+            Console.WriteLine($"ARCHIVE: {Archive.hyperlinks_files} of {Conversion.numCOMPLETE} converted spreadsheets have hyperlinks - Hyperlinks were not removed");
         }
     }
 }

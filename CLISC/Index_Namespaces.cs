@@ -63,6 +63,8 @@ namespace CLISC
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/printerSettings", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/printerSettings" });
             // relationship/comments
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/comments" });
+            // relationship/vbaProject
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.microsoft.com/office/2006/relationships/vbaProject", Strict = "" });
             // drawingml/a
             list.Add(new namespaceIndex() { Prefix = "a", Transitional = "http://schemas.openxmlformats.org/drawingml/2006/main", Strict = "http://purl.oclc.org/ooxml/drawingml/main" });
             // drawingml/xdr

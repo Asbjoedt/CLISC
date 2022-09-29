@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,6 +12,7 @@ using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Office.Interop.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -21,6 +23,18 @@ namespace CLISC
         // Convert to .xlsx Transitional - DOES NOT SUPPORT STRICT TO TRANSITIONAL
         public bool Convert_to_OOXML_Transitional(string input_filepath, string output_filepath)
         {
+            bool convert_success = false;
+
+            // If password-protected
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(input_filepath, false))
+            {
+                if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null)
+                {
+                    return convert_success;
+                }
+            }
+
+            // Convert spreadsheet
             byte[] byteArray = File.ReadAllBytes(input_filepath);
             using (MemoryStream stream = new MemoryStream())
             {
@@ -32,37 +46,11 @@ namespace CLISC
                 File.WriteAllBytes(output_filepath, stream.ToArray());
             }
 
-            if (System.IO.Path.GetExtension(input_filepath) == ".xlsm" || System.IO.Path.GetExtension(input_filepath) == ".XLSM")
-            {
-                // Remove VBA project (if present) due to error in Open XML SDK
-                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
-                {
-                    VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
-                    if (vba != null)
-                    {
-                        Console.WriteLine("VBA");
-                        spreadsheet.WorkbookPart.DeletePart(vba);
-                    }
-                }
+            // Use hacks because of errors in Open XML SDK
+            Hacks(input_filepath, output_filepath);
 
-                // Remove Excel 4.0 Get.Cell function (if present) due to error in Open XML SDK
-                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
-                {
-                    if (spreadsheet.WorkbookPart.Workbook.DefinedNames != null)
-                    {
-                        var definednames = spreadsheet.WorkbookPart.Workbook.DefinedNames.ToList();
-                        foreach (DocumentFormat.OpenXml.Spreadsheet.DefinedName definedname in definednames)
-                        {
-                            if (definedname.InnerXml.Contains("GET.CELL"))
-                            {
-                                definedname.Remove();
-                            }
-                        }
-                    }
-                }
-            }
-
-            bool convert_success = true;
+            // Return success
+            convert_success = true;
             return convert_success;
         }
 
@@ -132,6 +120,35 @@ namespace CLISC
             convert_success = true; // Mark as succesful
 
             return convert_success; // Report success
+        }
+
+        public void Hacks(string input_filepath, string output_filepath)
+        {
+            if (System.IO.Path.GetExtension(input_filepath) == ".xlsm" || System.IO.Path.GetExtension(input_filepath) == ".XLSM" || System.IO.Path.GetExtension(input_filepath) == ".xltm" || System.IO.Path.GetExtension(input_filepath) == ".XLTM")
+            {
+                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
+                {
+                    // Remove VBA project (if present) due to error in Open XML SDK
+                    VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
+                    if (vba != null)
+                    {
+                        spreadsheet.WorkbookPart.DeletePart(vba);
+                    }
+
+                    // Remove Excel 4.0 GET.CELL function (if present) due to error in Open XML SDK
+                    if (spreadsheet.WorkbookPart.Workbook.DefinedNames != null)
+                    {
+                        var definednames = spreadsheet.WorkbookPart.Workbook.DefinedNames.ToList();
+                        foreach (DocumentFormat.OpenXml.Spreadsheet.DefinedName definedname in definednames)
+                        {
+                            if (definedname.InnerXml.Contains("GET.CELL"))
+                            {
+                                definedname.Remove();
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

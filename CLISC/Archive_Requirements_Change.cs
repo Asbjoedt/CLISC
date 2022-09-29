@@ -8,6 +8,8 @@ using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Threading;
+using System.IO.Packaging;
+using CLISC;
 
 namespace CLISC
 {
@@ -255,10 +257,25 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                if (spreadsheet.WorkbookPart.Workbook.BookViews != null)
+                BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
+                WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
+                if (workbookView.ActiveTab != null)
                 {
-                    BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
-                    bookViews.Remove(); // Remove bookview and thereby remove custom active tab
+                    var activeSheetId = workbookView.ActiveTab.Value;
+                    if (activeSheetId > 0)
+                    {
+                        workbookView.ActiveTab.Value = 0;
+
+                        List<WorksheetPart> worksheets = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                        foreach (WorksheetPart worksheet in worksheets)
+                        {
+                            var sheetviews = worksheet.Worksheet.SheetViews.ToList();
+                            foreach (SheetView sheetview in sheetviews)
+                            {
+                                sheetview.TabSelected = null;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -285,6 +302,44 @@ namespace CLISC
                 if (vba != null)
                 {
                     spreadsheet.WorkbookPart.DeletePart(vba);
+                }
+            }
+        }
+
+        // Remove metadata in file properties
+        public void Remove_Metadata(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                PackageProperties property = spreadsheet.Package.PackageProperties;
+
+                if (property.Category != null)
+                {
+                    property.Category.Remove(0);
+                }
+                if (property.Creator != null)
+                {
+                    property.Creator.Remove(0);
+                }
+                if (property.Keywords != null)
+                {
+                    property.Keywords.Remove(0);
+                }
+                if (property.Description != null)
+                {
+                    property.Description.Remove(0);
+                }
+                if (property.Title != null)
+                {
+                    property.Title.Remove(0);
+                }
+                if (property.Subject != null)
+                {
+                    property.Subject.Remove(0);
+                }
+                if (property.LastModifiedBy != null)
+                {
+                    property.LastModifiedBy.Remove(0);
                 }
             }
         }
