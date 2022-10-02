@@ -34,6 +34,25 @@ namespace CLISC
                         part.DeletePart(qtp);
                     }
                 }
+
+                // Delete query tables if query tables exists without relationships
+                //Remove_DataConnections_QueryTables_Hack(filepath);
+            }
+        }
+
+        // Delete query tables if query tables exists without relationships
+        public void Remove_DataConnections_QueryTables_Hack(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Uri uri = new Uri($"/xl/queryTables/queryTable{i}.xml", UriKind.Relative);
+                    if (spreadsheet.Package.PartExists(uri) == true)
+                    {
+                        spreadsheet.Package.DeletePart(uri);
+                    }
+                }
             }
         }
 
@@ -313,33 +332,33 @@ namespace CLISC
             {
                 PackageProperties property = spreadsheet.Package.PackageProperties;
 
-                if (property.Category != null)
-                {
-                    property.Category.Remove(0);
-                }
                 if (property.Creator != null)
                 {
-                    property.Creator.Remove(0);
-                }
-                if (property.Keywords != null)
-                {
-                    property.Keywords.Remove(0);
-                }
-                if (property.Description != null)
-                {
-                    property.Description.Remove(0);
+                    property.Creator = null;
                 }
                 if (property.Title != null)
                 {
-                    property.Title.Remove(0);
+                    property.Title = null;
                 }
                 if (property.Subject != null)
                 {
-                    property.Subject.Remove(0);
+                    property.Subject = null;
+                }
+                if (property.Description != null)
+                {
+                    property.Description = null;
+                }
+                if (property.Keywords != null)
+                {
+                    property.Keywords = null;
+                }
+                if (property.Category != null)
+                {
+                    property.Category = null;
                 }
                 if (property.LastModifiedBy != null)
                 {
-                    property.LastModifiedBy.Remove(0);
+                    property.LastModifiedBy = null;
                 }
             }
         }

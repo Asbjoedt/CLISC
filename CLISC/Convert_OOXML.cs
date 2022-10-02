@@ -25,10 +25,10 @@ namespace CLISC
         {
             bool convert_success = false;
 
-            // If password-protected
+            // If password-protected or reserved by another user
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(input_filepath, false))
             {
-                if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null)
+                if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null)
                 {
                     return convert_success;
                 }

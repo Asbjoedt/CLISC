@@ -112,7 +112,7 @@ namespace CLISC
                         else
                         {
                             Conversion con = new Conversion();
-                            convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
+                            //convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
                             //con.Convert_Transitional_to_Strict(xlsx_conv_filepath);
                             if (convert_success == true)
                             {
@@ -122,7 +122,6 @@ namespace CLISC
                             {
                                 Console.WriteLine("--> Failed to convert to Strict conformance");
                             }
-                            
                         }
 
                         // Check .xlsx for archival requirements

@@ -8,6 +8,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using System.IO.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace CLISC
 {
@@ -41,6 +42,7 @@ namespace CLISC
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
             bool data = Check_Value(filepath);
+            bool metadata = Check_Metadata(filepath);
             int connections = Check_DataConnections(filepath);
             int cellreferences = Check_CellReferences(filepath);
             int rtdfunctions = Check_RTDFunctions(filepath);
@@ -51,7 +53,6 @@ namespace CLISC
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
             bool vbaprojects = Check_VBA(filepath);
-            bool metadata = Check_Metadata(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
@@ -104,6 +105,17 @@ namespace CLISC
                 {
                     conn_count = conn.Connections.Count();
                     Console.WriteLine($"--> {conn_count} data connections detected and removed");
+
+                    // Write information to metadata file
+                    string folder = Path.GetDirectoryName(filepath);
+                    foreach (Connection connection in conn.Connections)
+                    {
+                        using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                        {
+                            w.WriteLine("DATA CONNECTION");
+                            w.WriteLine($"NAME: {connection.Name}; DESCRIPTION: {connection.Description}; CREDENTIALS: {connection.Credentials}; CONNECTION FILE: {connection.ConnectionFile}");
+                        }
+                    }
                 }
             }
             return conn_count;
@@ -368,7 +380,7 @@ namespace CLISC
                     var activeSheetId = workbookView.ActiveTab.Value;
                     if (activeSheetId > 0)
                     {
-                        Console.WriteLine("--> First sheet is not active sheet detected and changed");
+                        Console.WriteLine("--> First sheet is not active detected and changed");
                         activeSheet = true;
                     }
                 }
@@ -418,40 +430,54 @@ namespace CLISC
             {
                 PackageProperties property = spreadsheet.Package.PackageProperties;
 
-                if (property.Category != null)
-                {
-                    metadata = true;
-                    return metadata;
-                }
                 if (property.Creator != null)
                 {
                     metadata = true;
-                    return metadata;
-                }
-                if (property.Keywords != null)
-                {
-                    metadata = true;
-                    return metadata;
-                }
-                if (property.Description != null)
-                {
-                    metadata = true;
-                    return metadata;
+
+                    // Write information to metadata file
+                    string folder = Path.GetDirectoryName(filepath);
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"CREATOR: {property.Creator}");
+                    }
                 }
                 if (property.Title != null)
                 {
                     metadata = true;
-                    return metadata;
                 }
                 if (property.Subject != null)
                 {
                     metadata = true;
-                    return metadata;
+                }
+                if (property.Description != null)
+                {
+                    metadata = true;
+                }
+                if (property.Keywords != null)
+                {
+                    metadata = true;
+                }
+                if (property.Category != null)
+                {
+                    metadata = true;
+
+                    // Write information to metadata file
+                    string folder = Path.GetDirectoryName(filepath);
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"CATEGORY: {property.Category}");
+                    }
                 }
                 if (property.LastModifiedBy != null)
                 {
                     metadata = true;
-                    return metadata;
+
+                    // Write information to metadata file
+                    string folder = Path.GetDirectoryName(filepath);
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"LAST MODIFIED BY: {property.LastModifiedBy}");
+                    }
                 }
             }
             return metadata;
