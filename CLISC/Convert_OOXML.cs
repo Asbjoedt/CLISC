@@ -47,7 +47,11 @@ namespace CLISC
             }
 
             // Use hacks because of errors in Open XML SDK
-            Hacks(input_filepath, output_filepath);
+            if (System.IO.Path.GetExtension(input_filepath) == ".xlsm" || System.IO.Path.GetExtension(input_filepath) == ".XLSM" || System.IO.Path.GetExtension(input_filepath) == ".xltm" || System.IO.Path.GetExtension(input_filepath) == ".XLTM")
+            {
+                Repair rep = new Repair();
+                rep.Repair_VBA(output_filepath);
+            }
 
             // Return success
             convert_success = true;
@@ -120,35 +124,6 @@ namespace CLISC
             convert_success = true; // Mark as succesful
 
             return convert_success; // Report success
-        }
-
-        public void Hacks(string input_filepath, string output_filepath)
-        {
-            if (System.IO.Path.GetExtension(input_filepath) == ".xlsm" || System.IO.Path.GetExtension(input_filepath) == ".XLSM" || System.IO.Path.GetExtension(input_filepath) == ".xltm" || System.IO.Path.GetExtension(input_filepath) == ".XLTM")
-            {
-                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
-                {
-                    // Remove VBA project (if present) due to error in Open XML SDK
-                    VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
-                    if (vba != null)
-                    {
-                        spreadsheet.WorkbookPart.DeletePart(vba);
-                    }
-
-                    // Remove Excel 4.0 GET.CELL function (if present) due to error in Open XML SDK
-                    if (spreadsheet.WorkbookPart.Workbook.DefinedNames != null)
-                    {
-                        var definednames = spreadsheet.WorkbookPart.Workbook.DefinedNames.ToList();
-                        foreach (DocumentFormat.OpenXml.Spreadsheet.DefinedName definedname in definednames)
-                        {
-                            if (definedname.InnerXml.Contains("GET.CELL"))
-                            {
-                                definedname.Remove();
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

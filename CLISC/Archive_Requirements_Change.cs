@@ -15,6 +15,13 @@ namespace CLISC
 {
     public partial class Archive_Requirements
     {
+        // Change conformance
+        public void Change_Conformance(string filepath)
+        {
+            Conversion con = new Conversion();
+            con.Convert_Transitional_to_Strict_ExcelInterop(filepath, filepath);
+        }
+
         // Remove data connections
         public void Remove_DataConnections(string filepath)
         {
@@ -308,19 +315,6 @@ namespace CLISC
                 {
                     AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
                     absPath.Remove();
-                }
-            }
-        }
-
-        // Remove VBA projects
-        public void Remove_VBA(string filepath)
-        {
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
-                if (vba != null)
-                {
-                    spreadsheet.WorkbookPart.DeletePart(vba);
                 }
             }
         }
