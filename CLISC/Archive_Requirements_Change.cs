@@ -16,10 +16,11 @@ namespace CLISC
     public partial class Archive_Requirements
     {
         // Change conformance
-        public void Change_Conformance(string filepath)
+        public bool Change_Conformance(string filepath)
         {
             Conversion con = new Conversion();
-            con.Convert_Transitional_to_Strict_ExcelInterop(filepath, filepath);
+            bool success = con.Convert_Transitional_to_Strict_ExcelInterop(filepath, filepath);
+            return success;
         }
 
         // Remove data connections
@@ -136,7 +137,6 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                // Delete all cell references in worksheet
                 List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart part in worksheetparts)
                 {
@@ -153,10 +153,11 @@ namespace CLISC
                                 if (formula.Length > 0)
                                 {
                                     string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
-                                    if (hit == "[")
+                                    string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
+                                    if (hit == "[" || hit2 == "'[")
                                     {
                                         CellValue cellvalue = cell.CellValue; // Save current cell value
-                                        cell.CellFormula = null; // Remove RTD formula
+                                        cell.CellFormula = null;
                                         // If cellvalue does not have a real value
                                         if (cellvalue.Text == "#N/A")
                                         {
@@ -173,7 +174,7 @@ namespace CLISC
                         }
                     }
                 }
-                // Delete all external link references
+                // Delete external book references
                 List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
                 if (extwbParts.Count > 0)
                 {
@@ -192,6 +193,20 @@ namespace CLISC
                 // Delete calculation chain
                 CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
                 spreadsheet.WorkbookPart.DeletePart(calc);
+
+                // Delete defined names that includes external cell references
+                DefinedNames definedNames = spreadsheet.WorkbookPart.Workbook.DefinedNames;
+                if (definedNames != null)
+                {
+                    var definedNamesList = definedNames.ToList();
+                    foreach (DefinedName definedName in definedNamesList)
+                    {
+                        if (definedName.InnerXml.StartsWith("["))
+                        {
+                            definedName.Remove();
+                        }
+                    }
+                }
             }
         }
 

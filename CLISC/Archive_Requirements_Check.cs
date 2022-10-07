@@ -105,11 +105,11 @@ namespace CLISC
                 Workbook workbook = spreadsheet.WorkbookPart.Workbook;
                 if (workbook.Conformance == null || workbook.Conformance != "strict")
                 {
-                    Console.WriteLine("--> Transitional conformance identified - Spreadsheet was converted to Strict conformance");
+                    Console.WriteLine("--> Transitional conformance detected and changed to Strict");
                 }
                 else if (workbook.Conformance == "strict")
                 {
-                    Console.WriteLine("--> Strict conformance identified");
+                    Console.WriteLine("--> Strict conformance detected");
                     conformance = true;
                 }
             }
@@ -128,21 +128,6 @@ namespace CLISC
                 {
                     conn_count = conn.Connections.Count();
                     Console.WriteLine($"--> {conn_count} data connections detected and removed");
-
-                    // Write information to metadata file
-                    string folder = Path.GetDirectoryName(filepath);
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine("DATA CONNECTIONS");
-                        w.WriteLine("---");
-                    }
-                    foreach (Connection connection in conn.Connections)
-                    {
-                        using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                        {
-                            w.WriteLine($"NAME: {connection.Name}; DESCRIPTION: {connection.Description}; CREDENTIALS: {connection.Credentials}; CONNECTION FILE: {connection.ConnectionFile}");
-                        }
-                    }
                 }
             }
             return conn_count;
@@ -172,7 +157,8 @@ namespace CLISC
                                 if (formula.Length > 0)
                                 {
                                     string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
-                                    if (hit == "[")
+                                    string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
+                                    if (hit == "[" || hit2 == "'[")
                                     {
                                         cellreferences_count++;
                                     }
@@ -467,7 +453,7 @@ namespace CLISC
                 // Write information to metadata file
                 using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
                 {
-                    w.WriteLine("FILE PROPERTIES METADATA");
+                    w.WriteLine("STRIPPED FILE PROPERTIES INFORMATION");
                     w.WriteLine("---");
                 }
 

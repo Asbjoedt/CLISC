@@ -12,7 +12,6 @@ using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Office.Interop.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -46,7 +45,7 @@ namespace CLISC
                 File.WriteAllBytes(output_filepath, stream.ToArray());
             }
 
-            // Use hacks because of errors in Open XML SDK
+            // Repair spreadsheet if errors
             if (System.IO.Path.GetExtension(input_filepath) == ".xlsm" || System.IO.Path.GetExtension(input_filepath) == ".XLSM" || System.IO.Path.GetExtension(input_filepath) == ".xltm" || System.IO.Path.GetExtension(input_filepath) == ".XLTM")
             {
                 Repair rep = new Repair();
@@ -107,23 +106,34 @@ namespace CLISC
         {
             bool convert_success = false;
 
-            Excel.Application app = new Excel.Application(); // Create Excel object instance
-            app.DisplayAlerts = false; // Don't display any Excel prompts
-            Excel.Workbook wb = app.Workbooks.Open(input_filepath, ReadOnly: false, Password: "'", WriteResPassword: "'", IgnoreReadOnlyRecommended: true, Notify: false); // Create workbook instance
-
-            wb.SaveAs(output_filepath, 61); // Save workbook as .xlsx Strict
-            wb.Close(); // Close workbook
-            app.Quit(); // Quit Excel application
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
+            try
             {
-                Marshal.ReleaseComObject(wb); // Delete workbook task in task manager
-                Marshal.ReleaseComObject(app); // Delete Excel task in task manager
+                // Open Excel
+                Excel.Application app = new Excel.Application(); // Create Excel object instance
+                app.DisplayAlerts = false; // Don't display any Excel prompts
+                Excel.Workbook wb = app.Workbooks.Open(input_filepath, ReadOnly: false, Password: "'", WriteResPassword: "'", IgnoreReadOnlyRecommended: true, Notify: false); // Create workbook instance
+
+                // Convert to Strict and close Excel
+                wb.SaveAs(output_filepath, 61);
+                wb.Close();
+                app.Quit();
+
+                // If CLISC is run on Windows close Excel in task manager
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Marshal.ReleaseComObject(wb); // Delete workbook task
+                    Marshal.ReleaseComObject(app); // Delete Excel task
+                }
+
+                // Return success
+                convert_success = true;
+                return convert_success;
             }
 
-            convert_success = true; // Mark as succesful
-
-            return convert_success; // Report success
+            catch (COMException)
+            {
+                return convert_success;
+            }
         }
     }
 }

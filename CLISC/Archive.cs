@@ -128,8 +128,14 @@ namespace CLISC
                         if (conformance == false)
                         {
                             conformance_files++;
-                            arc.Change_Conformance(xlsx_conv_filepath);
+                            bool success = arc.Change_Conformance(xlsx_conv_filepath);
+                            if (success == false)
+                            {
+                                archive_req_accept = false;
+                                Console.WriteLine("--> ERROR: Could not change conformance from Transitional to Strict");
+                            }
                         }
+
                         if (connections > 0)
                         {
                             connections_files++;

@@ -1,10 +1,12 @@
-﻿using CLISC;
-using DocumentFormat.OpenXml.Packaging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CLISC;
+using DocumentFormat.OpenXml.Office.CustomUI;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace CLISC
 {
@@ -27,28 +29,35 @@ namespace CLISC
                 }
 
                 // Remove Excel 4.0 GET.CELL function (if present) due to error in Open XML SDK
-                if (spreadsheet.WorkbookPart.Workbook.DefinedNames != null)
+                DefinedNames definedNames = spreadsheet.WorkbookPart.Workbook.DefinedNames;
+                if (definedNames != null)
                 {
-                    var definednames = spreadsheet.WorkbookPart.Workbook.DefinedNames.ToList();
-                    foreach (DocumentFormat.OpenXml.Spreadsheet.DefinedName definedname in definednames)
+                    var definedNamesList = definedNames.ToList();
+                    foreach (DefinedName definedName in definedNamesList)
                     {
-                        if (definedname.InnerXml.Contains("GET.CELL"))
+                        if (definedName.InnerXml.Contains("GET.CELL"))
                         {
-                            definedname.Remove();
+                            definedName.Remove();
                         }
                     }
                 }
 
-                // Correct the namespace for customUI14.xml
-                if (spreadsheet.RibbonExtensibilityPart != null)
+                // Correct the namespace for customUI14.xml, if wrong
+                RibbonExtensibilityPart ribbon = spreadsheet.RibbonExtensibilityPart;
+                if (ribbon != null)
                 {
                     Uri uri = new Uri("/customUI/customUI14.xml", UriKind.Relative);
-                    if (spreadsheet.Package.PartExists(uri) == true)
+                    if (spreadsheet.Package.GetPart(uri) != null)
                     {
-                        if (spreadsheet.RibbonExtensibilityPart.CustomUI.NamespaceUri != "http://schemas.microsoft.com/office/2009/07/customui:customUI")
+                        if (ribbon.RootElement.NamespaceUri != "http://schemas.microsoft.com/office/2009/07/customui")
                         {
-                            spreadsheet.RibbonExtensibilityPart.CustomUI.RemoveNamespaceDeclaration("x");
-                            spreadsheet.RibbonExtensibilityPart.CustomUI.AddNamespaceDeclaration("x", "http://schemas.microsoft.com/office/2009/07/customui:customUI");
+                            var list = ribbon.RootElement.NamespaceDeclarations.ToList();
+                            foreach (var name in list)
+                            {
+                                Console.WriteLine(name.Key + " " + name.Value);
+                            }
+                            Console.WriteLine(ribbon.RootElement.Prefix);
+                            Console.WriteLine(ribbon.RootElement.NamespaceUri);
                         }
                     }
                 }
