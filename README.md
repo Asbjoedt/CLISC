@@ -49,8 +49,8 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove external objects
 * Remove absolute path to local directory (not working)
 * Remove file property information but document in .txt sidecar file
-* Make first sheet the active sheet
-* Alert if embedded objects
+* Make first sheet active
+* Alert if embedded objects detected
 * Alert if hyperlinks detected
 * Calculate file checksums
 * Zip the archive directory
