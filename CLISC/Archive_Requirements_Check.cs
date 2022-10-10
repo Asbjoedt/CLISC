@@ -154,7 +154,7 @@ namespace CLISC
                             if (cell.CellFormula != null)
                             {
                                 string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 0)
+                                if (formula.Length > 1)
                                 {
                                     string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
                                     string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
@@ -313,7 +313,7 @@ namespace CLISC
                         {
                             embedobj_number++;
                             Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: Image object");
+                            Console.WriteLine($"----> Content Type: Drawing image object");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                         }
                         foreach (Model3DReferenceRelationshipPart part in embed_3d) // Inform user of each 3D object

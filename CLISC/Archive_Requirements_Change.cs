@@ -16,11 +16,10 @@ namespace CLISC
     public partial class Archive_Requirements
     {
         // Change conformance
-        public bool Change_Conformance(string filepath)
+        public void Change_Conformance(string filepath)
         {
             Conversion con = new Conversion();
-            bool success = con.Convert_Transitional_to_Strict_ExcelInterop(filepath, filepath);
-            return success;
+            con.Convert_Transitional_to_Strict_ExcelInterop(filepath, filepath);
         }
 
         // Remove data connections
@@ -42,26 +41,11 @@ namespace CLISC
                         part.DeletePart(qtp);
                     }
                 }
-
-                // Delete query tables if query tables exists without relationships
-                //Remove_DataConnections_QueryTables_Hack(filepath);
             }
-        }
-
-        // Delete query tables if query tables exists without relationships
-        public void Remove_DataConnections_QueryTables_Hack(string filepath)
-        {
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                for (int i = 0; i < 20; i++)
-                {
-                    Uri uri = new Uri($"/xl/queryTables/queryTable{i}.xml", UriKind.Relative);
-                    if (spreadsheet.Package.PartExists(uri) == true)
-                    {
-                        spreadsheet.Package.DeletePart(uri);
-                    }
-                }
-            }
+            // Repair spreadsheet
+            Repair rep = new Repair();
+            //rep.Repair_QueryTables(filepath);
+            rep.Repair_DataConnections(filepath);
         }
 
         // Remove RTD functions
@@ -150,7 +134,7 @@ namespace CLISC
                             if (cell.CellFormula != null)
                             {
                                 string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 0)
+                                if (formula.Length > 1)
                                 {
                                     string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
                                     string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
@@ -174,6 +158,7 @@ namespace CLISC
                         }
                     }
                 }
+
                 // Delete external book references
                 List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
                 if (extwbParts.Count > 0)
@@ -190,6 +175,7 @@ namespace CLISC
                         }
                     }
                 }
+
                 // Delete calculation chain
                 CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
                 spreadsheet.WorkbookPart.DeletePart(calc);

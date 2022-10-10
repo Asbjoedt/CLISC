@@ -125,17 +125,6 @@ namespace CLISC
                             cellvalue_files++;
                             archive_req_accept = true;
                         }
-                        if (conformance == false)
-                        {
-                            conformance_files++;
-                            bool success = arc.Change_Conformance(xlsx_conv_filepath);
-                            if (success == false)
-                            {
-                                archive_req_accept = false;
-                                Console.WriteLine("--> ERROR: Could not change conformance from Transitional to Strict");
-                            }
-                        }
-
                         if (connections > 0)
                         {
                             connections_files++;
@@ -184,6 +173,11 @@ namespace CLISC
                         {
                             metadata_files++;
                             arc.Remove_Metadata(xlsx_conv_filepath);
+                        }
+                        if (conformance == false)
+                        {
+                            conformance_files++;
+                            arc.Change_Conformance(xlsx_conv_filepath);
                         }
 
                         // Write to CSV archival requirements log

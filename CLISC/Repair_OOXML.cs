@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CLISC;
-using DocumentFormat.OpenXml.Office.CustomUI;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
@@ -15,8 +13,10 @@ namespace CLISC
         public void Repair_OOXML(string filepath)
         {
             Repair_VBA(filepath);
+            Repair_DataConnections(filepath);
         }
 
+        // Repair spreadsheets that had VBA code (macros) in them
         public void Repair_VBA(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
@@ -58,6 +58,42 @@ namespace CLISC
                             }
                             Console.WriteLine(ribbon.RootElement.Prefix);
                             Console.WriteLine(ribbon.RootElement.NamespaceUri);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Delete query tables if query tables exists without relationships
+        public void Repair_QueryTables(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Uri uri = new Uri($"/xl/queryTables/queryTable{i}.xml", UriKind.Relative);
+                    if (spreadsheet.Package.PartExists(uri) == true)
+                    {
+                        //spreadsheet.WorkbookPart.OpenXmlPackage.DeletePart(QueryTablePart);
+                    }
+                }
+            }
+        }
+
+        public void Repair_DataConnections(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                // If spreadsheet contains a custom XML Map, delete databinding
+                if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
+                {
+                    CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
+                    List<Map> maps = xmlMap.MapInfo.Elements<Map>().ToList();
+                    foreach (Map map in maps)
+                    {
+                        if (map.DataBinding != null)
+                        {
+                            map.DataBinding.Remove();
                         }
                     }
                 }
