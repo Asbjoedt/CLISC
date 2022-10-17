@@ -100,26 +100,5 @@ namespace CLISC
                 }
             }
         }
-
-        // Convert .xlsx Transtional to Strict using Excel
-        public void Convert_Transitional_to_Strict_ExcelInterop(string input_filepath, string output_filepath)
-        {
-            // Open Excel
-            Excel.Application app = new Excel.Application(); // Create Excel object instance
-            app.DisplayAlerts = false; // Don't display any Excel prompts
-            Excel.Workbook wb = app.Workbooks.Open(input_filepath, ReadOnly: false, Password: "'", WriteResPassword: "'", IgnoreReadOnlyRecommended: true, Notify: false); // Create workbook instance
-
-            // Convert to Strict and close Excel
-            wb.SaveAs(output_filepath, 61);
-            wb.Close();
-            app.Quit();
-
-            // If CLISC is run on Windows close Excel in task manager
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Marshal.ReleaseComObject(wb); // Delete workbook task
-                Marshal.ReleaseComObject(app); // Delete Excel task
-            }
-        }
     }
 }

@@ -1,25 +1,24 @@
 ﻿using System;
+using System.IO.Packaging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Threading;
-using System.IO.Packaging;
-using CLISC;
 
 namespace CLISC
 {
     public partial class Archive_Requirements
     {
-        // Change conformance
+        // Change conformance to Strict
         public void Change_Conformance(string filepath)
         {
-            Conversion con = new Conversion();
-            con.Convert_Transitional_to_Strict_ExcelInterop(filepath, filepath);
+            Archive_Requirements arc = new Archive_Requirements();
+            arc.Change_Conformance_ExcelInterop(filepath, filepath);
         }
 
         // Remove data connections
@@ -44,8 +43,8 @@ namespace CLISC
             }
             // Repair spreadsheet
             Repair rep = new Repair();
-            //rep.Repair_QueryTables(filepath);
             rep.Repair_DataConnections(filepath);
+            rep.Repair_QueryTables(filepath);
         }
 
         // Remove RTD functions

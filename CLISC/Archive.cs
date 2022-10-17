@@ -128,7 +128,7 @@ namespace CLISC
                         if (connections > 0)
                         {
                             connections_files++;
-                            arc.Remove_DataConnections(xlsx_conv_filepath);
+                            arc.Remove_DataConnections_ExcelInterop(xlsx_conv_filepath);
                         }
                         if (cellreferences > 0)
                         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
@@ -71,10 +72,28 @@ namespace CLISC
             {
                 for (int i = 0; i < 20; i++)
                 {
-                    Uri uri = new Uri($"/xl/queryTables/queryTable{i}.xml", UriKind.Relative);
-                    if (spreadsheet.Package.PartExists(uri) == true)
+                    Uri queryUri = new Uri($"/xl/queryTables/queryTable{i}.xml", UriKind.Relative);
+                    if (spreadsheet.Package.PartExists(queryUri) == true)
                     {
-                        //spreadsheet.WorkbookPart.OpenXmlPackage.DeletePart(QueryTablePart);
+                        // Delete query tables up until 20
+                        spreadsheet.Package.DeletePart(queryUri);
+
+                        // Delete query table relationships in tables
+                        List<WorksheetPart> wsParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                        foreach (WorksheetPart wsPart in wsParts)
+                        {
+                            var partsList = wsPart.Parts.ToList();
+                            foreach (var part in partsList)
+                            {
+                                if (part.OpenXmlPart.Equals("DocumentFormat.OpenXml.Packaging.TableDefinitionPart"))
+                                {
+                                    string id = part.RelationshipId;
+                                    wsPart.DeleteReferenceRelationship(id);
+                                }
+                                
+                                Console.WriteLine(part.OpenXmlPart);
+                            }
+                        }
                     }
                 }
             }
