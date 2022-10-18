@@ -11,15 +11,15 @@ namespace CLISC
     public partial class Archive_Requirements
     {
         // Change conformance to Strict
-        public void Change_Conformance_ExcelInterop(string input_filepath, string output_filepath)
+        public void Change_Conformance_ExcelInterop(string filepath)
         {
             // Open Excel
             Excel.Application app = new Excel.Application(); // Create Excel object instance
             app.DisplayAlerts = false; // Don't display any Excel prompts
-            Excel.Workbook wb = app.Workbooks.Open(input_filepath, ReadOnly: false, Password: "'", WriteResPassword: "'", IgnoreReadOnlyRecommended: true, Notify: false); // Create workbook instance
+            Excel.Workbook wb = app.Workbooks.Open(filepath, ReadOnly: false, Password: "'", WriteResPassword: "'", IgnoreReadOnlyRecommended: true, Notify: false); // Create workbook instance
 
             // Convert to Strict and close Excel
-            wb.SaveAs(output_filepath, 61);
+            wb.SaveAs(filepath, 61);
             wb.Close();
             app.Quit();
 
@@ -62,6 +62,10 @@ namespace CLISC
                 Marshal.ReleaseComObject(wb); // Delete workbook task in task manager
                 Marshal.ReleaseComObject(app); // Delete Excel task in task manager
             }
+
+            // Repair spreadsheet using Open XML SDK
+            Repair rep = new Repair();
+            rep.Repair_DataConnections(filepath);
         }
 
         // Remove external cell references

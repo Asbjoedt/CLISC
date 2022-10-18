@@ -5,15 +5,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using CLISC;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.CustomXmlSchemaReferences;
 using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.Office.Interop.Excel;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace CLISC
 {
@@ -75,28 +72,6 @@ namespace CLISC
 
                     // Remove vml urn namespace from workbook.xml
                     workbook.RemoveNamespaceDeclaration("v");
-                }
-            }
-        }
-
-        // Convert .xlsx Transtional to Strict
-        public void Convert_Transitional_to_Strict(string input_filepath)
-        {
-            // Create list of namespaces
-            List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
-
-            using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
-            {
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                DocumentFormat.OpenXml.Spreadsheet.Workbook workbook = wbPart.Workbook;
-                // If Transitional
-                if (workbook.Conformance == null || workbook.Conformance != "strict")
-                {
-                    // Change conformance class
-                    workbook.Conformance.Value = ConformanceClass.Enumstrict;
-
-                    // Add vml urn namespace to workbook.xml
-                    workbook.AddNamespaceDeclaration("v", "urn:schemas-microsoft-com:vml");
                 }
             }
         }

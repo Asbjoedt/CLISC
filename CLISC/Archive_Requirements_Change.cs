@@ -17,8 +17,25 @@ namespace CLISC
         // Change conformance to Strict
         public void Change_Conformance(string filepath)
         {
-            Archive_Requirements arc = new Archive_Requirements();
-            arc.Change_Conformance_ExcelInterop(filepath, filepath);
+            // Work in progress
+
+            // Create list of namespaces
+            List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
+
+            using (var spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                DocumentFormat.OpenXml.Spreadsheet.Workbook workbook = wbPart.Workbook;
+                // If Transitional
+                if (workbook.Conformance == null || workbook.Conformance != "strict")
+                {
+                    // Change conformance class
+                    workbook.Conformance.Value = ConformanceClass.Enumstrict;
+
+                    // Add vml urn namespace to workbook.xml
+                    workbook.AddNamespaceDeclaration("v", "urn:schemas-microsoft-com:vml");
+                }
+            }
         }
 
         // Remove data connections

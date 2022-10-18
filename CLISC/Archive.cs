@@ -177,7 +177,7 @@ namespace CLISC
                         if (conformance == false)
                         {
                             conformance_files++;
-                            arc.Change_Conformance(xlsx_conv_filepath);
+                            arc.Change_Conformance_ExcelInterop(xlsx_conv_filepath);
                         }
 
                         // Write to CSV archival requirements log
