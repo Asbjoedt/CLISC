@@ -100,6 +100,14 @@ namespace CLISC
                         conv_filepath = file_folder + "\\orgFile_" + Path.GetFileNameWithoutExtension(org_filename) + ".xlsx";
                     }
 
+                    // Throw exception if filesize is over limit (100 MB)
+                    long length = new System.IO.FileInfo(copy_filepath).Length;
+                    length = length/1000000;
+                    if (length >= 100)
+                    {
+                        throw new System.Data.ConstraintException("FilesizeExceeded");
+                    }
+
                     // Change conversion method based on file extension
                     switch (org_extension)
                     {
@@ -191,6 +199,13 @@ namespace CLISC
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[1];
+                }
+                // If filesize exceeds limit
+                catch (System.Data.ConstraintException)
+                {
+                    numFAILED++;
+                    convert_success = false;
+                    error_message = "Filesize exceeds application limit";
                 }
 
                 finally

@@ -12,9 +12,8 @@ namespace CLISC
 {
     public partial class Archive
     {
-        public static int valid_files = 0;
-        public static int invalid_files = 0;
         public static int cellvalue_files = 0;
+        public static int conformance_files = 0;
         public static int connections_files = 0;
         public static int cellreferences_files = 0;
         public static int rtdfunctions_files = 0;
@@ -24,8 +23,9 @@ namespace CLISC
         public static int hyperlinks_files = 0;
         public static int activesheet_files = 0;
         public static int absolutepath_files = 0;
-        public static int vbaproject_files = 0;
         public static int metadata_files = 0;
+        public static int valid_files = 0;
+        public static int invalid_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
         public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
@@ -51,6 +51,7 @@ namespace CLISC
             string ods_conv_checksum = "";
             bool archive_req_accept = false;
             bool data = false;
+            bool conformance = false;
             int connections = 0;
             int cellreferences = 0;
             int rtdfunctions = 0;
@@ -60,7 +61,6 @@ namespace CLISC
             int hyperlinks = 0;
             bool activesheet = false;
             bool absolutepath = false;
-            bool vbaprojects = false;
             bool metadata = false;
 
             // Open CSV file to log archive results
@@ -75,7 +75,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Data Connections Removed;Cell References Removed;RTD Functions Removed;Printersettings Removed;External Objects Removed;Embedded Objects Alert;Hyperlinks Alert;Active Sheet changed");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Conformance Changed;Data Connections Removed;Cell References Removed;RTD Functions Removed;Printersettings Removed;External Objects Removed;Active Sheet changed;Metadata Removed;Absolute Path Removed;Embedded Objects Alert;Hyperlinks Alert");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -99,32 +99,6 @@ namespace CLISC
                         string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
                         Console.WriteLine($"--> Analyzing: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
-                        // Convert to .xlsx Strict conformance
-                        bool? strict = null;
-                        using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx_conv_filepath, false))
-                        {
-                            strict = spreadsheet.StrictRelationshipFound; // Identify if already Strict
-                        }
-                        if (strict == true)
-                        {
-                            Console.WriteLine("--> Spreadsheet is already Strict conformant");
-                        }
-                        else
-                        {
-                            Conversion con = new Conversion();
-                            convert_success = con.Convert_Transitional_to_Strict_ExcelInterop(xlsx_conv_filepath, xlsx_conv_filepath);
-                            //con.Convert_Transitional_to_Strict(xlsx_conv_filepath);
-                            if (convert_success == true)
-                            {
-                                Console.WriteLine("--> Converted to Strict conformance");
-                            }
-                            else
-                            {
-                                Console.WriteLine("--> Failed to convert to Strict conformance");
-                            }
-                            
-                        }
-
                         // Check .xlsx for archival requirements
                         Archive_Requirements arc = new Archive_Requirements();
                         List<Archive_Requirements> pidgeon = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
@@ -132,6 +106,7 @@ namespace CLISC
                         {
                             // Receive information
                             data = item.Data;
+                            conformance = item.Conformance;
                             connections = item.Connections;
                             cellreferences = item.CellReferences;
                             rtdfunctions = item.RTDFunctions;
@@ -141,15 +116,24 @@ namespace CLISC
                             hyperlinks = item.Hyperlinks;
                             activesheet = item.ActiveSheet;
                             absolutepath = item.AbsolutePath;
-                            vbaprojects = item.VBAProjects;
                             metadata = item.Metadata;
                         }
 
                         // Transform data according to archiving requirements
+                        if (data == true)
+                        {
+                            cellvalue_files++;
+                            archive_req_accept = true;
+                        }
+                        if (conformance == false)
+                        {
+                            conformance_files++;
+                            arc.Change_Conformance_ExcelInterop(xlsx_conv_filepath);
+                        }
                         if (connections > 0)
                         {
                             connections_files++;
-                            arc.Remove_DataConnections(xlsx_conv_filepath);
+                            arc.Remove_DataConnections_ExcelInterop(xlsx_conv_filepath);
                         }
                         if (cellreferences > 0)
                         {
@@ -174,7 +158,7 @@ namespace CLISC
                         if (embedobj > 0)
                         {
                             embedobj_files++;
-                            arc.Remove_EmbeddedObjects(xlsx_conv_filepath);
+                            //arc.Remove_EmbeddedObjects(xlsx_conv_filepath);
                         }
                         if (hyperlinks > 0)
                         {
@@ -190,24 +174,14 @@ namespace CLISC
                             absolutepath_files++;
                             arc.Remove_AbsolutePath(xlsx_conv_filepath);
                         }
-                        if (data == false)
-                        {
-                            cellvalue_files++;
-                            archive_req_accept = true;
-                        }
-                        if (vbaprojects == true)
-                        {
-                            vbaproject_files++;
-                            arc.Remove_VBA(xlsx_conv_filepath);
-                        }
                         if (metadata == true)
                         {
                             metadata_files++;
-                            //arc.Remove_Metadata(xlsx_conv_filepath);
+                            arc.Remove_Metadata(xlsx_conv_filepath);
                         }
 
                         // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{embedobj};{hyperlinks};{activesheet}");
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{conformance};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{activesheet};{metadata};{absolutepath};{embedobj};{hyperlinks}");
                         csv3.AppendLine(newLine3_2);
 
                         // Validate
@@ -247,12 +221,12 @@ namespace CLISC
                     // If spreadsheet is malformed
                     catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
                     {
-                        // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};;;;;;");
-                        csv3.AppendLine(newLine3_2);
-
                         xlsx_validity = "Invalid";
                         archive_req_accept = false;
+
+                        // Write to CSV archival requirements log
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};;;;;");
+                        csv3.AppendLine(newLine3_2);
                     }
 
                     // Calculate checksum
@@ -296,7 +270,7 @@ namespace CLISC
                 xlsx_conv_checksum = "";
                 ods_conv_checksum = "";
                 xlsx_validity = "";
-                archive_req_accept = true;
+                archive_req_accept = false;
             }
 
             // Close validation CSV file to log results

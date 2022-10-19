@@ -1,20 +1,43 @@
 ﻿using System;
+using System.IO.Packaging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Threading;
-using System.IO.Packaging;
-using CLISC;
 
 namespace CLISC
 {
     public partial class Archive_Requirements
     {
+        // Change conformance to Strict
+        public void Change_Conformance(string filepath)
+        {
+            // Work in progress
+
+            // Create list of namespaces
+            List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
+
+            using (var spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                WorkbookPart wbPart = spreadsheet.WorkbookPart;
+                DocumentFormat.OpenXml.Spreadsheet.Workbook workbook = wbPart.Workbook;
+                // If Transitional
+                if (workbook.Conformance == null || workbook.Conformance != "strict")
+                {
+                    // Change conformance class
+                    workbook.Conformance.Value = ConformanceClass.Enumstrict;
+
+                    // Add vml urn namespace to workbook.xml
+                    workbook.AddNamespaceDeclaration("v", "urn:schemas-microsoft-com:vml");
+                }
+            }
+        }
+
         // Remove data connections
         public void Remove_DataConnections(string filepath)
         {
@@ -34,7 +57,24 @@ namespace CLISC
                         part.DeletePart(qtp);
                     }
                 }
+
+                // If spreadsheet contains a custom XML Map, delete databinding
+                if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
+                {
+                    CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
+                    List<Map> maps = xmlMap.MapInfo.Elements<Map>().ToList();
+                    foreach (Map map in maps)
+                    {
+                        if (map.DataBinding != null)
+                        {
+                            map.DataBinding.Remove();
+                        }
+                    }
+                }
             }
+            // Repair spreadsheet
+            Repair rep = new Repair();
+            rep.Repair_QueryTables(filepath);
         }
 
         // Remove RTD functions
@@ -110,7 +150,6 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                // Delete all cell references in worksheet
                 List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
                 foreach (WorksheetPart part in worksheetparts)
                 {
@@ -124,13 +163,14 @@ namespace CLISC
                             if (cell.CellFormula != null)
                             {
                                 string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 0)
+                                if (formula.Length > 1)
                                 {
                                     string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
-                                    if (hit == "[")
+                                    string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
+                                    if (hit == "[" || hit2 == "'[")
                                     {
                                         CellValue cellvalue = cell.CellValue; // Save current cell value
-                                        cell.CellFormula = null; // Remove RTD formula
+                                        cell.CellFormula = null;
                                         // If cellvalue does not have a real value
                                         if (cellvalue.Text == "#N/A")
                                         {
@@ -147,7 +187,8 @@ namespace CLISC
                         }
                     }
                 }
-                // Delete all external link references
+
+                // Delete external book references
                 List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
                 if (extwbParts.Count > 0)
                 {
@@ -163,9 +204,24 @@ namespace CLISC
                         }
                     }
                 }
+
                 // Delete calculation chain
                 CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
                 spreadsheet.WorkbookPart.DeletePart(calc);
+
+                // Delete defined names that includes external cell references
+                DefinedNames definedNames = spreadsheet.WorkbookPart.Workbook.DefinedNames;
+                if (definedNames != null)
+                {
+                    var definedNamesList = definedNames.ToList();
+                    foreach (DefinedName definedName in definedNamesList)
+                    {
+                        if (definedName.InnerXml.StartsWith("["))
+                        {
+                            definedName.Remove();
+                        }
+                    }
+                }
             }
         }
 
@@ -293,19 +349,6 @@ namespace CLISC
             }
         }
 
-        // Remove VBA projects
-        public void Remove_VBA(string filepath)
-        {
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
-                if (vba != null)
-                {
-                    spreadsheet.WorkbookPart.DeletePart(vba);
-                }
-            }
-        }
-
         // Remove metadata in file properties
         public void Remove_Metadata(string filepath)
         {
@@ -313,33 +356,33 @@ namespace CLISC
             {
                 PackageProperties property = spreadsheet.Package.PackageProperties;
 
-                if (property.Category != null)
-                {
-                    property.Category.Remove(0);
-                }
                 if (property.Creator != null)
                 {
-                    property.Creator.Remove(0);
-                }
-                if (property.Keywords != null)
-                {
-                    property.Keywords.Remove(0);
-                }
-                if (property.Description != null)
-                {
-                    property.Description.Remove(0);
+                    property.Creator = null;
                 }
                 if (property.Title != null)
                 {
-                    property.Title.Remove(0);
+                    property.Title = null;
                 }
                 if (property.Subject != null)
                 {
-                    property.Subject.Remove(0);
+                    property.Subject = null;
+                }
+                if (property.Description != null)
+                {
+                    property.Description = null;
+                }
+                if (property.Keywords != null)
+                {
+                    property.Keywords = null;
+                }
+                if (property.Category != null)
+                {
+                    property.Category = null;
                 }
                 if (property.LastModifiedBy != null)
                 {
-                    property.LastModifiedBy.Remove(0);
+                    property.LastModifiedBy = null;
                 }
             }
         }

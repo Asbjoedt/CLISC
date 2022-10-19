@@ -8,12 +8,16 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using System.IO.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Presentation;
 
 namespace CLISC
 {
     public partial class Archive_Requirements
     {
         public bool Data { get; set; }
+
+        public bool Conformance { get; set; }
 
         public int Connections { get; set; }
 
@@ -33,14 +37,14 @@ namespace CLISC
 
         public bool AbsolutePath { get; set; }
 
-        public bool VBAProjects { get; set; }
-
         public bool Metadata { get; set; }
 
         // Perform check of archival requirements
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
             bool data = Check_Value(filepath);
+            bool conformance = Check_Conformance(filepath);
+            bool metadata = Check_Metadata(filepath);
             int connections = Check_DataConnections(filepath);
             int cellreferences = Check_CellReferences(filepath);
             int rtdfunctions = Check_RTDFunctions(filepath);
@@ -50,12 +54,10 @@ namespace CLISC
             int hyperlinks = Check_Hyperlinks(filepath);
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
-            bool vbaprojects = Check_VBA(filepath);
-            bool metadata = Check_Metadata(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath, VBAProjects = vbaprojects, Metadata = metadata });
+            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath, Metadata = metadata });
             return Arc_Req;
         }
 
@@ -90,6 +92,28 @@ namespace CLISC
             }
             Console.WriteLine("--> No cell values detected");
             return hascellvalue;
+        }
+
+        // Check for Strict conformance
+        public bool Check_Conformance(string filepath)
+        {
+            bool conformance = false;
+
+            // Perform check
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                Workbook workbook = spreadsheet.WorkbookPart.Workbook;
+                if (workbook.Conformance == null || workbook.Conformance != "strict")
+                {
+                    Console.WriteLine("--> Transitional conformance detected and changed to Strict");
+                }
+                else if (workbook.Conformance == "strict")
+                {
+                    Console.WriteLine("--> Strict conformance detected");
+                    conformance = true;
+                }
+            }
+            return conformance;
         }
 
         // Check for data connections
@@ -130,10 +154,11 @@ namespace CLISC
                             if (cell.CellFormula != null)
                             {
                                 string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 0)
+                                if (formula.Length > 1)
                                 {
                                     string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
-                                    if (hit == "[")
+                                    string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
+                                    if (hit == "[" || hit2 == "'[")
                                     {
                                         cellreferences_count++;
                                     }
@@ -288,7 +313,7 @@ namespace CLISC
                         {
                             embedobj_number++;
                             Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: Image object");
+                            Console.WriteLine($"----> Content Type: Drawing image object");
                             Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                         }
                         foreach (Model3DReferenceRelationshipPart part in embed_3d) // Inform user of each 3D object
@@ -361,15 +386,21 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
-                WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
-                if (workbookView.ActiveTab != null)
+                if (spreadsheet.WorkbookPart.Workbook.BookViews != null)
                 {
-                    var activeSheetId = workbookView.ActiveTab.Value;
-                    if (activeSheetId > 0)
+                    BookViews bookViews = spreadsheet.WorkbookPart.Workbook.BookViews;
+                    if (bookViews.ChildElements.Where(p => p.OuterXml == "workbookView") != null)
                     {
-                        Console.WriteLine("--> First sheet is not active sheet detected and changed");
-                        activeSheet = true;
+                        WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
+                        if (workbookView.ActiveTab != null)
+                        {
+                            var activeSheetId = workbookView.ActiveTab.Value;
+                            if (activeSheetId > 0)
+                            {
+                                Console.WriteLine("--> First sheet is not active detected and changed");
+                                activeSheet = true;
+                            }
+                        }
                     }
                 }
             }
@@ -413,45 +444,88 @@ namespace CLISC
         public bool Check_Metadata(string filepath)
         {
             bool metadata = false;
+            string folder = Path.GetDirectoryName(filepath);
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 PackageProperties property = spreadsheet.Package.PackageProperties;
 
-                if (property.Category != null)
+                // Write information to metadata file
+                using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
                 {
-                    metadata = true;
-                    return metadata;
+                    w.WriteLine("STRIPPED FILE PROPERTIES INFORMATION");
+                    w.WriteLine("---");
                 }
+
                 if (property.Creator != null)
                 {
                     metadata = true;
-                    return metadata;
-                }
-                if (property.Keywords != null)
-                {
-                    metadata = true;
-                    return metadata;
-                }
-                if (property.Description != null)
-                {
-                    metadata = true;
-                    return metadata;
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"CREATOR: {property.Creator}");
+                    }
                 }
                 if (property.Title != null)
                 {
                     metadata = true;
-                    return metadata;
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"TITLE: {property.Title}");
+                    }
                 }
                 if (property.Subject != null)
                 {
                     metadata = true;
-                    return metadata;
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"SUBJECT: {property.Subject}");
+                    }
+                }
+                if (property.Description != null)
+                {
+                    metadata = true;
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"DESCRIPTION: {property.Description}");
+                    }
+                }
+                if (property.Keywords != null)
+                {
+                    metadata = true;
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"KEYWORDS: {property.Keywords}");
+                    }
+                }
+                if (property.Category != null)
+                {
+                    metadata = true;
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"CATEGORY: {property.Category}");
+                    }
                 }
                 if (property.LastModifiedBy != null)
                 {
                     metadata = true;
-                    return metadata;
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"LAST MODIFIED BY: {property.LastModifiedBy}");
+                    }
                 }
             }
             return metadata;
