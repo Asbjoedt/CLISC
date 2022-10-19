@@ -62,10 +62,6 @@ namespace CLISC
                 Marshal.ReleaseComObject(wb); // Delete workbook task in task manager
                 Marshal.ReleaseComObject(app); // Delete Excel task in task manager
             }
-
-            // Repair spreadsheet using Open XML SDK
-            Repair rep = new Repair();
-            rep.Repair_DataConnections(filepath);
         }
 
         // Remove external cell references
