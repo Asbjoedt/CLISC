@@ -42,12 +42,9 @@ namespace CLISC
                 File.WriteAllBytes(output_filepath, stream.ToArray());
             }
 
-            // Repair spreadsheet if errors
-            if (System.IO.Path.GetExtension(input_filepath) == ".xlsm" || System.IO.Path.GetExtension(input_filepath) == ".XLSM" || System.IO.Path.GetExtension(input_filepath) == ".xltm" || System.IO.Path.GetExtension(input_filepath) == ".XLTM")
-            {
-                Repair rep = new Repair();
-                rep.Repair_VBA(output_filepath);
-            }
+            // Repair spreadsheet
+            Repair rep = new Repair();
+            rep.Repair_OOXML(output_filepath);
 
             // Return success
             convert_success = true;

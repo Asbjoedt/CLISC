@@ -57,10 +57,23 @@ namespace CLISC
                         part.DeletePart(qtp);
                     }
                 }
+
+                // If spreadsheet contains a custom XML Map, delete databinding
+                if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
+                {
+                    CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
+                    List<Map> maps = xmlMap.MapInfo.Elements<Map>().ToList();
+                    foreach (Map map in maps)
+                    {
+                        if (map.DataBinding != null)
+                        {
+                            map.DataBinding.Remove();
+                        }
+                    }
+                }
             }
             // Repair spreadsheet
             Repair rep = new Repair();
-            rep.Repair_DataConnections(filepath);
             rep.Repair_QueryTables(filepath);
         }
 

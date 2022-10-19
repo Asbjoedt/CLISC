@@ -125,6 +125,11 @@ namespace CLISC
                             cellvalue_files++;
                             archive_req_accept = true;
                         }
+                        if (conformance == false)
+                        {
+                            conformance_files++;
+                            arc.Change_Conformance_ExcelInterop(xlsx_conv_filepath);
+                        }
                         if (connections > 0)
                         {
                             connections_files++;
@@ -173,11 +178,6 @@ namespace CLISC
                         {
                             metadata_files++;
                             arc.Remove_Metadata(xlsx_conv_filepath);
-                        }
-                        if (conformance == false)
-                        {
-                            conformance_files++;
-                            arc.Change_Conformance_ExcelInterop(xlsx_conv_filepath);
                         }
 
                         // Write to CSV archival requirements log

@@ -13,13 +13,21 @@ namespace CLISC
     {
         public void Repair_OOXML(string filepath)
         {
-            Repair_VBA(filepath);
-            Repair_DataConnections(filepath);
+            bool repair_1 = Repair_VBA(filepath);
+            bool repair_2 = Repair_DefinedNames(filepath);
+
+            // If any repair method has been performed
+            if (repair_1 == true || repair_2 == true)
+            {
+                Console.WriteLine("--> Spreadsheet was repaired");
+            }
         }
 
         // Repair spreadsheets that had VBA code (macros) in them
-        public void Repair_VBA(string filepath)
+        public bool Repair_VBA(string filepath)
         {
+            bool repaired = false;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 // Remove VBA project (if present) due to error in Open XML SDK
@@ -27,23 +35,11 @@ namespace CLISC
                 if (vba != null)
                 {
                     spreadsheet.WorkbookPart.DeletePart(vba);
-                }
-
-                // Remove Excel 4.0 GET.CELL function (if present) due to error in Open XML SDK
-                DefinedNames definedNames = spreadsheet.WorkbookPart.Workbook.DefinedNames;
-                if (definedNames != null)
-                {
-                    var definedNamesList = definedNames.ToList();
-                    foreach (DefinedName definedName in definedNamesList)
-                    {
-                        if (definedName.InnerXml.Contains("GET.CELL"))
-                        {
-                            definedName.Remove();
-                        }
-                    }
+                    repaired = true;
                 }
 
                 // Correct the namespace for customUI14.xml, if wrong
+                //WORK IN PROGRESS
                 RibbonExtensibilityPart ribbon = spreadsheet.RibbonExtensibilityPart;
                 if (ribbon != null)
                 {
@@ -63,11 +59,55 @@ namespace CLISC
                     }
                 }
             }
+            return repaired;
+        }
+
+        // Repair invalid defined names
+        public bool Repair_DefinedNames(string filepath)
+        {
+            bool repaired = false;
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                DefinedNames definedNames = spreadsheet.WorkbookPart.Workbook.DefinedNames;
+
+                // Remove legacy Excel 4.0 GET.CELL function (if present)
+                if (definedNames != null)
+                {
+                    var definedNamesList = definedNames.ToList();
+                    foreach (DefinedName definedName in definedNamesList)
+                    {
+                        if (definedName.InnerXml.Contains("GET.CELL"))
+                        {
+                            definedName.Remove();
+                            repaired = true;
+                        }
+                    }
+                }
+
+                // Remove defined names with these " " (3 characters) in reference
+                if (definedNames != null)
+                {
+                    var definedNamesList = definedNames.ToList();
+                    foreach (DefinedName definedName in definedNamesList)
+                    {
+                        if (definedName.InnerXml.Contains("\" \""))
+                        {
+                            definedName.Remove();
+                            repaired = true;
+                        }
+                    }
+                }
+            }
+            return repaired;
         }
 
         // Delete query tables if query tables exists without relationships
-        public void Repair_QueryTables(string filepath)
+        // WORK IN PROGRESS
+        public bool Repair_QueryTables(string filepath)
         {
+            bool repaired = false;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 for (int i = 0; i < 20; i++)
@@ -90,33 +130,14 @@ namespace CLISC
                                     string id = part.RelationshipId;
                                     wsPart.DeleteReferenceRelationship(id);
                                 }
-                                
+
                                 Console.WriteLine(part.OpenXmlPart);
                             }
                         }
                     }
                 }
             }
-        }
-
-        public void Repair_DataConnections(string filepath)
-        {
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                // If spreadsheet contains a custom XML Map, delete databinding
-                if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
-                {
-                    CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
-                    List<Map> maps = xmlMap.MapInfo.Elements<Map>().ToList();
-                    foreach (Map map in maps)
-                    {
-                        if (map.DataBinding != null)
-                        {
-                            map.DataBinding.Remove();
-                        }
-                    }
-                }
-            }
+            return repaired;
         }
     }
 }
