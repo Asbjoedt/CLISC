@@ -44,22 +44,22 @@ namespace CLISC
                 // Inform user of validation results
                 if (return_code == 0)
                 {
-                    Console.WriteLine("--> File format is invalid. Spreadsheet has no cell values");
+                    Console.WriteLine("--> Validate: File format is invalid. Spreadsheet has no cell values");
                 }
                 if (return_code == 1)
                 {
-                    Console.WriteLine("--> File format validation could not be completed");
+                    Console.WriteLine("--> Validate: File format validation could not be completed");
                 }
                 if (return_code == 2)
                 {
-                    Console.WriteLine("--> File format is valid");
+                    Console.WriteLine("--> Validate: File format is valid");
                     valid = true;
                 }
                 return valid;
             }
             catch (Win32Exception)
             {
-                Console.WriteLine("--> File format validation requires ODF Validator and Java Development Kit");
+                Console.WriteLine("--> Validate: File format validation requires ODF Validator and Java Development Kit");
                 return valid;
             }
         }

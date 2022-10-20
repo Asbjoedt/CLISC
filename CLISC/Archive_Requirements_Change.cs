@@ -352,36 +352,95 @@ namespace CLISC
         // Remove metadata in file properties
         public void Remove_Metadata(string filepath)
         {
+            string folder = Path.GetDirectoryName(filepath);
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 PackageProperties property = spreadsheet.Package.PackageProperties;
 
+                // Create metadata file
+                using (StreamWriter w = File.AppendText($"{folder}\\orgFile_Metadata.txt"))
+                {
+                    w.WriteLine("STRIPPED FILE PROPERTIES INFORMATION");
+                    w.WriteLine("---");
+                }
+
                 if (property.Creator != null)
                 {
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"CREATOR: {property.Creator}");
+                    }
+
+                    // Remove information
                     property.Creator = null;
                 }
                 if (property.Title != null)
                 {
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"TITLE: {property.Title}");
+                    }
+
+                    // Remove information
                     property.Title = null;
                 }
                 if (property.Subject != null)
                 {
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"SUBJECT: {property.Subject}");
+                    }
+
+                    // Remove information
                     property.Subject = null;
                 }
                 if (property.Description != null)
                 {
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"DESCRIPTION: {property.Description}");
+                    }
+
+                    // Remove information
                     property.Description = null;
                 }
                 if (property.Keywords != null)
                 {
+
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"KEYWORDS: {property.Keywords}");
+                    }
+
+                    // Remove information
                     property.Keywords = null;
                 }
                 if (property.Category != null)
                 {
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"CATEGORY: {property.Category}");
+                    }
+
+                    // Remove information
                     property.Category = null;
                 }
                 if (property.LastModifiedBy != null)
                 {
+                    // Write information to metadata file
+                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    {
+                        w.WriteLine($"LAST MODIFIED BY: {property.LastModifiedBy}");
+                    }
+
+                    // Remove information
                     property.LastModifiedBy = null;
                 }
             }

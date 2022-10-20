@@ -19,7 +19,7 @@ namespace CLISC
             // If any repair method has been performed
             if (repair_1 == true || repair_2 == true)
             {
-                Console.WriteLine("--> Spreadsheet was repaired");
+                Console.WriteLine("--> Repair: Spreadsheet was repaired");
             }
         }
 

@@ -13,17 +13,17 @@ namespace CLISC
     public partial class Archive
     {
         public static int cellvalue_files = 0;
+        public static int metadata_files = 0;
         public static int conformance_files = 0;
         public static int connections_files = 0;
         public static int cellreferences_files = 0;
         public static int rtdfunctions_files = 0;
         public static int printersettings_files = 0;
         public static int extobj_files = 0;
-        public static int embedobj_files = 0;
-        public static int hyperlinks_files = 0;
         public static int activesheet_files = 0;
         public static int absolutepath_files = 0;
-        public static int metadata_files = 0;
+        public static int embedobj_files = 0;
+        public static int hyperlinks_files = 0;
         public static int valid_files = 0;
         public static int invalid_files = 0;
 
@@ -49,19 +49,19 @@ namespace CLISC
             int xlsx_errors_count = 0;
             bool? ods_validity = null;
             string ods_conv_checksum = "";
-            bool archive_req_accept = false;
+            bool archive_req_accept = true;
             bool data = false;
+            bool metadata = false;
             bool conformance = false;
             int connections = 0;
             int cellreferences = 0;
             int rtdfunctions = 0;
             int printersettings = 0;
             int extobj = 0;
-            int embedobj = 0;
-            int hyperlinks = 0;
             bool activesheet = false;
             bool absolutepath = false;
-            bool metadata = false;
+            int embedobj = 0;
+            int hyperlinks = 0;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
@@ -75,7 +75,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;Conformance Changed;Data Connections Removed;Cell References Removed;RTD Functions Removed;Printersettings Removed;External Objects Removed;Active Sheet changed;Metadata Removed;Absolute Path Removed;Embedded Objects Alert;Hyperlinks Alert");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;File Property information Removed; Conformance Changed;Data Connections Removed;Cell References Removed;RTD Functions Removed;Printersettings Removed;External Objects Removed;Active Sheet changed;Metadata Removed;Absolute Path Removed;Embedded Objects Alert;Hyperlinks Alert");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -106,82 +106,92 @@ namespace CLISC
                         {
                             // Receive information
                             data = item.Data;
+                            metadata = item.Metadata;
                             conformance = item.Conformance;
                             connections = item.Connections;
                             cellreferences = item.CellReferences;
                             rtdfunctions = item.RTDFunctions;
                             printersettings = item.PrinterSettings;
                             extobj = item.ExternalObj;
-                            embedobj = item.EmbedObj;
-                            hyperlinks = item.Hyperlinks;
                             activesheet = item.ActiveSheet;
                             absolutepath = item.AbsolutePath;
-                            metadata = item.Metadata;
+                            embedobj = item.EmbedObj;
+                            hyperlinks = item.Hyperlinks;
                         }
 
                         // Transform data according to archiving requirements
-                        if (data == true)
+                        if (data == false)
                         {
                             cellvalue_files++;
-                            archive_req_accept = true;
-                        }
-                        if (conformance == false)
-                        {
-                            conformance_files++;
-                            arc.Change_Conformance_ExcelInterop(xlsx_conv_filepath);
-                        }
-                        if (connections > 0)
-                        {
-                            connections_files++;
-                            arc.Remove_DataConnections_ExcelInterop(xlsx_conv_filepath);
-                        }
-                        if (cellreferences > 0)
-                        {
-                            cellreferences_files++;
-                            arc.Remove_CellReferences(xlsx_conv_filepath);
-                        }
-                        if (rtdfunctions > 0)
-                        {
-                            rtdfunctions_files++;
-                            arc.Remove_RTDFunctions(xlsx_conv_filepath);
-                        }
-                        if (printersettings > 0)
-                        {
-                            printersettings_files++;
-                            arc.Remove_PrinterSettings(xlsx_conv_filepath);
-                        }
-                        if (extobj > 0)
-                        {
-                            extobj_files++;
-                            arc.Remove_ExternalObjects(xlsx_conv_filepath);
-                        }
-                        if (embedobj > 0)
-                        {
-                            embedobj_files++;
-                            //arc.Remove_EmbeddedObjects(xlsx_conv_filepath);
-                        }
-                        if (hyperlinks > 0)
-                        {
-                            hyperlinks_files++;
-                        }
-                        if (activesheet == true)
-                        {
-                            activesheet_files++;
-                            arc.Activate_FirstSheet(xlsx_conv_filepath);
-                        }
-                        if (absolutepath == true)
-                        {
-                            absolutepath_files++;
-                            arc.Remove_AbsolutePath(xlsx_conv_filepath);
+                            archive_req_accept = false;
                         }
                         if (metadata == true)
                         {
                             metadata_files++;
                             arc.Remove_Metadata(xlsx_conv_filepath);
+                            Console.WriteLine("--> Change: File property was removed and saved to sidecar file orgFile_Metadata.txt");
+                        }
+                        if (conformance == false)
+                        {
+                            conformance_files++;
+                            arc.Change_Conformance_ExcelInterop(xlsx_conv_filepath);
+                            Console.WriteLine("--> Change: Conformance was changed to Strict");
+                        }
+                        if (connections > 0)
+                        {
+                            connections_files++;
+                            arc.Remove_DataConnections_ExcelInterop(xlsx_conv_filepath);
+                            Console.WriteLine($"--> Change: {connections} data connections were removed");
+                        }
+                        if (cellreferences > 0)
+                        {
+                            cellreferences_files++;
+                            arc.Remove_CellReferences(xlsx_conv_filepath);
+                            Console.WriteLine($"--> Change: {cellreferences} cell references were removed");
+                        }
+                        if (rtdfunctions > 0)
+                        {
+                            rtdfunctions_files++;
+                            arc.Remove_RTDFunctions(xlsx_conv_filepath);
+                            Console.WriteLine($"--> Change: {rtdfunctions} RTD functions were removed");
+                        }
+                        if (printersettings > 0)
+                        {
+                            printersettings_files++;
+                            arc.Remove_PrinterSettings(xlsx_conv_filepath);
+                            Console.WriteLine($"--> Change: {printersettings} printer settings were removed");
+                        }
+                        if (extobj > 0)
+                        {
+                            extobj_files++;
+                            arc.Remove_ExternalObjects(xlsx_conv_filepath);
+                            Console.WriteLine($"--> Change: {extobj} external objects were removed");
+                        }
+                        if (activesheet == true)
+                        {
+                            activesheet_files++;
+                            arc.Activate_FirstSheet(xlsx_conv_filepath);
+                            Console.WriteLine("--> Change: First sheet was activated");
+                        }
+                        if (absolutepath == true)
+                        {
+                            absolutepath_files++;
+                            arc.Remove_AbsolutePath(xlsx_conv_filepath);
+                            Console.WriteLine("--> Change: Absolute path to local directory was removed");
+                        }
+                        if (embedobj > 0)
+                        {
+                            embedobj_files++;
+                            //arc.Remove_EmbeddedObjects(xlsx_conv_filepath);
+                            //Console.WriteLine($"--> Change: {embedobj} embedded objects were removed");
+                        }
+                        if (hyperlinks > 0)
+                        {
+                            hyperlinks_files++;
                         }
 
                         // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{conformance};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{activesheet};{metadata};{absolutepath};{embedobj};{hyperlinks}");
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{metadata};{conformance};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{activesheet};{metadata};{absolutepath};{embedobj};{hyperlinks}");
                         csv3.AppendLine(newLine3_2);
 
                         // Validate
@@ -231,7 +241,7 @@ namespace CLISC
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
-                    Console.WriteLine("--> Checksum (MD5) was calculated");
+                    Console.WriteLine("--> Calculate: MD5 checksum was calculated");
                 }
                 if (entry.ODS_Conv_Extension == ".ods")
                 {
@@ -241,7 +251,7 @@ namespace CLISC
 
                     // Inform user
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
-                    Console.WriteLine($"--> File saved to: {folder_number}\\1.ods");
+                    Console.WriteLine($"--> Convert: Copy saved to: {folder_number}\\1.ods");
                     Console.WriteLine($"--> Analyzing: {folder_number}\\1.ods");
                     Console.WriteLine($"--> Archival requirements identical to {folder_number}\\1.xlsx");
 
@@ -251,7 +261,7 @@ namespace CLISC
 
                     // Calculate checksum
                     ods_conv_checksum = Calculate_MD5(ods_conv_filepath);
-                    Console.WriteLine("--> Checksum (MD5) was calculated");
+                    Console.WriteLine("--> Calculate: MD5 checksum was calculated");
                 }
 
                 // Calculate checksums for original and copied files
@@ -270,7 +280,7 @@ namespace CLISC
                 xlsx_conv_checksum = "";
                 ods_conv_checksum = "";
                 xlsx_validity = "";
-                archive_req_accept = false;
+                archive_req_accept = true;
             }
 
             // Close validation CSV file to log results

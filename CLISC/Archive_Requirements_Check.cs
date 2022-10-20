@@ -8,14 +8,14 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using System.IO.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Presentation;
 
 namespace CLISC
 {
     public partial class Archive_Requirements
     {
         public bool Data { get; set; }
+
+        public bool Metadata { get; set; }
 
         public bool Conformance { get; set; }
 
@@ -37,27 +37,25 @@ namespace CLISC
 
         public bool AbsolutePath { get; set; }
 
-        public bool Metadata { get; set; }
-
         // Perform check of archival requirements
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
             bool data = Check_Value(filepath);
-            bool conformance = Check_Conformance(filepath);
             bool metadata = Check_Metadata(filepath);
+            bool conformance = Check_Conformance(filepath);
             int connections = Check_DataConnections(filepath);
             int cellreferences = Check_CellReferences(filepath);
             int rtdfunctions = Check_RTDFunctions(filepath);
             int printersettings = Check_PrinterSettings(filepath);
             int extobjects = Check_ExternalObjects(filepath);
-            int embedobj = Check_EmbeddedObjects(filepath);
-            int hyperlinks = Check_Hyperlinks(filepath);
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
+            int embedobj = Check_EmbeddedObjects(filepath);
+            int hyperlinks = Check_Hyperlinks(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, EmbedObj = embedobj, Hyperlinks = hyperlinks, ActiveSheet = activesheet, AbsolutePath = absolutepath, Metadata = metadata });
+            Arc_Req.Add(new Archive_Requirements { Data = data, Metadata = metadata, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, EmbedObj = embedobj, Hyperlinks = hyperlinks });
             return Arc_Req;
         }
 
@@ -66,31 +64,29 @@ namespace CLISC
         {
             bool hascellvalue = false;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                //Check if worksheets exist
-                Sheets allSheets = spreadsheet.WorkbookPart.Workbook.Sheets;
-                if (allSheets == null)
+                if (spreadsheet.WorkbookPart.WorksheetParts != null)
                 {
-                    Console.WriteLine("--> No cell values detected");
-                    return hascellvalue;
-                }
-
-                // Check if any cells have any value
-                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
-                foreach (WorksheetPart part in worksheetparts)
-                {
-                    Worksheet worksheet = part.Worksheet;
-                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
-                    int row_count = rows.Count(); // Count number of rows
-                    if (row_count > 0) // If any rows exist, this means cells exist
+                    List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                    foreach (WorksheetPart part in worksheetparts)
                     {
-                        hascellvalue = true;
-                        return hascellvalue;
+                        Worksheet worksheet = part.Worksheet;
+                        var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                        if (rows.Count() > 0) // If any rows exist, this means cells exist
+                        {
+                            hascellvalue = true;
+                        }
                     }
                 }
             }
-            Console.WriteLine("--> No cell values detected");
+
+            // Inform user
+            if (hascellvalue == false)
+            {
+                Console.WriteLine("--> Check: No cell values detected");
+            }
             return hascellvalue;
         }
 
@@ -105,13 +101,22 @@ namespace CLISC
                 Workbook workbook = spreadsheet.WorkbookPart.Workbook;
                 if (workbook.Conformance == null || workbook.Conformance != "strict")
                 {
-                    Console.WriteLine("--> Transitional conformance detected and changed to Strict");
+                    conformance = false;
                 }
                 else if (workbook.Conformance == "strict")
                 {
-                    Console.WriteLine("--> Strict conformance detected");
                     conformance = true;
                 }
+            }
+
+            // Inform user
+            if (conformance == true)
+            {
+                Console.WriteLine("--> Check: Strict conformance detected");
+            }
+            else if (conformance == false)
+            {
+                Console.WriteLine("--> Check: Transitional conformance detected");
             }
             return conformance;
         }
@@ -121,14 +126,20 @@ namespace CLISC
         {
             int conn_count = 0;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
                 if (conn != null)
                 {
                     conn_count = conn.Connections.Count();
-                    Console.WriteLine($"--> {conn_count} data connections detected and removed");
                 }
+            }
+
+            // Inform user
+            if (conn_count > 0)
+            {
+                Console.WriteLine($"--> Check: {conn_count} data connections detected");
             }
             return conn_count;
         }
@@ -138,6 +149,7 @@ namespace CLISC
         {
             int cellreferences_count = 0;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 // Delete all cell references in worksheet
@@ -168,9 +180,11 @@ namespace CLISC
                     }
                 }
             }
+
+            // Inform user
             if (cellreferences_count > 0)
             {
-                Console.WriteLine($"--> {cellreferences_count} external cell references detected and removed");
+                Console.WriteLine($"--> Check: {cellreferences_count} external cell references detected");
             }
             return cellreferences_count;
         }
@@ -180,6 +194,7 @@ namespace CLISC
         {
             int extobj_count = 0;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
@@ -202,9 +217,11 @@ namespace CLISC
                     }
                 }
             }
+
+            // Inform user
             if (extobj_count > 0)
             {
-                Console.WriteLine($"--> {extobj_count} external objects detected and removed");
+                Console.WriteLine($"--> Check: {extobj_count} external objects detected");
             }
             return extobj_count;
         }
@@ -235,7 +252,7 @@ namespace CLISC
                                     if (hit == "RTD")
                                     {
                                         rtd_functions_count++;
-                                        Console.WriteLine($"--> RTD function in sheet {part.Uri} cell {cell.CellReference} detected and removed");
+                                        Console.WriteLine($"--> Check: RTD function in sheet {part.Uri} cell {cell.CellReference} detected");
                                     }
                                 }
                             }
@@ -275,7 +292,7 @@ namespace CLISC
 
                     if (embedobj_count > 0) // If embedded objects
                     {
-                        Console.WriteLine($"--> {embedobj_count} embedded objects detected");
+                        Console.WriteLine($"--> Check: {embedobj_count} embedded objects detected");
 
                         List<EmbeddedObjectPart> embed_ole = worksheetPart.EmbeddedObjectParts.ToList();
                         List<EmbeddedPackagePart> embedobj_package = worksheetPart.EmbeddedPackageParts.ToList();
@@ -334,6 +351,7 @@ namespace CLISC
         {
             int hyperlinks_count = 0;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 List<HyperlinkRelationship> hyperlinks = spreadsheet
@@ -341,15 +359,12 @@ namespace CLISC
                     .SelectMany(p => p.HyperlinkRelationships)
                     .ToList();
                 hyperlinks_count = hyperlinks.Count;
+            }
 
-                if (hyperlinks_count > 0) // If hyperlinks
-                {
-                    Console.WriteLine($"--> {hyperlinks_count} hyperlinks detected. Hyperlinks were not removed");
-                    foreach (HyperlinkRelationship hyperlink in hyperlinks)
-                    {
-                        Console.WriteLine($"----> Hyperlink address: {hyperlink.Uri}");
-                    }
-                }
+            // Inform user
+            if (hyperlinks_count > 0)
+            {
+                Console.WriteLine($"--> Check: {hyperlinks_count} hyperlinks detected");
             }
             return hyperlinks_count;
         }
@@ -359,6 +374,7 @@ namespace CLISC
         {
             int printersettings_count = 0;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 List<WorksheetPart> worksheetpartslist = spreadsheet.WorkbookPart.WorksheetParts.ToList();
@@ -371,10 +387,12 @@ namespace CLISC
                 {
                     printersettings_count++;
                 }
-                if (printerList.Count > 0)
-                {
-                    Console.WriteLine($"--> {printersettings_count} printer settings detected and removed");
-                }
+            }
+
+            // Inform user
+            if (printersettings_count > 0)
+            {
+                Console.WriteLine($"--> Check: {printersettings_count} printer settings detected");
             }
             return printersettings_count;
         }
@@ -384,6 +402,7 @@ namespace CLISC
         {
             bool activeSheet = false;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 if (spreadsheet.WorkbookPart.Workbook.BookViews != null)
@@ -397,12 +416,17 @@ namespace CLISC
                             var activeSheetId = workbookView.ActiveTab.Value;
                             if (activeSheetId > 0)
                             {
-                                Console.WriteLine("--> First sheet is not active detected and changed");
                                 activeSheet = true;
                             }
                         }
                     }
                 }
+            }
+
+            // Inform user
+            if (activeSheet == true)
+            {
+                Console.WriteLine("--> Check: First sheet is not active detected");
             }
             return activeSheet;
         }
@@ -412,13 +436,19 @@ namespace CLISC
         {
             bool absolutepath = false;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
                 {
-                    Console.WriteLine("--> Absolute path to local directory detected and removed");
                     absolutepath = true;
                 }
+            }
+
+            // Inform user
+            if (absolutepath == true)
+            {
+                Console.WriteLine("--> Check: Absolute path to local directory detected");
             }
             return absolutepath;
         }
@@ -428,14 +458,20 @@ namespace CLISC
         {
             bool vba = false;
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 VbaProjectPart found = spreadsheet.WorkbookPart.VbaProjectPart;
                 if (found != null)
                 {
-                    Console.WriteLine("--> VBA project found and removed");
                     vba = true;
                 }
+            }
+
+            //Inform user
+            if (vba == true)
+            {
+                Console.WriteLine("--> Check: VBA project detected");
             }
             return vba;
         }
@@ -444,89 +480,46 @@ namespace CLISC
         public bool Check_Metadata(string filepath)
         {
             bool metadata = false;
-            string folder = Path.GetDirectoryName(filepath);
 
+            // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 PackageProperties property = spreadsheet.Package.PackageProperties;
 
-                // Write information to metadata file
-                using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                {
-                    w.WriteLine("STRIPPED FILE PROPERTIES INFORMATION");
-                    w.WriteLine("---");
-                }
-
                 if (property.Creator != null)
                 {
                     metadata = true;
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine($"CREATOR: {property.Creator}");
-                    }
                 }
                 if (property.Title != null)
                 {
                     metadata = true;
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine($"TITLE: {property.Title}");
-                    }
                 }
                 if (property.Subject != null)
                 {
                     metadata = true;
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine($"SUBJECT: {property.Subject}");
-                    }
                 }
                 if (property.Description != null)
                 {
                     metadata = true;
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine($"DESCRIPTION: {property.Description}");
-                    }
                 }
                 if (property.Keywords != null)
                 {
                     metadata = true;
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine($"KEYWORDS: {property.Keywords}");
-                    }
                 }
                 if (property.Category != null)
                 {
                     metadata = true;
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine($"CATEGORY: {property.Category}");
-                    }
                 }
                 if (property.LastModifiedBy != null)
                 {
                     metadata = true;
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
-                    {
-                        w.WriteLine($"LAST MODIFIED BY: {property.LastModifiedBy}");
-                    }
                 }
+            }
+
+            // Inform user
+            if (metadata == true)
+            {
+                Console.WriteLine("--> Check: File property information detected");
             }
             return metadata;
         }

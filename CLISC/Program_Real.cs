@@ -53,7 +53,7 @@ namespace CLISC
                 case "CountConvertCompareArchive":
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
-                    //com.Compare_Spreadsheets(function, resultsDirectory, fileList);
+                    com.Compare_Spreadsheets(function, resultsDirectory, fileList);
                     arc.Archive_Spreadsheets(resultsDirectory, fileList);
                     app.Archive_Results();
                     break;
@@ -123,7 +123,7 @@ namespace CLISC
             Console.WriteLine($"COMPARE: {fail_comparison} of {Conversion.numCOMPLETE} converted spreadsheets failed comparison");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
             Console.WriteLine($"ARCHIVE: {Archive.invalid_files} of {Conversion.numCOMPLETE} converted spreadsheets have invalid file formats");
-            Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} of {Conversion.numCOMPLETE} converted spreadsheets had no cell values - Handle manually!");
+            Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} of {Conversion.numCOMPLETE} converted spreadsheets had no cell values");
             Console.WriteLine($"ARCHIVE: {Archive.connections_files} of {Conversion.numCOMPLETE} converted spreadsheets had data connections - Data connections were removed");
             Console.WriteLine($"ARCHIVE: {Archive.cellreferences_files} of {Conversion.numCOMPLETE} converted spreadsheets had external cell references - External cell references were removed");
             Console.WriteLine($"ARCHIVE: {Archive.rtdfunctions_files} of {Conversion.numCOMPLETE} converted spreadsheets had RTD functions - RTD functions were removed");
@@ -131,7 +131,6 @@ namespace CLISC
             Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} of {Conversion.numCOMPLETE} converted spreadsheets had embedded objects  - Embedded objects were NOT removed");
             Console.WriteLine($"ARCHIVE: {Archive.printersettings_files} of {Conversion.numCOMPLETE} converted spreadsheets had printer settings - Printer settings were removed");
             Console.WriteLine($"ARCHIVE: {Archive.activesheet_files} of {Conversion.numCOMPLETE} converted spreadsheets did not have active first sheet - Active sheet was changed");
-            Console.WriteLine($"ARCHIVE: {Archive.hyperlinks_files} of {Conversion.numCOMPLETE} converted spreadsheets have hyperlinks - Hyperlinks were NOT removed");
         }
     }
 }

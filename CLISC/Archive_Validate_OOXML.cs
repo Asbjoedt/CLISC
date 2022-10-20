@@ -50,7 +50,7 @@ namespace CLISC
 
                 if (validation_errors.Any()) // If errors, inform user & return results
                 {
-                    Console.WriteLine($"--> File format is invalid - Spreadsheet has {error_count} validation errors");
+                    Console.WriteLine($"--> Validate: File format is invalid - Spreadsheet has {error_count} validation errors");
 
                     foreach (var error in validation_errors)
                     {
@@ -85,7 +85,7 @@ namespace CLISC
                 }
                 else
                 {
-                    Console.WriteLine("--> File format is valid"); // Inform user
+                    Console.WriteLine("--> Validate: File format is valid"); // Inform user
                     
                     Archive.valid_files++; // Add to number of valid files
                     
@@ -114,7 +114,7 @@ namespace CLISC
                 {
                     if (error_count >= 45)
                     {
-                        Console.WriteLine($"--> File format is valid - {error_count} incorrectly reported validation errors have been suppressed"); // Inform user
+                        Console.WriteLine($"--> Validate: File format is valid - {error_count} incorrectly reported validation errors have been suppressed"); // Inform user
 
                         Archive.valid_files++; // Add to number of valid files
 
@@ -127,7 +127,7 @@ namespace CLISC
                     }
                     else
                     {
-                        Console.WriteLine($"--> File format is invalid - Spreadsheet has {error_count} validation errors");
+                        Console.WriteLine($"--> Validate: File format is invalid - Spreadsheet has {error_count} validation errors");
 
                         foreach (var error in validation_errors)
                         {
@@ -172,7 +172,7 @@ namespace CLISC
                 }
                 else
                 {
-                    Console.WriteLine("--> File format is valid"); // Inform user
+                    Console.WriteLine("--> Validate: File format is valid"); // Inform user
                     
                     Archive.valid_files++; // Add to number of valid files
                     
