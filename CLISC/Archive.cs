@@ -50,18 +50,6 @@ namespace CLISC
             bool? ods_validity = null;
             string ods_conv_checksum = "";
             bool archive_req_accept = true;
-            bool data = false;
-            bool metadata = false;
-            bool conformance = false;
-            int connections = 0;
-            int cellreferences = 0;
-            int rtdfunctions = 0;
-            int printersettings = 0;
-            int extobj = 0;
-            bool activesheet = false;
-            bool absolutepath = false;
-            int embedobj = 0;
-            int hyperlinks = 0;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
@@ -75,7 +63,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values Exist;File Property information Removed; Conformance Changed;Data Connections Removed;Cell References Removed;RTD Functions Removed;Printersettings Removed;External Objects Removed;Active Sheet changed;Metadata Removed;Absolute Path Removed;Embedded Objects Alert;Hyperlinks Alert");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Active Sheet;Absolute Path;Embedded Objects");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -94,105 +82,75 @@ namespace CLISC
                 {
                     try
                     {
-                        // Inform user of archival requirements
+                        // Inform user
                         Console.WriteLine(org_filepath); // Inform user of original filepath
                         string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
                         Console.WriteLine($"--> Analyzing: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
                         // Check .xlsx for archival requirements
                         Archive_Requirements arc = new Archive_Requirements();
-                        List<Archive_Requirements> pidgeon = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
-                        foreach (var item in pidgeon)
-                        {
-                            // Receive information
-                            data = item.Data;
-                            metadata = item.Metadata;
-                            conformance = item.Conformance;
-                            connections = item.Connections;
-                            cellreferences = item.CellReferences;
-                            rtdfunctions = item.RTDFunctions;
-                            printersettings = item.PrinterSettings;
-                            extobj = item.ExternalObj;
-                            activesheet = item.ActiveSheet;
-                            absolutepath = item.AbsolutePath;
-                            embedobj = item.EmbedObj;
-                            hyperlinks = item.Hyperlinks;
-                        }
+                        List<Archive_Requirements> arcReq = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
 
-                        // Transform data according to archiving requirements
-                        if (data == false)
-                        {
-                            cellvalue_files++;
-                            archive_req_accept = false;
-                        }
-                        if (metadata == true)
-                        {
-                            metadata_files++;
-                            arc.Remove_Metadata(xlsx_conv_filepath);
-                            Console.WriteLine("--> Change: File property was removed and saved to sidecar file orgFile_Metadata.txt");
-                        }
-                        if (conformance == false)
-                        {
-                            conformance_files++;
-                            arc.Change_Conformance_ExcelInterop(xlsx_conv_filepath);
-                            Console.WriteLine("--> Change: Conformance was changed to Strict");
-                        }
-                        if (connections > 0)
-                        {
-                            connections_files++;
-                            arc.Remove_DataConnections_ExcelInterop(xlsx_conv_filepath);
-                            Console.WriteLine($"--> Change: {connections} data connections were removed");
-                        }
-                        if (cellreferences > 0)
-                        {
-                            cellreferences_files++;
-                            arc.Remove_CellReferences(xlsx_conv_filepath);
-                            Console.WriteLine($"--> Change: {cellreferences} cell references were removed");
-                        }
-                        if (rtdfunctions > 0)
-                        {
-                            rtdfunctions_files++;
-                            arc.Remove_RTDFunctions(xlsx_conv_filepath);
-                            Console.WriteLine($"--> Change: {rtdfunctions} RTD functions were removed");
-                        }
-                        if (printersettings > 0)
-                        {
-                            printersettings_files++;
-                            arc.Remove_PrinterSettings(xlsx_conv_filepath);
-                            Console.WriteLine($"--> Change: {printersettings} printer settings were removed");
-                        }
-                        if (extobj > 0)
-                        {
-                            extobj_files++;
-                            arc.Remove_ExternalObjects(xlsx_conv_filepath);
-                            Console.WriteLine($"--> Change: {extobj} external objects were removed");
-                        }
-                        if (activesheet == true)
-                        {
-                            activesheet_files++;
-                            arc.Activate_FirstSheet(xlsx_conv_filepath);
-                            Console.WriteLine("--> Change: First sheet was activated");
-                        }
-                        if (absolutepath == true)
-                        {
-                            absolutepath_files++;
-                            arc.Remove_AbsolutePath(xlsx_conv_filepath);
-                            Console.WriteLine("--> Change: Absolute path to local directory was removed");
-                        }
-                        if (embedobj > 0)
-                        {
-                            embedobj_files++;
-                            //arc.Remove_EmbeddedObjects(xlsx_conv_filepath);
-                            //Console.WriteLine($"--> Change: {embedobj} embedded objects were removed");
-                        }
-                        if (hyperlinks > 0)
-                        {
-                            hyperlinks_files++;
-                        }
+                        // Change .xlsx according to archival requirements
+                        arc.Change_XLSX_Requirements(arcReq, xlsx_conv_filepath);
 
-                        // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{data};{metadata};{conformance};{connections};{cellreferences};{rtdfunctions};{printersettings};{extobj};{activesheet};{metadata};{absolutepath};{embedobj};{hyperlinks}");
-                        csv3.AppendLine(newLine3_2);
+                        foreach (var item in arcReq)
+                        {
+                            // Register and count occurences of detected breaches of archival requirements
+                            if (item.Data == true)
+                            {
+                                cellvalue_files++;
+                                archive_req_accept = false;
+                            }
+                            if (item.Metadata == true)
+                            {
+                                metadata_files++;
+                            }
+                            if (item.Conformance == true)
+                            {
+                                conformance_files++;
+                            }
+                            if (item.Connections > 0)
+                            {
+                                connections_files++;
+                            }
+                            if (item.CellReferences > 0)
+                            {
+                                cellreferences_files++;
+                            }
+                            if (item.RTDFunctions > 0)
+                            {
+                                rtdfunctions_files++;
+                            }
+                            if (item.PrinterSettings > 0)
+                            {
+                                printersettings_files++;
+                            }
+                            if (item.ExternalObj > 0)
+                            {
+                                extobj_files++;
+                            }
+                            if (item.ActiveSheet == true)
+                            {
+                                activesheet_files++;
+                            }
+                            if (item.AbsolutePath == true)
+                            {
+                                absolutepath_files++;
+                            }
+                            if (item.EmbedObj > 0)
+                            {
+                                embedobj_files++;
+                            }
+                            if (item.Hyperlinks > 0)
+                            {
+                                hyperlinks_files++;
+                            }
+
+                            // Write information to CSV archival requirements log
+                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.ActiveSheet};{item.AbsolutePath};{item.EmbedObj}");
+                            csv3.AppendLine(newLine3_2);
+                        }
 
                         // Validate
                         Validation validate = new Validation();
@@ -245,15 +203,15 @@ namespace CLISC
                 }
                 if (entry.ODS_Conv_Extension == ".ods")
                 {
+                    // Inform user of .ods operation
+                    string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
+                    Console.WriteLine($"--> Copy saved to: {folder_number}\\1.ods");
+                    Console.WriteLine($"--> Analyzing: {folder_number}\\1.ods");
+                    Console.WriteLine($"--> Archival requirements identical to {folder_number}\\1.xlsx");
+
                     // Make an .ods copy
                     Conversion con = new Conversion();
                     convert_success = con.Convert_to_OpenDocument(xlsx_conv_filepath, file_folder);
-
-                    // Inform user
-                    string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
-                    Console.WriteLine($"--> Convert: Copy saved to: {folder_number}\\1.ods");
-                    Console.WriteLine($"--> Analyzing: {folder_number}\\1.ods");
-                    Console.WriteLine($"--> Archival requirements identical to {folder_number}\\1.xlsx");
 
                     // Validate .ods
                     Validation val = new Validation();

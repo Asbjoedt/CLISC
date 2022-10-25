@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Packaging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,41 +8,40 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
-using System.IO.Packaging;
 
 namespace CLISC
 {
     public partial class Archive_Requirements
     {
-        public bool Data { get; set; }
+        public bool Data { get; set; } = false;
 
-        public bool Metadata { get; set; }
+        public bool Metadata { get; set; } = false;
 
-        public bool Conformance { get; set; }
+        public bool Conformance { get; set; } = false;
 
-        public int Connections { get; set; }
+        public int Connections { get; set; } = 0;
 
-        public int CellReferences { get; set; }
+        public int CellReferences { get; set; } = 0;
 
-        public int RTDFunctions { get; set; }
+        public int RTDFunctions { get; set; } = 0;
 
-        public int PrinterSettings { get; set; }
+        public int PrinterSettings { get; set; } = 0; 
 
-        public int ExternalObj { get; set; }
+        public int ExternalObj { get; set; } = 0;
 
-        public int EmbedObj { get; set; }
+        public int EmbedObj { get; set; } = 0;
 
-        public int Hyperlinks { get; set; }
+        public int Hyperlinks { get; set; } = 0;
 
-        public bool ActiveSheet { get; set; }
+        public bool ActiveSheet { get; set; } = false;
 
-        public bool AbsolutePath { get; set; }
+        public bool AbsolutePath { get; set; } = false;
 
         // Perform check of archival requirements
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
             bool data = Check_Value(filepath);
-            bool metadata = Check_Metadata(filepath);
+            //bool metadata = Check_Metadata(filepath);
             bool conformance = Check_Conformance(filepath);
             int connections = Check_DataConnections(filepath);
             int cellreferences = Check_CellReferences(filepath);
@@ -51,18 +51,18 @@ namespace CLISC
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
             int embedobj = Check_EmbeddedObjects(filepath);
-            int hyperlinks = Check_Hyperlinks(filepath);
+            //int hyperlinks = Check_Hyperlinks(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Metadata = metadata, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, EmbedObj = embedobj, Hyperlinks = hyperlinks });
+            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, EmbedObj = embedobj});
             return Arc_Req;
         }
 
         // Check for any values by checking if sheets and cell values exist
         public bool Check_Value(string filepath)
         {
-            bool hascellvalue = false;
+            bool nocellvalues = true;
 
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
@@ -76,18 +76,18 @@ namespace CLISC
                         var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                         if (rows.Count() > 0) // If any rows exist, this means cells exist
                         {
-                            hascellvalue = true;
+                            nocellvalues = false;
                         }
                     }
                 }
             }
 
             // Inform user
-            if (hascellvalue == false)
+            if (nocellvalues == true)
             {
                 Console.WriteLine("--> Check: No cell values detected");
             }
-            return hascellvalue;
+            return nocellvalues;
         }
 
         // Check for Strict conformance
@@ -101,20 +101,20 @@ namespace CLISC
                 Workbook workbook = spreadsheet.WorkbookPart.Workbook;
                 if (workbook.Conformance == null || workbook.Conformance != "strict")
                 {
-                    conformance = false;
+                    conformance = true;
                 }
                 else if (workbook.Conformance == "strict")
                 {
-                    conformance = true;
+                    conformance = false;
                 }
             }
 
             // Inform user
-            if (conformance == true)
+            if (conformance == false)
             {
                 Console.WriteLine("--> Check: Strict conformance detected");
             }
-            else if (conformance == false)
+            else if (conformance == true)
             {
                 Console.WriteLine("--> Check: Transitional conformance detected");
             }
@@ -413,8 +413,7 @@ namespace CLISC
                         WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
                         if (workbookView.ActiveTab != null)
                         {
-                            var activeSheetId = workbookView.ActiveTab.Value;
-                            if (activeSheetId > 0)
+                            if (workbookView.ActiveTab.Value > 0)
                             {
                                 activeSheet = true;
                             }

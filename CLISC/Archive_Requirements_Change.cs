@@ -14,6 +14,69 @@ namespace CLISC
 {
     public partial class Archive_Requirements
     {
+        // Change .xlsx according to archival requirements
+        public void Change_XLSX_Requirements(List<Archive_Requirements> arcReq, string filepath)
+        {
+            foreach (var item in arcReq)
+            {
+                if (item.Metadata == true)
+                {
+                    //Remove_Metadata(filepath);
+                    //Console.WriteLine("--> Change: File property information was removed and saved to sidecar file");
+                }
+                if (item.Conformance == true)
+                {
+                    Change_Conformance_ExcelInterop(filepath);
+                    Console.WriteLine("--> Change: Conformance was changed to Strict");
+                }
+                if (item.Connections > 0)
+                {
+                    Remove_DataConnections(filepath);
+                    Console.WriteLine($"--> Change: {item.Connections} data connections were removed");
+                }
+                if (item.CellReferences > 0)
+                {
+                    Remove_CellReferences(filepath);
+                    Console.WriteLine($"--> Change: {item.CellReferences} cell references were removed");
+                }
+                if (item.RTDFunctions > 0)
+                {
+                    Remove_RTDFunctions(filepath);
+                    Console.WriteLine($"--> Change: {item.RTDFunctions} RTD functions were removed");
+                }
+                if (item.PrinterSettings > 0)
+                {
+                    Remove_PrinterSettings(filepath);
+                    Console.WriteLine($"--> Change: {item.PrinterSettings} printer settings were removed");
+                }
+                if (item.ExternalObj > 0)
+                {
+                    Remove_ExternalObjects(filepath);
+                    Console.WriteLine($"--> Change: {item.ExternalObj} external objects were removed");
+                }
+                if (item.ActiveSheet == true)
+                {
+                    Activate_FirstSheet(filepath);
+                    Console.WriteLine("--> Change: First sheet was activated");
+                }
+                if (item.AbsolutePath == true)
+                {
+                    Remove_AbsolutePath(filepath);
+                    Console.WriteLine("--> Change: Absolute path to local directory was removed");
+                }
+                if (item.EmbedObj > 0)
+                {
+                    //Remove_EmbeddedObjects(filepath);
+                    //Console.WriteLine($"--> Change: {item.EmbedObj} embedded objects were removed");
+                }
+                if (item.Hyperlinks > 0)
+                {
+                    //Change_Hyperlinks(filepath);
+                    //Console.WriteLine($"--> Change: {item.Hyperlinks} hyperlinks were converted to Wayback Machine hyperlinks");
+                }
+            }
+        }
+
         // Change conformance to Strict
         public void Change_Conformance(string filepath)
         {
@@ -74,7 +137,7 @@ namespace CLISC
             }
             // Repair spreadsheet
             Repair rep = new Repair();
-            rep.Repair_QueryTables(filepath);
+            //rep.Repair_QueryTables(filepath);
         }
 
         // Remove RTD functions
@@ -442,6 +505,26 @@ namespace CLISC
 
                     // Remove information
                     property.LastModifiedBy = null;
+                }
+            }
+        }
+
+        // Change hyperlinks to link to Wayback Machine
+        public void Change_Hyperlinks(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                List<HyperlinkRelationship> hyperlinks = spreadsheet
+                    .GetAllParts()
+                    .SelectMany(p => p.HyperlinkRelationships)
+                    .ToList();
+
+                foreach (HyperlinkRelationship hyperlink in hyperlinks)
+                {
+                    string old_hyperlink = hyperlink.Uri.ToString();
+                    string new_hyperlink = "https://web.archive.org/web/*/" + old_hyperlink;
+
+                    // WORK IN PROGRESS
                 }
             }
         }
