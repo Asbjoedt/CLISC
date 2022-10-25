@@ -131,7 +131,7 @@ namespace CLISC
             Console.WriteLine($"ARCHIVE: {Archive.printersettings_files} of {Conversion.numCOMPLETE} converted spreadsheets had printer settings - Printer settings were removed");
             Console.WriteLine($"ARCHIVE: {Archive.activesheet_files} of {Conversion.numCOMPLETE} converted spreadsheets did not have active first sheet - Active sheet was changed");
             Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} of {Conversion.numCOMPLETE} converted spreadsheets had embedded objects  - Embedded objects were NOT removed");
-            //Console.WriteLine($"ARCHIVE: {Archive.hyperlinks_files} of {Conversion.numCOMPLETE} converted spreadsheets have hyperlinks - Hyperlinks were NOT removed");
+            Console.WriteLine($"ARCHIVE: {Archive.hyperlinks_files} of {Conversion.numCOMPLETE} converted spreadsheets have hyperlinks - Hyperlinks were NOT removed");
         }
     }
 }

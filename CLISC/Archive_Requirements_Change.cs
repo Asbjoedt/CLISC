@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Office2016.Excel;
-using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Office2013.ExcelAc;
 
 namespace CLISC
 {
@@ -512,19 +511,21 @@ namespace CLISC
         // Change hyperlinks to link to Wayback Machine
         public void Change_Hyperlinks(string filepath)
         {
+            string old_hyperlink = "";
+            string new_hyperlink = "";
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<HyperlinkRelationship> hyperlinks = spreadsheet
-                    .GetAllParts()
-                    .SelectMany(p => p.HyperlinkRelationships)
-                    .ToList();
-
-                foreach (HyperlinkRelationship hyperlink in hyperlinks)
+                List<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    string old_hyperlink = hyperlink.Uri.ToString();
-                    string new_hyperlink = "https://web.archive.org/web/*/" + old_hyperlink;
-
-                    // WORK IN PROGRESS
+                    Worksheet worksheet = worksheetPart.Worksheet;
+                    IEnumerable<Hyperlink> hyperlinks = worksheet.GetFirstChild<Hyperlinks>().Elements<Hyperlink>();
+                    foreach(Hyperlink hyperlink in hyperlinks)
+                    {
+                        Console.WriteLine(hyperlink.Id);
+                        ReferenceRelationship refRel = worksheetPart.GetReferenceRelationship(hyperlink.Id);
+                    }
                 }
             }
         }

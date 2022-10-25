@@ -51,11 +51,11 @@ namespace CLISC
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
             int embedobj = Check_EmbeddedObjects(filepath);
-            //int hyperlinks = Check_Hyperlinks(filepath);
+            int hyperlinks = Check_Hyperlinks(filepath);
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, EmbedObj = embedobj});
+            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, EmbedObj = embedobj, Hyperlinks = hyperlinks});
             return Arc_Req;
         }
 
@@ -73,7 +73,7 @@ namespace CLISC
                     foreach (WorksheetPart part in worksheetparts)
                     {
                         Worksheet worksheet = part.Worksheet;
-                        var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                        IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                         if (rows.Count() > 0) // If any rows exist, this means cells exist
                         {
                             nocellvalues = false;
@@ -157,10 +157,10 @@ namespace CLISC
                 foreach (WorksheetPart part in worksheetparts)
                 {
                     Worksheet worksheet = part.Worksheet;
-                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     foreach (var row in rows)
                     {
-                        var cells = row.Elements<Cell>();
+                        IEnumerable<Cell> cells = row.Elements<Cell>();
                         foreach (Cell cell in cells)
                         {
                             if (cell.CellFormula != null)
@@ -237,7 +237,7 @@ namespace CLISC
                 foreach (WorksheetPart part in worksheetparts)
                 {
                     Worksheet worksheet = part.Worksheet;
-                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     foreach (var row in rows)
                     {
                         var cells = row.Elements<Cell>();
@@ -358,6 +358,7 @@ namespace CLISC
                     .GetAllParts()
                     .SelectMany(p => p.HyperlinkRelationships)
                     .ToList();
+
                 hyperlinks_count = hyperlinks.Count;
             }
 

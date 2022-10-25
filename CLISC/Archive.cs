@@ -63,7 +63,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Active Sheet;Absolute Path;Embedded Objects");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Active Sheet;Absolute Path;Embedded Objects;Hyperlinks");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -148,7 +148,7 @@ namespace CLISC
                             }
 
                             // Write information to CSV archival requirements log
-                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.ActiveSheet};{item.AbsolutePath};{item.EmbedObj}");
+                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.ActiveSheet};{item.AbsolutePath};{item.EmbedObj}; {item.Hyperlinks}");
                             csv3.AppendLine(newLine3_2);
                         }
 
