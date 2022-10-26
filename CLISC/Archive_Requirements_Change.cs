@@ -398,7 +398,7 @@ namespace CLISC
             }
         }
 
-        // Remove absolute path to local directory - DOES NOT WORK
+        // Remove absolute path to local directory
         public void Remove_AbsolutePath(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))

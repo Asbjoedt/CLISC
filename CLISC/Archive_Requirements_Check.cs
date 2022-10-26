@@ -153,8 +153,8 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 // Delete all cell references in worksheet
-                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
-                foreach (WorksheetPart part in worksheetparts)
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
+                foreach (WorksheetPart part in worksheetParts)
                 {
                     Worksheet worksheet = part.Worksheet;
                     IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
@@ -233,8 +233,8 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
-                foreach (WorksheetPart part in worksheetparts)
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
+                foreach (WorksheetPart part in worksheetParts)
                 {
                     Worksheet worksheet = part.Worksheet;
                     IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
@@ -264,90 +264,88 @@ namespace CLISC
         }
 
         // Check for embedded objects
-        public int Check_EmbeddedObjects(string filepath) // Check for embedded objects and return alert
+        public int Check_EmbeddedObjects(string filepath)
         {
-            int embedobj_count = 0;
+            int count_embedobj = 0;
             int embedobj_number = 0;
-            int count_ole = 0;
-            int count_package = 0;
-            int count_image = 0;
-            int count_drawing_image = 0;
-            int count_3d = 0;
+            List<EmbeddedObjectPart> embeddings_ole = new List<EmbeddedObjectPart>();
+            List<EmbeddedPackagePart> embeddings_package = new List<EmbeddedPackagePart>();
+            List<ImagePart> embeddings_emf = new List<ImagePart>();
+            List<ImagePart> embeddings_image = new List<ImagePart>();
+            List<Model3DReferenceRelationshipPart> embeddings_3d = new List<Model3DReferenceRelationshipPart>();
 
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
+         
+                // Perform check
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    count_ole = worksheetPart.EmbeddedObjectParts.Count(); // Register the number of OLE
-                    count_package = worksheetPart.EmbeddedPackageParts.Count(); // Register the number of packages
-                    count_image = worksheetPart.ImageParts.Count(); // Register number of images
-                    if (worksheetPart.DrawingsPart != null)
+                    embeddings_ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
+                    embeddings_package = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
+                    embeddings_emf = worksheetPart.ImageParts.Distinct().ToList();
+                    if (worksheetPart.DrawingsPart != null) // DrawingsPart needs a null check
                     {
-                        count_drawing_image = worksheetPart.DrawingsPart.ImageParts.Count();
-                        count_image = count_image + count_drawing_image;
+                        embeddings_image = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
                     }
-                    count_3d = worksheetPart.Model3DReferenceRelationshipParts.Count(); // Register number of 3D models
-                    embedobj_count = count_ole + count_package + count_image + count_3d; // Sum
+                    embeddings_3d = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
+                }
 
-                    if (embedobj_count > 0) // If embedded objects
+                // Count number of embeddings
+                count_embedobj = embeddings_ole.Count() + embeddings_package.Count() + embeddings_emf.Count() + embeddings_image.Count() + embeddings_3d.Count();
+
+                // Inform user of detected embedded objects
+                if (count_embedobj > 0)
+                {
+                    Console.WriteLine($"--> Check: {count_embedobj} embedded objects detected");
+
+                    // Inform user of each OLE object
+                    foreach (EmbeddedObjectPart part in embeddings_ole)
                     {
-                        Console.WriteLine($"--> Check: {embedobj_count} embedded objects detected");
-
-                        List<EmbeddedObjectPart> embed_ole = worksheetPart.EmbeddedObjectParts.ToList();
-                        List<EmbeddedPackagePart> embedobj_package = worksheetPart.EmbeddedPackageParts.ToList();
-                        List<ImagePart> embed_image = worksheetPart.ImageParts.ToList();
-                        List<ImagePart> embed_drawing_image = new List<ImagePart>();
-                        if (count_drawing_image > 0)
-                        {
-                            embed_drawing_image = worksheetPart.DrawingsPart.ImageParts.ToList();
-                        }
-                        List<Model3DReferenceRelationshipPart> embed_3d = worksheetPart.Model3DReferenceRelationshipParts.ToList();
-
-                        foreach (EmbeddedObjectPart part in embed_ole) // Inform user of each OLE object
-                        {
-                            embedobj_number++;
-                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: OLE object");
-                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
-
-                        }
-                        foreach (EmbeddedPackagePart part in embedobj_package) // Inform user of each package object
-                        {
-                            embedobj_number++;
-                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: Package object");
-                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
-                        }
-                        foreach (ImagePart part in embed_image) // Inform user of each .emf image object
-                        {
-                            embedobj_number++;
-                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: Image object");
-                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
-                        }
-                        foreach (ImagePart part in embed_drawing_image) // Inform user of each image object
-                        {
-                            embedobj_number++;
-                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: Drawing image object");
-                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
-                        }
-                        foreach (Model3DReferenceRelationshipPart part in embed_3d) // Inform user of each 3D object
-                        {
-                            embedobj_number++;
-                            Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                            Console.WriteLine($"----> Content Type: 3D model object");
-                            Console.WriteLine($"----> URI: {part.Uri.ToString()}");
-                        }
+                        embedobj_number++;
+                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"----> Content Type: OLE object");
+                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                    }
+                    // Inform user of each package object
+                    foreach (EmbeddedPackagePart part in embeddings_package)
+                    {
+                        embedobj_number++;
+                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"----> Content Type: Package object");
+                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                    }
+                    // Inform user of each .emf image object
+                    foreach (ImagePart part in embeddings_emf)
+                    {
+                        embedobj_number++;
+                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"----> Content Type: Rendering (.emf) of embeddings object");
+                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                    }
+                    // Inform user of each image object
+                    foreach (ImagePart part in embeddings_image)
+                    {
+                        embedobj_number++;
+                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"----> Content Type: Image object");
+                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                    }
+                    // Inform user of each 3D object -- DOES NOT WORK
+                    foreach (Model3DReferenceRelationshipPart part in embeddings_3d)
+                    {
+                        embedobj_number++;
+                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"----> Content Type: 3D model object");
+                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                     }
                 }
             }
-            return embedobj_count;
+            return count_embedobj;
         }
 
         // Check for hyperlinks
-        public int Check_Hyperlinks(string filepath) // Find all hyperlinks
+        public int Check_Hyperlinks(string filepath)
         {
             int hyperlinks_count = 0;
 
@@ -378,11 +376,11 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<WorksheetPart> worksheetpartslist = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
                 List<SpreadsheetPrinterSettingsPart> printerList = new List<SpreadsheetPrinterSettingsPart>();
-                foreach (WorksheetPart worksheetpart in worksheetpartslist)
+                foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    printerList = worksheetpart.SpreadsheetPrinterSettingsParts.ToList();
+                    printerList = worksheetPart.SpreadsheetPrinterSettingsParts.ToList();
                 }
                 foreach (SpreadsheetPrinterSettingsPart printer in printerList)
                 {
