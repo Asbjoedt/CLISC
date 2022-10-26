@@ -152,7 +152,7 @@ namespace CLISC
                 csv.AppendLine(newLine18);
                 // Close CSV
                 Spreadsheet.CSV_filepath = Results_Directory + "\\1_Count_Results.csv";
-                File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
+                File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString(), Encoding.UTF8);
 
                 return Results_Directory;
             }

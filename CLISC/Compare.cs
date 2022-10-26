@@ -101,7 +101,7 @@ namespace CLISC
 
             // Close CSV file to log results
             Spreadsheet.CSV_filepath = Results_Directory + "\\3_Compare_Results.csv";
-            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString(), Encoding.UTF8);
         }
     }
 }

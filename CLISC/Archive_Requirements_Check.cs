@@ -331,7 +331,7 @@ namespace CLISC
                         Console.WriteLine($"----> Content Type: Image object");
                         Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                     }
-                    // Inform user of each 3D object -- DOES NOT WORK
+                    // Inform user of each 3D object
                     foreach (Model3DReferenceRelationshipPart part in embeddings_3d)
                     {
                         embedobj_number++;
@@ -449,29 +449,6 @@ namespace CLISC
                 Console.WriteLine("--> Check: Absolute path to local directory detected");
             }
             return absolutepath;
-        }
-
-        // Check for VBA projects
-        public bool Check_VBA(string filepath)
-        {
-            bool vba = false;
-
-            // Perform check
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
-            {
-                VbaProjectPart found = spreadsheet.WorkbookPart.VbaProjectPart;
-                if (found != null)
-                {
-                    vba = true;
-                }
-            }
-
-            //Inform user
-            if (vba == true)
-            {
-                Console.WriteLine("--> Check: VBA project detected");
-            }
-            return vba;
         }
 
         // Check for metadata in file properties

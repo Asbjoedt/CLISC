@@ -37,7 +37,7 @@ namespace CLISC
         string? ods_conv_filename = null;
         string? ods_conv_filepath = null;
         static string error_message = "";
-        static string[] error_messages = { "", "Spreadsheet cannot be read", "Binary .xlsb file format needs Excel installed with .NET programming", "LibreOffice is not installed in filepath: C:\\Program Files\\LibreOffice", "", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Spreadsheet is already .xlsx file format", "Spreadsheet cannot be opened, because the XML structure is malformed", "Spreadsheet was converted to OOXML Transitional conformance", ".xlsx Strict conformance identified", "Cannot convert automatically because of irregular content", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Converted to Strict conformance", "Conversion to Strict conformance failed.", "Conversion of file has exceeded 5 min. Handle file manually" };
+        static string[] error_messages = { "", "Spreadsheet cannot be read", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Filesize exceeds application limit" };
 
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets(string function, string inputdir, bool recurse, string Results_Directory)
@@ -100,10 +100,10 @@ namespace CLISC
                         conv_filepath = file_folder + "\\orgFile_" + Path.GetFileNameWithoutExtension(org_filename) + ".xlsx";
                     }
 
-                    // Throw exception if filesize is over limit (100 MB)
+                    // Throw exception if filesize is over limit
                     long length = new System.IO.FileInfo(copy_filepath).Length;
                     length = length/1000000;
-                    if (length >= 100)
+                    if (length >= 150) // Set limit, currently 150MB
                     {
                         throw new System.Data.ConstraintException("FilesizeExceeded");
                     }
@@ -114,13 +114,13 @@ namespace CLISC
                         case ".gsheet":
                             numFAILED++;
                             convert_success = false;
-                            error_message = error_messages[11];
+                            error_message = error_messages[3];
                             break;
 
                         case ".numbers":
                             numFAILED++;
                             convert_success = false;
-                            error_message = error_messages[12];
+                            error_message = error_messages[4];
                             break;
 
                         // OpenDocument file formats
@@ -137,7 +137,7 @@ namespace CLISC
                             // Transform data types
                             numFAILED++;
                             convert_success = false;
-                            error_message = error_messages[5];
+                            error_message = error_messages[2];
                             break;
 
                         // Legacy Microsoft Excel file formats
@@ -205,7 +205,7 @@ namespace CLISC
                 {
                     numFAILED++;
                     convert_success = false;
-                    error_message = "Filesize exceeds application limit";
+                    error_message = error_messages[5];
                 }
 
                 finally
@@ -214,7 +214,6 @@ namespace CLISC
                     Console.WriteLine($"--> Conversion: {convert_success}");
                     if (convert_success == false)
                     {
-                        error_message = error_messages[1];
                         Console.WriteLine($"--> {error_message}");
                     }
 
@@ -282,7 +281,7 @@ namespace CLISC
             }
             // Close CSV file to log results
             Spreadsheet.CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
-            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString());
+            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString(), Encoding.UTF8);
 
             return File_List;
         }

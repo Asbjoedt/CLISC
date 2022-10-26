@@ -33,7 +33,7 @@ namespace CLISC
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/theme" });
             // relationship/worksheet
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/worksheet" });
-            // relationship/sharedstrings
+            // relationship/sharedStrings
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/sharedStrings" });
             // relationship/externalLink
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/externalLink" });
@@ -53,6 +53,10 @@ namespace CLISC
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/pivotCacheDefinition" });
             // relationship/pivotCache Records
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/pivotCacheRecords" });
+            // relationships/slicerCache
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.microsoft.com/office/2007/relationships/slicerCache", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/slicerCache" });
+            // relationship/calcChain
+            list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain", Strict = "http://purl.oclc.org/ooxml/officeDocument/relationships/calcChain" });
             // relationship/vmlDrawing - NO NAMESPACE FOR STRICT
             list.Add(new namespaceIndex() { Prefix = "", Transitional = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing", Strict = "" });
             // relationship/drawing
