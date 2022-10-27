@@ -78,7 +78,7 @@ namespace CLISC
             Console.WriteLine("CLISC SUMMARY");
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
-            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Results.CSV_filepath}");
         }
 
         void Convert_Results()
@@ -91,7 +91,7 @@ namespace CLISC
             Console.WriteLine("---");
             Console.WriteLine($"COUNT: {Count.numTOTAL} spreadsheet files in total");
             Console.WriteLine($"CONVERT: {fail_conversion} of {Count.numTOTAL} spreadsheets failed conversion");
-            Console.WriteLine($"Results saved to CSV log in filepath: {Spreadsheet.CSV_filepath}");
+            Console.WriteLine($"Results saved to CSV log in filepath: {Results.CSV_filepath}");
         }
         void Compare_Results()
         {

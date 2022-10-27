@@ -166,8 +166,9 @@ namespace CLISC
                             break;
                     }
                 }
-                // If spreadsheet is password protected or corrupt
-                catch (FileFormatException)
+
+                // Handle any errors occuring during conversion
+                catch (FileFormatException) // If spreadsheet is password protected or corrupt
                 {
                     numFAILED++;
                     convert_success = false;
@@ -179,35 +180,32 @@ namespace CLISC
                     convert_success = false;
                     error_message = error_messages[1];
                 }
-                // If file is corrupt and cannot be opened for XML schema validation
-                catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
+                catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException) // If file is corrupt and cannot be opened for XML schema validation
                 {
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[1];
                 }
-                // If .LibreOffice is not installed
-                catch (Win32Exception)
+                catch (Win32Exception) // If .LibreOffice is not installed
                 {
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[1];
                 }
-                // If files used by Excel Interop are password protected or corrupt
-                catch (System.Runtime.InteropServices.COMException)
+                catch (System.Runtime.InteropServices.COMException) // If files used by Excel Interop are password protected or corrupt
                 {
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[1];
-                }
-                // If filesize exceeds limit
-                catch (System.Data.ConstraintException)
+                }       
+                catch (System.Data.ConstraintException) // If filesize exceeds limit
                 {
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[5];
                 }
 
+                // Post conversion operations
                 finally
                 {
                     // Inform user
@@ -280,8 +278,8 @@ namespace CLISC
                 }
             }
             // Close CSV file to log results
-            Spreadsheet.CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
-            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString(), Encoding.UTF8);
+            Results.CSV_filepath = Results_Directory + "\\2_Convert_Results.csv";
+            File.WriteAllText(Results.CSV_filepath, csv.ToString(), Encoding.UTF8);
 
             return File_List;
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-    public partial class Spreadsheet
+    public class Results
     {
         // Create public data types
         public static string Results_Directory = "";
@@ -20,7 +20,7 @@ namespace CLISC
         public string dateStamp = GetTimestamp(DateTime.Now);
         
         // Create name for new results directory
-        public string Create_Directory_Results(string outputdir)
+        public string Create_Results_Directory(string outputdir)
         {
             // Identify available name for results directory
             int results_directory_number = 1;

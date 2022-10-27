@@ -14,30 +14,53 @@ namespace CLISC
         public static int numCONFORM_fail = 0;
 
         // Count XLSX Strict conformance
-        public int Count_XLSX_Strict(string inputdir, bool recurse)
+        public int Count_OOXML_Conformance(string inputdir, bool recurse, string conformance)
         {
-            DirectoryInfo count = new DirectoryInfo(inputdir);
-            string[] xlsx_files;
+            int count = 0;
+            string[] xlsx_files = {""};
+
+            // Search recursively or not
+            SearchOption searchoption = SearchOption.TopDirectoryOnly;
             if (recurse == true)
             {
-                xlsx_files = Directory.GetFiles(inputdir,"*.xlsx", SearchOption.AllDirectories);
+                searchoption = SearchOption.AllDirectories;
             }
-            else
-            {
-                xlsx_files = Directory.GetFiles(inputdir, "*.xlsx", SearchOption.TopDirectoryOnly);
-            }
+
+            // Create index of xlsx files
+            xlsx_files = Directory.GetFiles(inputdir, "*.xlsx", searchoption);
+
+            // Open each spreadsheet to check for conformance
             try
             {
-                foreach (var xlsx in xlsx_files)
+                // Count Transitional
+                if (conformance == "Transitional")
                 {
-                    SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
-                    bool? strict = spreadsheet.StrictRelationshipFound;
-                    spreadsheet.Close();
-                    if (strict == true)
+                    foreach (var xlsx in xlsx_files)
                     {
-                        numXLSX_Strict++;
+                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
+                        bool? strict = spreadsheet.StrictRelationshipFound;
+                        spreadsheet.Close();
+                        if (strict == false)
+                        {
+                            count++;
+                        }
                     }
                 }
+                // Count Strict
+                else if (conformance == "Strict")
+                {
+                    foreach (var xlsx in xlsx_files)
+                    {
+                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
+                        bool? strict = spreadsheet.StrictRelationshipFound;
+                        spreadsheet.Close();
+                        if (strict == true)
+                        {
+                            count++;
+                        }
+                    }
+                }
+
             }
 
             // Catch exceptions, when spreadsheet cannot be opened due to password protection or corruption
@@ -50,8 +73,8 @@ namespace CLISC
                 numCONFORM_fail++;
             }
 
-            // Return number of Strict conformant xlsx files
-            return numXLSX_Strict;
+            // Return count
+            return count;
         }
     }
 }

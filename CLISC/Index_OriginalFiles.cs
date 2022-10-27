@@ -18,22 +18,15 @@ namespace CLISC
         // Search input directory to index all files
         public static List<orgIndex> Org_Files(string inputdir, bool recurse)
         {
-            // Create new temporary list for enumeration of input directory
-            var org_enumeration = new List<string>();
-
-            // Recurse enumeration of original spreadsheets from input directory
+            // Search recursively or not
+            SearchOption searchoption = SearchOption.TopDirectoryOnly;
             if (recurse == true)
             {
-                // If extensions are lowercase
-                org_enumeration = (List<string>)Directory.EnumerateFiles(inputdir, "*", SearchOption.AllDirectories)
-                    .ToList();
+                searchoption = SearchOption.AllDirectories;
             }
-            // No recurse enumeration
-            else
-            {
-                org_enumeration = (List<string>)Directory.EnumerateFiles(inputdir, "*", SearchOption.TopDirectoryOnly)
-                   .ToList();
-            }
+
+            // Enumerate input directory
+            IEnumerable<string> org_enumeration = Directory.EnumerateFiles(inputdir, "*", searchoption).ToList();
 
             // Create new fileIndex for spreadsheets
             List<orgIndex> Org_File_List = new List<orgIndex>();
@@ -42,7 +35,7 @@ namespace CLISC
             foreach (var entry in org_enumeration)
             {
                 FileInfo file_info = new FileInfo(entry);
-                if (FileFormats.Extension.Contains(file_info.Extension) || FileFormats.Extension_Upper.Contains(file_info.Extension))
+                if (fileFormatIndex.Extension_Array.Contains(file_info.Extension) || fileFormatIndex.Extension_Upper_Array.Contains(file_info.Extension))
                 {
                     string extension = file_info.Extension.ToLower();
                     string filename = file_info.Name;

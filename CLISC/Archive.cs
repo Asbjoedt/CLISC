@@ -163,25 +163,11 @@ namespace CLISC
                             foreach (Validation info in xlsx_validation_list) // Get information from validation list
                             {
                                 xlsx_validity = info.Validity;
-                                int? error_number = info.Error_Number;
-                                string? error_id = info.Error_Id;
-                                string? error_description = info.Error_Description;
-                                string? error_type = info.Error_Type;
-                                string? error_node = info.Error_Node;
-                                string? error_path = info.Error_Path;
-                                string? error_part = info.Error_Part;
-                                string? error_relatednode = info.Error_RelatedNode;
-                                string? error_relatedtext = info.Error_RelatedNode_InnerText;
-
                                 if (xlsx_validity == "Invalid")
                                 {
                                     // If invalid write to CSV validation log
-                                    var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};{error_number};{error_id};{error_description};{error_type};{error_node};{error_path};{error_part};{error_relatednode};{error_relatedtext}");
+                                    var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{info.Validity};{info.Error_Number};{info.Error_Id};{info.Error_Description};{info.Error_Type};{info.Error_Node};{info.Error_Path};{info.Error_Part};{info.Error_RelatedNode};{info.Error_RelatedNode_InnerText}");
                                     csv2.AppendLine(newLine2_2);
-
-                                    // Reset data types, for correct CSV file output
-                                    error_relatednode = null;
-                                    error_relatedtext = null;
                                 }
                             }
                         }
@@ -193,7 +179,7 @@ namespace CLISC
                         archive_req_accept = false;
 
                         // Write to CSV archival requirements log
-                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};;;;;");
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};;;;;;;;;;;");
                         csv3.AppendLine(newLine3_2);
                     }
 
@@ -242,16 +228,16 @@ namespace CLISC
             }
 
             // Close validation CSV file to log results
-            Spreadsheet.CSV_filepath = Results_Directory + "\\4a_StandardValidation_Results.csv";
-            File.WriteAllText(Spreadsheet.CSV_filepath, csv2.ToString(), Encoding.UTF8);
+            Results.CSV_filepath = Results_Directory + "\\4a_StandardValidation_Results.csv";
+            File.WriteAllText(Results.CSV_filepath, csv2.ToString(), Encoding.UTF8);
 
             // Close archival requirements CSV file to log results
-            Spreadsheet.CSV_filepath = Results_Directory + "\\4b_RequirementsValidation_Results.csv";
-            File.WriteAllText(Spreadsheet.CSV_filepath, csv3.ToString(), Encoding.UTF8);
+            Results.CSV_filepath = Results_Directory + "\\4b_RequirementsValidation_Results.csv";
+            File.WriteAllText(Results.CSV_filepath, csv3.ToString(), Encoding.UTF8);
 
             // Close archive CSV file to log results
-            Spreadsheet.CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
-            File.WriteAllText(Spreadsheet.CSV_filepath, csv.ToString(), Encoding.UTF8);
+            Results.CSV_filepath = Results_Directory + "\\4_Archive_Results.csv";
+            File.WriteAllText(Results.CSV_filepath, csv.ToString(), Encoding.UTF8);
 
             // Zip the output directory
             Console.WriteLine("---");
