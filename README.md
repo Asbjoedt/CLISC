@@ -22,20 +22,20 @@ Count number of spreadsheets in directory by file format.
 
 :magic_wand: **Convert**
 
-Convert any spreadsheet[^1] to .xlsx (Transitional conformance).
+Convert any spreadsheet[^1][^2] to .xlsx (Transitional conformance).
 * Office Open XML (Excel) with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
 
 :mag: **Compare**
 
-Compare original and converted spreadsheets to log differences.[^2]
+Compare original and converted spreadsheets to log differences.[^3]
 * Cell values
 
 :file_cabinet: **Archive**
 
 The program can convert, package and describe spreadsheets to meet a data quality level, that will enable you to open your spreadsheets many years from now. 
-* Convert any spreadsheet[^1] to both .xlsx (Strict conformance) and .ods
+* Convert any spreadsheet[^1][^2] to both .xlsx (Strict conformance) and .ods
 * Package spreadsheets and metadata in a new archive directory
 * Output all conversions in subdirectories named n+1
 * Rename all conversions 1.xlsx and 1.ods
@@ -123,4 +123,5 @@ The following packages and software are used under license in CLISC. [Read more]
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, Copyright (c) Microsoft Corporation
 
 [^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
-[^2]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
+[^2]: The program currently has a conversion filesize limit of 150MB to prevent excessive performance bottlenecks. Larger filesize spreadsheets should be converted manually.
+[^3]: The program can currently not compare cell formatting, embedded objects, charts and other advanced spreadsheet features.
