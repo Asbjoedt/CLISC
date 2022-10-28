@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
 
-
 namespace CLISC
 {
     public partial class Conversion

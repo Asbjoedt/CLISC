@@ -382,12 +382,14 @@ namespace CLISC
                     var activeSheetId = workbookView.ActiveTab.Value;
                     if (activeSheetId > 0)
                     {
+                        // Set value in workbook.xml to first sheet
                         workbookView.ActiveTab.Value = 0;
 
-                        List<WorksheetPart> worksheets = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                        // Iterate all worksheets to detect if sheetview.Tabselected exists and change it
+                        IEnumerable<WorksheetPart> worksheets = spreadsheet.WorkbookPart.WorksheetParts;
                         foreach (WorksheetPart worksheet in worksheets)
                         {
-                            var sheetviews = worksheet.Worksheet.SheetViews.ToList();
+                            SheetViews sheetviews = worksheet.Worksheet.SheetViews;
                             foreach (SheetView sheetview in sheetviews)
                             {
                                 sheetview.TabSelected = null;

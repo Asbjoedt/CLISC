@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CLISC
 {
-    public class Results
+    public partial class Results
     {
         // Create public data types
         public static string Results_Directory = "";
