@@ -87,7 +87,7 @@ namespace CLISC
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                DocumentFormat.OpenXml.Spreadsheet.Workbook workbook = wbPart.Workbook;
+                Workbook workbook = wbPart.Workbook;
                 // If Transitional
                 if (workbook.Conformance == null || workbook.Conformance != "strict")
                 {

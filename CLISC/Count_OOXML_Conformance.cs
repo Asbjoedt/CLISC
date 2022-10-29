@@ -33,21 +33,22 @@ namespace CLISC
             try
             {
                 // Count Transitional
-                if (conformance == "Transitional")
+                if (conformance == "transitional")
                 {
                     foreach (var xlsx in xlsx_files)
                     {
-                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
-                        bool? strict = spreadsheet.StrictRelationshipFound;
-                        spreadsheet.Close();
-                        if (strict == false)
+                        using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false))
                         {
-                            count++;
+                            Workbook workbook = spreadsheet.WorkbookPart.Workbook;
+                            if (workbook.Conformance == null || workbook.Conformance == "transitional")
+                            {
+                                count++;
+                            }
                         }
                     }
                 }
                 // Count Strict
-                else if (conformance == "Strict")
+                else if (conformance == "strict")
                 {
                     foreach (var xlsx in xlsx_files)
                     {

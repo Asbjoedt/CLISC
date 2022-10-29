@@ -39,11 +39,11 @@ namespace CLISC
                 // Detect OOXML conformance
                 if (fileformat.Extension== ".xlsx")
                 {
-                    if (fileformat.Conformance == "Transitional")
+                    if (fileformat.Conformance == "transitional")
                     {
                         total = Count_OOXML_Conformance(inputdir, recurse, fileformat.Conformance);
                     }
-                    else if (fileformat.Conformance == "Strict")
+                    else if (fileformat.Conformance == "strict")
                     {
                         total = Count_OOXML_Conformance(inputdir, recurse, fileformat.Conformance);
                     }
@@ -56,7 +56,7 @@ namespace CLISC
                 numTOTAL = numTOTAL + total;
 
                 // Subtract if OOXML conformance was counted
-                if (fileformat.Conformance == "Transitional" || fileformat.Conformance == "Strict")
+                if (fileformat.Conformance == "transitional" || fileformat.Conformance == "strict")
                 {
                     numTOTAL = numTOTAL - total;
                 }

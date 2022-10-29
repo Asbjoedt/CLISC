@@ -99,7 +99,7 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 Workbook workbook = spreadsheet.WorkbookPart.Workbook;
-                if (workbook.Conformance == null || workbook.Conformance != "strict")
+                if (workbook.Conformance == null || workbook.Conformance == "transitional")
                 {
                     conformance = true;
                 }
