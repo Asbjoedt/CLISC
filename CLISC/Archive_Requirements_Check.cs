@@ -44,7 +44,7 @@ namespace CLISC
             //bool metadata = Check_Metadata(filepath);
             bool conformance = Check_Conformance(filepath);
             int connections = Check_DataConnections(filepath);
-            int cellreferences = Check_CellReferences(filepath);
+            int cellreferences = Check_ExternalCellReferences(filepath);
             int rtdfunctions = Check_RTDFunctions(filepath);
             int printersettings = Check_PrinterSettings(filepath);
             int extobjects = Check_ExternalObjects(filepath);
@@ -145,14 +145,13 @@ namespace CLISC
         }
 
         // Check for external cell references
-        public int Check_CellReferences(string filepath)
+        public int Check_ExternalCellReferences(string filepath)
         {
-            int cellreferences_count = 0;
+            int ext_cellrefs_count = 0;
 
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                // Delete all cell references in worksheet
                 IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart part in worksheetParts)
                 {
@@ -172,7 +171,7 @@ namespace CLISC
                                     string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
                                     if (hit == "[" || hit2 == "'[")
                                     {
-                                        cellreferences_count++;
+                                        ext_cellrefs_count++;
                                     }
                                 }
                             }
@@ -182,11 +181,11 @@ namespace CLISC
             }
 
             // Inform user
-            if (cellreferences_count > 0)
+            if (ext_cellrefs_count > 0)
             {
-                Console.WriteLine($"--> Check: {cellreferences_count} external cell references detected");
+                Console.WriteLine($"--> Check: {ext_cellrefs_count} external cell references detected");
             }
-            return cellreferences_count;
+            return ext_cellrefs_count;
         }
 
         // Check for external object references
@@ -197,24 +196,10 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
-                if (extwbParts.Count > 0)
+                IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
+                foreach (ExternalWorkbookPart extWbPart in extWbParts)
                 {
-                    foreach (ExternalWorkbookPart ext in extwbParts)
-                    {
-                        var elements = ext.ExternalLink.ChildElements.ToList();
-                        foreach (var element in elements)
-                        {
-                            if (element.LocalName == "oleLink")
-                            {
-                                var externalLink = ext.ExternalLink.ToList();
-                                foreach (OleLink oleLink in externalLink)
-                                {
-                                    extobj_count++;
-                                }
-                            }
-                        }
-                    }
+                    extobj_count++;
                 }
             }
 

@@ -35,7 +35,7 @@ namespace CLISC
                 }
                 if (item.CellReferences > 0)
                 {
-                    Remove_CellReferences(filepath);
+                    Remove_ExternalCellReferences(filepath);
                     Console.WriteLine($"--> Change: {item.CellReferences} cell references were removed");
                 }
                 if (item.RTDFunctions > 0)
@@ -103,6 +103,7 @@ namespace CLISC
         // Remove data connections
         public void Remove_DataConnections(string filepath)
         {
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 // Delete all connections
@@ -208,7 +209,7 @@ namespace CLISC
         }
 
         // Remove external cell references
-        public void Remove_CellReferences(string filepath)
+        public void Remove_ExternalCellReferences(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -292,23 +293,13 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
-                if (extwbParts.Count > 0)
+                IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
+                foreach (ExternalWorkbookPart extWbPart in extWbParts)
                 {
-                    foreach (ExternalWorkbookPart extpart in extwbParts)
-                    {
-                        if (extpart.ExternalLink.ChildElements != null)
-                        {
-                            var elements = extpart.ExternalLink.ChildElements.ToList();
-                            foreach (var element in elements)
-                            {
-                                if (element.LocalName == "oleLink")
-                                {
-                                    spreadsheet.WorkbookPart.DeletePart(extpart);
-                                }
-                            }
-                        }
-                    }
+                    Console.WriteLine(extWbPart.RelationshipType);
+                    Console.WriteLine(extWbPart.Uri);
+                    Console.WriteLine(extWbPart.ExternalLink.OuterXml);
+                    spreadsheet.WorkbookPart.DeletePart(extWbPart);
                 }
             }
         }
@@ -317,7 +308,7 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
                     List<EmbeddedObjectPart> embedobj_ole_list = worksheetPart.EmbeddedObjectParts.ToList();
