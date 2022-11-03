@@ -296,10 +296,14 @@ namespace CLISC
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
                 foreach (ExternalWorkbookPart extWbPart in extWbParts)
                 {
-                    Console.WriteLine(extWbPart.RelationshipType);
-                    Console.WriteLine(extWbPart.Uri);
-                    Console.WriteLine(extWbPart.ExternalLink.OuterXml);
-                    spreadsheet.WorkbookPart.DeletePart(extWbPart);
+                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList();
+                    foreach (ExternalRelationship extrel in extrels)
+                    {
+                        // Change external target reference
+                        Uri uri = new Uri("External reference was removed", UriKind.Relative);
+                        extWbPart.DeleteExternalRelationship("rId1");
+                        extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: "rId1");
+                    }
                 }
             }
         }
