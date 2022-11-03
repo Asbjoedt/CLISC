@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Office2013.ExcelAc;
-using DocumentFormat.OpenXml.Packaging;
 
 namespace CLISC
 {
@@ -201,7 +198,7 @@ namespace CLISC
 
                     // Validate .ods
                     Validation val = new Validation();
-                    //ods_validity = val.Validate_OpenDocument(ods_conv_filepath);
+                    ods_validity = val.Validate_OpenDocument(ods_conv_filepath);
 
                     // Calculate checksum
                     ods_conv_checksum = Calculate_MD5(ods_conv_filepath);
