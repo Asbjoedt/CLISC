@@ -5,6 +5,7 @@ A Windows console application made in C#. It is a prototype project for digital 
 
 * For more information, see the **[wiki](https://github.com/Asbjoedt/CLISC/wiki)**
 * For graphical user interface, see repository **[GUISC](https://github.com/Asbjoedt/GUISC)**
+* For C# implementation library, see repository **[Archsheerary](https://github.com/Asbjoedt/Archsheerary)**
 * For simple archival workflow conversion tool, see repository **[convert-spreadsheet](https://github.com/Asbjoedt/convert-spreadsheet)**
 * For simple archival workflow validation tool, see repository **[validate-spreadsheet](https://github.com/Asbjoedt/validate-spreadsheet)**
 
