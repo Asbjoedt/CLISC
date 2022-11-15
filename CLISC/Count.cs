@@ -37,15 +37,19 @@ namespace CLISC
                 int total = count.GetFiles($"*{fileformat.Extension}", searchoption).Length;
 
                 // Detect OOXML conformance
-                if (fileformat.Extension== ".xlsx")
+                if (fileformat.Extension == ".xlsx")
                 {
+                    int xlsx_total = total;
+                    int strict_total = Count_Strict(inputdir, recurse);
+                    int transitional_total = xlsx_total - strict_total;
+
                     if (fileformat.Conformance == "transitional")
                     {
-                        total = Count_OOXML_Conformance(inputdir, recurse, fileformat.Conformance);
+                        total = transitional_total;
                     }
                     else if (fileformat.Conformance == "strict")
                     {
-                        total = Count_OOXML_Conformance(inputdir, recurse, fileformat.Conformance);
+                        total = strict_total;
                     }
                 }
 

@@ -77,5 +77,46 @@ namespace CLISC
             // Return count
             return count;
         }
+
+        // Count Strict conformance
+        public int Count_Strict(string inputdir, bool recurse)
+        {
+            int count = 0;
+            string[] xlsx_files = { "" };
+
+            // Search recursively or not
+            SearchOption searchoption = SearchOption.TopDirectoryOnly;
+            if (recurse == true)
+            {
+                searchoption = SearchOption.AllDirectories;
+            }
+
+            // Create index of xlsx files
+            xlsx_files = Directory.GetFiles(inputdir, "*.xlsx", searchoption);
+
+            try
+            {
+                foreach (var xlsx in xlsx_files)
+                {
+                    SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
+                    bool? strict = spreadsheet.StrictRelationshipFound;
+                    spreadsheet.Close();
+                    if (strict == true)
+                    {
+                        count++;
+                    }
+                }
+            }
+            // Catch exceptions, when spreadsheet cannot be opened due to password protection or corruption
+            catch (InvalidDataException)
+            {
+                numCONFORM_fail++;
+            }
+            catch (OpenXmlPackageException)
+            {
+                numCONFORM_fail++;
+            }
+            return count;
+        }
     }
 }
