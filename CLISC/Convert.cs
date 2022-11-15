@@ -162,6 +162,10 @@ namespace CLISC
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             // Convert to .xlsx Transitional using Open XML SDK
                             convert_success = Convert_to_OOXML_Transitional(copy_filepath, conv_filepath);
+                            if (convert_success == false)
+                            {
+                                error_message = error_messages[1];
+                            }
                             break;
                     }
                 }

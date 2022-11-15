@@ -13,7 +13,7 @@
     <Copyright>Asbjørn Skødt</Copyright>
     <RepositoryUrl>https://github.com/Asbjoedt/CLISC</RepositoryUrl>
     <PackageTags>excel;conversion; xlsx;archive;spreadsheets;compare-files;opendocument-spreadsheet;ooxml-workbooks</PackageTags>
-    <FileVersion>1.0.0beta</FileVersion>
+    <FileVersion>1.0</FileVersion>
     <IsPublishable>True</IsPublishable>
   </PropertyGroup>
 
