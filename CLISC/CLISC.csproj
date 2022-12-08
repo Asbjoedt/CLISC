@@ -15,6 +15,10 @@
     <PackageTags>excel;conversion; xlsx;archive;spreadsheets;compare-files;opendocument-spreadsheet;ooxml-workbooks</PackageTags>
     <FileVersion>1.0</FileVersion>
     <IsPublishable>True</IsPublishable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>G:\Mit drev\Diverse\Keys\Signing keys for my programs\CLISC.snk</AssemblyOriginatorKeyFile>
+    <Version>1.0.0</Version>
+    <Company></Company>
   </PropertyGroup>
 
   <ItemGroup>
