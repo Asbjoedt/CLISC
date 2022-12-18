@@ -116,16 +116,11 @@ namespace CLISC
                             error_message = error_messages[3];
                             break;
 
-                        case ".numbers":
-                            numFAILED++;
-                            convert_success = false;
-                            error_message = error_messages[4];
-                            break;
-
-                        // OpenDocument file formats
+                        // OpenDocument file formats and Apple Numbers
                         case ".fods":
                         case ".ods":
                         case ".ots":
+                        case ".numbers":
                             // Convert to XLSX Transitional using LibreOffice
                             convert_success = Convert_from_OpenDocument(function, copy_filepath, file_folder);
                             break;
@@ -139,16 +134,11 @@ namespace CLISC
                             error_message = error_messages[2];
                             break;
 
-                        // Legacy Microsoft Excel file formats
+                        // Legacy Microsoft Excel file formats and OOXML binary
                         case ".xls":
                         case ".xlt":
-                            // Transform data types for converted spreadsheets
-                            xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                            // Convert to .xlsx Transitional using Excel Interop
-                            convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath);
-                            break;
-
                         case ".xlsb":
+                            // Transform data types for converted spreadsheets
                             xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             // Convert to .xlsx Transitional using Excel Interop
                             convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath);
