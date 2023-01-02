@@ -86,7 +86,7 @@ namespace CLISC
             bool convert_success;
 
             // Because of previous bug, we must rename converted spreadsheet to meet archiving requirements
-            if (function == "count&convert&compare&archive")
+            if (function == "CountConvertCompareArchive")
             {
                 string[] filename = Directory.GetFiles(file_folder, "*.xlsx");
                 if (filename.Length > 0)
