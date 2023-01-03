@@ -26,7 +26,9 @@ namespace CLISC
             {
                 if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null)
                 {
-                    return convert_success;
+                    // Use Excel Interop to convert the spreadsheet
+                    Convert_Legacy_ExcelInterop(input_filepath, output_filepath);
+                    return convert_success = true;
                 }
             }
 
@@ -51,6 +53,7 @@ namespace CLISC
             return convert_success;
         }
 
+        // Work in progress
         // Convert .xlsx Strict to Transitional conformance
         public void Convert_Strict_to_Transitional(string input_filepath)
         {
@@ -60,7 +63,7 @@ namespace CLISC
             using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
             {
                 WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                DocumentFormat.OpenXml.Spreadsheet.Workbook workbook = wbPart.Workbook;
+                Workbook workbook = wbPart.Workbook;
                 // If Strict
                 if (workbook.Conformance != null || workbook.Conformance != "transitional")
                 {
@@ -69,6 +72,19 @@ namespace CLISC
 
                     // Remove vml urn namespace from workbook.xml
                     workbook.RemoveNamespaceDeclaration("v");
+                }
+            }
+        }
+
+        // Remove write or filesharing protection from spreadsheet in cases of no password
+        public void Remove_Protection(string input_filepath)
+        {
+            using (var fileStream = new FileStream(input_filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (var spreadsheet = SpreadsheetDocument.Open(fileStream, true))
+                {
+                    spreadsheet.WorkbookPart.Workbook.WorkbookProtection = null;
+                    spreadsheet.WorkbookPart.Workbook.FileSharing = null;
                 }
             }
         }
