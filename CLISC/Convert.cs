@@ -15,17 +15,16 @@ namespace CLISC
         // Define data types
         public static int numCOMPLETE = 0;
         public static int numFAILED = 0;
-        public static bool? convert_success = null;
+        public static bool convert_success = false;
         static string? file_folder = null;
         static int subdir_number = 1;
-        static int copy_file_number = 1;
-        static int conv_file_number = 1;
+        static int copy_number = 0;
         string org_extension = "";
         string org_filename = "";
         string org_filepath = "";
-        static string copy_extension = "";
-        static string copy_filename = "";
-        static string copy_filepath = "";
+        static string? copy_extension = null;
+        static string? copy_filename = null;
+        static string? copy_filepath = null;
         static string? conv_extension = null;
         static string? conv_filename = null;
         static string? conv_filepath = null;
@@ -35,7 +34,7 @@ namespace CLISC
         string? ods_conv_extension = null;
         string? ods_conv_filename = null;
         string? ods_conv_filepath = null;
-        static string error_message = "";
+        static string? error_message = null;
         static string[] error_messages = { "", "Spreadsheet cannot be read", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Filesize exceeds application limit" };
 
         // Convert spreadsheets method
@@ -75,41 +74,51 @@ namespace CLISC
                 }
                 DirectoryInfo Output_Subdir = Directory.CreateDirectory(file_folder);
 
-                // Transform data types for copied original spreadsheet
                 copy_extension = org_extension;
-                copy_filename = "orgFile_" + org_filename;
                 copy_filepath = file_folder + "\\" + copy_filename;
 
-                // Copy spreadsheet 
+                if (function == "CountConvertCompareArchive")
+                {
+                    // Change data types for copied spreadsheet
+                    copy_filename = "orgFile_" + org_filename;
+                    copy_filepath = file_folder + "\\" + copy_filename;
+
+                    // Change conversion filepath
+                    conv_filepath = file_folder + "\\1.xlsx";
+                }
+                else
+                {
+                    // Change copy filepath
+                    copy_filename = org_filename;
+
+                    // Change conversion filepath
+                    conv_filepath = file_folder + "\\" + Path.GetFileNameWithoutExtension(copy_filename) + ".xlsx";
+                }
+
+                // Copy spreadsheet
                 File.Copy(org_filepath, copy_filepath);
-                File.SetAttributes(copy_filepath, FileAttributes.Normal); // Remove file attributes on copied spreadsheet
+
+                // Remove file attributes on copied spreadsheet
+                File.SetAttributes(copy_filepath, FileAttributes.Normal);
+
+                // Inform user of original filepath
+                Console.WriteLine(org_filepath);
 
                 // Convert spreadsheet
                 try
                 {
-                    // Inform user of original filepath
-                    Console.WriteLine(org_filepath);
-
-                    if (function == "CountConvertCompareArchive")
-                    {
-                        conv_filepath = file_folder + "\\1.xlsx";
-                    }
-                    else
-                    {
-                        conv_filepath = file_folder + "\\orgFile_" + Path.GetFileNameWithoutExtension(org_filename) + ".xlsx";
-                    }
-
                     // Throw exception if filesize is over limit
                     long length = new System.IO.FileInfo(copy_filepath).Length;
                     length = length/1000000;
                     if (length >= 150) // Set limit, currently 150MB
                     {
-                        throw new System.Data.ConstraintException("FilesizeExceeded");
+                        throw new System.Data.ConstraintException("Filesize exceeded");
                     }
 
                     // Change conversion method based on file extension
                     switch (org_extension)
                     {
+                        // Google Sheets file format
                         case ".gsheet":
                             numFAILED++;
                             convert_success = false;
@@ -138,24 +147,17 @@ namespace CLISC
                         case ".xls":
                         case ".xlt":
                         case ".xlsb":
-                            // Transform data types for converted spreadsheets
-                            xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             // Convert to .xlsx Transitional using Excel Interop
                             convert_success = Convert_Legacy_ExcelInterop(copy_filepath, conv_filepath);
                             break;
 
+                        // Office Open XML file formats
                         case ".xlsm":
                         case ".xlsx":
                         case ".xltm":
                         case ".xltx":
-                            // Transform data types for converted spreadsheets
-                            xlsx_conv_filepath = file_folder + "\\1.xlsx";
                             // Convert to .xlsx Transitional using Open XML SDK
                             convert_success = Convert_to_OOXML_Transitional(copy_filepath, conv_filepath);
-                            if (convert_success == false)
-                            {
-                                error_message = error_messages[1];
-                            }
                             break;
                     }
                 }
@@ -203,63 +205,69 @@ namespace CLISC
                 {
                     // Inform user
                     Console.WriteLine($"--> Conversion: {convert_success}");
-                    if (convert_success == false)
+
+                    // If conversion success
+                    if (convert_success == true)
                     {
+                        // Count one complete
+                        numCOMPLETE++;
+
+                        //Transform XLSX data types
+                        xlsx_conv_extension = ".xlsx";
+                        xlsx_conv_filename = Path.GetFileName(conv_filepath);
+                        xlsx_conv_filepath = conv_filepath;
+
+                        // Inform user
+                        Console.WriteLine($"--> File saved to: {conv_filepath}");
+                    }
+                    // If conversion failed
+                    else
+                    {
+                        if (error_message == null)
+                        {
+                            error_message = error_messages[1];
+                        }
                         Console.WriteLine($"--> {error_message}");
                     }
 
-                    if (convert_success == true)
+                    // If archiving, transform data types
+                    if (function == "CountConvertCompareArchive")
                     {
-                        if (function == "CountConvertCompareArchive")
-                        {
-                            // Transform data types
-                            numCOMPLETE++;
-                            xlsx_conv_extension = ".xlsx";
-                            xlsx_conv_filename = "1.xlsx";
-                            xlsx_conv_filepath = file_folder + "\\1.xlsx";
-                            ods_conv_extension = ".ods";
-                            ods_conv_filename = "1.ods";
-                            ods_conv_filepath = file_folder + "\\1.ods";
-                            error_message = error_messages[0];
+                        ods_conv_extension = ".ods";
+                        ods_conv_filename = "1.ods";
+                        ods_conv_filepath = file_folder + "\\1.ods";
+                        error_message = null;
 
-                            // Inform user
-                            Console.WriteLine($"--> File saved to: {xlsx_conv_filepath}");
-                        }
-
-                        // Ordinary use, no archiving
-                        else
-                        {
-                            numCOMPLETE++;
-                            // Delete copied spreadsheet
-                            string new_location = docCollection + "\\" + Path.GetFileName(conv_filepath);
-                            File.Move(conv_filepath, new_location);
-                            if (File.Exists(copy_filepath))
-                            {
-                                File.Delete(copy_filepath);
-                            }
-                            Directory.Delete(file_folder);
-                            copy_extension = "";
-                            copy_filename = "";
-                            copy_filepath = "";
-                            xlsx_conv_extension = ".xlsx";
-                            xlsx_conv_filename = Path.GetFileName(conv_filepath);
-                            xlsx_conv_filepath = conv_filepath;
-                            ods_conv_extension = null;
-                            ods_conv_filename = null;
-                            ods_conv_filepath = null;
-                            // Inform user
-                            Console.WriteLine($"--> File saved to: {conv_filepath}");
-                        }
-                    }
+                    }                   
+                    // If no archiving
                     else
                     {
-                        convert_success = false;
-                        xlsx_conv_extension = null;
-                        xlsx_conv_filename = null;
-                        xlsx_conv_filepath = null;
-                        ods_conv_extension = null;
-                        ods_conv_filename = null;
-                        ods_conv_filepath = null;
+                        // Delete the copied spreadsheet, if conversion failed
+                        if (!convert_success)
+                        {
+                            File.Delete(conv_filepath);
+                        }
+                        // If success, move the spreadsheet to docCollection
+                        else
+                        {
+                            string new_location = docCollection + "\\" + conv_filename;
+                            string copy_filename_without_extension = Path.GetFileNameWithoutExtension(copy_filename);
+                            while (File.Exists(new_location))
+                            {
+                                copy_number++;
+                                copy_filename = $"{copy_filename_without_extension}({copy_number}){entry.Org_Extension}";
+                                copy_filepath = docCollection + "\\" + copy_filename;
+                            }
+                            File.Move(conv_filepath, new_location);
+                        }
+
+                        // Transform data types
+                        copy_extension = null;
+                        copy_filename = null;
+                        copy_filepath = null;
+
+                        // Delete folder
+                        Directory.Delete(file_folder);
                     }
 
                     // Add copied and converted spreadsheets file info to index of files
