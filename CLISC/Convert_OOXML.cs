@@ -49,8 +49,7 @@ namespace CLISC
             rep.Repair_OOXML(output_filepath);
 
             // Return success
-            convert_success = true;
-            return convert_success;
+            return convert_success = true;
         }
 
         // Work in progress

@@ -211,12 +211,9 @@ namespace CLISC
                         numCOMPLETE++;
 
                         //Transform XLSX data types
-                        xlsx_conv_extension = ".xlsx";
+                        xlsx_conv_extension = Path.GetExtension(conv_filepath);
                         xlsx_conv_filename = Path.GetFileName(conv_filepath);
                         xlsx_conv_filepath = conv_filepath;
-
-                        // Inform user
-                        Console.WriteLine($"--> File saved to: {conv_filepath}");
                     }
                     // If conversion failed
                     else
@@ -228,44 +225,44 @@ namespace CLISC
                         Console.WriteLine($"--> {error_message}");
                     }
 
-                    // If archiving, transform data types
-                    if (function == "CountConvertCompareArchive")
+                    // If archiving
+                    if (function == "CountConvertCompareArchive" && convert_success)
                     {
+                        // Inform user
+                        Console.WriteLine($"--> File saved to: {conv_filepath}");
+
+                        // Transform data types
                         ods_conv_extension = ".ods";
                         ods_conv_filename = "1.ods";
                         ods_conv_filepath = file_folder + "\\1.ods";
                         error_message = null;
-
                     }                   
                     // If no archiving
-                    else
+                    else if (function != "CountConvertCompareArchive")
                     {
                         // Delete the copied spreadsheet, if conversion failed
-                        if (!convert_success)
+                        if (convert_success)
                         {
-                            File.Delete(conv_filepath);
-                        }
-                        // If success, move the spreadsheet to docCollection
-                        else
-                        {
-                            string new_location = docCollection + "\\" + conv_filename;
                             string copy_filename_without_extension = Path.GetFileNameWithoutExtension(copy_filename);
+                            conv_filename = copy_filename_without_extension + ".xlsx";
+                            string new_location = docCollection + "\\" + conv_filename;
                             while (File.Exists(new_location))
                             {
                                 copy_number++;
-                                copy_filename = $"{copy_filename_without_extension}({copy_number}){entry.Org_Extension}";
-                                copy_filepath = docCollection + "\\" + copy_filename;
+                                conv_filename = $"{copy_filename_without_extension}({copy_number}).xlsx";
+                                new_location = docCollection + "\\" + conv_filename;
                             }
                             File.Move(conv_filepath, new_location);
                         }
 
-                        // Transform data types
+                        // Try to delete copy and its folder
+                        File.Delete(copy_filepath);
+                        Directory.Delete(file_folder);
+
+                        // Reset data types
                         copy_extension = null;
                         copy_filename = null;
                         copy_filepath = null;
-
-                        // Delete folder
-                        Directory.Delete(file_folder);
                     }
 
                     // Add copied and converted spreadsheets file info to index of files
@@ -274,6 +271,9 @@ namespace CLISC
                     // Output result in open CSV file
                     var newLine2 = string.Format($"{org_filepath};{org_filename};{org_extension};{xlsx_conv_filepath};{ods_conv_filepath};{convert_success};{error_message}");
                     csv.AppendLine(newLine2);
+
+                    // Reset datatypes
+                    conv_filepath = null;
                 }
             }
             // Close CSV file to log results

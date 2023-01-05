@@ -95,14 +95,10 @@ namespace CLISC
                     string old_filename = filename[0];
                     string new_filename = file_folder + "\\1.xlsx";
                     File.Move(old_filename, new_filename);
-                    // Transform datatypes
-                    xlsx_conv_extension = ".xlsx";
-                    xlsx_conv_filename = "1" + xlsx_conv_extension;
-                    xlsx_conv_filepath = file_folder + "\\" + xlsx_conv_filename;
                 }
             }
             // Report success if file exists - BUG: password protected ODS are returned as true, if not for below check
-            if (File.Exists(xlsx_conv_filepath))
+            if (File.Exists(conv_filepath))
             {
                 convert_success = true;
             }
