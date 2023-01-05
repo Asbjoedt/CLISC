@@ -74,6 +74,7 @@ namespace CLISC
                 }
                 DirectoryInfo Output_Subdir = Directory.CreateDirectory(file_folder);
 
+                copy_filename = org_filename;
                 copy_extension = org_extension;
                 copy_filepath = file_folder + "\\" + copy_filename;
 
@@ -88,9 +89,6 @@ namespace CLISC
                 }
                 else
                 {
-                    // Change copy filepath
-                    copy_filename = org_filename;
-
                     // Change conversion filepath
                     conv_filepath = file_folder + "\\" + Path.GetFileNameWithoutExtension(copy_filename) + ".xlsx";
                 }
