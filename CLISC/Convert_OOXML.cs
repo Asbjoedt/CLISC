@@ -72,7 +72,7 @@ namespace CLISC
             if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null)
             {
                 // Use Excel Interop to convert the spreadsheet
-                Convert_Legacy_ExcelInterop(input_filepath, input_filepath);
+                Convert_ExcelInterop(input_filepath, input_filepath);
             }
         }
     }

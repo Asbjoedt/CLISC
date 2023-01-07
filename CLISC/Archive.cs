@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,11 +43,11 @@ namespace CLISC
             string org_checksum = "";
             string copy_checksum = "";
             string xlsx_conv_checksum = "";
-            string xlsx_validity = "";
-            int xlsx_errors_count = 0;
+            string? xlsx_validity = "";
+            int? xlsx_errors_count = 0;
             bool? ods_validity = null;
             string ods_conv_checksum = "";
-            bool archive_req_accept = true;
+            bool? archive_req_accept = null;
 
             // Open CSV file to log archive results
             var csv = new StringBuilder();
@@ -60,7 +61,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Active Sheet;Absolute Path;Embedded Objects;Hyperlinks");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Active Sheet;Absolute Path;Metadata;Embedded Objects;Hyperlinks");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -91,17 +92,16 @@ namespace CLISC
                         // Change .xlsx according to archival requirements
                         arc.Change_XLSX_Requirements(arcReq, xlsx_conv_filepath);
 
+                        // Make archival requirements true
+                        archive_req_accept = true;
+
+                        // Register and count occurences of detected breaches of archival requirements
                         foreach (var item in arcReq)
                         {
-                            // Register and count occurences of detected breaches of archival requirements
                             if (item.Data == true)
                             {
                                 cellvalue_files++;
                                 archive_req_accept = false;
-                            }
-                            if (item.Metadata == true)
-                            {
-                                metadata_files++;
                             }
                             if (item.Conformance == true)
                             {
@@ -135,6 +135,10 @@ namespace CLISC
                             {
                                 absolutepath_files++;
                             }
+                            if (item.Metadata == true)
+                            {
+                                metadata_files++;
+                            }
                             if (item.EmbedObj > 0)
                             {
                                 embedobj_files++;
@@ -145,27 +149,24 @@ namespace CLISC
                             }
 
                             // Write information to CSV archival requirements log
-                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.ActiveSheet};{item.AbsolutePath};{item.EmbedObj}; {item.Hyperlinks}");
+                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.ActiveSheet};{item.AbsolutePath};{item.Metadata};{item.EmbedObj};{item.Hyperlinks}");
                             csv3.AppendLine(newLine3_2);
                         }
 
                         // Validate
                         Validation validate = new Validation();
-                        if (File.Exists(xlsx_conv_filepath))
+                        List<Validation> xlsx_validation_list = validate.Validate_OOXML_Hack(org_filepath, xlsx_conv_filepath, Results_Directory);
+
+                        xlsx_errors_count = xlsx_validation_list.Count;
+
+                        foreach (Validation info in xlsx_validation_list) // Get information from validation list
                         {
-                            List<Validation> xlsx_validation_list = validate.Validate_OOXML_Hack(org_filepath, xlsx_conv_filepath, Results_Directory);
-
-                            xlsx_errors_count = xlsx_validation_list.Count;
-
-                            foreach (Validation info in xlsx_validation_list) // Get information from validation list
+                            xlsx_validity = info.Validity;
+                            if (xlsx_validity == "Invalid")
                             {
-                                xlsx_validity = info.Validity;
-                                if (xlsx_validity == "Invalid")
-                                {
-                                    // If invalid write to CSV validation log
-                                    var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{info.Validity};{info.Error_Number};{info.Error_Id};{info.Error_Description};{info.Error_Type};{info.Error_Node};{info.Error_Path};{info.Error_Part};{info.Error_RelatedNode};{info.Error_RelatedNode_InnerText}");
-                                    csv2.AppendLine(newLine2_2);
-                                }
+                                // If invalid write to CSV validation log
+                                var newLine2_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{info.Validity};{info.Error_Number};{info.Error_Id};{info.Error_Description};{info.Error_Type};{info.Error_Node};{info.Error_Path};{info.Error_Part};{info.Error_RelatedNode};{info.Error_RelatedNode_InnerText}");
+                                csv2.AppendLine(newLine2_2);
                             }
                         }
                     }
@@ -213,15 +214,17 @@ namespace CLISC
                 var newLine1 = string.Format($"{org_filepath};{org_checksum};{copy_filepath};{copy_checksum};{xlsx_conv_filepath};{xlsx_conv_checksum};{xlsx_validity};{xlsx_errors_count};{ods_conv_filepath};{ods_conv_checksum};{ods_validity};{archive_req_accept}");
                 csv.AppendLine(newLine1);
 
-                // Reset data types to fix bug in CSV log, if converted spreadsheet does not exist
+                // Reset data types
                 xlsx_conv_filepath = "";
                 xlsx_conv_extension = "";
                 ods_conv_filepath = "";
                 ods_conv_extension = "";
                 xlsx_conv_checksum = "";
                 ods_conv_checksum = "";
-                xlsx_validity = "";
-                archive_req_accept = true;
+                xlsx_validity = null;
+                xlsx_errors_count = null;
+                ods_validity = null;
+                archive_req_accept = null;
             }
 
             // Close validation CSV file to log results

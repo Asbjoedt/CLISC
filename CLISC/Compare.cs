@@ -21,19 +21,18 @@ namespace CLISC
             Console.WriteLine("COMPARE");
             Console.WriteLine("---");
 
-            // Data types
-            string error_message = "Beyond Compare 4 is not installed";
-
             // Open CSV file to log results
             var csv = new StringBuilder();
-            var newLine0 = string.Format($"Original Filepath;XLSX Filepath;Comparison Success");
+            var newLine0 = string.Format($"Original Filepath;XLSX Filepath;Comparison Success;Error message");
             csv.AppendLine(newLine0);
 
             try 
             {
                 foreach (fileIndex entry in File_List)
                 {
+                    // Define data types
                     bool? compare_success = null;
+                    string? error_message = null;
                     // Get information from list
                     string org_filepath = entry.Org_Filepath;
                     string copy_filepath = entry.Copy_Filepath;
@@ -74,28 +73,31 @@ namespace CLISC
                         if (return_code == 11)
                         {
                             compare_success = null;
+                            error_message = "Original file cannot be compared";
                             Console.WriteLine("--> Original file cannot be compared");
                         }
                         if (return_code == 100)
                         {
                             compare_success = null;
+                            error_message = "Unknown error";
                             Console.WriteLine("--> Unknown error");
                         }
                         if (return_code == 104)
                         {
                             compare_success = null;
+                            error_message = "Beyond Compare 4 trial period expired";
                             Console.WriteLine("--> Beyond Compare 4 trial period expired");
                         }
 
                         // Output result in open CSV file
-                        var newLine1 = string.Format($"{org_filepath};{xlsx_filepath};{compare_success}");
+                        var newLine1 = string.Format($"{org_filepath};{xlsx_filepath};{compare_success};{error_message}");
                         csv.AppendLine(newLine1);
                     }
                 }
             }
             catch (Win32Exception)
             {
-                Console.WriteLine(error_message);
+                Console.WriteLine("Beyond Compare 4 is not installed");
                 Console.WriteLine("Comparison ended");
             }
 

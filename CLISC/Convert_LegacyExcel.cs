@@ -9,7 +9,7 @@ namespace CLISC
     public partial class Conversion
     {
         // Convert legacy Excel files to .xlsx Transitional using Microsoft Office Interop Excel
-        public bool Convert_Legacy_ExcelInterop(string input_filepath, string output_filepath)
+        public bool Convert_ExcelInterop(string input_filepath, string output_filepath)
         {
             bool convert_success = false;
 

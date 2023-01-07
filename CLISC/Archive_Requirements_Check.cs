@@ -41,7 +41,7 @@ namespace CLISC
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
         {
             bool data = Check_Value(filepath);
-            //bool metadata = Check_Metadata(filepath);
+            bool metadata = Check_Metadata(filepath);
             bool conformance = Check_Conformance(filepath);
             int connections = Check_DataConnections(filepath);
             int cellreferences = Check_ExternalCellReferences(filepath);
@@ -55,7 +55,7 @@ namespace CLISC
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, EmbedObj = embedobj, Hyperlinks = hyperlinks});
+            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, Metadata = metadata, EmbedObj = embedobj, Hyperlinks = hyperlinks});
             return Arc_Req;
         }
 
