@@ -51,6 +51,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove external objects
 * Remove absolute path to local directory
 * Make first sheet active
+* Alert if metadata detected
 * Alert if embedded objects detected
 * Alert if hyperlinks detected
 * Calculate file checksums
