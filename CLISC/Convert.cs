@@ -60,27 +60,25 @@ namespace CLISC
             // Loop spreadsheets based on enumeration
             foreach (var entry in Org_File_List)
             {
-                // Create data types for original files and connect to list of original files
+                // Create data types for original spreadsheet and connect to list of original spreadsheet
                 org_extension = entry.Org_Extension;
                 org_filename = entry.Org_Filename;
                 org_filepath = entry.Org_Filepath;
 
-                // Create new subdirectory for the spreadsheet
-                file_folder = docCollection + "\\" + subdir_number;
-                while (Directory.Exists(file_folder))
-                {
-                    subdir_number++;
-                    file_folder = docCollection + "\\" + subdir_number;
-                }
-                DirectoryInfo Output_Subdir = Directory.CreateDirectory(file_folder);
-
-                copy_filename = org_filename;
-                copy_extension = org_extension;
-                copy_filepath = file_folder + "\\" + copy_filename;
-
+                // Create subdirectories for copied spreadsheet
                 if (function == "CountConvertCompareArchive")
                 {
+                    // Create new subdirectory for the spreadsheet
+                    file_folder = docCollection + "\\" + subdir_number;
+                    while (Directory.Exists(file_folder))
+                    {
+                        subdir_number++;
+                        file_folder = docCollection + "\\" + subdir_number;
+                    }
+                    DirectoryInfo Output_Subdir = Directory.CreateDirectory(file_folder);
+
                     // Change data types for copied spreadsheet
+                    copy_extension = org_extension;
                     copy_filename = "orgFile_" + org_filename;
                     copy_filepath = file_folder + "\\" + copy_filename;
 
@@ -89,6 +87,18 @@ namespace CLISC
                 }
                 else
                 {
+                    // Create new subdirectory for the spreadsheet
+                    file_folder = docCollection + "\\" + "Failed conversions";
+                    if (!Directory.Exists(file_folder))
+                    {
+                        DirectoryInfo Output_Subdir = Directory.CreateDirectory(file_folder);
+                    }
+
+                    // Change data types for copied spreadsheet
+                    copy_extension = org_extension;
+                    copy_filename = org_filename;
+                    copy_filepath = file_folder + "\\" + copy_filename;
+
                     // Change conversion filepath
                     conv_filepath = file_folder + "\\" + Path.GetFileNameWithoutExtension(copy_filename) + ".xlsx";
                 }
@@ -274,6 +284,7 @@ namespace CLISC
 
                     // Reset datatypes
                     conv_filepath = null;
+                    error_message = null;
                 }
             }
             // Close CSV file to log results

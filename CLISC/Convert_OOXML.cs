@@ -21,17 +21,6 @@ namespace CLISC
         {
             bool convert_success = false;
 
-            // If password-protected or reserved by another user
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(input_filepath, false))
-            {
-                if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null)
-                {
-                    // Use Excel Interop to convert the spreadsheet
-                    Convert_Legacy_ExcelInterop(input_filepath, output_filepath);
-                    return convert_success = true;
-                }
-            }
-
             // Convert spreadsheet
             byte[] byteArray = File.ReadAllBytes(input_filepath);
             using (MemoryStream stream = new MemoryStream())
@@ -39,7 +28,8 @@ namespace CLISC
                 stream.Write(byteArray, 0, (int)byteArray.Length);
                 using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(stream, true))
                 {
-                    spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
+                    Handle_Protection(spreadsheet, input_filepath); // Try to remove read-only and filesharing protection
+                    spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook); // Convert to different file format
                 }
                 File.WriteAllBytes(output_filepath, stream.ToArray());
             }
@@ -75,16 +65,14 @@ namespace CLISC
             }
         }
 
+        // Work in progress
         // Remove write or filesharing protection from spreadsheet in cases of no password
-        public void Remove_Protection(string input_filepath)
+        public void Handle_Protection(SpreadsheetDocument spreadsheet, string input_filepath)
         {
-            using (var fileStream = new FileStream(input_filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null)
             {
-                using (var spreadsheet = SpreadsheetDocument.Open(fileStream, true))
-                {
-                    spreadsheet.WorkbookPart.Workbook.WorkbookProtection = null;
-                    spreadsheet.WorkbookPart.Workbook.FileSharing = null;
-                }
+                // Use Excel Interop to convert the spreadsheet
+                Convert_Legacy_ExcelInterop(input_filepath, input_filepath);
             }
         }
     }
