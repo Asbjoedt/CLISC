@@ -28,7 +28,6 @@ namespace CLISC
                 stream.Write(byteArray, 0, (int)byteArray.Length);
                 using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(stream, true))
                 {
-                    Handle_Protection(spreadsheet, input_filepath); // Try to remove read-only and filesharing protection
                     spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook); // Convert to different file format
                 }
                 File.WriteAllBytes(output_filepath, stream.ToArray());
