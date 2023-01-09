@@ -248,7 +248,6 @@ namespace CLISC
             return rtd_functions_count;
         }
 
-        // Check for embedded objects
         public int Check_EmbeddedObjects(string filepath)
         {
             int count_embedobj = 0;
@@ -262,7 +261,7 @@ namespace CLISC
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-         
+
                 // Perform check
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {

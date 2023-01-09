@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Packaging;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,11 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
+using DocumentFormat.OpenXml.Linq;
+using ImageMagick;
+using System.Xml;
+using System.Xml.Linq;
+
 
 namespace CLISC
 {
@@ -65,8 +71,8 @@ namespace CLISC
                 }
                 if (item.EmbedObj > 0)
                 {
-                    //Remove_EmbeddedObjects(filepath);
-                    //Console.WriteLine($"--> Change: {item.EmbedObj} embedded objects were removed");
+                    Convert_EmbeddedObjects(filepath);
+                    Console.WriteLine($"--> Change: {item.EmbedObj} embedded objects were converted");
                 }
                 if (item.Hyperlinks > 0)
                 {
@@ -518,13 +524,131 @@ namespace CLISC
                 {
                     Worksheet worksheet = worksheetPart.Worksheet;
                     IEnumerable<Hyperlink> hyperlinks = worksheet.GetFirstChild<Hyperlinks>().Elements<Hyperlink>();
-                    foreach(Hyperlink hyperlink in hyperlinks)
+                    foreach (Hyperlink hyperlink in hyperlinks)
                     {
                         Console.WriteLine(hyperlink.Id);
                         ReferenceRelationship refRel = worksheetPart.GetReferenceRelationship(hyperlink.Id);
                     }
                 }
             }
+        }
+
+        //
+        public void Convert_EmbeddedObjects(string filepath)
+        {
+            string new_extension = ".tif";
+            string input_embed_filepath;
+            string output_embed_filepath;
+
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
+                foreach (WorksheetPart worksheetPart in worksheetParts)
+                {
+                    List<EmbeddedObjectPart> embedobj_ole_list = worksheetPart.EmbeddedObjectParts.ToList();
+                    List<EmbeddedPackagePart> embedobj_package_list = worksheetPart.EmbeddedPackageParts.ToList();
+                    List<ImagePart> embedobj_image_list = worksheetPart.ImageParts.ToList();
+                    List<ImagePart> embedobj_drawing_image_list = new List<ImagePart>();
+                    if (worksheetPart.DrawingsPart != null)
+                    {
+                        embedobj_drawing_image_list = worksheetPart.DrawingsPart.ImageParts.ToList();
+                    }
+                    List<Model3DReferenceRelationshipPart> embedobj_3d_list = worksheetPart.Model3DReferenceRelationshipParts.ToList();
+
+                    if (embedobj_ole_list.Count() > 0)
+                    {
+                        foreach (EmbeddedObjectPart part in embedobj_ole_list)
+                        {
+
+                        }
+                    }
+
+                    if (embedobj_package_list.Count() > 0)
+                    {
+                        foreach (EmbeddedPackagePart part in embedobj_package_list)
+                        {
+                            
+                        }
+                    }
+                    if (embedobj_image_list.Count() > 0)
+                    {
+                        foreach (ImagePart part in embedobj_image_list)
+                        {
+                            
+                        }
+                    }
+                    if (embedobj_drawing_image_list.Count() > 0)
+                    {
+                        foreach (ImagePart part in embedobj_drawing_image_list)
+                        {
+                            Console.WriteLine(part.Uri);
+
+                            // Create new Uri
+                            input_embed_filepath = part.Uri.ToString();
+                            int idx = input_embed_filepath.LastIndexOf('.');
+                            output_embed_filepath = input_embed_filepath.Substring(0, idx) + new_extension;
+                            Uri new_uri = new Uri(output_embed_filepath);
+
+                            // Convert
+                            Stream stream = part.GetStream();
+                            stream = Convert_to_TIF(stream);
+
+                            // Change relationships
+                            //Change_Embed_Relationships(filepath);
+
+                            string id = part.GetIdOfPart(part);
+                            ReferenceRelationship reference = part.GetReferenceRelationship(id);
+                            Console.WriteLine(reference);
+
+                            part.Uri.MakeRelativeUri(new_uri);
+
+                            XElement change_uri;
+                            //part.SetXElement();
+                        }
+                    }
+                    if (embedobj_3d_list.Count() > 0)
+                    {
+                        foreach (Model3DReferenceRelationshipPart part in embedobj_3d_list)
+                        {
+                            
+                        }
+                    }
+                }
+            }
+        }
+
+        // Convert embedded object to TIF
+        public Stream Convert_to_TIF(Stream stream)
+        {
+            stream.Position = 0;
+
+            using (var memStream = new MemoryStream())
+            {
+                // Convert stream to memorystream
+                stream.CopyTo(memStream);
+
+                // Create image that is completely purple and 800x600
+                using (var image = new MagickImage())
+                {
+                    // Sets the output format
+                    image.Format = MagickFormat.Tif;
+
+                    // Write the image to the memorystream
+                    image.Write(memStream);
+
+                    // Convert memorystream to stream
+                    memStream.CopyTo(stream);
+                }
+            }
+
+            // Return the stream
+            return stream;
+        }
+
+        // Change the relationships of the converted embedded object
+        public void Change_Embed_Relationships(Stream stream)
+        {
+            // https://learn.microsoft.com/en-us/dotnet/standard/linq/modify-office-open-xml-document
         }
     }
 }

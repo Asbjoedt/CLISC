@@ -241,6 +241,12 @@ namespace CLISC
                             error_message = error_messages[1];
                         }
                         Console.WriteLine($"--> {error_message}");
+
+                        // Delete converted spreadsheet (it has errors), if it exists
+                        if (File.Exists(output_filepath))
+                        {
+                            File.Delete(output_filepath);
+                        }
                     }
                 }
 

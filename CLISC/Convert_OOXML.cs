@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -28,9 +29,18 @@ namespace CLISC
                 stream.Write(byteArray, 0, (int)byteArray.Length);
                 using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(stream, true))
                 {
-                    spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook); // Convert to different file format
+                    spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
                 }
                 File.WriteAllBytes(output_filepath, stream.ToArray());
+            }
+
+            // Return fail if spreadsheet is protected or filesharing is enabled
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
+            {
+                if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null)
+                {
+                    return convert_success;
+                }
             }
 
             // Repair spreadsheet
