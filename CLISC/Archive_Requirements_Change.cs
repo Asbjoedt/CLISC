@@ -9,10 +9,6 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
-using DocumentFormat.OpenXml.Linq;
-using ImageMagick;
-using System.Xml;
-using System.Xml.Linq;
 
 
 namespace CLISC
@@ -82,11 +78,10 @@ namespace CLISC
             }
         }
 
+        // Work in progress
         // Change conformance to Strict
         public void Change_Conformance(string filepath)
         {
-            // Work in progress
-
             // Create list of namespaces
             List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
 
@@ -117,10 +112,10 @@ namespace CLISC
                 spreadsheet.WorkbookPart.DeletePart(conn);
 
                 // Delete all query tables
-                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart part in worksheetparts)
                 {
-                    List<QueryTablePart> queryTables = part.QueryTableParts.ToList();
+                    IEnumerable<QueryTablePart> queryTables = part.QueryTableParts;
                     foreach (QueryTablePart qtp in queryTables)
                     {
                         part.DeletePart(qtp);
@@ -131,7 +126,7 @@ namespace CLISC
                 if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
                 {
                     CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
-                    List<Map> maps = xmlMap.MapInfo.Elements<Map>().ToList();
+                    IEnumerable<Map> maps = xmlMap.MapInfo.Elements<Map>();
                     foreach (Map map in maps)
                     {
                         if (map.DataBinding != null)
@@ -142,7 +137,7 @@ namespace CLISC
                 }
             }
             // Repair spreadsheet
-            Repair rep = new Repair();
+            //Repair rep = new Repair();
             //rep.Repair_QueryTables(filepath);
         }
 
@@ -151,14 +146,14 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart part in worksheetparts)
                 {
                     Worksheet worksheet = part.Worksheet;
                     var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     foreach (var row in rows)
                     {
-                        var cells = row.Elements<Cell>();
+                        IEnumerable<Cell> cells = row.Elements<Cell>();
                         foreach (Cell cell in cells)
                         {
                             if (cell.CellFormula != null)
@@ -202,11 +197,11 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<WorksheetPart> wsParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> wsParts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart wsPart in wsParts)
                 {
-                    List<SpreadsheetPrinterSettingsPart> printerList = wsPart.SpreadsheetPrinterSettingsParts.ToList();
-                    foreach (SpreadsheetPrinterSettingsPart printer in printerList)
+                    IEnumerable<SpreadsheetPrinterSettingsPart> printers = wsPart.SpreadsheetPrinterSettingsParts;
+                    foreach (SpreadsheetPrinterSettingsPart printer in printers)
                     {
                         wsPart.DeletePart(printer);
                     }
@@ -219,14 +214,14 @@ namespace CLISC
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart part in worksheetparts)
                 {
                     Worksheet worksheet = part.Worksheet;
-                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
-                    foreach (var row in rows)
+                    IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
+                    foreach (Row row in rows)
                     {
-                        var cells = row.Elements<Cell>();
+                        IEnumerable<Cell> cells = row.Elements<Cell>();
                         foreach (Cell cell in cells)
                         {
                             if (cell.CellFormula != null)
@@ -302,7 +297,7 @@ namespace CLISC
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
                 foreach (ExternalWorkbookPart extWbPart in extWbParts)
                 {
-                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList();
+                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // This must be a list
                     foreach (ExternalRelationship extrel in extrels)
                     {
                         // Change external target reference
@@ -511,6 +506,7 @@ namespace CLISC
             }
         }
 
+        // Work in progress
         // Change hyperlinks to link to Wayback Machine
         public void Change_Hyperlinks(string filepath)
         {
@@ -519,7 +515,7 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                List<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
                     Worksheet worksheet = worksheetPart.Worksheet;
@@ -531,124 +527,6 @@ namespace CLISC
                     }
                 }
             }
-        }
-
-        //
-        public void Convert_EmbeddedObjects(string filepath)
-        {
-            string new_extension = ".tif";
-            string input_embed_filepath;
-            string output_embed_filepath;
-
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart worksheetPart in worksheetParts)
-                {
-                    List<EmbeddedObjectPart> embedobj_ole_list = worksheetPart.EmbeddedObjectParts.ToList();
-                    List<EmbeddedPackagePart> embedobj_package_list = worksheetPart.EmbeddedPackageParts.ToList();
-                    List<ImagePart> embedobj_image_list = worksheetPart.ImageParts.ToList();
-                    List<ImagePart> embedobj_drawing_image_list = new List<ImagePart>();
-                    if (worksheetPart.DrawingsPart != null)
-                    {
-                        embedobj_drawing_image_list = worksheetPart.DrawingsPart.ImageParts.ToList();
-                    }
-                    List<Model3DReferenceRelationshipPart> embedobj_3d_list = worksheetPart.Model3DReferenceRelationshipParts.ToList();
-
-                    if (embedobj_ole_list.Count() > 0)
-                    {
-                        foreach (EmbeddedObjectPart part in embedobj_ole_list)
-                        {
-
-                        }
-                    }
-
-                    if (embedobj_package_list.Count() > 0)
-                    {
-                        foreach (EmbeddedPackagePart part in embedobj_package_list)
-                        {
-                            
-                        }
-                    }
-                    if (embedobj_image_list.Count() > 0)
-                    {
-                        foreach (ImagePart part in embedobj_image_list)
-                        {
-                            
-                        }
-                    }
-                    if (embedobj_drawing_image_list.Count() > 0)
-                    {
-                        foreach (ImagePart part in embedobj_drawing_image_list)
-                        {
-                            Console.WriteLine(part.Uri);
-
-                            // Create new Uri
-                            input_embed_filepath = part.Uri.ToString();
-                            int idx = input_embed_filepath.LastIndexOf('.');
-                            output_embed_filepath = input_embed_filepath.Substring(0, idx) + new_extension;
-                            Uri new_uri = new Uri(output_embed_filepath);
-
-                            // Convert
-                            Stream stream = part.GetStream();
-                            stream = Convert_to_TIF(stream);
-
-                            // Change relationships
-                            //Change_Embed_Relationships(filepath);
-
-                            string id = part.GetIdOfPart(part);
-                            ReferenceRelationship reference = part.GetReferenceRelationship(id);
-                            Console.WriteLine(reference);
-
-                            part.Uri.MakeRelativeUri(new_uri);
-
-                            XElement change_uri;
-                            //part.SetXElement();
-                        }
-                    }
-                    if (embedobj_3d_list.Count() > 0)
-                    {
-                        foreach (Model3DReferenceRelationshipPart part in embedobj_3d_list)
-                        {
-                            
-                        }
-                    }
-                }
-            }
-        }
-
-        // Convert embedded object to TIF
-        public Stream Convert_to_TIF(Stream stream)
-        {
-            stream.Position = 0;
-
-            using (var memStream = new MemoryStream())
-            {
-                // Convert stream to memorystream
-                stream.CopyTo(memStream);
-
-                // Create image that is completely purple and 800x600
-                using (var image = new MagickImage())
-                {
-                    // Sets the output format
-                    image.Format = MagickFormat.Tif;
-
-                    // Write the image to the memorystream
-                    image.Write(memStream);
-
-                    // Convert memorystream to stream
-                    memStream.CopyTo(stream);
-                }
-            }
-
-            // Return the stream
-            return stream;
-        }
-
-        // Change the relationships of the converted embedded object
-        public void Change_Embed_Relationships(Stream stream)
-        {
-            // https://learn.microsoft.com/en-us/dotnet/standard/linq/modify-office-open-xml-document
         }
     }
 }

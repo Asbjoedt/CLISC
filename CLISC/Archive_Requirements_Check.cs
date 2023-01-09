@@ -69,7 +69,7 @@ namespace CLISC
             {
                 if (spreadsheet.WorkbookPart.WorksheetParts != null)
                 {
-                    List<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts.ToList();
+                    IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
                     foreach (WorksheetPart part in worksheetparts)
                     {
                         Worksheet worksheet = part.Worksheet;
@@ -225,7 +225,7 @@ namespace CLISC
                     IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
                     foreach (var row in rows)
                     {
-                        var cells = row.Elements<Cell>();
+                        IEnumerable<Cell> cells = row.Elements<Cell>();
                         foreach (Cell cell in cells)
                         {
                             if (cell.CellFormula != null)
@@ -252,11 +252,11 @@ namespace CLISC
         {
             int count_embedobj = 0;
             int embedobj_number = 0;
-            List<EmbeddedObjectPart> embeddings_ole = new List<EmbeddedObjectPart>();
-            List<EmbeddedPackagePart> embeddings_package = new List<EmbeddedPackagePart>();
-            List<ImagePart> embeddings_emf = new List<ImagePart>();
-            List<ImagePart> embeddings_image = new List<ImagePart>();
-            List<Model3DReferenceRelationshipPart> embeddings_3d = new List<Model3DReferenceRelationshipPart>();
+            List<EmbeddedObjectPart> ole = new List<EmbeddedObjectPart>();
+            List<EmbeddedPackagePart> packages = new List<EmbeddedPackagePart>();
+            List<ImagePart> emf = new List<ImagePart>();
+            List<ImagePart> images = new List<ImagePart>();
+            List<Model3DReferenceRelationshipPart> threeD = new List<Model3DReferenceRelationshipPart>();
 
             using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
@@ -265,18 +265,18 @@ namespace CLISC
                 // Perform check
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    embeddings_ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
-                    embeddings_package = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
-                    embeddings_emf = worksheetPart.ImageParts.Distinct().ToList();
+                    ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
+                    packages = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
+                    emf = worksheetPart.ImageParts.Distinct().ToList();
                     if (worksheetPart.DrawingsPart != null) // DrawingsPart needs a null check
                     {
-                        embeddings_image = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
+                        images = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
                     }
-                    embeddings_3d = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
+                    threeD = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
                 }
 
                 // Count number of embeddings
-                count_embedobj = embeddings_ole.Count() + embeddings_package.Count() + embeddings_emf.Count() + embeddings_image.Count() + embeddings_3d.Count();
+                count_embedobj = ole.Count() + packages.Count() + emf.Count() + images.Count() + threeD.Count();
 
                 // Inform user of detected embedded objects
                 if (count_embedobj > 0)
@@ -284,7 +284,7 @@ namespace CLISC
                     Console.WriteLine($"--> Check: {count_embedobj} embedded objects detected");
 
                     // Inform user of each OLE object
-                    foreach (EmbeddedObjectPart part in embeddings_ole)
+                    foreach (EmbeddedObjectPart part in ole)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
@@ -292,15 +292,23 @@ namespace CLISC
                         Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                     }
                     // Inform user of each package object
-                    foreach (EmbeddedPackagePart part in embeddings_package)
+                    foreach (EmbeddedPackagePart part in packages)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
                         Console.WriteLine($"----> Content Type: Package object");
                         Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                     }
+                    // Inform user of each 3D object
+                    foreach (Model3DReferenceRelationshipPart part in threeD)
+                    {
+                        embedobj_number++;
+                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"----> Content Type: 3D model object");
+                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                    }
                     // Inform user of each .emf image object
-                    foreach (ImagePart part in embeddings_emf)
+                    foreach (ImagePart part in emf)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
@@ -308,19 +316,11 @@ namespace CLISC
                         Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                     }
                     // Inform user of each image object
-                    foreach (ImagePart part in embeddings_image)
+                    foreach (ImagePart part in images)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
                         Console.WriteLine($"----> Content Type: Image object");
-                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
-                    }
-                    // Inform user of each 3D object
-                    foreach (Model3DReferenceRelationshipPart part in embeddings_3d)
-                    {
-                        embedobj_number++;
-                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                        Console.WriteLine($"----> Content Type: 3D model object");
                         Console.WriteLine($"----> URI: {part.Uri.ToString()}");
                     }
                 }
@@ -361,12 +361,12 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                List<SpreadsheetPrinterSettingsPart> printerList = new List<SpreadsheetPrinterSettingsPart>();
+                List<SpreadsheetPrinterSettingsPart> printers = new List<SpreadsheetPrinterSettingsPart>();
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    printerList = worksheetPart.SpreadsheetPrinterSettingsParts.ToList();
+                    printers = worksheetPart.SpreadsheetPrinterSettingsParts.ToList();
                 }
-                foreach (SpreadsheetPrinterSettingsPart printer in printerList)
+                foreach (SpreadsheetPrinterSettingsPart printer in printers)
                 {
                     printersettings_count++;
                 }
@@ -481,6 +481,25 @@ namespace CLISC
                 Console.WriteLine("--> Check: File property information detected");
             }
             return metadata;
+        }
+
+        // Check for readonly recommended
+        public bool Check_ReadOnlyRecommended(string filepath)
+        {
+            bool readOnlyRecommended = false;
+
+            // Perform check
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            {
+                readOnlyRecommended = spreadsheet.Features.IsReadOnly;
+            }
+
+            // Inform user
+            if (readOnlyRecommended == true)
+            {
+                Console.WriteLine("--> Check: Read only recommended detected");
+            }
+            return readOnlyRecommended;
         }
     }
 }
