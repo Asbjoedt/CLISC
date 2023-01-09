@@ -115,7 +115,7 @@ namespace CLISC
                 IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart part in worksheetparts)
                 {
-                    IEnumerable<QueryTablePart> queryTables = part.QueryTableParts;
+                    List<QueryTablePart> queryTables = part.QueryTableParts.ToList(); // Must be a list
                     foreach (QueryTablePart qtp in queryTables)
                     {
                         part.DeletePart(qtp);
@@ -126,7 +126,7 @@ namespace CLISC
                 if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
                 {
                     CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
-                    IEnumerable<Map> maps = xmlMap.MapInfo.Elements<Map>();
+                    List<Map> maps = xmlMap.MapInfo.Elements<Map>().ToList(); // Must be a list
                     foreach (Map map in maps)
                     {
                         if (map.DataBinding != null)
@@ -200,7 +200,7 @@ namespace CLISC
                 IEnumerable<WorksheetPart> wsParts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart wsPart in wsParts)
                 {
-                    IEnumerable<SpreadsheetPrinterSettingsPart> printers = wsPart.SpreadsheetPrinterSettingsParts;
+                    List<SpreadsheetPrinterSettingsPart> printers = wsPart.SpreadsheetPrinterSettingsParts.ToList(); // Must be a list
                     foreach (SpreadsheetPrinterSettingsPart printer in printers)
                     {
                         wsPart.DeletePart(printer);
@@ -297,7 +297,7 @@ namespace CLISC
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
                 foreach (ExternalWorkbookPart extWbPart in extWbParts)
                 {
-                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // This must be a list
+                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // Must be a list
                     foreach (ExternalRelationship extrel in extrels)
                     {
                         // Change external target reference

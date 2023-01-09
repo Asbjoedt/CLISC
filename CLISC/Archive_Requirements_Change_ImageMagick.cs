@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Linq;
 using ImageMagick;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.ExtendedProperties;
 
 namespace CLISC
 {
@@ -17,8 +16,8 @@ namespace CLISC
         public void Convert_EmbeddedObjects(string filepath)
         {
             string new_extension = ".tif";
-            string input_embed_filepath;
-            string output_embed_filepath;
+            string input_path;
+            string output_path;
             string id;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
@@ -26,6 +25,7 @@ namespace CLISC
                 IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
+                    // Check for parts
                     IEnumerable<EmbeddedObjectPart> ole = worksheetPart.EmbeddedObjectParts;
                     IEnumerable<EmbeddedPackagePart> packages = worksheetPart.EmbeddedPackageParts;
                     IEnumerable<Model3DReferenceRelationshipPart> threeD = worksheetPart.Model3DReferenceRelationshipParts;
@@ -36,6 +36,7 @@ namespace CLISC
                         drawing_images = worksheetPart.DrawingsPart.ImageParts;
                     }
 
+                    // Convert each part
                     if (ole.Count() > 0)
                     {
                         foreach (EmbeddedObjectPart part in ole)
@@ -70,11 +71,10 @@ namespace CLISC
                         foreach (ImagePart part in drawing_images)
                         {
                             // Create new Uri
-                            input_embed_filepath = part.Uri.ToString();
-                            int idx = input_embed_filepath.LastIndexOf('.');
-                            output_embed_filepath = input_embed_filepath.Substring(0, idx) + new_extension;
-                            Uri new_uri = new Uri(output_embed_filepath, UriKind.Relative);
-                            Console.WriteLine(new_uri);
+                            input_path = part.Uri.ToString();
+                            int idx = input_path.LastIndexOf('.');
+                            output_path = input_path.Substring(0, idx) + new_extension;
+                            Uri new_uri = new Uri(output_path, UriKind.Relative);
 
                             // Convert
                             Stream stream = part.GetStream();
@@ -115,14 +115,13 @@ namespace CLISC
 
                 using (MagickImage image = new MagickImage())
                 {
+                    Console.WriteLine(image.FormatInfo);
+
                     // Read the file
                     image.Read(memStream, settings);
 
-                    // Sets the output format
-                    image.Format = MagickFormat.Tif;
-
                     // Write the image
-                    image.Write(memStream);
+                    image.Write(memStream, MagickFormat.Tif);
 
                     // Convert memorystream to stream
                     memStream.CopyTo(stream);
