@@ -17,7 +17,7 @@ namespace CLISC
 {
     public partial class Conversion
     {
-        // Convert to .xlsx Transitional - DOES NOT SUPPORT STRICT TO TRANSITIONAL
+        // Convert to .xlsx Transitional
         public bool Convert_to_OOXML_Transitional(string input_filepath, string output_filepath)
         {
             bool convert_success = false;
@@ -46,6 +46,16 @@ namespace CLISC
             // Repair spreadsheet
             Repair rep = new Repair();
             rep.Repair_OOXML(output_filepath);
+
+
+            // Convert Strict to Transitional using Excel Interop
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(output_filepath, true))
+            {
+                if (spreadsheet.StrictRelationshipFound)
+                {
+                    Convert_ExcelInterop(input_filepath, output_filepath);
+                }
+            }
 
             // Return success
             return convert_success = true;

@@ -20,101 +20,85 @@ namespace CLISC
         public void Convert_EmbeddedObjects(string filepath)
         {
             Uri new_uri;
-            string new_contentType = "image/tiff";
+            string id;
             string new_filename;
-            Stream old_stream = new MemoryStream();
+            Stream stream = new MemoryStream();
             Stream new_stream = new MemoryStream();
+            List<EmbeddedObjectPart> ole = new List<EmbeddedObjectPart>();
+            List<EmbeddedPackagePart> packages = new List<EmbeddedPackagePart>();
+            List<ImagePart> emf = new List<ImagePart>();
+            List<ImagePart> images = new List<ImagePart>();
+            List<Model3DReferenceRelationshipPart> threeD = new List<Model3DReferenceRelationshipPart>();
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
                 foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    // Check for parts
-                    IEnumerable<EmbeddedObjectPart> ole = worksheetPart.EmbeddedObjectParts;
-                    IEnumerable<EmbeddedPackagePart> packages = worksheetPart.EmbeddedPackageParts;
-                    IEnumerable<Model3DReferenceRelationshipPart> threeD = worksheetPart.Model3DReferenceRelationshipParts;
-                    IEnumerable<ImagePart> emf_images = worksheetPart.ImageParts;
-                    List<ImagePart> drawing_images = new List<ImagePart>();
-                    if (worksheetPart.DrawingsPart != null)
+                    // Perform check
+                    ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
+                    packages = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
+                    emf = worksheetPart.ImageParts.Distinct().ToList();
+                    if (worksheetPart.DrawingsPart != null) // DrawingsPart needs a null check
                     {
-                        drawing_images = worksheetPart.DrawingsPart.ImageParts.ToList();
+                        images = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
                     }
+                    threeD = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
 
-                    // Convert each part
-                    if (ole.Count() > 0)
+                    // Convert embedded objects
+                    foreach (EmbeddedObjectPart part in ole)
                     {
-                        foreach (EmbeddedObjectPart part in ole)
-                        {
 
-                        }
                     }
-
-                    if (packages.Count() > 0)
+                    foreach (EmbeddedPackagePart part in packages)
                     {
-                        foreach (EmbeddedPackagePart part in packages)
-                        {
 
-                        }
                     }
-                    if (threeD.Count() > 0)
+                    foreach (Model3DReferenceRelationshipPart part in threeD)
                     {
-                        foreach (Model3DReferenceRelationshipPart part in threeD)
-                        {
 
-                        }
                     }
-                    if (emf_images.Count() > 0)
+                    foreach (ImagePart part in emf)
                     {
-                        foreach (ImagePart part in emf_images)
-                        {
-                            
-                        }
+
                     }
-                    if (drawing_images.Count() > 0)
+                    foreach (ImagePart part in images)
                     {
-                        foreach (ImagePart part in drawing_images)
-                        {
-                            // Get data
-                            new_uri = Get_New_Uri(part.Uri);
-                            new_filename = Get_New_Filename(new_uri);
-                            old_stream = part.GetStream();
-
-                            // Convert embedded object
-                            new_stream = Convert_to_TIFF(old_stream);
-
-                            // Extract image
-                            string path = @"C:\Users\Asbjo\Desktop\" + new_filename;
-                            using (var fileStream = File.Create(path))
-                            {
-                                new_stream.Seek(0, SeekOrigin.Begin);
-                                new_stream.CopyTo(fileStream);
-                            }
-
-                            // Add new Image
-                            ImagePart newImage = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
-                            // Put image data into the ImagePart
-                            newImage.FeedData(new_stream);
-                            Console.WriteLine(newImage.Uri);
-
-                            // Get the blip
-                            //Blip blip = GetBlipForPicture(new_uri, spreadsheet);
-                            // Point blip at new image
-                            //blip.Embed = worksheetPart.GetIdOfPart(newImage);
+                        // Get data
+                        new_uri = Get_New_Uri(part.Uri);
+                        new_filename = Get_New_Filename(new_uri);
+                        stream = part.GetStream();
+                        id = part.RelationshipType;
+                        Console.WriteLine(id);
 
 
+                        // Convert image
+                        //new_stream = Convert_EmbedObj_ImageMagick(stream);
 
-                            // Get Id of embedded object
-                            //string id = part.GetIdOfPart(part);
-                            //Console.WriteLine(id);
+                        // Extract image
+                        Extract_EmbeddedObjects(stream, new_filename, filepath);
 
-                            //Change_Embed_Relationships(filepath);
+                        // Add new Image
+                        ImagePart newImage = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
+                        newImage.FeedData(new_stream);
+                        Console.WriteLine(newImage.Uri);
+                        Console.WriteLine(newImage.ContentType);
 
-                            //part.Uri.MakeRelativeUri(new_uri);
+                        // Get the blip
+                        //Blip blip = GetBlipForPicture(new_uri, spreadsheet);
+                        // Point blip at new image
+                        //blip.Embed = worksheetPart.GetIdOfPart(newImage);
 
-                            //XElement change_uri;
-                            //part.SetXElement();
-                        }
+                        // Get Id of embedded object
+                        //string id = part.GetIdOfPart(part);
+                        //Console.WriteLine(id);
+
+                        //Change_EmbedObj_Relationships(filepath);
+
+                        //part.Uri.MakeRelativeUri(new_uri);
+
+                        //XElement change_uri;
+                        //part.SetXElement();
                     }
                 }
             }
@@ -125,8 +109,8 @@ namespace CLISC
         {
             string new_extension = ".tiff";
             string input_path = part_uri.ToString();
-            int idx = input_path.LastIndexOf('.');
-            string output_path = input_path.Substring(0, idx) + new_extension;
+            int dot = input_path.LastIndexOf(".");
+            string output_path = input_path.Substring(0, dot) + new_extension;
             Uri new_uri = new Uri(output_path, UriKind.Relative);
             return new_uri;
         }
@@ -138,8 +122,8 @@ namespace CLISC
             return filename;
         }
 
-        // Convert embedded object to TIFF
-        public Stream Convert_to_TIFF(Stream stream)
+        // Convert embedded object to TIFF using ImageMagick
+        public Stream Convert_EmbedObj_ImageMagick(Stream stream)
         {
             using (var memStream = new MemoryStream())
             {
@@ -162,7 +146,8 @@ namespace CLISC
                     // Write the image
                     image.Write(memStream);
 
-                    Console.WriteLine(info.Format);
+                    var info2 = new MagickImageInfo(memStream);
+                    Console.WriteLine(info2.Format);
 
                     // Return the stream
                     return memStream;
@@ -171,9 +156,27 @@ namespace CLISC
         }
 
         // Change the relationships of the converted embedded object
-        public void Change_Embed_Relationships(Stream stream)
+        public void Change_EmbedObj_Relationships(Stream stream)
         {
             // https://learn.microsoft.com/en-us/dotnet/standard/linq/modify-office-open-xml-document
+        }
+
+        // Extract embedded objects
+        public void Extract_EmbeddedObjects(Stream input_stream, string new_filename, string filepath)
+        {
+            // Create new folder for embedded objects
+            int backslash = filepath.LastIndexOf("\\");
+            string file_folder = filepath.Substring(0, backslash);
+            string new_folder = file_folder + "\\Embedded objects";
+            Directory.CreateDirectory(new_folder);
+
+            // Extract embedded object to folder
+            string output_filepath = new_folder + "\\" + new_filename;
+            using (var fileStream = File.Create(output_filepath))
+            {
+                input_stream.Seek(0, SeekOrigin.Begin);
+                input_stream.CopyTo(fileStream);
+            }
         }
     }
 }

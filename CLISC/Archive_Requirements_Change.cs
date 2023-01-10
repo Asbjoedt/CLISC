@@ -333,7 +333,6 @@ namespace CLISC
                             worksheetPart.DeletePart(ole);
                         }
                     }
-
                     if (embedobj_package_list.Count() > 0)
                     {
                         foreach (EmbeddedPackagePart package in embedobj_package_list)
