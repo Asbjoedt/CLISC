@@ -28,6 +28,7 @@ Convert any spreadsheet[^1][^2] to .xlsx (Transitional conformance).
 * Office Open XML (Excel) with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance
 * Legacy Microsoft Excel with extensions .xls and .xlt
 * OpenDocument with extensions .fods, .ods and .ots
+* Apple Numbers with extension .numbers
 
 :mag: **Compare**
 
@@ -43,16 +44,16 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Rename all conversions 1.xlsx and 1.ods
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML and OpenDocument)
-* Check if any cell values exists
+* Check if cell values exist
 * Remove cell references to other spreadsheets but keep cell values
 * Remove data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove printer settings
 * Remove external objects
 * Remove absolute path to local directory
+* Convert embedded objects to .tiff (work in progress)
 * Make first sheet active
 * Alert if metadata detected
-* Alert if embedded objects detected
 * Alert if hyperlinks detected
 * Calculate file checksums
 * Zip the archive directory
