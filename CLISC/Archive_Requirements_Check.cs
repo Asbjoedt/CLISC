@@ -288,40 +288,40 @@ namespace CLISC
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                        Console.WriteLine($"----> Content Type: OLE object");
-                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        Console.WriteLine($"----> Content Type: {part.ContentType}");
+                        Console.WriteLine($"----> URI: {part.Uri}");
                     }
                     // Inform user of each package object
                     foreach (EmbeddedPackagePart part in packages)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                        Console.WriteLine($"----> Content Type: Package object");
-                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        Console.WriteLine($"----> Content Type: {part.ContentType}");
+                        Console.WriteLine($"----> URI: {part.Uri}");
                     }
                     // Inform user of each 3D object
                     foreach (Model3DReferenceRelationshipPart part in threeD)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                        Console.WriteLine($"----> Content Type: 3D model object");
-                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        Console.WriteLine($"----> Content Type: {part.ContentType}");
+                        Console.WriteLine($"----> URI: {part.Uri}");
                     }
                     // Inform user of each .emf image object
                     foreach (ImagePart part in emf)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                        Console.WriteLine($"----> Content Type: Rendering (.emf) of embeddings object");
-                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        Console.WriteLine($"----> Content Type: Rendering of embedded object ({part.ContentType})");
+                        Console.WriteLine($"----> URI: {part.Uri}");
                     }
                     // Inform user of each image object
                     foreach (ImagePart part in images)
                     {
                         embedobj_number++;
                         Console.WriteLine($"--> Embedded object #{embedobj_number}");
-                        Console.WriteLine($"----> Content Type: Image object");
-                        Console.WriteLine($"----> URI: {part.Uri.ToString()}");
+                        Console.WriteLine($"----> Content Type: {part.ContentType}");
+                        Console.WriteLine($"----> URI: {part.Uri}");
                     }
                 }
             }
