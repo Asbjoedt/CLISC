@@ -10,8 +10,6 @@ using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Linq;
 using ImageMagick;
 
-
-
 namespace CLISC
 {
     public partial class Archive_Requirements
@@ -71,18 +69,16 @@ namespace CLISC
                         id = part.RelationshipType;
                         Console.WriteLine(id);
 
-
                         // Convert image
-                        //new_stream = Convert_EmbedObj_ImageMagick(stream);
+                        new_stream = Convert_EmbedObj_ImageMagick(stream);
 
                         // Extract image
-                        Extract_EmbeddedObjects(stream, new_filename, filepath);
+                        Extract_EmbeddedObjects(new_stream, new_filename, filepath);
 
                         // Add new Image
                         ImagePart newImage = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
                         newImage.FeedData(new_stream);
                         Console.WriteLine(newImage.Uri);
-                        Console.WriteLine(newImage.ContentType);
 
                         // Get the blip
                         //Blip blip = GetBlipForPicture(new_uri, spreadsheet);
@@ -125,33 +121,21 @@ namespace CLISC
         // Convert embedded object to TIFF using ImageMagick
         public Stream Convert_EmbedObj_ImageMagick(Stream stream)
         {
-            using (var memStream = new MemoryStream())
+            // Read the input stream in ImageMagick
+            using (var image = new MagickImage(stream))
             {
-                // Change stream to memorystream
-                stream.CopyTo(memStream);
-                memStream.Position = 0;
+                // Set input stream position to beginning
+                stream.Position = 0;
 
-                // Set image quality settings
-                MagickReadSettings settings = new MagickReadSettings();
-                settings.Compression = CompressionMethod.LZW;
+                // Create a memorystream to write image to
+                var memStream = new MemoryStream();
 
-                using (var image = new MagickImage())
-                {
-                    // Set output format
-                    image.Format = MagickFormat.Tiff;
+                // Write the image to memorystream
+                image.SetCompression(CompressionMethod.LZW); // Not working
+                image.Write(memStream, MagickFormat.Tiff);
 
-                    var info = new MagickImageInfo(memStream);
-                    Console.WriteLine(info.Format);
-
-                    // Write the image
-                    image.Write(memStream);
-
-                    var info2 = new MagickImageInfo(memStream);
-                    Console.WriteLine(info2.Format);
-
-                    // Return the stream
-                    return memStream;
-                }
+                // Return the memorystream
+                return memStream;
             }
         }
 
