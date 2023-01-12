@@ -309,6 +309,27 @@ namespace CLISC
             }
         }
 
+        // Embed external objects
+        public void Embed_ExternalObjects(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
+                foreach (ExternalWorkbookPart extWbPart in extWbParts)
+                {
+                    // Embed object
+
+
+                    // Delete external relationship
+                    extWbPart.DeleteExternalRelationship("rId1");
+
+                    // Different approach to deleting external relationship
+                    ExternalRelationship extrel = extWbPart.ExternalRelationships.FirstOrDefault();
+                    extWbPart.DeleteExternalRelationship(extrel.Id);
+                }
+            }
+        }
+
         public void Remove_EmbeddedObjects(string filepath)
         {
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
@@ -509,8 +530,7 @@ namespace CLISC
         // Change hyperlinks to link to Wayback Machine
         public void Change_Hyperlinks(string filepath)
         {
-            string old_hyperlink = "";
-            string new_hyperlink = "";
+            string wayback = "https://web.archive.org/web/20230000000000*/";
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -523,6 +543,12 @@ namespace CLISC
                     {
                         Console.WriteLine(hyperlink.Id);
                         ReferenceRelationship refRel = worksheetPart.GetReferenceRelationship(hyperlink.Id);
+
+                        // Create new hyperlink string
+                        string new_Hyperlink = wayback + hyperlink.Id;
+
+                        // Change hyperlink
+
                     }
                 }
             }
