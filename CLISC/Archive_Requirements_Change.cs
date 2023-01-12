@@ -10,7 +10,6 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
 
-
 namespace CLISC
 {
     public partial class Archive_Requirements
@@ -32,43 +31,49 @@ namespace CLISC
                 }
                 if (item.Connections > 0)
                 {
-                    Remove_DataConnections(filepath);
-                    Console.WriteLine($"--> Change: {item.Connections} data connections were removed");
+                    int success = Remove_DataConnections(filepath);
+                    Console.WriteLine($"--> Change: {success} data connections were removed");
                 }
                 if (item.CellReferences > 0)
                 {
-                    Remove_ExternalCellReferences(filepath);
-                    Console.WriteLine($"--> Change: {item.CellReferences} cell references were removed");
+                    int success = Remove_ExternalCellReferences(filepath);
+                    Console.WriteLine($"--> Change: {success} cell references were removed");
                 }
                 if (item.RTDFunctions > 0)
                 {
-                    Remove_RTDFunctions(filepath);
-                    Console.WriteLine($"--> Change: {item.RTDFunctions} RTD functions were removed");
+                    int success = Remove_RTDFunctions(filepath);
+                    Console.WriteLine($"--> Change: {success} RTD functions were removed");
                 }
                 if (item.PrinterSettings > 0)
                 {
-                    Remove_PrinterSettings(filepath);
-                    Console.WriteLine($"--> Change: {item.PrinterSettings} printer settings were removed");
+                    int success = Remove_PrinterSettings(filepath);
+                    Console.WriteLine($"--> Change: {success} printer settings were removed");
                 }
                 if (item.ExternalObj > 0)
                 {
-                    Remove_ExternalObjects(filepath);
-                    Console.WriteLine($"--> Change: {item.ExternalObj} external objects were removed");
-                }
-                if (item.ActiveSheet == true)
-                {
-                    Activate_FirstSheet(filepath);
-                    Console.WriteLine("--> Change: First sheet was activated");
-                }
-                if (item.AbsolutePath == true)
-                {
-                    Remove_AbsolutePath(filepath);
-                    Console.WriteLine("--> Change: Absolute path to local directory was removed");
+                    int success = Remove_ExternalObjects(filepath);
+                    Console.WriteLine($"--> Change: {success} external objects were removed");
                 }
                 if (item.EmbedObj > 0)
                 {
-                    Convert_EmbeddedObjects(filepath);
-                    Console.WriteLine($"--> Change: {item.EmbedObj} embedded objects were converted");
+                    int success = Convert_EmbeddedObjects(filepath);
+                    Console.WriteLine($"--> Change: {success} embedded objects were converted");
+                }
+                if (item.ActiveSheet == true)
+                {
+                    bool success = Activate_FirstSheet(filepath);
+                    if (success)
+                    {
+                        Console.WriteLine("--> Change: First sheet was activated");
+                    }
+                }
+                if (item.AbsolutePath == true)
+                {
+                    bool success = Remove_AbsolutePath(filepath);
+                    if (success)
+                    {
+                        Console.WriteLine("--> Change: Absolute path to local directory was removed");
+                    }
                 }
                 if (item.Hyperlinks > 0)
                 {
@@ -102,13 +107,18 @@ namespace CLISC
         }
 
         // Remove data connections
-        public void Remove_DataConnections(string filepath)
+        public int Remove_DataConnections(string filepath)
         {
+            int success = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                // Delete all connections
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
+
+                // Count connections
+                success = conn.Connections.Count();
+
+                // Delete all connections
                 spreadsheet.WorkbookPart.DeletePart(conn);
 
                 // Delete all query tables
@@ -139,11 +149,15 @@ namespace CLISC
             // Repair spreadsheet
             //Repair rep = new Repair();
             //rep.Repair_QueryTables(filepath);
+
+            return success;
         }
 
         // Remove RTD functions
-        public void Remove_RTDFunctions(string filepath)
+        public int Remove_RTDFunctions(string filepath)
         {
+            int success = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
@@ -176,6 +190,8 @@ namespace CLISC
                                         {
                                             cell.CellValue = cellvalue; // Insert saved cell value
                                         }
+                                        // Add to success
+                                        success++;
                                     }
                                 }
                             }
@@ -190,11 +206,14 @@ namespace CLISC
                 VolatileDependenciesPart vol = spreadsheet.WorkbookPart.VolatileDependenciesPart;
                 spreadsheet.WorkbookPart.DeletePart(vol);
             }
+            return success;
         }
 
         // Remove printer settings
-        public void Remove_PrinterSettings(string filepath)
+        public int Remove_PrinterSettings(string filepath)
         {
+            int success = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<WorksheetPart> wsParts = spreadsheet.WorkbookPart.WorksheetParts;
@@ -204,14 +223,18 @@ namespace CLISC
                     foreach (SpreadsheetPrinterSettingsPart printer in printers)
                     {
                         wsPart.DeletePart(printer);
+                        success++;
                     }
                 }
             }
+            return success;
         }
 
         // Remove external cell references
-        public void Remove_ExternalCellReferences(string filepath)
+        public int Remove_ExternalCellReferences(string filepath)
         {
+            int success = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
@@ -245,6 +268,8 @@ namespace CLISC
                                         {
                                             cell.CellValue = cellvalue; // Insert saved cell value
                                         }
+                                        // Add to success
+                                        success++;
                                     }
                                 }
                             }
@@ -287,11 +312,14 @@ namespace CLISC
                     }
                 }
             }
+            return success;
         }
 
         // Remove external object references
-        public void Remove_ExternalObjects(string filepath)
+        public int Remove_ExternalObjects(string filepath)
         {
+            int success = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
@@ -304,14 +332,20 @@ namespace CLISC
                         Uri uri = new Uri("External reference was removed", UriKind.Relative);
                         extWbPart.DeleteExternalRelationship("rId1");
                         extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: "rId1");
+
+                        // Add to success
+                        success++;
                     }
                 }
             }
+            return success;
         }
 
         // Embed external objects
-        public void Embed_ExternalObjects(string filepath)
+        public int Embed_ExternalObjects(string filepath)
         {
+            int success = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
@@ -326,12 +360,18 @@ namespace CLISC
                     // Different approach to deleting external relationship
                     ExternalRelationship extrel = extWbPart.ExternalRelationships.FirstOrDefault();
                     extWbPart.DeleteExternalRelationship(extrel.Id);
+
+                    // Add to success
+                    success++;
                 }
             }
+            return success;
         }
 
-        public void Remove_EmbeddedObjects(string filepath)
+        public int Remove_EmbeddedObjects(string filepath)
         {
+            int success = 0;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
@@ -352,6 +392,7 @@ namespace CLISC
                         foreach (EmbeddedObjectPart ole in embedobj_ole_list)
                         {
                             worksheetPart.DeletePart(ole);
+                            success++;
                         }
                     }
                     if (embedobj_package_list.Count() > 0)
@@ -359,6 +400,7 @@ namespace CLISC
                         foreach (EmbeddedPackagePart package in embedobj_package_list)
                         {
                             worksheetPart.DeletePart(package);
+                            success++;
                         }
                     }
                     if (embedobj_image_list.Count() > 0)
@@ -366,6 +408,7 @@ namespace CLISC
                         foreach (ImagePart image in embedobj_image_list)
                         {
                             worksheetPart.DeletePart(image);
+                            success++;
                         }
                     }
                     if (embedobj_drawing_image_list.Count() > 0)
@@ -373,6 +416,7 @@ namespace CLISC
                         foreach (ImagePart drawing_image in embedobj_drawing_image_list)
                         {
                             worksheetPart.DrawingsPart.DeletePart(drawing_image);
+                            success++;
                         }
                     }
                     if (embedobj_3d_list.Count() > 0)
@@ -380,15 +424,19 @@ namespace CLISC
                         foreach (Model3DReferenceRelationshipPart threeD in embedobj_3d_list)
                         {
                             worksheetPart.DeletePart(threeD);
+                            success++;
                         }
                     }
                 }
             }
+            return success;
         }
 
         // Make first sheet active sheet
-        public void Activate_FirstSheet(string filepath)
+        public bool Activate_FirstSheet(string filepath)
         {
+            bool success = false;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
@@ -411,22 +459,28 @@ namespace CLISC
                                 sheetview.TabSelected = null;
                             }
                         }
+                        success = true;
                     }
                 }
             }
+            return success;
         }
 
         // Remove absolute path to local directory
-        public void Remove_AbsolutePath(string filepath)
+        public bool Remove_AbsolutePath(string filepath)
         {
+            bool success = false;
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
                 {
                     AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
                     absPath.Remove();
+                    success = true;
                 }
             }
+            return success;
         }
 
         // Remove metadata in file properties
@@ -528,8 +582,9 @@ namespace CLISC
 
         // Work in progress
         // Change hyperlinks to link to Wayback Machine
-        public void Change_Hyperlinks(string filepath)
+        public int Change_Hyperlinks(string filepath)
         {
+            int success = 0;
             string wayback = "https://web.archive.org/web/20230000000000*/";
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
@@ -549,9 +604,13 @@ namespace CLISC
 
                         // Change hyperlink
 
+
+                        // Add to success
+                        success++;
                     }
                 }
             }
+            return success;
         }
     }
 }

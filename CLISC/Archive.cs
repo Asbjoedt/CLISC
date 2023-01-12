@@ -18,9 +18,9 @@ namespace CLISC
         public static int rtdfunctions_files = 0;
         public static int printersettings_files = 0;
         public static int extobj_files = 0;
+        public static int embedobj_files = 0;
         public static int activesheet_files = 0;
         public static int absolutepath_files = 0;
-        public static int embedobj_files = 0;
         public static int hyperlinks_files = 0;
         public static int valid_files = 0;
         public static int invalid_files = 0;
@@ -61,7 +61,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Active Sheet;Absolute Path;Metadata;Embedded Objects;Hyperlinks");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Embedded Objects;Active Sheet;Absolute Path;Metadata;Hyperlinks");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -127,6 +127,10 @@ namespace CLISC
                             {
                                 extobj_files++;
                             }
+                            if (item.EmbedObj > 0)
+                            {
+                                embedobj_files++;
+                            }
                             if (item.ActiveSheet == true)
                             {
                                 activesheet_files++;
@@ -139,17 +143,13 @@ namespace CLISC
                             {
                                 metadata_files++;
                             }
-                            if (item.EmbedObj > 0)
-                            {
-                                embedobj_files++;
-                            }
                             if (item.Hyperlinks > 0)
                             {
                                 hyperlinks_files++;
                             }
 
                             // Write information to CSV archival requirements log
-                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.ActiveSheet};{item.AbsolutePath};{item.Metadata};{item.EmbedObj};{item.Hyperlinks}");
+                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.EmbedObj};{item.ActiveSheet};{item.AbsolutePath};{item.Metadata};{item.Hyperlinks}");
                             csv3.AppendLine(newLine3_2);
                         }
 
