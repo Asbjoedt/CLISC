@@ -21,8 +21,8 @@ namespace CLISC
             {
                 if (item.Metadata == true)
                 {
-                    //Remove_Metadata(filepath);
-                    //Console.WriteLine("--> Change: File property information was removed and saved to sidecar file");
+                    //int success = Remove_Metadata(filepath);
+                    //Console.WriteLine($"--> Change: {success} file property information were removed and saved to sidecar file");
                 }
                 if (item.Conformance == true)
                 {
@@ -351,18 +351,36 @@ namespace CLISC
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
                 foreach (ExternalWorkbookPart extWbPart in extWbParts)
                 {
-                    // Embed object
+                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // Must be a list
+                    foreach (ExternalRelationship extrel in extrels)
+                    {
+                        // Change external target reference
+                        Uri uri = new Uri("External reference was removed", UriKind.Relative);
+                        extWbPart.DeleteExternalRelationship("rId1");
+                        extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: "rId1");
+
+                        // Add to success
+                        success++;
+                    }
 
 
-                    // Delete external relationship
-                    extWbPart.DeleteExternalRelationship("rId1");
 
-                    // Different approach to deleting external relationship
-                    ExternalRelationship extrel = extWbPart.ExternalRelationships.FirstOrDefault();
-                    extWbPart.DeleteExternalRelationship(extrel.Id);
+                    // Do a null check to see if the external object is available
+                    if (extWbPart.)
+                    {
+                        // Embed object
 
-                    // Add to success
-                    success++;
+
+                        // Delete external relationship
+                        extWbPart.DeleteExternalRelationship("rId1");
+
+                        // Different approach to deleting external relationship
+                        ExternalRelationship extrel = extWbPart.ExternalRelationships.FirstOrDefault();
+                        extWbPart.DeleteExternalRelationship(extrel.Id);
+
+                        // Add to success
+                        success++;
+                    }
                 }
             }
             return success;
@@ -484,9 +502,10 @@ namespace CLISC
         }
 
         // Remove metadata in file properties
-        public void Remove_Metadata(string filepath)
+        public int Remove_Metadata(string filepath)
         {
             string folder = Path.GetDirectoryName(filepath);
+            int success = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -509,6 +528,9 @@ namespace CLISC
 
                     // Remove information
                     property.Creator = null;
+
+                    // Add to success
+                    success++;
                 }
                 if (property.Title != null)
                 {
@@ -520,6 +542,9 @@ namespace CLISC
 
                     // Remove information
                     property.Title = null;
+
+                    // Add to success
+                    success++;
                 }
                 if (property.Subject != null)
                 {
@@ -531,6 +556,9 @@ namespace CLISC
 
                     // Remove information
                     property.Subject = null;
+
+                    // Add to success
+                    success++;
                 }
                 if (property.Description != null)
                 {
@@ -542,6 +570,9 @@ namespace CLISC
 
                     // Remove information
                     property.Description = null;
+
+                    // Add to success
+                    success++;
                 }
                 if (property.Keywords != null)
                 {
@@ -554,6 +585,9 @@ namespace CLISC
 
                     // Remove information
                     property.Keywords = null;
+
+                    // Add to success
+                    success++;
                 }
                 if (property.Category != null)
                 {
@@ -565,6 +599,9 @@ namespace CLISC
 
                     // Remove information
                     property.Category = null;
+
+                    // Add to success
+                    success++;
                 }
                 if (property.LastModifiedBy != null)
                 {
@@ -576,8 +613,12 @@ namespace CLISC
 
                     // Remove information
                     property.LastModifiedBy = null;
+
+                    // Add to success
+                    success++;
                 }
             }
+            return success;
         }
 
         // Work in progress
