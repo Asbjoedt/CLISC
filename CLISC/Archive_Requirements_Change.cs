@@ -366,7 +366,7 @@ namespace CLISC
 
 
                     // Do a null check to see if the external object is available
-                    if (extWbPart.)
+                    if (extWbPart != null)
                     {
                         // Embed object
 

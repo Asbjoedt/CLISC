@@ -195,7 +195,7 @@ namespace CLISC
 
                     // Make an .ods copy
                     Conversion con = new Conversion();
-                    convert_success = con.Convert_to_OpenDocument(xlsx_conv_filepath, file_folder);
+                    convert_success = con.Convert_to_ODS(xlsx_conv_filepath, file_folder);
 
                     // Validate .ods
                     Validation val = new Validation();

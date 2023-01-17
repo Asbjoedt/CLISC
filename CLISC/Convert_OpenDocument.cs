@@ -60,7 +60,7 @@ namespace CLISC
         }
 
         // Convert spreadsheets to OpenDocument file formats using LibreOffice
-        public bool Convert_to_OpenDocument(string input_filepath, string output_folder)
+        public bool Convert_to_ODS(string input_filepath, string output_folder)
         {
             bool convert_success = false;
 
