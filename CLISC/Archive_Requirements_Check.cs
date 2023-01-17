@@ -424,6 +424,7 @@ namespace CLISC
                 if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
                 {
                     absolutepath = true;
+                    Console.WriteLine(spreadsheet.WorkbookPart.Workbook.AbsolutePath.Url); // DELETE THIS LINE LATER
                 }
             }
 
