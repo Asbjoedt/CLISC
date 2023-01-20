@@ -90,7 +90,7 @@ namespace CLISC
             // Create list of namespaces
             List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
 
-            using (var spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 WorkbookPart wbPart = spreadsheet.WorkbookPart;
                 Workbook workbook = wbPart.Workbook;

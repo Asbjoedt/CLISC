@@ -258,7 +258,7 @@ namespace CLISC
             List<ImagePart> images = new List<ImagePart>();
             List<Model3DReferenceRelationshipPart> threeD = new List<Model3DReferenceRelationshipPart>();
 
-            using (var spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
 

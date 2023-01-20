@@ -61,9 +61,12 @@ namespace CLISC
                     // Convert embedded packages to OpenDocument
                     foreach (EmbeddedPackagePart part in packages)
                     {
+                        Console.WriteLine(part.Uri);
+                        Console.WriteLine(part.ContentType);
+
                         // Create new EmbeddedPackage in OpenDocument file format
-                        //Convert_EmbedPackage(filepath, worksheetPart, part);
-                        //success++;
+                        Convert_EmbedPackage(filepath, worksheetPart, part);
+                        success++;
                     }
 
                     // 3D objects cannot be processed - Bug in Open XML SDK?
@@ -116,7 +119,7 @@ namespace CLISC
             stream.Dispose();
 
             // Extract converted image to new folder
-            Extract_EmbeddedObjects(new_Stream, new_Filename, filepath);
+            string output_filepath = Extract_EmbeddedObjects(new_Stream, new_Filename, filepath);
 
             // Add new ImagePart
             ImagePart new_ImagePart = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
@@ -191,7 +194,7 @@ namespace CLISC
                 Convert_LibreOffice(extract_filepath, output_filepath);
 
                 // Create new EmbeddedPackage
-                string contentType = Create_ContentType(output_filepath);
+                string contentType = Create_ContentType(extract_filepath);
                 EmbeddedPackagePart new_EmbeddedPackagePart = worksheetPart.AddEmbeddedPackagePart(contentType);
 
                 // Feed converted data to the new package
@@ -219,7 +222,7 @@ namespace CLISC
 
             // Extract embedded object to folder
             string output_filepath = new_folder + "\\" + new_filename;
-            using (var fileStream = File.Create(output_filepath))
+            using (FileStream fileStream = File.Create(output_filepath))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.CopyTo(fileStream);
