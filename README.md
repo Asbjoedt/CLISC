@@ -51,8 +51,7 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove printer settings
 * Remove absolute path to local directory
 * Embed external objects (work in progress)
-* Convert embedded images to .tiff (work in progress)
-* Convert embedded packages to OpenDocument (work in progress)
+* Convert embedded images to .tiff
 * Make first sheet active
 * Alert if metadata detected
 * Alert if hyperlinks detected
