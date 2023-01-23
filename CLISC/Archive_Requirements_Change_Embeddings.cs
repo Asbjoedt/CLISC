@@ -50,6 +50,12 @@ namespace CLISC
                     // Embedded binaries cannot be processed
                     foreach (EmbeddedObjectPart part in ole)
                     {
+                        // Extract object
+                        string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+                        Stream input_stream = part.GetStream();
+                        Extract_EmbeddedObjects(input_stream, output_filepath);
+
+                        // Register conversion fail
                         binary_fail++;
                     }
                     if (binary_fail > 0)
@@ -61,10 +67,6 @@ namespace CLISC
                     // Convert embedded packages to OpenDocument
                     foreach (EmbeddedPackagePart part in packages)
                     {
-                        Console.WriteLine(part.Uri);
-                        Console.WriteLine(part.ContentType);
-
-                        // Create new EmbeddedPackage in OpenDocument file format
                         Convert_EmbedPackage(filepath, worksheetPart, part);
                         success++;
                     }
@@ -72,6 +74,12 @@ namespace CLISC
                     // 3D objects cannot be processed - Bug in Open XML SDK?
                     foreach (Model3DReferenceRelationshipPart part in threeD)
                     {
+                        // Extract object
+                        string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+                        Stream input_stream = part.GetStream();
+                        Extract_EmbeddedObjects(input_stream, output_filepath);
+
+                        // Register conversion fail
                         threeD_fail++;
                     }
                     if (threeD_fail > 0)
@@ -108,18 +116,14 @@ namespace CLISC
         // Convert embedded images to TIFF
         public void Convert_EmbedImg(string filepath, WorksheetPart worksheetPart, ImagePart part)
         {
-            // Get data
-            Uri new_Uri = Create_Uri(part.Uri, ".tiff");
-            string new_Filename = Create_Filename(new_Uri);
-            string id = Get_RelationshipId(part);
-            Stream stream = part.GetStream();
-
             // Convert streamed image to new stream
+            Stream stream = part.GetStream();
             Stream new_Stream = Convert_EmbedObj_ImageMagick(stream);
             stream.Dispose();
 
-            // Extract converted image to new folder
-            string output_filepath = Extract_EmbeddedObjects(new_Stream, new_Filename, filepath);
+            // Extract converted image to folder
+            string extract_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+            Extract_EmbeddedObjects(new_Stream, extract_filepath);
 
             // Add new ImagePart
             ImagePart new_ImagePart = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
@@ -129,6 +133,7 @@ namespace CLISC
             new_ImagePart.FeedData(new_Stream);
 
             // Change relationships of image
+            string id = Get_RelationshipId(part);
             Blip blip = worksheetPart.DrawingsPart.WorksheetDrawing.Descendants<DocumentFormat.OpenXml.Drawing.Spreadsheet.Picture>()
                             .Where(p => p.BlipFill.Blip.Embed == id)
                             .Select(p => p.BlipFill.Blip)
@@ -142,18 +147,14 @@ namespace CLISC
         // Convert Excel-generated .emf images to TIFF
         public void Convert_EmbedEmf(string filepath, WorksheetPart worksheetPart, ImagePart part)
         {
-            // Get data
-            Uri new_Uri = Create_Uri(part.Uri, ".tiff");
-            string new_Filename = Create_Filename(new_Uri);
-            string id = Get_RelationshipId(part);
-            Stream stream = part.GetStream();
-
             // Convert streamed image to new stream
+            Stream stream = part.GetStream();
             Stream new_Stream = Convert_EmbedObj_ImageMagick(stream);
             stream.Dispose();
 
-            // Extract converted image to new folder
-            Extract_EmbeddedObjects(new_Stream, new_Filename, filepath);
+            // Extract converted image to folder
+            string extract_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+            Extract_EmbeddedObjects(new_Stream, extract_filepath);
 
             // Add new ImagePart
             ImagePart new_ImagePart = worksheetPart.VmlDrawingParts.First().AddImagePart(ImagePartType.Tiff);
@@ -163,6 +164,7 @@ namespace CLISC
             new_ImagePart.FeedData(new_Stream);
 
             // Change relationships of image
+            string id = Get_RelationshipId(part);
             ImageData imageData = worksheetPart.DrawingsPart.WorksheetDrawing.Descendants<ImageData>()
                             .Where(p => p.RelId == id)
                             .Select(p => p)
@@ -176,12 +178,13 @@ namespace CLISC
         // Convert embedded packages to OpenDocument
         public void Convert_EmbedPackage(string filepath, WorksheetPart worksheetPart, EmbeddedPackagePart part)
         {
-            // Extract EmbeddedPackage
-            string filename = Create_Filename(part.Uri);
+            // Extract EmbeddedPackage to folder
+            string extract_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
             Stream stream = part.GetStream();
-            string extract_filepath = Extract_EmbeddedObjects(stream, filename, filepath);
+            Extract_EmbeddedObjects(stream, extract_filepath);
             stream.Dispose();
 
+            // If not OpenDocument package, then convert to OpenDocument
             string extension = System.IO.Path.GetExtension(extract_filepath);
             if (extension != ".ods" || extension != ".fods" || extension != ".ots" || extension != ".fodt" || extension != ".odt" || extension != ".ott" || extension != ".fodp" || extension != ".odp" || extension != ".otp")
             {
@@ -200,8 +203,11 @@ namespace CLISC
                 // Feed converted data to the new package
                 var new_Stream = new MemoryStream();
                 using (FileStream file = new FileStream(output_filepath, FileMode.Open, FileAccess.Read))
+                {
                     file.CopyTo(new_Stream);
+                }
                 new_EmbeddedPackagePart.FeedData(new_Stream);
+                new_Stream.Dispose();
 
                 // Change relationships
                 Change_EmbedPackage_Relationships(worksheetPart, part.Uri);
@@ -212,22 +218,14 @@ namespace CLISC
         }
 
         // Extract embedded objects
-        public string Extract_EmbeddedObjects(Stream stream, string new_filename, string filepath)
+        public void Extract_EmbeddedObjects(Stream input_stream, string output_filepath)
         {
-            // Create new folder for embedded objects
-            int backslash = filepath.LastIndexOf("\\");
-            string file_folder = filepath.Substring(0, backslash);
-            string new_folder = file_folder + "\\Embedded objects";
-            Directory.CreateDirectory(new_folder);
-
             // Extract embedded object to folder
-            string output_filepath = new_folder + "\\" + new_filename;
             using (FileStream fileStream = File.Create(output_filepath))
             {
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.CopyTo(fileStream);
+                input_stream.Seek(0, SeekOrigin.Begin);
+                input_stream.CopyTo(fileStream);
             }
-            return output_filepath;
         }
 
         // Convert embedded object to TIFF using ImageMagick
@@ -277,7 +275,7 @@ namespace CLISC
             {
                 app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
             }
-            app.StartInfo.Arguments = "--headless --convert-to " + format + " " + input_filepath + " --outdir " + output_folder;
+            app.StartInfo.Arguments = $"--headless --convert-to {format} \"{input_filepath}\" --outdir \"{output_folder}\"";
             app.Start();
             app.WaitForExit();
             app.Close();
@@ -337,6 +335,20 @@ namespace CLISC
         {
             string filename = new_Uri.ToString().Split("/").Last();
             return filename;
+        }
+
+        // Create a new output filepath for extracted embedded files
+        public string Create_Output_Filepath(string filepath, string uri)
+        {
+            // Create new folder for embedded objects
+            int backslash = filepath.LastIndexOf("\\");
+            string file_folder = filepath.Substring(0, backslash);
+            string new_folder = file_folder + "\\Embedded objects";
+            Directory.CreateDirectory(new_folder);
+         
+            // Create and return output filepath
+            string output_filepath = new_folder + "\\" + uri.Split("/").Last();
+            return output_filepath;
         }
 
         // Transform extension to OpenDocument extension
