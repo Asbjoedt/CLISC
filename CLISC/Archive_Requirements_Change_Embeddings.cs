@@ -67,7 +67,7 @@ namespace CLISC
                     // Convert embedded packages to OpenDocument
                     foreach (EmbeddedPackagePart part in packages)
                     {
-                        Convert_EmbedPackage(filepath, worksheetPart, part);
+                        Convert_EmbedPackage(filepath, spreadsheet, worksheetPart, part);
                         success++;
                     }
 
@@ -91,15 +91,8 @@ namespace CLISC
                     // Convert Excel-generated .emf images to TIFF
                     foreach (ImagePart part in emf)
                     {
-                        try
-                        {
-                            Convert_EmbedEmf(filepath, worksheetPart, part);
-                            success++;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message); // DELETE THIS LINE LATER
-                        }
+                        Convert_EmbedEmf(filepath, worksheetPart, part);
+                        success++;
                     }
 
                     // Convert embedded images to TIFF
@@ -114,15 +107,15 @@ namespace CLISC
         }
 
         // Convert embedded images to TIFF
-        public void Convert_EmbedImg(string filepath, WorksheetPart worksheetPart, ImagePart part)
+        public void Convert_EmbedImg(string filepath, WorksheetPart worksheetPart, ImagePart imagePart)
         {
             // Convert streamed image to new stream
-            Stream stream = part.GetStream();
+            Stream stream = imagePart.GetStream();
             Stream new_Stream = Convert_EmbedObj_ImageMagick(stream);
             stream.Dispose();
 
             // Extract converted image to folder
-            string extract_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+            string extract_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
             Extract_EmbeddedObjects(new_Stream, extract_filepath);
 
             // Add new ImagePart
@@ -133,7 +126,7 @@ namespace CLISC
             new_ImagePart.FeedData(new_Stream);
 
             // Change relationships of image
-            string id = Get_RelationshipId(part);
+            string id = Get_RelationshipId(imagePart);
             Blip blip = worksheetPart.DrawingsPart.WorksheetDrawing.Descendants<DocumentFormat.OpenXml.Drawing.Spreadsheet.Picture>()
                             .Where(p => p.BlipFill.Blip.Embed == id)
                             .Select(p => p.BlipFill.Blip)
@@ -141,19 +134,19 @@ namespace CLISC
             blip.Embed = Get_RelationshipId(new_ImagePart);
 
             // Delete original ImagePart
-            worksheetPart.DrawingsPart.DeletePart(part);
+            worksheetPart.DrawingsPart.DeletePart(imagePart);
         }
 
         // Convert Excel-generated .emf images to TIFF
-        public void Convert_EmbedEmf(string filepath, WorksheetPart worksheetPart, ImagePart part)
+        public void Convert_EmbedEmf(string filepath, WorksheetPart worksheetPart, ImagePart imagePart)
         {
             // Convert streamed image to new stream
-            Stream stream = part.GetStream();
+            Stream stream = imagePart.GetStream();
             Stream new_Stream = Convert_EmbedObj_ImageMagick(stream);
             stream.Dispose();
 
             // Extract converted image to folder
-            string extract_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+            string extract_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
             Extract_EmbeddedObjects(new_Stream, extract_filepath);
 
             // Add new ImagePart
@@ -164,19 +157,24 @@ namespace CLISC
             new_ImagePart.FeedData(new_Stream);
 
             // Change relationships of image
-            string id = Get_RelationshipId(part);
-            ImageData imageData = worksheetPart.DrawingsPart.WorksheetDrawing.Descendants<ImageData>()
-                            .Where(p => p.RelId == id)
-                            .Select(p => p)
-                            .Single();
+            string id = Get_RelationshipId(imagePart);
+            VmlDrawingPart vml = worksheetPart.VmlDrawingParts.First();
+            foreach (var part in vml.Parts)
+            {
+                Console.WriteLine(part.OpenXmlPart.ToString());
+            }
+            ImageData imageData = worksheetPart.VmlDrawingParts.First().RootElement.Descendants<ImageData>()
+                .Where(p => p.RelId == id)
+                .Select(p => p)
+                .Single();
             imageData.RelId = Get_RelationshipId(new_ImagePart);
 
             // Delete original ImagePart
-            worksheetPart.VmlDrawingParts.First().DeletePart(part);
+            worksheetPart.VmlDrawingParts.First().DeletePart(imagePart);
         }
 
         // Convert embedded packages to OpenDocument
-        public void Convert_EmbedPackage(string filepath, WorksheetPart worksheetPart, EmbeddedPackagePart part)
+        public void Convert_EmbedPackage(string filepath, SpreadsheetDocument spreadsheet, WorksheetPart worksheetPart, EmbeddedPackagePart part)
         {
             // Extract EmbeddedPackage to folder
             string extract_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
@@ -314,6 +312,47 @@ namespace CLISC
                 else if (parentPart.ToString() == "DocumentFormat.OpenXml.Packaging.OleObjectPart")
                 {
                     id = parentPart.GetIdOfPart(part);
+                    return id;
+                }
+            }
+            return id;
+        }
+
+        public string Alternative_Get_RelationshipId(OpenXmlPart part)
+        {
+            string? id = null;
+
+            IEnumerable<IdPartPair> relationshipParts = part.Parts;
+            foreach (IdPartPair rel in relationshipParts)
+            {
+                if (rel.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.ImagePart")
+                {
+                    id = rel.RelationshipId;
+                    return id;
+                }
+                else if (rel.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.DrawingsPart")
+                {
+                    id = rel.RelationshipId;
+                    return id;
+                }
+                else if (rel.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.VmlDrawingPart")
+                {
+                    id = rel.RelationshipId;
+                    return id;
+                }
+                else if (rel.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.Model3DReferenceRelationshipPart")
+                {
+                    id = rel.RelationshipId;
+                    return id;
+                }
+                else if (rel.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.EmbeddedPackagePart")
+                {
+                    id = rel.RelationshipId;
+                    return id;
+                }
+                else if (rel.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.OleObjectPart")
+                {
+                    id = rel.RelationshipId;
                     return id;
                 }
             }

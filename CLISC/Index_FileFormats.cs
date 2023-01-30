@@ -61,7 +61,7 @@ namespace CLISC
             // XLTM
             list.Add(new fileFormatIndex() { Extension = ".xltm", Extension_Upper = ".XLTM", Description = "Office Open XML Macro-Enabled Spreadsheet Template" });
             // XLTX
-            list.Add(new fileFormatIndex() { Extension = ".XLTX", Extension_Upper = ".XLTX", Description = "Office Open XML Spreadsheet Template" });
+            list.Add(new fileFormatIndex() { Extension = ".xltx", Extension_Upper = ".XLTX", Description = "Office Open XML Spreadsheet Template" });
 
             return list;
         }

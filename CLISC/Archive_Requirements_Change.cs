@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
+using DocumentFormat.OpenXml;
 
 namespace CLISC
 {
@@ -66,6 +67,10 @@ namespace CLISC
                     {
                         Console.WriteLine("--> Change: First sheet was activated");
                     }
+                    else
+                    {
+                        Console.WriteLine("--> Change: First sheet was NOT activated");
+                    }
                 }
                 if (item.AbsolutePath == true)
                 {
@@ -73,6 +78,13 @@ namespace CLISC
                     if (success)
                     {
                         Console.WriteLine("--> Change: Absolute path to local directory was removed");
+                    }
+                    else
+                    {
+                        if (success)
+                        {
+                            Console.WriteLine("--> Change: Absolute path to local directory was NOT removed");
+                        }
                     }
                 }
                 if (item.Hyperlinks > 0)
@@ -120,19 +132,46 @@ namespace CLISC
 
                 // Delete all connections
                 spreadsheet.WorkbookPart.DeletePart(conn);
-
-                // Delete all query tables
-                IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart part in worksheetparts)
+                
+                // Delete all QueryTableParts
+                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
+                foreach (WorksheetPart worksheetPart in worksheetParts)
                 {
-                    List<QueryTablePart> queryTables = part.QueryTableParts.ToList(); // Must be a list
-                    foreach (QueryTablePart qtp in queryTables)
+                    // Delete all QueryTableParts in WorksheetParts
+                    List<QueryTablePart> queryTables = worksheetPart.QueryTableParts.ToList(); // Must be a list
+                    foreach (QueryTablePart queryTablePart in queryTables)
                     {
-                        part.DeletePart(qtp);
+                        worksheetPart.DeletePart(queryTablePart);
+                    }
+
+                    // Delete all QueryTableParts, if they are not registered in a WorksheetPart
+                    List<TableDefinitionPart> tableDefinitionParts = worksheetPart.TableDefinitionParts.ToList();
+                    foreach (TableDefinitionPart tableDefinitionPart in tableDefinitionParts)
+                    {
+                        List<IdPartPair> idPartPairs = tableDefinitionPart.Parts.ToList();
+                        foreach (IdPartPair idPartPair in idPartPairs)
+                        {
+                            if (idPartPair.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.QueryTablePart")
+                            {
+                                // Delete QueryTablePart
+                                tableDefinitionPart.DeletePart(idPartPair.OpenXmlPart);
+                                // The TableDefinitionPart must also be deleted
+                                worksheetPart.DeletePart(tableDefinitionPart);
+                                // And the reference to the TableDefinitionPart in the WorksheetPart must be deleted
+                                List<TablePart> tableParts = worksheetPart.Worksheet.Descendants<TablePart>().ToList();
+                                foreach (TablePart tablePart in tableParts)
+                                {
+                                    if (idPartPair.RelationshipId == tablePart.Id)
+                                    {
+                                        tablePart.Remove();
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
-                // If spreadsheet contains a custom XML Map, delete databinding
+                // If spreadsheet contains a CustomXmlMappingsPart, delete databinding
                 if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
                 {
                     CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
@@ -146,10 +185,6 @@ namespace CLISC
                     }
                 }
             }
-            // Repair spreadsheet
-            //Repair rep = new Repair();
-            //rep.Repair_QueryTables(filepath);
-
             return success;
         }
 
