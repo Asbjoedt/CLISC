@@ -160,7 +160,7 @@ namespace CLISC
                         case ".xltm":
                         case ".xltx":
                             // Convert to .xlsx Transitional using Open XML SDK
-                            convert_success = Convert_to_OOXML_Transitional(copy_filepath, output_filepath);
+                            convert_success = ConvertToXLSX(copy_filepath, output_filepath);
                             break;
                     }
                 }

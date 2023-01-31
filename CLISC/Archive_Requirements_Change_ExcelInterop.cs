@@ -11,7 +11,7 @@ namespace CLISC
     public partial class Archive_Requirements
     {
         // Change conformance to Strict
-        public void Change_Conformance_ExcelInterop(string filepath)
+        public void Change_ConformanceToStrict_ExcelInterop(string filepath)
         {
             // Open Excel
             Excel.Application app = new Excel.Application(); // Create Excel object instance

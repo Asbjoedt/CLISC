@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
-using DocumentFormat.OpenXml;
 
 namespace CLISC
 {
@@ -27,7 +26,7 @@ namespace CLISC
                 }
                 if (item.Conformance == true)
                 {
-                    Change_Conformance_ExcelInterop(filepath);
+                    Change_ConformanceToStrict_ExcelInterop(filepath);
                     Console.WriteLine("--> Change: Conformance was changed to Strict");
                 }
                 if (item.Connections > 0)
@@ -57,8 +56,10 @@ namespace CLISC
                 }
                 if (item.EmbedObj > 0)
                 {
-                    int success = Convert_EmbeddedObjects(filepath);
-                    Console.WriteLine($"--> Change: {success} embedded objects were converted");
+                    Tuple<int, int, int> success = Convert_EmbeddedObjects(filepath);
+                    Console.WriteLine($"--> Extract: {success.Item1} embedded objects were saved to new \"Embeddings\" subfolder.");
+                    Console.WriteLine($"--> Change: {success.Item3} embedded objects were converted");
+                    Console.WriteLine($"--> ChangeError: {success.Item2} embedded objects could not be processed");
                 }
                 if (item.ActiveSheet == true)
                 {
@@ -89,15 +90,14 @@ namespace CLISC
                 }
                 if (item.Hyperlinks > 0)
                 {
-                    //Change_Hyperlinks(filepath);
-                    //Console.WriteLine($"--> Change: {item.Hyperlinks} hyperlinks were converted to Wayback Machine hyperlinks");
+                    // Do nothing
                 }
             }
         }
 
         // Work in progress
         // Change conformance to Strict
-        public void Change_Conformance(string filepath)
+        public void Change_ConformanceToStrict(string filepath)
         {
             // Create list of namespaces
             List<namespaceIndex> namespaces = namespaceIndex.Create_Namespaces_Index();
@@ -421,70 +421,6 @@ namespace CLISC
             return success;
         }
 
-        public int Remove_EmbeddedObjects(string filepath)
-        {
-            int success = 0;
-
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart worksheetPart in worksheetParts)
-                {
-                    List<EmbeddedObjectPart> embedobj_ole_list = worksheetPart.EmbeddedObjectParts.ToList();
-                    List<EmbeddedPackagePart> embedobj_package_list = worksheetPart.EmbeddedPackageParts.ToList();
-                    List<ImagePart> embedobj_image_list = worksheetPart.ImageParts.ToList();
-                    List<ImagePart> embedobj_drawing_image_list = new List<ImagePart>();
-                    if (worksheetPart.DrawingsPart != null)
-                    {
-                        embedobj_drawing_image_list = worksheetPart.DrawingsPart.ImageParts.ToList();
-                    }
-                    List<Model3DReferenceRelationshipPart> embedobj_3d_list = worksheetPart.Model3DReferenceRelationshipParts.ToList();
-
-                    if (embedobj_ole_list.Count() > 0)
-                    {
-                        foreach (EmbeddedObjectPart ole in embedobj_ole_list)
-                        {
-                            worksheetPart.DeletePart(ole);
-                            success++;
-                        }
-                    }
-                    if (embedobj_package_list.Count() > 0)
-                    {
-                        foreach (EmbeddedPackagePart package in embedobj_package_list)
-                        {
-                            worksheetPart.DeletePart(package);
-                            success++;
-                        }
-                    }
-                    if (embedobj_image_list.Count() > 0)
-                    {
-                        foreach (ImagePart image in embedobj_image_list)
-                        {
-                            worksheetPart.DeletePart(image);
-                            success++;
-                        }
-                    }
-                    if (embedobj_drawing_image_list.Count() > 0)
-                    {
-                        foreach (ImagePart drawing_image in embedobj_drawing_image_list)
-                        {
-                            worksheetPart.DrawingsPart.DeletePart(drawing_image);
-                            success++;
-                        }
-                    }
-                    if (embedobj_3d_list.Count() > 0)
-                    {
-                        foreach (Model3DReferenceRelationshipPart threeD in embedobj_3d_list)
-                        {
-                            worksheetPart.DeletePart(threeD);
-                            success++;
-                        }
-                    }
-                }
-            }
-            return success;
-        }
-
         // Make first sheet active sheet
         public bool Activate_FirstSheet(string filepath)
         {
@@ -539,7 +475,7 @@ namespace CLISC
         // Remove metadata in file properties
         public int Remove_Metadata(string filepath)
         {
-            string folder = Path.GetDirectoryName(filepath);
+            string folder = System.IO.Path.GetDirectoryName(filepath);
             int success = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
@@ -651,39 +587,6 @@ namespace CLISC
 
                     // Add to success
                     success++;
-                }
-            }
-            return success;
-        }
-
-        // Work in progress
-        // Change hyperlinks to link to Wayback Machine
-        public int Change_Hyperlinks(string filepath)
-        {
-            int success = 0;
-            string wayback = "https://web.archive.org/web/20230000000000*/";
-
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart worksheetPart in worksheetParts)
-                {
-                    Worksheet worksheet = worksheetPart.Worksheet;
-                    IEnumerable<Hyperlink> hyperlinks = worksheet.GetFirstChild<Hyperlinks>().Elements<Hyperlink>();
-                    foreach (Hyperlink hyperlink in hyperlinks)
-                    {
-                        Console.WriteLine(hyperlink.Id);
-                        ReferenceRelationship refRel = worksheetPart.GetReferenceRelationship(hyperlink.Id);
-
-                        // Create new hyperlink string
-                        string new_Hyperlink = wayback + hyperlink.Id;
-
-                        // Change hyperlink
-
-
-                        // Add to success
-                        success++;
-                    }
                 }
             }
             return success;
