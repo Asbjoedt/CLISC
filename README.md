@@ -44,17 +44,18 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Rename all conversions 1.xlsx and 1.ods
 * Include copies of the original spreadsheets, this include password protected or otherwise unreadable files
 * Validate spreadsheet against its file format standard (Office Open XML and OpenDocument)
-* Check if cell values exist
-* Remove cell references to other spreadsheets but keep cell values
+* Remove cell formula references to other spreadsheets but keep cell values
 * Remove data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove printer settings
 * Remove absolute path to local directory
-* Embed external objects (work in progress)
-* Convert embedded images to .tiff
 * Make first sheet active
-* Alert if metadata detected
-* Alert if hyperlinks detected
+* Convert embedded images to .tiff
+* Warn if other types of embedded files detected, process manually
+* Warn if external file references detected, process manually
+* Warn if no cell values detected, process manually
+* Inform if metadata detected
+* Inform if hyperlinks detected
 * Calculate file checksums
 * Zip the archive directory
 
