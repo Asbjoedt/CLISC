@@ -9,6 +9,7 @@ using DocumentFormat.OpenXml.Drawing.Pictures;
 using DocumentFormat.OpenXml.Vml;
 using ImageMagick;
 using System.Xml.Linq;
+using System.Xml;
 
 namespace CLISC
 {
@@ -80,16 +81,16 @@ namespace CLISC
                     }
 
                     // Convert Excel-generated .emf images to TIFF
-                    foreach (ImagePart part in emf)
+                    foreach (ImagePart imagePart in emf)
                     {
-                        Convert_EmbedEmf(filepath, worksheetPart, part);
+                        Convert_EmbedEmf(filepath, worksheetPart, imagePart);
                         success++;
                     }
 
                     // Convert embedded images to TIFF
-                    foreach (ImagePart part in images)
+                    foreach (ImagePart imagePart in images)
                     {
-                        Convert_EmbedImg(filepath, worksheetPart, part);
+                        Convert_EmbedImg(filepath, worksheetPart, imagePart);
                         success++;
                     }
                 }
@@ -151,24 +152,28 @@ namespace CLISC
 
             // Change relationships of image
             string id = Get_RelationshipId(imagePart);
-            foreach (VmlDrawingPart vmlDrawingPart in worksheetPart.VmlDrawingParts)
+            XDocument xElement = worksheetPart.VmlDrawingParts.First().GetXDocument();
+            IEnumerable<XElement> descendants = xElement.FirstNode.Document.Descendants();
+            foreach (XElement descendant in descendants)
             {
-                //XElement xEl = vmlDrawingPart.GetXElement();
-                //XName xName = xEl.;
-                //xEl.SetAttributeValue();
-                IEnumerable<ImageData> imageData = vmlDrawingPart.RootElement.Descendants<ImageData>();
-                foreach (ImageData image in imageData)
+                if (descendant.Name == "{urn:schemas-microsoft-com:vml}imagedata")
                 {
-                    if (image.RelId == id)
+                    IEnumerable<XAttribute> attributes = descendant.Attributes();
+                    foreach (XAttribute attribute in attributes)
                     {
-                        // Change ImagePart relationship reference
-                        image.RelId = Get_RelationshipId(new_ImagePart);
-
-                        // Delete original ImagePart
-                        worksheetPart.VmlDrawingParts.First().DeletePart(imagePart);
+                        if (attribute.Name == "{urn:schemas-microsoft-com:office:office}relid")
+                        {
+                            if (attribute.Value == id)
+                            {
+                                attribute.Value = Get_RelationshipId(new_ImagePart);
+                                worksheetPart.VmlDrawingParts.First().SaveXDocument();
+                            }
+                        }
                     }
                 }
             }
+            // Delete original ImagePart
+            worksheetPart.VmlDrawingParts.First().DeletePart(imagePart);
         }
 
         // Convert embedded object to TIFF using ImageMagick

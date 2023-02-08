@@ -11,6 +11,7 @@ namespace CLISC
 {
     public class Repair
     {
+        // Perform all repairs
         public void Repair_OOXML(string filepath)
         {
             bool repair_1 = Repair_VBA(filepath);

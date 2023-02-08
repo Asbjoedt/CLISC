@@ -57,9 +57,9 @@ namespace CLISC
                 if (item.EmbedObj > 0)
                 {
                     Tuple<int, int, int> success = Convert_EmbeddedObjects(filepath);
-                    Console.WriteLine($"--> Extract: {success.Item1} embedded objects were saved to new \"Embeddings\" subfolder.");
-                    Console.WriteLine($"--> Change: {success.Item3} embedded objects were converted");
-                    Console.WriteLine($"--> ChangeError: {success.Item2} embedded objects could not be processed");
+                    Console.WriteLine($"--> Extract: {success.Item1} original embedded objects were saved to new \"Embeddings\" subfolder.");
+                    Console.WriteLine($"--> Change: {success.Item2} embedded objects were converted");
+                    Console.WriteLine($"--> ChangeError: {success.Item3} embedded objects could not be processed");
                 }
                 if (item.ActiveSheet == true)
                 {
@@ -376,51 +376,6 @@ namespace CLISC
             return success;
         }
 
-        // Embed external objects
-        public int Embed_ExternalObjects(string filepath)
-        {
-            int success = 0;
-
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
-            {
-                IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
-                foreach (ExternalWorkbookPart extWbPart in extWbParts)
-                {
-                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // Must be a list
-                    foreach (ExternalRelationship extrel in extrels)
-                    {
-                        // Change external target reference
-                        Uri uri = new Uri("External reference was removed", UriKind.Relative);
-                        extWbPart.DeleteExternalRelationship("rId1");
-                        extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: "rId1");
-
-                        // Add to success
-                        success++;
-                    }
-
-
-
-                    // Do a null check to see if the external object is available
-                    if (extWbPart != null)
-                    {
-                        // Embed object
-
-
-                        // Delete external relationship
-                        extWbPart.DeleteExternalRelationship("rId1");
-
-                        // Different approach to deleting external relationship
-                        ExternalRelationship extrel = extWbPart.ExternalRelationships.FirstOrDefault();
-                        extWbPart.DeleteExternalRelationship(extrel.Id);
-
-                        // Add to success
-                        success++;
-                    }
-                }
-            }
-            return success;
-        }
-
         // Make first sheet active sheet
         public bool Activate_FirstSheet(string filepath)
         {
@@ -487,106 +442,84 @@ namespace CLISC
                 {
                     w.WriteLine("STRIPPED FILE PROPERTIES INFORMATION");
                     w.WriteLine("---");
-                }
 
-                if (property.Creator != null)
-                {
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    if (property.Creator != null)
                     {
+                        // Write information to metadata file
                         w.WriteLine($"CREATOR: {property.Creator}");
+
+                        // Remove information
+                        property.Creator = null;
+
+                        // Add to success
+                        success++;
                     }
-
-                    // Remove information
-                    property.Creator = null;
-
-                    // Add to success
-                    success++;
-                }
-                if (property.Title != null)
-                {
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    if (property.Title != null)
                     {
+                        // Write information to metadata file
                         w.WriteLine($"TITLE: {property.Title}");
+
+                        // Remove information
+                        property.Title = null;
+
+                        // Add to success
+                        success++;
                     }
-
-                    // Remove information
-                    property.Title = null;
-
-                    // Add to success
-                    success++;
-                }
-                if (property.Subject != null)
-                {
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    if (property.Subject != null)
                     {
+                        // Write information to metadata file
                         w.WriteLine($"SUBJECT: {property.Subject}");
+
+                        // Remove information
+                        property.Subject = null;
+
+                        // Add to success
+                        success++;
                     }
-
-                    // Remove information
-                    property.Subject = null;
-
-                    // Add to success
-                    success++;
-                }
-                if (property.Description != null)
-                {
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    if (property.Description != null)
                     {
+                        // Write information to metadata file
                         w.WriteLine($"DESCRIPTION: {property.Description}");
+
+                        // Remove information
+                        property.Description = null;
+
+                        // Add to success
+                        success++;
                     }
-
-                    // Remove information
-                    property.Description = null;
-
-                    // Add to success
-                    success++;
-                }
-                if (property.Keywords != null)
-                {
-
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    if (property.Keywords != null)
                     {
+                        // Write information to metadata file
                         w.WriteLine($"KEYWORDS: {property.Keywords}");
+
+                        // Remove information
+                        property.Keywords = null;
+
+                        // Add to success
+                        success++;
                     }
-
-                    // Remove information
-                    property.Keywords = null;
-
-                    // Add to success
-                    success++;
-                }
-                if (property.Category != null)
-                {
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    if (property.Category != null)
                     {
+                        // Write information to metadata file
                         w.WriteLine($"CATEGORY: {property.Category}");
+
+                        // Remove information
+                        property.Category = null;
+
+                        // Add to success
+                        success++;
                     }
-
-                    // Remove information
-                    property.Category = null;
-
-                    // Add to success
-                    success++;
-                }
-                if (property.LastModifiedBy != null)
-                {
-                    // Write information to metadata file
-                    using (StreamWriter w = File.AppendText($"{folder}\\orgFile_metadata.txt"))
+                    if (property.LastModifiedBy != null)
                     {
+                        // Write information to metadata file
                         w.WriteLine($"LAST MODIFIED BY: {property.LastModifiedBy}");
+
+                        // Remove information
+                        property.LastModifiedBy = null;
+
+                        // Add to success
+                        success++;
                     }
-
-                    // Remove information
-                    property.LastModifiedBy = null;
-
-                    // Add to success
-                    success++;
                 }
             }
             return success;
