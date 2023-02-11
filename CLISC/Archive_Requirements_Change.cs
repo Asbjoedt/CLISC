@@ -397,8 +397,8 @@ namespace CLISC
 
                         // Remove external object reference
                         Uri uri = new Uri($"External reference {extrel.Uri} was removed", UriKind.Relative);
-                        extWbPart.DeleteExternalRelationship("rId1");
-                        extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: "rId1");
+                        extWbPart.DeleteExternalRelationship(extrel.Id);
+                        extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: extrel.Id);
                     }
                 }
             }
