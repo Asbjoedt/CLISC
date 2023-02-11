@@ -122,8 +122,8 @@ The following packages and software are used under license in CLISC. [Read more]
 
 * [Beyond Compare 4](https://www.scootersoftware.com/index.php), copyright (c) 2022 Scooter Software, Inc.
 * [CommandLineParser](https://github.com/commandlineparser/commandline), MIT License, copyright (c) 2005 - 2015 Giacomo Stelluti Scala & Contributor
-* [Magick.Net](https://github.com/dlemstra/Magick.NET), Apache-2.0 license, copyright (c) dlemstra
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
+* [Magick.Net](https://github.com/dlemstra/Magick.NET), Apache-2.0 license, copyright (c) Dirk Lemstra
 * [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), copyright (c) Microsoft Corporation
 * [ODF Validator 0.10.0](https://odftoolkit.org/conformance/ODFValidator.html), Apache License, [copyright info](https://github.com/tdf/odftoolkit/blob/master/NOTICE)
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, copyright (c) Microsoft Corporation
