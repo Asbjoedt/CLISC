@@ -287,7 +287,7 @@ namespace CLISC
                     foreach (EmbeddedObjectPart part in ole)
                     {
                         embedobj_number++;
-                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"--> Check: Embedded object #{embedobj_number}");
                         Console.WriteLine($"----> Content Type: {part.ContentType}");
                         Console.WriteLine($"----> URI: {part.Uri}");
                     }
@@ -295,7 +295,7 @@ namespace CLISC
                     foreach (EmbeddedPackagePart part in packages)
                     {
                         embedobj_number++;
-                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"--> Check: Embedded object #{embedobj_number}");
                         Console.WriteLine($"----> Content Type: {part.ContentType}");
                         Console.WriteLine($"----> URI: {part.Uri}");
                     }
@@ -303,7 +303,7 @@ namespace CLISC
                     foreach (Model3DReferenceRelationshipPart part in threeD)
                     {
                         embedobj_number++;
-                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"--> Check: Embedded object #{embedobj_number}");
                         Console.WriteLine($"----> Content Type: {part.ContentType}");
                         Console.WriteLine($"----> URI: {part.Uri}");
                     }
@@ -311,7 +311,7 @@ namespace CLISC
                     foreach (ImagePart part in emf)
                     {
                         embedobj_number++;
-                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"--> Check: Embedded object #{embedobj_number}");
                         Console.WriteLine($"----> Content Type: Rendering of embedded object ({part.ContentType})");
                         Console.WriteLine($"----> URI: {part.Uri}");
                     }
@@ -319,7 +319,7 @@ namespace CLISC
                     foreach (ImagePart part in images)
                     {
                         embedobj_number++;
-                        Console.WriteLine($"--> Embedded object #{embedobj_number}");
+                        Console.WriteLine($"--> Check: Embedded object #{embedobj_number}");
                         Console.WriteLine($"----> Content Type: {part.ContentType}");
                         Console.WriteLine($"----> URI: {part.Uri}");
                     }

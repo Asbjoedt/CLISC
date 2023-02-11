@@ -51,15 +51,31 @@ namespace CLISC
                 }
                 if (item.ExternalObj > 0)
                 {
-                    int success = Remove_ExternalObjects(filepath);
-                    Console.WriteLine($"--> Change: {success} external objects were removed");
+                    Tuple<int, int> success = CopyAndRemove_ExternalObjects(filepath);
+                    if (success.Item1 > 0)
+                    {
+                        Console.WriteLine($"--> Change: {success.Item1} external object references were copied to new subfolder and removed");
+                    }
+                    if (success.Item2 > 0)
+                    {
+                        Console.WriteLine($"--> ChangeError: {success.Item2} external object references were removed but NOT copied to new subfolder \"External objects\"");
+                    }
                 }
                 if (item.EmbedObj > 0)
                 {
                     Tuple<int, int, int> success = Convert_EmbeddedObjects(filepath);
-                    Console.WriteLine($"--> Extract: {success.Item1} original embedded objects were saved to new \"Embeddings\" subfolder.");
-                    Console.WriteLine($"--> Change: {success.Item2} embedded objects were converted");
-                    Console.WriteLine($"--> ChangeError: {success.Item3} embedded objects could not be processed");
+                    if (success.Item1 > 0)
+                    {
+                        Console.WriteLine($"--> Extract: {success.Item1} original embedded objects were saved to new \"Embedded objects\" subfolder.");
+                    }
+                    if (success.Item2 > 0)
+                    {
+                        Console.WriteLine($"--> Change: {success.Item2} embedded objects were converted");
+                    }
+                    if (success.Item3 > 0)
+                    {
+                        Console.WriteLine($"--> ChangeError: {success.Item3} embedded objects could not be processed");
+                    }
                 }
                 if (item.ActiveSheet == true)
                 {
@@ -70,7 +86,7 @@ namespace CLISC
                     }
                     else
                     {
-                        Console.WriteLine("--> Change: First sheet was NOT activated");
+                        Console.WriteLine("--> ChangeError: First sheet was NOT activated");
                     }
                 }
                 if (item.AbsolutePath == true)
@@ -82,10 +98,7 @@ namespace CLISC
                     }
                     else
                     {
-                        if (success)
-                        {
-                            Console.WriteLine("--> Change: Absolute path to local directory was NOT removed");
-                        }
+                        Console.WriteLine("--> ChangeError: Absolute path to local directory was NOT removed");
                     }
                 }
                 if (item.Hyperlinks > 0)
@@ -351,9 +364,10 @@ namespace CLISC
         }
 
         // Remove external object references
-        public int Remove_ExternalObjects(string filepath)
+        public Tuple<int, int> CopyAndRemove_ExternalObjects(string filepath)
         {
             int success = 0;
+            int fail = 0;
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
@@ -363,17 +377,32 @@ namespace CLISC
                     List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // Must be a list
                     foreach (ExternalRelationship extrel in extrels)
                     {
-                        // Change external target reference
+                        // Create new folder for external objects
+                        int backslash = filepath.LastIndexOf("\\");
+                        string file_folder = filepath.Substring(0, backslash);
+                        string new_folder = file_folder + "\\External objects";
+                        Directory.CreateDirectory(new_folder);
+
+                        // Copy external file to subfolder
+                        string output_filepath = new_folder + "\\" + extrel.Uri.ToString().Split("/").Last();
+                        try
+                        {
+                            File.Copy(extrel.Uri.ToString(), output_filepath);
+                            success++;
+                        }
+                        catch(System.IO.IOException)
+                        {
+                            fail++;
+                        }
+
+                        // Remove external object reference
                         Uri uri = new Uri("External reference was removed", UriKind.Relative);
                         extWbPart.DeleteExternalRelationship("rId1");
                         extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: "rId1");
-
-                        // Add to success
-                        success++;
                     }
                 }
             }
-            return success;
+            return System.Tuple.Create(success, fail);
         }
 
         // Make first sheet active sheet
