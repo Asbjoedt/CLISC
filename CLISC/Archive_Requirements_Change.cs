@@ -369,6 +369,12 @@ namespace CLISC
             int success = 0;
             int fail = 0;
 
+            // Create new subfolder for external objects
+            int backslash = filepath.LastIndexOf("\\");
+            string file_folder = filepath.Substring(0, backslash);
+            string new_folder = file_folder + "\\External objects";
+            Directory.CreateDirectory(new_folder);
+
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
@@ -377,12 +383,6 @@ namespace CLISC
                     List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // Must be a list
                     foreach (ExternalRelationship extrel in extrels)
                     {
-                        // Create new folder for external objects
-                        int backslash = filepath.LastIndexOf("\\");
-                        string file_folder = filepath.Substring(0, backslash);
-                        string new_folder = file_folder + "\\External objects";
-                        Directory.CreateDirectory(new_folder);
-
                         // Copy external file to subfolder
                         string output_filepath = new_folder + "\\" + extrel.Uri.ToString().Split("/").Last();
                         try
@@ -396,11 +396,16 @@ namespace CLISC
                         }
 
                         // Remove external object reference
-                        Uri uri = new Uri("External reference was removed", UriKind.Relative);
+                        Uri uri = new Uri($"External reference {extrel.Uri} was removed", UriKind.Relative);
                         extWbPart.DeleteExternalRelationship("rId1");
                         extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: "rId1");
                     }
                 }
+            }
+            // Delete new subfolder, if no objects were copied to it
+            if (Directory.GetFiles(new_folder).Length == 0)
+            {
+                Directory.Delete(new_folder);
             }
             return System.Tuple.Create(success, fail);
         }
