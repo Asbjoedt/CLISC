@@ -49,10 +49,10 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove printer settings
 * Remove absolute path to local directory
+* Remove external object references but copy objects to new subfolder
 * Make first sheet active
 * Convert embedded images to .tiff
-* Warn if other types of embedded files detected, process manually
-* Warn if external file references detected, process manually
+* Extract all embedded objects to new subfolder
 * Warn if no cell values detected, process manually
 * Inform if metadata detected
 * Inform if hyperlinks detected
