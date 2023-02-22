@@ -52,7 +52,7 @@ namespace CLISC
             Console.WriteLine("---");
 
             // Execute the real program with arguments
-            Program_Real.Execute(Arg.Function, Arg.Inputdir, Arg.Outputdir, Arg.Recurse);
+            Program_Real.Execute(Arg.Function, Arg.Inputdir, Arg.Outputdir, Arg.Recurse, Arg.FullCompliance);
         }
     }
 }

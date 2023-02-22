@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace CLISC
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
 
         }
-        public void Archive_Results()
+        public void Archive_Results(bool fullcompliance)
         {
             // Calculate fails
             int fail_conversion = Count.numTOTAL - Conversion.numCOMPLETE;
@@ -59,16 +60,27 @@ namespace CLISC
             Console.WriteLine($"COMPARE: {fail_comparison} of {Conversion.numCOMPLETE} converted spreadsheets failed comparison");
             Console.WriteLine($"COMPARE: {Compare.numTOTAL_diff} of {Compare.numTOTAL_compare} compared spreadsheets have cell value differences");
             Console.WriteLine($"ARCHIVE: {Archive.invalid_files} of {Conversion.numCOMPLETE} converted spreadsheets have invalid file formats");
-            Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} of {Conversion.numCOMPLETE} converted spreadsheets had no cell values");
             Console.WriteLine($"ARCHIVE: {Archive.connections_files} of {Conversion.numCOMPLETE} converted spreadsheets had data connections - Data connections were removed");
             Console.WriteLine($"ARCHIVE: {Archive.cellreferences_files} of {Conversion.numCOMPLETE} converted spreadsheets had external cell references - External cell references were removed");
             Console.WriteLine($"ARCHIVE: {Archive.rtdfunctions_files} of {Conversion.numCOMPLETE} converted spreadsheets had RTD functions - RTD functions were removed");
             Console.WriteLine($"ARCHIVE: {Archive.extobj_files} of {Conversion.numCOMPLETE} converted spreadsheets had external object references - External object references were removed");
             Console.WriteLine($"ARCHIVE: {Archive.embedobj_files} of {Conversion.numCOMPLETE} converted spreadsheets have embedded objects  - Embedded IMAGE objects were converted to .tiff");
-            Console.WriteLine($"ARCHIVE: {Archive.printersettings_files} of {Conversion.numCOMPLETE} converted spreadsheets had printer settings - Printer settings were removed");
-            Console.WriteLine($"ARCHIVE: {Archive.activesheet_files} of {Conversion.numCOMPLETE} converted spreadsheets did not have active first sheet - Active sheet was changed");
-            Console.WriteLine($"ARCHIVE: {Archive.metadata_files} of {Conversion.numCOMPLETE} converted spreadsheets have metadata  - Metadata were NOT removed");
-            Console.WriteLine($"ARCHIVE: {Archive.hyperlinks_files} of {Conversion.numCOMPLETE} converted spreadsheets have hyperlinks - Hyperlinks were NOT removed");
+            Console.WriteLine($"ARCHIVE: {Archive.cellvalue_files} of {Conversion.numCOMPLETE} converted spreadsheets had no cell values - Process manually");
+            if (fullcompliance)
+            {
+                Console.WriteLine($"ARCHIVE: {Archive.printersettings_files} of {Conversion.numCOMPLETE} converted spreadsheets had printer settings - Printer settings were removed");
+                Console.WriteLine($"ARCHIVE: {Archive.activesheet_files} of {Conversion.numCOMPLETE} converted spreadsheets did not have active first sheet - Active sheet was changed");
+                Console.WriteLine($"ARCHIVE: {Archive.metadata_files} of {Conversion.numCOMPLETE} converted spreadsheets have metadata  - Metadata were extracted and removed");
+                Console.WriteLine($"ARCHIVE: {Archive.hyperlinks_files} of {Conversion.numCOMPLETE} converted spreadsheets have hyperlinks - Hyperlinks were extracted");
+            }
+            else
+            {
+                Console.WriteLine($"ARCHIVE: {Archive.printersettings_files} of {Conversion.numCOMPLETE} converted spreadsheets had printer settings - Nothing was done");
+                Console.WriteLine($"ARCHIVE: {Archive.activesheet_files} of {Conversion.numCOMPLETE} converted spreadsheets did not have active first sheet - Nothing was done");
+                Console.WriteLine($"ARCHIVE: {Archive.metadata_files} of {Conversion.numCOMPLETE} converted spreadsheets have metadata - Nothing was done");
+                Console.WriteLine($"ARCHIVE: {Archive.hyperlinks_files} of {Conversion.numCOMPLETE} converted spreadsheets have hyperlinks - Nothing was done");
+            }
+
         }
     }
 }

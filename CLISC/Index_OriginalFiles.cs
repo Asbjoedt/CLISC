@@ -35,12 +35,9 @@ namespace CLISC
             foreach (var entry in org_enumeration)
             {
                 FileInfo file_info = new FileInfo(entry);
-                if (fileFormatIndex.Extension_Array.Contains(file_info.Extension) || fileFormatIndex.Extension_Upper_Array.Contains(file_info.Extension))
+                if (fileFormatIndex.Extension_Array.Contains(file_info.Extension.ToLower()))
                 {
-                    string extension = file_info.Extension.ToLower();
-                    string filename = file_info.Name;
-                    string filepath = file_info.FullName;
-                    Org_File_List.Add(new orgIndex() { Org_Filepath = filepath, Org_Filename = filename, Org_Extension = extension });
+                    Org_File_List.Add(new orgIndex() { Org_Filepath = file_info.FullName, Org_Filename = file_info.Name, Org_Extension = file_info.Extension.ToLower() });
                 }
             }
             return Org_File_List;

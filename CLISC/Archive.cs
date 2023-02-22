@@ -26,7 +26,7 @@ namespace CLISC
         public static int invalid_files = 0;
 
         // Archive the spreadsheets according to advanced archival requirements
-        public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List)
+        public void Archive_Spreadsheets(string Results_Directory, List<fileIndex> File_List, bool fullcompliance)
         {
             Console.WriteLine("---");
             Console.WriteLine("ARCHIVE");
@@ -90,7 +90,7 @@ namespace CLISC
                         List<Archive_Requirements> arcReq = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
 
                         // Change .xlsx according to archival requirements
-                        arc.Change_XLSX_Requirements(arcReq, xlsx_conv_filepath);
+                        arc.Change_XLSX_Requirements(arcReq, xlsx_conv_filepath, fullcompliance);
 
                         // Make archival requirements true
                         archive_req_accept = true;

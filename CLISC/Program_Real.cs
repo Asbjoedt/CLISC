@@ -7,7 +7,7 @@ namespace CLISC
 {
     public class Program_Real
     {
-        public static void Execute(string function, string inputdir, string outputdir, bool recurse)
+        public static void Execute(string function, string inputdir, string outputdir, bool recurse, bool fullcompliance)
         {
             if (!Directory.Exists(inputdir))
             {
@@ -54,8 +54,8 @@ namespace CLISC
                     resultsDirectory = cou.Count_Spreadsheets(inputdir, outputdir, recurse);
                     fileList = con.Convert_Spreadsheets(function, inputdir, recurse, resultsDirectory);
                     com.Compare_Spreadsheets(function, resultsDirectory, fileList);
-                    arc.Archive_Spreadsheets(resultsDirectory, fileList);
-                    res.Archive_Results();
+                    arc.Archive_Spreadsheets(resultsDirectory, fileList, fullcompliance);
+                    res.Archive_Results(fullcompliance);
                     break;
 
                 default:

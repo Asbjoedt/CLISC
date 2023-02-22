@@ -12,10 +12,6 @@ namespace CLISC
         // Public arrays
         public static string[] Extension_Array = { ".gsheet", ".fods", ".numbers", ".ods", ".ots", ".xla", ".xlam", ".xls", ".xlsb", ".xlsm", ".xlsx", ".xlt", ".xltm", ".xltx" };
 
-        public static string[] Extension_Upper_Array = { ".GSHEET", ".FODS", ".NUMBERS", ".ODS", ".OTS", ".XLA", ".XLAM", ".XLS", ".XLSB", ".XLSM", ".XLSX", ".XLT", ".XLTM", ".XLTX" };
-
-        public static string[] Description_Array = { "Google Sheets hyperlink", "OpenDocument Flat XML Spreadsheet", "Apple Numbers Spreadsheet", "OpenDocument Spreadsheet", "OpenDocument Spreadsheet Template", "Legacy Microsoft Excel Spreadsheet Add-In", "Office Open XML Macro-Enabled Add-In", "Legacy Microsoft Excel Spreadsheet", "Office Open XML Binary Spreadsheet", "Office Open XML Macro-Enabled Spreadsheet", "Office Open XML Spreadsheet (Transitional and Strict conformance)", "Legacy Microsoft Excel Spreadsheet Template", "Office Open XML Macro-Enabled Spreadsheet Template", "Office Open XML Spreadsheet Template" };
-
         public string Extension { get; protected set; }
 
         public string Extension_Upper { get; protected set; }

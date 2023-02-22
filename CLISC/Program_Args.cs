@@ -21,5 +21,9 @@ namespace CLISC
         // Parameter to include subdirectories in input directory
         [Option('r', "recurse", Required = false, HelpText = "Specify if input directory should include subdirectories.", Default = false)]
         public bool Recurse { get; set; }
+
+        // Parameter to set fullcompliance for archiving
+        [Option('c', "fullcompliance", Required = false, HelpText = "Specify if archiving should create full compliance with OPF specification.", Default = false)]
+        public bool FullCompliance { get; set; }
     }
 }
