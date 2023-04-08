@@ -11,10 +11,33 @@ namespace CLISC
 {
     public partial class Conversion
     {
+        // Check if spreadsheet is writeable
+        public void CheckWriteAbility(string filepath)
+        {
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            {
+                try
+                {
+					// Check for certain protection
+					if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null) // This line will throw NullReferebceException
+					{
+						throw new FileFormatException();
+					}
+				}
+                catch (System.NullReferenceException) 
+                {
+					throw new FileFormatException();
+				}
+            }
+        }
+
         // Convert to .xlsx Transitional
         public bool ConvertToXLSX(string input_filepath, string output_filepath)
         {
             bool convert_success = false;
+
+            // Check if file is writeable
+            CheckWriteAbility(input_filepath);
 
             // Convert spreadsheet
             byte[] byteArray = File.ReadAllBytes(input_filepath);
@@ -23,11 +46,6 @@ namespace CLISC
                 stream.Write(byteArray, 0, (int)byteArray.Length);
                 using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(stream, true))
                 {
-                    // Check for certain protection
-                    if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null)
-                    {
-                        return convert_success;
-                    }
                     //Convert
                     spreadsheet.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
                 }

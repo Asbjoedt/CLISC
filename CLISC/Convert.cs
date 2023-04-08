@@ -203,8 +203,8 @@ namespace CLISC
                     error_message = error_messages[5];
                 }
 
-                // Post conversion operations
-                finally
+				// Post conversion operations
+				finally
                 {
                     // Inform user
                     Console.WriteLine($"--> Conversion: {convert_success}");

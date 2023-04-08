@@ -16,17 +16,17 @@
     <FileVersion>1.0</FileVersion>
     <IsPublishable>True</IsPublishable>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>G:\Mit drev\Diverse\Keys\Signing keys for my programs\CLISC.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>C:\Users\Asbjo\Mit drev\Diverse\Keys\Signing keys for my programs\CLISC.snk</AssemblyOriginatorKeyFile>
     <Version>1.1.0</Version>
     <Company></Company>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.19.0" />
-    <PackageReference Include="DocumentFormat.OpenXml.Features" Version="2.19.0" />
-    <PackageReference Include="DocumentFormat.OpenXml.Linq" Version="2.19.0" />
-    <PackageReference Include="Magick.NET-Q16-x64" Version="12.3.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
+    <PackageReference Include="DocumentFormat.OpenXml.Features" Version="2.20.0" />
+    <PackageReference Include="DocumentFormat.OpenXml.Linq" Version="2.20.0" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="13.0.1" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
   </ItemGroup>
 

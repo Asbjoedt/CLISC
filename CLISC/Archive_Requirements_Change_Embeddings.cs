@@ -9,7 +9,6 @@ using DocumentFormat.OpenXml.Drawing.Pictures;
 using DocumentFormat.OpenXml.Vml;
 using ImageMagick;
 using System.Xml.Linq;
-using System.Xml;
 
 namespace CLISC
 {
