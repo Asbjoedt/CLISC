@@ -15,19 +15,15 @@ namespace CLISC
         {
             // Use Beyond Compare 4 command line for comparison
             Process app = new Process();
-            string? dir = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
-            {
-                dir = Environment.GetEnvironmentVariable("BeyondCompare");
-            }
-            if (dir != null)
-            {
-                app.StartInfo.FileName = dir;
-            }
-            else
-            {
-                app.StartInfo.FileName = "C:\\Program Files\\Beyond Compare 4\\BCompare.exe";
-            }
+			app.StartInfo.FileName = "C:\\Program Files\\Beyond Compare 4\\BCompare.exe";
+
+			// Use environment variables
+			string? dir = Environment.GetEnvironmentVariable("BeyondCompare");
+			if (dir != null)
+			{
+				app.StartInfo.FileName = dir;
+			}
+
             app.StartInfo.Arguments = $"\"{org_filepath}\" \"{conv_filepath}\" /silent /qc=<crc> /ro";
             app.Start();
             app.WaitForExit();

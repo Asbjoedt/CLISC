@@ -21,20 +21,16 @@ namespace CLISC
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so output filepath cannot be specified. Only the output folder can be specified
             Process app = new Process();
-            string? dir = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
-            {
-                dir = Environment.GetEnvironmentVariable("LibreOffice");
-            }
-            if (dir != null)
-            {
-                app.StartInfo.FileName = dir;
-            }
-            else
-            {
-                app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
-            }
-            app.StartInfo.Arguments = "--headless --convert-to xlsx " + input_filepath + " --outdir " + output_folder;
+			app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
+
+			// Use environment variables
+			string? dir = Environment.GetEnvironmentVariable("LibreOffice");
+			if (dir != null)
+			{
+				app.StartInfo.FileName = dir;
+			}
+
+			app.StartInfo.Arguments = "--headless --convert-to xlsx " + input_filepath + " --outdir " + output_folder;
             app.Start();
             app.WaitForExit();
             app.Close();
@@ -67,23 +63,19 @@ namespace CLISC
             // Use LibreOffice command line for conversion
             // --> LibreOffice has bug, so output filepath cannot be specified. Only the output folder can be specified
             Process app = new Process();
-            string? dir = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
-            {
-                dir = Environment.GetEnvironmentVariable("LibreOffice");
-            }
-            if (dir != null)
-            {
-                app.StartInfo.FileName = dir;
-            }
-            else
-            {
-                app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
-            }
+			app.StartInfo.FileName = "C:\\Program Files\\LibreOffice\\program\\scalc.exe";
+
+			// Use environment variables
+			string? dir = Environment.GetEnvironmentVariable("LibreOffice");
+			if (dir != null)
+			{
+				app.StartInfo.FileName = dir;
+			}
+
             app.StartInfo.Arguments = "--headless --convert-to ods " + input_filepath + " --outdir " + output_folder;
             app.Start();
             app.WaitForExit();
-            app.Close();
+            app.Close(); 
 
             // Because of previous bug, we must rename converted spreadsheet to meet archiving requirements, if selected
             string[] filename = Directory.GetFiles(output_folder, "*.ods");

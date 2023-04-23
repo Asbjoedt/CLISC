@@ -2,13 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Drawing.Spreadsheet;
 using DocumentFormat.OpenXml.Drawing.Pictures;
 using DocumentFormat.OpenXml.Vml;
+using DocumentFormat.OpenXml.Linq;
 using ImageMagick;
-using System.Xml.Linq;
+using FFMpegCore;
+using FFMpegCore.Pipes;
+using FFMpegCore.Enums;
 
 namespace CLISC
 {
@@ -44,15 +48,30 @@ namespace CLISC
                     // Perform change
 
                     // Embedded binaries cannot be converted
-                    foreach (EmbeddedObjectPart part in ole)
+                    foreach (EmbeddedObjectPart embeddedObjectPart in ole)
                     {
                         // Extract object
-                        string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
-                        Stream input_stream = part.GetStream();
-                        Extract_EmbeddedObjects(input_stream, output_filepath);
+                        string output_filepath = Create_Output_Filepath(filepath, embeddedObjectPart.Uri.ToString());
+                        Stream input_stream = embeddedObjectPart.GetStream();
+                        Extract_EmbeddedObjects(input_stream, output_filepath);				
 
-                        // Register conversion fail
-                        fail++;
+						// Identify object
+						string AV_type = Identify_Object(input_stream);
+
+                        // Dispose of object stream
+						input_stream.Dispose();
+
+						// Convert if correct AV type
+						if (AV_type == "video" || AV_type == "audio")
+                        {
+							Convert_EmbedAV(worksheetPart, embeddedObjectPart, AV_type);
+							success++;
+                        }
+                        else
+                        {
+							// Register conversion fail
+							fail++;
+						}
                     }
 
                     // Embedded packages cannot be converted
@@ -62,9 +81,10 @@ namespace CLISC
                         string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
                         Stream input_stream = part.GetStream();
                         Extract_EmbeddedObjects(input_stream, output_filepath);
+						input_stream.Dispose();
 
-                        // Register conversion fail
-                        fail++;
+						// Register conversion fail
+						fail++;
                     }
 
                     // 3D objects cannot be processed - Bug in Open XML SDK?
@@ -74,22 +94,37 @@ namespace CLISC
                         string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
                         Stream input_stream = part.GetStream();
                         Extract_EmbeddedObjects(input_stream, output_filepath);
+						input_stream.Dispose();
 
-                        // Register conversion fail
-                        fail++;
+						// Register conversion fail
+						fail++;
                     }
 
                     // Convert Excel-generated .emf images to TIFF
                     foreach (ImagePart imagePart in emf)
                     {
-                        Convert_EmbedEmf(filepath, worksheetPart, imagePart);
+						// Extract object
+						string output_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
+						Stream input_stream = imagePart.GetStream();
+						Extract_EmbeddedObjects(input_stream, output_filepath);
+						input_stream.Dispose();
+
+						// Convert object
+						Convert_EmbedEmf(worksheetPart, imagePart);
                         success++;
                     }
 
                     // Convert embedded images to TIFF
                     foreach (ImagePart imagePart in images)
                     {
-                        Convert_EmbedImg(filepath, worksheetPart, imagePart);
+						// Extract object
+						string output_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
+						Stream input_stream = imagePart.GetStream();
+						Extract_EmbeddedObjects(input_stream, output_filepath);
+                        input_stream.Dispose();
+
+						// Convert object
+						Convert_EmbedImg(worksheetPart, imagePart);
                         success++;
                     }
                 }
@@ -100,19 +135,15 @@ namespace CLISC
         }
 
         // Convert embedded images to TIFF
-        public void Convert_EmbedImg(string filepath, WorksheetPart worksheetPart, ImagePart imagePart)
+        public void Convert_EmbedImg(WorksheetPart worksheetPart, ImagePart imagePart)
         {
             // Convert streamed image to new stream
             Stream stream = imagePart.GetStream();
             Stream new_Stream = Convert_ImageMagick(stream);
             stream.Dispose();
 
-            // Extract converted image to folder
-            string extract_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
-            Extract_EmbeddedObjects(new_Stream, extract_filepath);
-
-            // Add new ImagePart
-            ImagePart new_ImagePart = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
+			// Add new ImagePart
+			ImagePart new_ImagePart = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
 
             // Save image from stream to new ImagePart
             new_Stream.Position = 0;
@@ -131,16 +162,12 @@ namespace CLISC
         }
 
         // Convert Excel-generated .emf images to TIFF
-        public void Convert_EmbedEmf(string filepath, WorksheetPart worksheetPart, ImagePart imagePart)
+        public void Convert_EmbedEmf(WorksheetPart worksheetPart, ImagePart imagePart)
         {
             // Convert streamed image to new stream
             Stream stream = imagePart.GetStream();
             Stream new_Stream = Convert_ImageMagick(stream);
             stream.Dispose();
-
-            // Extract converted image to folder
-            string extract_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
-            Extract_EmbeddedObjects(new_Stream, extract_filepath);
 
             // Add new ImagePart
             ImagePart new_ImagePart = worksheetPart.VmlDrawingParts.First().AddImagePart(ImagePartType.Tiff);
@@ -188,7 +215,7 @@ namespace CLISC
                 MemoryStream new_stream = new MemoryStream();
 
                 // Adjust TIFF settings
-                image.Format = MagickFormat.Tiff;
+                image.Format = MagickFormat.Tif;
                 image.Settings.ColorSpace = ColorSpace.RGB;
                 image.Settings.Depth = 32;
                 image.Settings.Compression = CompressionMethod.LZW;
@@ -243,7 +270,7 @@ namespace CLISC
             // Create new folder for embedded objects
             int backslash = filepath.LastIndexOf("\\");
             string file_folder = filepath.Substring(0, backslash);
-            string new_folder = file_folder + "\\Embedded objects";
+            string new_folder = file_folder + "\\Embedded original objects";
             Directory.CreateDirectory(new_folder);
          
             // Create and return output filepath
@@ -261,5 +288,106 @@ namespace CLISC
                 input_stream.CopyTo(fileStream);
             }
         }
-    }
+
+        public string Identify_Object(Stream stream)
+        {
+            string AV_type = "";
+			FileStream file_stream = stream as FileStream;
+            file_stream.Position = 0;
+			string extension = System.IO.Path.GetExtension(file_stream.Name);
+			Console.WriteLine(extension);
+
+            string[] video_extensions = { ".avi", ".mp2", ".mp4" };
+			string[] audio_extensions = { ".flac", ".mp3", ".ogg" };
+
+			if (video_extensions.Contains(extension))
+            {
+                AV_type = "video";
+            }
+            else if (audio_extensions.Contains(extension))
+            {
+				AV_type = "audio";
+			}
+            
+            return AV_type;
+		}
+
+		// Convert embedded audio and video
+		public void Convert_EmbedAV(WorksheetPart worksheetPart, EmbeddedObjectPart embeddedObjectPart, string AV_type)
+		{
+			// Convert streamed AV to new stream
+			Stream stream = embeddedObjectPart.GetStream();
+            Stream new_Stream = new MemoryStream();
+			if (AV_type == "video")
+            {
+				new_Stream = Convert_Video_FFmpeg(stream);
+			}
+            else if (AV_type == "audio")
+            {
+				new_Stream = Convert_Audio_FFmpeg(stream);
+			}
+			stream.Dispose();
+
+			// Add new EmbeddedObjectPart
+			EmbeddedObjectPart new_EmbeddedObjectPart = worksheetPart.AddEmbeddedObjectPart(contentType:"application/vnd.openxmlformats-officedocument.oleObject");
+
+			// Save image from stream to new EmbeddedObjectPart
+			new_Stream.Position = 0;
+			new_EmbeddedObjectPart.FeedData(new_Stream);
+
+			// Change relationships of EmbeddedObjectPart
+			string id = Get_RelationshipId(embeddedObjectPart);
+
+
+			// Delete original EmbeddedObjectPart
+			worksheetPart.DeletePart(embeddedObjectPart);
+		}
+
+		public Stream Convert_Video_FFmpeg(Stream input_stream)
+		{
+			// Define path to FFmpeg
+			string? binary_folder = Environment.GetEnvironmentVariable("FFmpeg");
+			if (binary_folder == null)
+			{
+				binary_folder = "C:\\Program Files\\FFmpeg\\bin";
+			}
+			GlobalFFOptions.Configure(options => options.BinaryFolder = binary_folder);
+
+			// Perform conversion
+			Stream output_stream = new MemoryStream();
+			FFMpegArguments
+	            .FromPipeInput(new StreamPipeSource(input_stream))
+	            .OutputToPipe(new StreamPipeSink(output_stream), options => options
+		            .WithVideoCodec(VideoCodec.LibX264)
+		            .WithAudioCodec(AudioCodec.Aac)
+		            .WithVideoFilters(filterOptions => filterOptions
+			            .Scale(VideoSize.Original))
+		            .ForceFormat("mp4"));
+
+            // Return the converted video as stream
+			return output_stream;
+		}
+
+		public Stream Convert_Audio_FFmpeg(Stream input_stream)
+		{
+            // Define path to FFmpeg
+            string? binary_folder = Environment.GetEnvironmentVariable("FFmpeg");
+			if (binary_folder == null)
+			{
+                binary_folder = "C:\\Program Files\\FFmpeg\\bin";
+			}
+			GlobalFFOptions.Configure(options => options.BinaryFolder = binary_folder);
+
+			// Perform conversion
+			Stream output_stream = new MemoryStream();
+			FFMpegArguments
+				.FromPipeInput(new StreamPipeSource(input_stream))
+				.OutputToPipe(new StreamPipeSink(output_stream), options => options
+					.WithAudioCodec(AudioCodec.LibMp3Lame)
+					.ForceFormat("mp3"));
+
+			// Return the converted audio as stream
+			return output_stream;
+		}
+	}
 }
