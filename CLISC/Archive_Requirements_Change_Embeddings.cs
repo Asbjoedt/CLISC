@@ -53,16 +53,14 @@ namespace CLISC
                         // Extract object
                         string output_filepath = Create_Output_Filepath(filepath, embeddedObjectPart.Uri.ToString());
                         Stream input_stream = embeddedObjectPart.GetStream();
-                        Extract_EmbeddedObjects(input_stream, output_filepath);				
-
-						// Identify object
-						string AV_type = Identify_Object(input_stream);
-
-                        // Dispose of object stream
+                        Extract_EmbeddedObjects(input_stream, output_filepath);
 						input_stream.Dispose();
 
+						// Identify object
+						string AV_type = Identify_Object(embeddedObjectPart);
+
 						// Convert if correct AV type
-						if (AV_type == "video" || AV_type == "audio")
+						if (AV_type == "audio" || AV_type == "video")
                         {
 							Convert_EmbedAV(worksheetPart, embeddedObjectPart, AV_type);
 							success++;
@@ -289,27 +287,29 @@ namespace CLISC
             }
         }
 
-        public string Identify_Object(Stream stream)
+        public string Identify_Object(EmbeddedObjectPart embeddedObjectPart)
         {
             string AV_type = "";
-			FileStream file_stream = stream as FileStream;
-            file_stream.Position = 0;
-			string extension = System.IO.Path.GetExtension(file_stream.Name);
-			Console.WriteLine(extension);
 
-            string[] video_extensions = { ".avi", ".mp2", ".mp4" };
+            // Get extension of object
+            int position = embeddedObjectPart.Uri.ToString().LastIndexOf(".");
+			string extension = embeddedObjectPart.Uri.ToString().Substring(position);
+
+            // Identifiable extensions
 			string[] audio_extensions = { ".flac", ".mp3", ".ogg" };
+			string[] video_extensions = { ".avi", ".mp2", ".mp4" };
 
-			if (video_extensions.Contains(extension))
+			// Identify
+            if (audio_extensions.Contains(extension))
+			{
+				AV_type = "audio";
+			}
+			else if (video_extensions.Contains(extension))
             {
                 AV_type = "video";
             }
-            else if (audio_extensions.Contains(extension))
-            {
-				AV_type = "audio";
-			}
-            
-            return AV_type;
+
+			return AV_type;
 		}
 
 		// Convert embedded audio and video
