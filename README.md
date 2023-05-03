@@ -8,7 +8,7 @@ A Windows console application made in C#. It is a prototype project for digital 
 * For C# library, see repository **[Archsheerary](https://github.com/Asbjoedt/Archsheerary)**
 * For simple archival workflow conversion tool, see repository **[convert-spreadsheet](https://github.com/Asbjoedt/convert-spreadsheet)**
 * For simple archival workflow validation tool, see repository **[validate-spreadsheet](https://github.com/Asbjoedt/validate-spreadsheet)**
-* For OpenDocument Spreadsheets and Apache POI tool, see repository **[ODS-ArchivalRequirements](https://github.com/Asbjoedt/ODS-ArchivalRequirements)**
+* For OpenDocument Spreadsheets tool, see repository **[ODS-Archiving](https://github.com/Asbjoedt/ODS-Archiving)**
 
 :rainbow_flag: **General**
 
