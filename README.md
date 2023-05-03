@@ -47,15 +47,18 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove cell formula references to other spreadsheets but keep cell values
 * Remove data connections but keep cell values
 * Remove RealTimeData (RTD) functions but keep cell values
-* Remove printer settings
-* Remove absolute path to local directory
 * Remove external object references but copy objects to new subfolder
-* Make first sheet active
-* Convert embedded images to .tiff
+* Convert embedded images to .tif
 * Extract all embedded objects to new subfolder
-* Warn if no cell values detected, process manually
+* Warn if no cell values or objects detected
 * Inform if metadata detected
 * Inform if hyperlinks detected
+* Full compliance option involves
+	* Remove printer settings
+	* Remove absolute path to local directory
+	* Make first sheet active
+	* Extract metadata but keep in spreadsheet
+	* Extract hyperlinks but keep in spreadsheet
 * Calculate file checksums
 * Zip the archive directory
 
@@ -105,13 +108,17 @@ Create your arguments from the following list:
 ```
 --recurse
 ```
+**Change data to meet all archival requirements** (optional, by default false)
+```
+--fullcompliance
+```
 **Example of full usage**
 ```
-.\CLISC.exe --function CountConvertCompareArchive --inputdir "c:\folder" --outputdir "c:\folder" --recurse
+.\CLISC.exe --function CountConvertCompareArchive --inputdir "c:\folder" --outputdir "c:\folder" --recurse --fullcompliance
 ```
 **or shorter**
 ```
-.\CLISC.exe -f CountConvertCompareArchive -i "c:\folder" -o "c:\folder" -r
+.\CLISC.exe -f CountConvertCompareArchive -i "c:\folder" -o "c:\folder" -r -c
 ```
 
 If you want to test the application, a sample dataset is provided [here](https://github.com/Asbjoedt/CLISC/blob/master/Docs/SampleData.zip).

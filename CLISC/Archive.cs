@@ -10,7 +10,7 @@ namespace CLISC
 {
     public partial class Archive
     {
-        public static int cellvalue_files = 0;
+        public static int content_files = 0;
         public static int metadata_files = 0;
         public static int conformance_files = 0;
         public static int connections_files = 0;
@@ -61,7 +61,7 @@ namespace CLISC
 
             // Open CSV file to log archival requirements results
             var csv3 = new StringBuilder();
-            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Cell Values;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Embedded Objects;Active Sheet;Absolute Path;Metadata;Hyperlinks");
+            var newLine3_1 = string.Format($"Original Filepath;XLSX Convert Filepath;Content;Conformance;Data Connections;External Cell References;RTD Functions;Printersettings;External Objects;Embedded Objects;Active Sheet;Absolute Path;Metadata;Hyperlinks");
             csv3.AppendLine(newLine3_1);
 
             foreach (fileIndex entry in File_List) // Loop through each file
@@ -87,7 +87,7 @@ namespace CLISC
 
                         // Check .xlsx for archival requirements
                         Archive_Requirements arc = new Archive_Requirements();
-                        List<Archive_Requirements> arcReq = arc.Check_XLSX_Requirements(xlsx_conv_filepath);
+                        List<Archive_Requirements> arcReq = arc.Check_XLSX_Requirements(xlsx_conv_filepath, fullcompliance);
 
                         // Change .xlsx according to archival requirements
                         arc.Change_XLSX_Requirements(arcReq, xlsx_conv_filepath, fullcompliance);
@@ -98,9 +98,9 @@ namespace CLISC
                         // Register and count occurences of detected breaches of archival requirements
                         foreach (var item in arcReq)
                         {
-                            if (item.Data == true)
+                            if (item.Content == false)
                             {
-                                cellvalue_files++;
+                                content_files++;
                                 archive_req_accept = false;
                             }
                             if (item.Conformance == true)
@@ -149,7 +149,7 @@ namespace CLISC
                             }
 
                             // Write information to CSV archival requirements log
-                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Data};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.EmbedObj};{item.ActiveSheet};{item.AbsolutePath};{item.Metadata};{item.Hyperlinks}");
+                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Content};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.EmbedObj};{item.ActiveSheet};{item.AbsolutePath};{item.Metadata};{item.Hyperlinks}");
                             csv3.AppendLine(newLine3_2);
                         }
 

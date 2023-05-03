@@ -13,7 +13,7 @@ namespace CLISC
 {
     public partial class Archive_Requirements
     {
-        public bool Data { get; set; } = false;
+        public bool Content { get; set; } = false;
 
         public bool Metadata { get; set; } = false;
 
@@ -38,9 +38,9 @@ namespace CLISC
         public bool AbsolutePath { get; set; } = false;
 
         // Perform check of archival requirements
-        public List<Archive_Requirements> Check_XLSX_Requirements(string filepath)
+        public List<Archive_Requirements> Check_XLSX_Requirements(string filepath, bool fullcompliance)
         {
-            bool data = Check_Value(filepath);
+            bool content = Check_ContentExists(filepath);
             bool metadata = Check_Metadata(filepath);
             bool conformance = Check_Conformance(filepath);
             int connections = Check_DataConnections(filepath);
@@ -55,39 +55,45 @@ namespace CLISC
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Data = data, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, Metadata = metadata, EmbedObj = embedobj, Hyperlinks = hyperlinks});
+            Arc_Req.Add(new Archive_Requirements { Content = content, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, Metadata = metadata, EmbedObj = embedobj, Hyperlinks = hyperlinks});
             return Arc_Req;
         }
 
-        // Check for any values by checking if sheets and cell values exist
-        public bool Check_Value(string filepath)
+        // Check for any cell values or objects
+        public bool Check_ContentExists(string filepath)
         {
-            bool nocellvalues = true;
+            bool contentExists = false;
 
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 if (spreadsheet.WorkbookPart.WorksheetParts != null)
                 {
-                    IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
+					// Check cell values
+					IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
                     foreach (WorksheetPart part in worksheetparts)
                     {
                         Worksheet worksheet = part.Worksheet;
-                        IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
-                        if (rows.Count() > 0) // If any rows exist, this means cells exist
+                        IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>();
+						if (rows.Count() > 0) // If any rows exist, this means cells exist
                         {
-                            nocellvalues = false;
+                            contentExists = true;
                         }
                     }
-                }
+					// Check objects
+					if (spreadsheet.DataParts != null)
+					{
+						contentExists = true;
+					}
+				}
             }
 
             // Inform user
-            if (nocellvalues == true)
+            if (contentExists == false)
             {
-                Console.WriteLine("--> Check: No cell values detected");
+                Console.WriteLine("--> Check: No cell values or objects detected");
             }
-            return nocellvalues;
+            return contentExists;
         }
 
         // Check for Strict conformance
