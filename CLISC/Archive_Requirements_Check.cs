@@ -1,13 +1,6 @@
-﻿using System;
-using System.IO;
-using System.IO.Packaging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO.Packaging;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Office2013.ExcelAc;
 
 namespace CLISC
 {
@@ -75,24 +68,19 @@ namespace CLISC
                     {
                         Worksheet worksheet = part.Worksheet;
                         IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>();
-						if (rows.Count() > 0) // If any rows exist, this means cells exist
-                        {
+						if (rows.Count() > 0)
+                            // If any rows exist, then cells must exist
                             contentExists = true;
-                        }
                     }
 					// Check objects
 					if (spreadsheet.DataParts != null)
-					{
-						contentExists = true;
-					}
+                        contentExists = true;
 				}
             }
 
             // Inform user
             if (contentExists == false)
-            {
                 Console.WriteLine("--> Check: No cell values or objects detected");
-            }
             return contentExists;
         }
 
@@ -106,24 +94,16 @@ namespace CLISC
             {
                 Workbook workbook = spreadsheet.WorkbookPart.Workbook;
                 if (workbook.Conformance == null || workbook.Conformance == "transitional")
-                {
                     conformance = true;
-                }
                 else if (workbook.Conformance == "strict")
-                {
                     conformance = false;
-                }
             }
 
             // Inform user
             if (conformance == false)
-            {
                 Console.WriteLine("--> Check: Strict conformance detected");
-            }
             else if (conformance == true)
-            {
                 Console.WriteLine("--> Check: Transitional conformance detected");
-            }
             return conformance;
         }
 
@@ -137,16 +117,12 @@ namespace CLISC
             {
                 ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
                 if (conn != null)
-                {
                     conn_count = conn.Connections.Count();
-                }
             }
 
             // Inform user
             if (conn_count > 0)
-            {
                 Console.WriteLine($"--> Check: {conn_count} data connections detected");
-            }
             return conn_count;
         }
 
@@ -176,9 +152,7 @@ namespace CLISC
                                     string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
                                     string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
                                     if (hit == "[" || hit2 == "'[")
-                                    {
                                         ext_cellrefs_count++;
-                                    }
                                 }
                             }
                         }
@@ -188,9 +162,7 @@ namespace CLISC
 
             // Inform user
             if (ext_cellrefs_count > 0)
-            {
                 Console.WriteLine($"--> Check: {ext_cellrefs_count} external cell references detected");
-            }
             return ext_cellrefs_count;
         }
 
@@ -204,16 +176,12 @@ namespace CLISC
             {
                 IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
                 foreach (ExternalWorkbookPart extWbPart in extWbParts)
-                {
                     extobj_count++;
-                }
             }
 
             // Inform user
             if (extobj_count > 0)
-            {
                 Console.WriteLine($"--> Check: {extobj_count} external objects detected");
-            }
             return extobj_count;
         }
 
@@ -352,9 +320,7 @@ namespace CLISC
 
             // Inform user
             if (hyperlinks_count > 0)
-            {
                 Console.WriteLine($"--> Check: {hyperlinks_count} hyperlinks detected");
-            }
             return hyperlinks_count;
         }
 
@@ -380,9 +346,7 @@ namespace CLISC
 
             // Inform user
             if (printersettings_count > 0)
-            {
                 Console.WriteLine($"--> Check: {printersettings_count} printer settings detected");
-            }
             return printersettings_count;
         }
 
@@ -401,21 +365,15 @@ namespace CLISC
                     {
                         WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
                         if (workbookView.ActiveTab != null)
-                        {
                             if (workbookView.ActiveTab.Value > 0)
-                            {
                                 activeSheet = true;
-                            }
-                        }
                     }
                 }
             }
 
             // Inform user
             if (activeSheet == true)
-            {
                 Console.WriteLine("--> Check: First sheet is not active detected");
-            }
             return activeSheet;
         }
 
@@ -428,16 +386,12 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
                 if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
-                {
                     absolutepath = true;
-                }
             }
 
             // Inform user
             if (absolutepath == true)
-            {
                 Console.WriteLine("--> Check: Absolute path to local directory detected");
-            }
             return absolutepath;
         }
 
@@ -452,40 +406,24 @@ namespace CLISC
                 PackageProperties property = spreadsheet.PackageProperties;
 
                 if (property.Creator != null)
-                {
                     metadata = true;
-                }
                 if (property.Title != null)
-                {
                     metadata = true;
-                }
                 if (property.Subject != null)
-                {
                     metadata = true;
-                }
                 if (property.Description != null)
-                {
                     metadata = true;
-                }
                 if (property.Keywords != null)
-                {
                     metadata = true;
-                }
                 if (property.Category != null)
-                {
                     metadata = true;
-                }
                 if (property.LastModifiedBy != null)
-                {
                     metadata = true;
-                }
             }
 
             // Inform user
             if (metadata == true)
-            {
                 Console.WriteLine("--> Check: File property information detected");
-            }
             return metadata;
         }
 
@@ -496,15 +434,11 @@ namespace CLISC
 
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
-            {
                 readOnlyRecommended = spreadsheet.Features.IsReadOnly;
-            }
 
             // Inform user
             if (readOnlyRecommended == true)
-            {
                 Console.WriteLine("--> Check: Read only recommended detected");
-            }
             return readOnlyRecommended;
         }
     }

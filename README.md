@@ -6,9 +6,9 @@ A Windows console application made in C#. It is a prototype project for digital 
 * For more information, see the **[wiki](https://github.com/Asbjoedt/CLISC/wiki)**
 * For graphical user interface, see repository **[GUISC](https://github.com/Asbjoedt/GUISC)**
 * For C# library, see repository **[Archsheerary](https://github.com/Asbjoedt/Archsheerary)**
+* For OpenDocument Spreadsheets java tool, see repository **[ODS-Archiving](https://github.com/Asbjoedt/ODS-Archiving)**
 * For simple archival workflow conversion tool, see repository **[convert-spreadsheet](https://github.com/Asbjoedt/convert-spreadsheet)**
 * For simple archival workflow validation tool, see repository **[validate-spreadsheet](https://github.com/Asbjoedt/validate-spreadsheet)**
-* For OpenDocument Spreadsheets tool, see repository **[ODS-Archiving](https://github.com/Asbjoedt/ODS-Archiving)**
 
 :rainbow_flag: **General**
 
@@ -25,10 +25,10 @@ Count number of spreadsheets in directory by file format.
 :magic_wand: **Convert**
 
 Convert any spreadsheet[^1][^2] to .xlsx (Transitional conformance).
-* Office Open XML (Excel) with extensions .xlsb, .xlsm, .xltm, .xltx and .xlsx with Strict conformance
-* Legacy Microsoft Excel with extensions .xls and .xlt
-* OpenDocument with extensions .fods, .ods and .ots
-* Apple Numbers with extension .numbers
+* Office Open XML (Excel) with extensions: .xlsb, .xlsm, .xltm, .xltx, .xlsx with Strict conformance
+* Legacy Microsoft Excel with extensions: .xls, .xlt
+* OpenDocument with extensions: .fods, .ods, .ots
+* Apple Numbers with extension: .numbers
 
 :mag: **Compare**
 
@@ -75,9 +75,9 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 :warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
 * If you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
 
-:warning: **[ODF Validator 0.10.0](https://odftoolkit.org/conformance/ODFValidator.html)**
+:warning: **[ODF Validator 0.11.0](https://odftoolkit.org/conformance/ODFValidator.html)**
 * If you want to validate .ods spreadsheets
-* You need to install program in "C:\Program Files\ODF Validator" and name program "odfvalidator-0.10.0-jar-with-dependencies.jar", or create environment variable "ODFValidator" with path to your installation
+* You need to install program in "C:\Program Files\ODF Validator" and name program "odfvalidator-0.11.0-jar-with-dependencies.jar", or create environment variable "ODFValidator" with path to your installation
 * ODF Validator needs latest version of Java Development Kit installed
 
 ## How to use
@@ -132,7 +132,7 @@ The following packages and software are used under license in CLISC. [Read more]
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
 * [Magick.Net](https://github.com/dlemstra/Magick.NET), Apache-2.0 license, copyright (c) Dirk Lemstra
 * [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), copyright (c) Microsoft Corporation
-* [ODF Validator 0.10.0](https://odftoolkit.org/conformance/ODFValidator.html), Apache License, [copyright info](https://github.com/tdf/odftoolkit/blob/master/NOTICE)
+* [ODF Validator 0.11.0](https://odftoolkit.org/conformance/ODFValidator.html), Apache License, [copyright info](https://github.com/tdf/odftoolkit/blob/master/NOTICE)
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, copyright (c) Microsoft Corporation
 
 [^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).

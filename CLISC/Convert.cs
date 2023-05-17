@@ -114,9 +114,7 @@ namespace CLISC
                     long length = new System.IO.FileInfo(copy_filepath).Length;
                     length = length / 1000000;
                     if (length >= 150) // Set limit, currently 150MB
-                    {
                         throw new System.Data.ConstraintException("Filesize exceeded");
-                    }
 
                     // Change conversion method based on file extension
                     switch (org_extension)
@@ -237,16 +235,12 @@ namespace CLISC
                     {
                         // Inform user of error
                         if (error_message == null)
-                        {
                             error_message = error_messages[1];
-                        }
                         Console.WriteLine($"--> {error_message}");
 
                         // Delete converted spreadsheet (it has errors), if it exists
                         if (File.Exists(output_filepath))
-                        {
                             File.Delete(output_filepath);
-                        }
                     }
                 }
 

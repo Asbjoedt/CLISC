@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.IO.Enumeration;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.ComponentModel;
 
 namespace CLISC
@@ -48,14 +43,10 @@ namespace CLISC
                         int return_code;
 
                         if (function == "CountConvertCompareArchive")
-                        {
                             // Compare workbooks using external app Beyond Compare 4
                             return_code = Compare_Workbook(copy_filepath, xlsx_filepath);
-                        }
                         else
-                        {
                             return_code = Compare_Workbook(org_filepath, xlsx_filepath);
-                        }
 
                         if (return_code == 0 || return_code == 1 || return_code == 2)
                         {

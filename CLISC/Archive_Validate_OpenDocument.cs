@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CLISC
 {
@@ -22,21 +15,18 @@ namespace CLISC
                 Process app = new Process();
                 app.StartInfo.UseShellExecute = false;
                 app.StartInfo.FileName = "javaw";
-                string normal_dir = "C:\\Program Files\\ODF Validator\\odfvalidator-0.10.0-jar-with-dependencies.jar";
-                string? environ_dir = null;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // If app is run on Windows
-                {
-                    environ_dir = Environment.GetEnvironmentVariable("ODFValidator");
-                }
-                if (environ_dir != null)
-                {
-                    app.StartInfo.Arguments = $"-jar \"{environ_dir}\" \"{filepath}\"";
-                }
+
+                string optionone = "-Djavax.xml.validation.SchemaFactory:<http://relaxng.org/ns/structure/1.0>=org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl";
+                string optiontwo = "-Dorg.iso_relax.verifier.VerifierFactoryLoader=com.sun.msv.verifier.jarv.FactoryLoaderImpl";
+
+                // Use environment variable or direct path
+                string? dir = Environment.GetEnvironmentVariable("ODFValidator");
+                if (dir != null)
+                    app.StartInfo.Arguments = "-jar " + optionone + " " + optiontwo + " " + dir;
                 else
-                {
-                    app.StartInfo.Arguments = $"-jar \"{normal_dir}\" \"{filepath}\"";
-                }
-                app.Start();
+                    app.StartInfo.Arguments = "-jar " + optionone + " " + optiontwo + " \"C:\\Program Files\\ODF Validator\\odfvalidator-0.11.0-jar-with-dependencies.jar\"";
+
+				app.Start();
                 app.WaitForExit();
                 int return_code = app.ExitCode;
                 app.Close();
@@ -44,17 +34,13 @@ namespace CLISC
                 // Inform user of validation results
                 if (return_code == 0)
                 {
-                    Console.WriteLine("--> Validate: File format is invalid. Spreadsheet has no cell values");
-                }
+					valid = true;
+					Console.WriteLine("--> Validate: File format is valid");
+				}
                 if (return_code == 1)
-                {
                     Console.WriteLine("--> Validate: File format validation could not be completed");
-                }
                 if (return_code == 2)
-                {
-                    Console.WriteLine("--> Validate: File format is valid");
-                    valid = true;
-                }
+					Console.WriteLine("--> Validate: File format is invalid");
                 return valid;
             }
             catch (Win32Exception)

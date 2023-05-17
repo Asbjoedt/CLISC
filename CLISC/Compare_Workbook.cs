@@ -20,9 +20,7 @@ namespace CLISC
 			// Use environment variables
 			string? dir = Environment.GetEnvironmentVariable("BeyondCompare");
 			if (dir != null)
-			{
 				app.StartInfo.FileName = dir;
-			}
 
             app.StartInfo.Arguments = $"\"{org_filepath}\" \"{conv_filepath}\" /silent /qc=<crc> /ro";
             app.Start();

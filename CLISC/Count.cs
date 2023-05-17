@@ -1,10 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
+﻿using System.Text;
 
 namespace CLISC
 {
@@ -27,11 +21,9 @@ namespace CLISC
             // Search recursively or not
             SearchOption searchoption = SearchOption.TopDirectoryOnly;
             if (recurse == true)
-            {
-                searchoption = SearchOption.AllDirectories;
-            }
+				searchoption = SearchOption.AllDirectories;
 
-            foreach (fileFormatIndex fileformat in fileformats)
+			foreach (fileFormatIndex fileformat in fileformats)
             {
                 // Count
                 int total = count.GetFiles($"*{fileformat.Extension}", searchoption).Length;
@@ -44,13 +36,9 @@ namespace CLISC
                     int transitional_total = xlsx_total - strict_total;
 
                     if (fileformat.Conformance == "transitional")
-                    {
                         total = transitional_total;
-                    }
                     else if (fileformat.Conformance == "strict")
-                    {
                         total = strict_total;
-                    }
                 }
 
                 // Change value in list
@@ -61,9 +49,7 @@ namespace CLISC
 
                 // Subtract if OOXML conformance was counted
                 if (fileformat.Conformance == "transitional" || fileformat.Conformance == "strict")
-                {
                     numTOTAL = numTOTAL - total;
-                }
             }
 
             // Inform user if no spreadsheets identified
@@ -81,13 +67,9 @@ namespace CLISC
                 foreach (fileFormatIndex fileformat in fileformats)
                 {
                     if (fileformat.Conformance == null)
-                    {
                         Console.WriteLine($"{fileformat.Count} {fileformat.Extension} - {fileformat.Description}");
-                    }
                     else if (fileformat.Conformance != null)
-                    {
                         Console.WriteLine($"--> {fileformat.Count} {fileformat.Extension} have {fileformat.Conformance} conformance");
-                    }
                 }
                 Console.WriteLine($"{numTOTAL} spreadsheets in total");
 

@@ -179,9 +179,7 @@ namespace CLISC
                                 foreach (TablePart tablePart in tableParts)
                                 {
                                     if (idPartPair.RelationshipId == tablePart.Id)
-                                    {
                                         tablePart.Remove();
-                                    }
                                 }
                             }
                         }
@@ -196,9 +194,7 @@ namespace CLISC
                     foreach (Map map in maps)
                     {
                         if (map.DataBinding != null)
-                        {
                             map.DataBinding.Remove();
-                        }
                     }
                 }
             }
@@ -339,9 +335,7 @@ namespace CLISC
                         foreach (var element in elements)
                         {
                             if (element.LocalName == "externalBook")
-                            {
                                 spreadsheet.WorkbookPart.DeletePart(extpart);
-                            }
                         }
                     }
                 }
@@ -358,9 +352,7 @@ namespace CLISC
                     foreach (DefinedName definedName in definedNamesList)
                     {
                         if (definedName.InnerXml.StartsWith("["))
-                        {
                             definedName.Remove();
-                        }
                     }
                 }
             }
@@ -408,9 +400,7 @@ namespace CLISC
             }
             // Delete new subfolder, if no objects were copied to it
             if (Directory.GetFiles(new_folder).Length == 0)
-            {
                 Directory.Delete(new_folder);
-            }
             return System.Tuple.Create(success, fail);
         }
 

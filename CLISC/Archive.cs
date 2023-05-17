@@ -104,52 +104,30 @@ namespace CLISC
                                 archive_req_accept = false;
                             }
                             if (item.Conformance == true)
-                            {
                                 conformance_files++;
-                            }
                             if (item.Connections > 0)
-                            {
-                                connections_files++;
-                            }
-                            if (item.CellReferences > 0)
-                            {
-                                cellreferences_files++;
-                            }
-                            if (item.RTDFunctions > 0)
-                            {
-                                rtdfunctions_files++;
-                            }
-                            if (item.PrinterSettings > 0)
-                            {
-                                printersettings_files++;
-                            }
-                            if (item.ExternalObj > 0)
-                            {
-                                extobj_files++;
-                            }
-                            if (item.EmbedObj > 0)
-                            {
-                                embedobj_files++;
-                            }
-                            if (item.ActiveSheet == true)
-                            {
-                                activesheet_files++;
-                            }
-                            if (item.AbsolutePath == true)
-                            {
-                                absolutepath_files++;
-                            }
-                            if (item.Metadata == true)
-                            {
-                                metadata_files++;
-                            }
-                            if (item.Hyperlinks > 0)
-                            {
-                                hyperlinks_files++;
-                            }
+								connections_files++;
+							if (item.CellReferences > 0)
+								cellreferences_files++;
+							if (item.RTDFunctions > 0)
+								rtdfunctions_files++;
+							if (item.PrinterSettings > 0)
+								printersettings_files++;
+							if (item.ExternalObj > 0)
+								extobj_files++;
+							if (item.EmbedObj > 0)
+								embedobj_files++;
+							if (item.ActiveSheet == true)
+								activesheet_files++;
+							if (item.AbsolutePath == true)
+								absolutepath_files++;
+							if (item.Metadata == true)
+								metadata_files++;
+							if (item.Hyperlinks > 0)
+								hyperlinks_files++;
 
-                            // Write information to CSV archival requirements log
-                            var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Content};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.EmbedObj};{item.ActiveSheet};{item.AbsolutePath};{item.Metadata};{item.Hyperlinks}");
+							// Write information to CSV archival requirements log
+							var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{item.Content};{item.Conformance};{item.Connections};{item.CellReferences};{item.RTDFunctions};{item.PrinterSettings};{item.ExternalObj};{item.EmbedObj};{item.ActiveSheet};{item.AbsolutePath};{item.Metadata};{item.Hyperlinks}");
                             csv3.AppendLine(newLine3_2);
                         }
 
