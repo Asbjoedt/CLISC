@@ -1,4 +1,6 @@
 ﻿using System.IO.Packaging;
+using DocumentFormat.OpenXml.Office2013.ExcelAc;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
@@ -385,7 +387,16 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
+                // DOES NOT WORK - BUG IN OPEN XML SDK
+                // if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
+                    // absolutepath = true;
+
+                // ALTERNATIVE SOLUTION FOUND BY MIKE BOWEN
+                var alternateContent = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AlternateContent>();
+                var choice = alternateContent.GetFirstChild<AlternateContentChoice>();
+                var absPath = choice.GetFirstChild<AbsolutePath>();
+                var url = absPath.Url;
+                if (url != null)
                     absolutepath = true;
             }
 

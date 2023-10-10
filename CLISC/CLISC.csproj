@@ -27,7 +27,7 @@
     <PackageReference Include="DocumentFormat.OpenXml.Features" Version="2.20.0" />
     <PackageReference Include="DocumentFormat.OpenXml.Linq" Version="2.20.0" />
     <PackageReference Include="FFMpegCore" Version="5.1.0" />
-    <PackageReference Include="Magick.NET-Q16-x64" Version="13.1.0" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="13.3.0" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
   </ItemGroup>
 

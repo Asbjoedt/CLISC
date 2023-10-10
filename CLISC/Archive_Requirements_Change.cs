@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2013.ExcelAc;
+using DocumentFormat.OpenXml;
 
 namespace CLISC
 {
@@ -445,19 +446,25 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
-                {
-                    AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
-                    absPath.Remove();
-                    success = true;
-                }
+                // DOES NOT WORK - BUG IN OPEN XML SDK
+                // AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
+                // absPath.Remove();
+                // success = true;
+
+                // ALTERNATIVE SOLUTION FOUND BY MIKE BOWEN
+                var alternateContent = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AlternateContent>();
+                var choice = alternateContent.GetFirstChild<AlternateContentChoice>();
+                var absPath = choice.GetFirstChild<AbsolutePath>();
+                var url = absPath.Url;
+                url.Value = null;
+                success = true;
             }
             return success;
         }
 
         // Remove metadata in file properties
         public int Remove_Metadata(string filepath)
-        {
+        { 
             string folder = System.IO.Path.GetDirectoryName(filepath);
             int success = 0;
 
