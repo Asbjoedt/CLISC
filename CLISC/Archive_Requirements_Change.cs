@@ -444,20 +444,15 @@ namespace CLISC
         {
             bool success = false;
 
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true, new OpenSettings()
             {
-                // DOES NOT WORK - BUG IN OPEN XML SDK
-                // AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AbsolutePath>();
-                // absPath.Remove();
-                // success = true;
-
-                // ALTERNATIVE SOLUTION FOUND BY MIKE BOWEN
-                var alternateContent = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AlternateContent>();
-                var choice = alternateContent.GetFirstChild<AlternateContentChoice>();
-                var absPath = choice.GetFirstChild<AbsolutePath>();
-                var url = absPath.Url;
-                url.Value = null;
+                MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(MarkupCompatibilityProcessMode.ProcessAllParts, FileFormatVersions.Office2013)
+            }))
+            {
+                AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.AbsolutePath;
+                absPath.Remove();
                 success = true;
+                spreadsheet.Dispose();
             }
             return success;
         }

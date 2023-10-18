@@ -385,18 +385,12 @@ namespace CLISC
             bool absolutepath = false;
 
             // Perform check
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false, new OpenSettings()
             {
-                // DOES NOT WORK - BUG IN OPEN XML SDK
-                // if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
-                    // absolutepath = true;
-
-                // ALTERNATIVE SOLUTION FOUND BY MIKE BOWEN
-                var alternateContent = spreadsheet.WorkbookPart.Workbook.GetFirstChild<AlternateContent>();
-                var choice = alternateContent.GetFirstChild<AlternateContentChoice>();
-                var absPath = choice.GetFirstChild<AbsolutePath>();
-                var url = absPath.Url;
-                if (url != null)
+                MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(MarkupCompatibilityProcessMode.ProcessAllParts, FileFormatVersions.Office2013)
+            }))
+            {
+                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
                     absolutepath = true;
             }
 
