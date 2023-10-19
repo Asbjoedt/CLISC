@@ -452,7 +452,7 @@ namespace CLISC
                 AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.AbsolutePath;
                 absPath.Remove();
                 success = true;
-                spreadsheet.Dispose();
+                spreadsheet.Save(); // For some reason we have to save the spreadsheet even though we are "using" the spreadsheet
             }
             return success;
         }
