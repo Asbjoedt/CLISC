@@ -5,13 +5,66 @@ namespace CLISC
 {
     public partial class Count
     {
-        public static int numCONFORM_fail = 0;
-
         // Count XLSX Strict conformance
-        public int Count_OOXML_Conformance(string inputdir, bool recurse, string conformance)
+        public Tuple<int, int, int> Count_OOXML_Conformance(string inputdir, bool recurse)
         {
-            int count = 0;
-            string[] xlsx_files = {""};
+            int transitional_count = 0;
+            int strict_count = 0;
+            int unknown_count = 0;
+            string[] xlsx_files = { "" };
+
+            // Search recursively or not
+            SearchOption searchoption = SearchOption.TopDirectoryOnly;
+            if (recurse == true)
+            {
+                searchoption = SearchOption.AllDirectories;
+            }
+
+            // Create index of xlsx files
+            xlsx_files = Directory.GetFiles(inputdir, "*.xlsx", searchoption);
+
+            try
+            {
+                foreach (var xlsx in xlsx_files)
+                {
+                    using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false))
+                    {
+                        bool? strict = spreadsheet.StrictRelationshipFound;
+                        if (strict == true)
+                        {
+                            strict_count++;
+                        }
+                    }
+                }
+            }
+            // Catch exceptions, when spreadsheet cannot be opened due to password protection or corruption
+            catch (InvalidDataException)
+            {
+                unknown_count++;
+            }
+            catch (OpenXmlPackageException)
+            {
+                unknown_count++;
+            }
+            catch (System.IO.FileFormatException)
+            {
+                unknown_count++;
+            }
+
+            // Calculate transitional
+            transitional_count = xlsx_files.Count() - strict_count - unknown_count;
+
+            // Return counts
+            return System.Tuple.Create(transitional_count, strict_count, unknown_count);
+        }
+
+        // Alternative method for counting OOXML conformance
+        public Tuple<int, int, int> Count_OOXML_Conformance_Alt(string inputdir, bool recurse, string conformance)
+        {
+            int transitional_count = 0;
+            int strict_count = 0;
+            int unknown_count = 0;
+            string[] xlsx_files = { "" };
 
             // Search recursively or not
             SearchOption searchoption = SearchOption.TopDirectoryOnly;
@@ -36,7 +89,7 @@ namespace CLISC
                             Workbook workbook = spreadsheet.WorkbookPart.Workbook;
                             if (workbook.Conformance == null || workbook.Conformance == "transitional")
                             {
-                                count++;
+                                transitional_count++;
                             }
                         }
                     }
@@ -46,12 +99,13 @@ namespace CLISC
                 {
                     foreach (var xlsx in xlsx_files)
                     {
-                        SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
-                        bool? strict = spreadsheet.StrictRelationshipFound;
-                        spreadsheet.Close();
-                        if (strict == true)
+                        using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false))
                         {
-                            count++;
+                            bool? strict = spreadsheet.StrictRelationshipFound;
+                            if (strict == true)
+                            {
+                                strict_count++;
+                            }
                         }
                     }
                 }
@@ -61,56 +115,22 @@ namespace CLISC
             // Catch exceptions, when spreadsheet cannot be opened due to password protection or corruption
             catch (InvalidDataException)
             {
-                numCONFORM_fail++;
+                unknown_count++;
             }
             catch (OpenXmlPackageException)
             {
-                numCONFORM_fail++;
+                unknown_count++;
             }
+            catch (System.IO.FileFormatException)
+            {
+                unknown_count++;
+            }
+
+            // Calculate transitional
+            transitional_count = xlsx_files.Count() - strict_count - unknown_count;
 
             // Return count
-            return count;
-        }
-
-        // Count Strict conformance
-        public int Count_Strict(string inputdir, bool recurse)
-        {
-            int count = 0;
-            string[] xlsx_files = { "" };
-
-            // Search recursively or not
-            SearchOption searchoption = SearchOption.TopDirectoryOnly;
-            if (recurse == true)
-            {
-                searchoption = SearchOption.AllDirectories;
-            }
-
-            // Create index of xlsx files
-            xlsx_files = Directory.GetFiles(inputdir, "*.xlsx", searchoption);
-
-            try
-            {
-                foreach (var xlsx in xlsx_files)
-                {
-                    SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(xlsx, false);
-                    bool? strict = spreadsheet.StrictRelationshipFound;
-                    spreadsheet.Close();
-                    if (strict == true)
-                    {
-                        count++;
-                    }
-                }
-            }
-            // Catch exceptions, when spreadsheet cannot be opened due to password protection or corruption
-            catch (InvalidDataException)
-            {
-                numCONFORM_fail++;
-            }
-            catch (OpenXmlPackageException)
-            {
-                numCONFORM_fail++;
-            }
-            return count;
+            return System.Tuple.Create(transitional_count, strict_count, unknown_count);
         }
     }
 }

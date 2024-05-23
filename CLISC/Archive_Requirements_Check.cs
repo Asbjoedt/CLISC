@@ -1,5 +1,4 @@
 ﻿using System.IO.Packaging;
-using DocumentFormat.OpenXml.Office2013.ExcelAc;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -312,10 +311,8 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<HyperlinkRelationship> hyperlinks = spreadsheet
-                    .GetAllParts()
-                    .SelectMany(p => p.HyperlinkRelationships)
-                    .ToList();
+                // Find all hyperlinks
+                List<HyperlinkRelationship> hyperlinks = spreadsheet.GetAllParts().SelectMany(p => p.HyperlinkRelationships).ToList();
 
                 hyperlinks_count = hyperlinks.Count;
             }
@@ -406,23 +403,24 @@ namespace CLISC
             bool metadata = false;
 
             // Perform check
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
+            using (Package package = Package.Open(filepath, FileMode.Open, FileAccess.ReadWrite))
             {
-                PackageProperties property = spreadsheet.PackageProperties;
+                // Read the properties of the file
+                System.IO.Packaging.PackageProperties properties = package.PackageProperties;
 
-                if (property.Creator != null)
+                if (properties.Creator != null)
                     metadata = true;
-                if (property.Title != null)
+                if (properties.Title != null)
                     metadata = true;
-                if (property.Subject != null)
+                if (properties.Subject != null)
                     metadata = true;
-                if (property.Description != null)
+                if (properties.Description != null)
                     metadata = true;
-                if (property.Keywords != null)
+                if (properties.Keywords != null)
                     metadata = true;
-                if (property.Category != null)
+                if (properties.Category != null)
                     metadata = true;
-                if (property.LastModifiedBy != null)
+                if (properties.LastModifiedBy != null)
                     metadata = true;
             }
 

@@ -459,93 +459,95 @@ namespace CLISC
         // Remove metadata in file properties
         public int Remove_Metadata(string filepath)
         { 
-            string folder = System.IO.Path.GetDirectoryName(filepath);
             int success = 0;
 
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            // Read the file package
+            using (Package package = Package.Open(filepath, FileMode.Open, FileAccess.ReadWrite))
             {
-                PackageProperties property = spreadsheet.PackageProperties;
+                // Read the properties of the file
+                System.IO.Packaging.PackageProperties properties = package.PackageProperties;
 
                 // Create metadata file
+                string folder = System.IO.Path.GetDirectoryName(filepath);
                 using (StreamWriter w = File.AppendText($"{folder}\\orgFile_Metadata.txt"))
                 {
                     w.WriteLine("---");
                     w.WriteLine("EXTRACTED METADATA");
                     w.WriteLine("---");
 
-                    if (property.Creator != null)
+                    if (properties.Creator != null)
                     {
                         // Write information to metadata file
-                        w.WriteLine($"CREATOR: {property.Creator}");
+                        w.WriteLine($"CREATOR: {properties.Creator}");
 
                         // Remove information
-                        property.Creator = null;
+                        properties.Creator = null;
 
                         // Add to success
                         success++;
                     }
-                    if (property.Title != null)
+                    if (properties.Title != null)
                     {
                         // Write information to metadata file
-                        w.WriteLine($"TITLE: {property.Title}");
+                        w.WriteLine($"TITLE: {properties.Title}");
 
                         // Remove information
-                        property.Title = null;
+                        properties.Title = null;
 
                         // Add to success
                         success++;
                     }
-                    if (property.Subject != null)
+                    if (properties.Subject != null)
                     {
                         // Write information to metadata file
-                        w.WriteLine($"SUBJECT: {property.Subject}");
+                        w.WriteLine($"SUBJECT: {properties.Subject}");
 
                         // Remove information
-                        property.Subject = null;
+                        properties.Subject = null;
 
                         // Add to success
                         success++;
                     }
-                    if (property.Description != null)
+                    if (properties.Description != null)
                     {
                         // Write information to metadata file
-                        w.WriteLine($"DESCRIPTION: {property.Description}");
+                        w.WriteLine($"DESCRIPTION: {properties.Description}");
 
                         // Remove information
-                        property.Description = null;
+                        properties.Description = null;
 
                         // Add to success
                         success++;
                     }
-                    if (property.Keywords != null)
+                    if (properties.Keywords != null)
                     {
                         // Write information to metadata file
-                        w.WriteLine($"KEYWORDS: {property.Keywords}");
+                        w.WriteLine($"KEYWORDS: {properties.Keywords}");
 
                         // Remove information
-                        property.Keywords = null;
+                        properties.Keywords = null;
 
                         // Add to success
                         success++;
                     }
-                    if (property.Category != null)
+                    if (properties.Category != null)
                     {
                         // Write information to metadata file
-                        w.WriteLine($"CATEGORY: {property.Category}");
+                        w.WriteLine($"CATEGORY: {properties.Category}");
 
                         // Remove information
-                        property.Category = null;
+                        properties.Category = null;
 
                         // Add to success
                         success++;
                     }
-                    if (property.LastModifiedBy != null)
+                    if (properties.LastModifiedBy != null)
                     {
                         // Write information to metadata file
-                        w.WriteLine($"LAST MODIFIED BY: {property.LastModifiedBy}");
+                        w.WriteLine($"LAST MODIFIED BY: {properties.LastModifiedBy}");
 
                         // Remove information
-                        property.LastModifiedBy = null;
+                        properties.LastModifiedBy = null;
 
                         // Add to success
                         success++;
@@ -558,17 +560,16 @@ namespace CLISC
         // Extract all cell hyperlinks to an external file
         public int Extract_Hyperlinks(string filepath)
         {
-            string folder = System.IO.Path.GetDirectoryName(filepath);
             int hyperlinks_count = 0;
 
+            // Read spreadsheet
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                List<HyperlinkRelationship> hyperlinks = spreadsheet
-                    .GetAllParts()
-                    .SelectMany(p => p.HyperlinkRelationships)
-                    .ToList();
+                // Find all hyperlinks
+                List<HyperlinkRelationship> hyperlinks = spreadsheet.GetAllParts().SelectMany(p => p.HyperlinkRelationships).ToList();
 
                 // Create metadata file
+                string folder = System.IO.Path.GetDirectoryName(filepath);
                 using (StreamWriter w = File.AppendText($"{folder}\\orgFile_Metadata.txt"))
                 {
                     w.WriteLine("---");
