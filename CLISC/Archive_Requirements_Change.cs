@@ -33,7 +33,7 @@ namespace CLISC
                 if (item.CellReferences > 0)
                 {
                     int success = Remove_ExternalCellReferences(filepath);
-                    Console.WriteLine($"--> Change: {success} cell references were removed");
+                    Console.WriteLine($"--> Change: {success} external cell references were removed");
                 }
                 if (item.RTDFunctions > 0)
                 {

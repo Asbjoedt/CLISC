@@ -236,7 +236,7 @@ namespace CLISC
                         // Inform user of error
                         if (error_message == null)
                             error_message = error_messages[1];
-                        Console.WriteLine($"--> {error_message}");
+                        Console.WriteLine($"--> Error: {error_message}");
 
                         // Delete converted spreadsheet (it has errors), if it exists
                         if (File.Exists(output_filepath))
