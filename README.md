@@ -1,4 +1,4 @@
-# CLISC
+# 🅒🅛🅘🅢🅒
 **Command Line Interface Spreadsheet Count, Convert, Compare & Archive**
 
 A Windows console application made in C#. It is a prototype project for digital archiving of spreadsheets.
