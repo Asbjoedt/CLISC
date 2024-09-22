@@ -68,7 +68,7 @@ namespace CLISC
             TimeSpan time = timer.Elapsed;
             string elapsedTime = String.Format($"{time:dd\\:hh\\:mm\\:ss} (days:hrs:min:sec)");
             Console.WriteLine("Total process time: " + elapsedTime);
-            Console.WriteLine("CLISC ended");
+            Console.WriteLine("CLISC ended appropriately");
             Console.WriteLine("---"); 
         }
     }
