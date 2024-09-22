@@ -78,6 +78,7 @@ namespace CLISC
 
                 if (File.Exists(xlsx_conv_filepath))
                 {
+                    System.Console.WriteLine(xlsx_conv_filepath);
                     try
                     {
                         // Inform user
@@ -153,6 +154,18 @@ namespace CLISC
                     {
                         xlsx_validity = "Invalid";
                         archive_req_accept = false;
+
+                        // Write to CSV archival requirements log
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};;;;;;;;;;;");
+                        csv3.AppendLine(newLine3_2);
+                    }
+                    catch (System.Runtime.InteropServices.COMException) // If Excel is not installed
+                    {
+                        xlsx_validity = "Archiving failed. Excel is most likely not installed. Unknown validity";
+                        archive_req_accept = false;
+
+                        // inform user
+                        System.Console.WriteLine("--> Archiving failed. Excel is most likely not installed");
 
                         // Write to CSV archival requirements log
                         var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};;;;;;;;;;;");
