@@ -28,6 +28,8 @@
     <PackageReference Include="FFMpegCore" Version="5.1.0" />
     <PackageReference Include="Magick.NET-Q16-x64" Version="14.2.0" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
