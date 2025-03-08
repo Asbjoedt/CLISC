@@ -35,7 +35,6 @@ namespace CLISC
         public List<Archive_Requirements> Check_XLSX_Requirements(string filepath, bool fullcompliance)
         {
             bool content = Check_ContentExists(filepath);
-            bool metadata = Check_Metadata(filepath);
             bool conformance = Check_Conformance(filepath);
             int connections = Check_DataConnections(filepath);
             int cellreferences = Check_ExternalCellReferences(filepath);
@@ -44,6 +43,7 @@ namespace CLISC
             int extobjects = Check_ExternalObjects(filepath);
             bool activesheet = Check_ActiveSheet(filepath);
             bool absolutepath = Check_AbsolutePath(filepath);
+            bool metadata = Check_Metadata(filepath);
             int embedobj = Check_EmbeddedObjects(filepath);
             int hyperlinks = Check_Hyperlinks(filepath);
 
