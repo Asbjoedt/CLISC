@@ -182,7 +182,6 @@ namespace CLISC
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
                     Console.WriteLine($"--> Copy saved to: {folder_number}\\1.ods");
                     Console.WriteLine($"--> Analyzing: {folder_number}\\1.ods");
-                    Console.WriteLine($"--> Archival requirements identical to {folder_number}\\1.xlsx");
 
                     // Make an .ods copy
                     Conversion con = new Conversion();

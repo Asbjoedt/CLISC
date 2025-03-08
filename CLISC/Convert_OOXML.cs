@@ -19,7 +19,7 @@ namespace CLISC
                 try
                 {
 					// Check for certain protection
-					if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null) // This line will throw NullReferebceException
+					if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null) // This line will throw NullReferenceException
 					{
 						throw new FileFormatException();
 					}

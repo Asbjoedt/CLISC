@@ -24,7 +24,7 @@ namespace CLISC
                 if (dir != null)
                     app.StartInfo.Arguments = "-jar " + optionone + " " + optiontwo + " " + dir;
                 else
-                    app.StartInfo.Arguments = "-jar " + optionone + " " + optiontwo + " \"C:\\Program Files\\ODF Validator\\odfvalidator-0.11.0-jar-with-dependencies.jar\"";
+                    app.StartInfo.Arguments = "-jar " + optionone + " " + optiontwo + " \"C:\\Program Files\\ODF Validator\\odfvalidator-0.12.0-jar-with-dependencies.jar\" " + filepath;
 
 				app.Start();
                 app.WaitForExit();

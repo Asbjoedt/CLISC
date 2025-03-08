@@ -75,9 +75,9 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 :warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
 * If you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
 
-:warning: **[ODF Validator 0.11.0](https://odftoolkit.org/conformance/ODFValidator.html)**
+:warning: **[ODF Validator 0.12.0](https://odftoolkit.org/conformance/ODFValidator.html)**
 * If you want to validate .ods spreadsheets
-* You need to install program in "C:\Program Files\ODF Validator" and name program "odfvalidator-0.11.0-jar-with-dependencies.jar", or create environment variable "ODFValidator" with path to your installation
+* You need to install program in "C:\Program Files\ODF Validator" and name program "odfvalidator-0.12.0-jar-with-dependencies.jar", or create environment variable "ODFValidator" with path to your installation
 * ODF Validator needs latest version of Java Development Kit installed
 
 ## How to use
@@ -133,7 +133,7 @@ The following packages and software are used under license in CLISC. [Read more]
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
 * [Magick.Net](https://github.com/dlemstra/Magick.NET), Apache-2.0 license, copyright (c) Dirk Lemstra
 * [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), copyright (c) Microsoft Corporation
-* [ODF Validator 0.11.0](https://odftoolkit.org/conformance/ODFValidator.html), Apache License, [copyright info](https://github.com/tdf/odftoolkit/blob/master/NOTICE)
+* [ODF Validator 0.12.0](https://odftoolkit.org/conformance/ODFValidator.html), Apache License, [copyright info](https://github.com/tdf/odftoolkit/blob/master/NOTICE)
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, copyright (c) Microsoft Corporation
 
 [^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
