@@ -5,11 +5,13 @@ namespace CLISC
     public partial class Count
     {
         // Public data types
-        public static int numTOTAL, numXLSX_Strict;
+        public static int numTOTAL;
 
         // Count spreadsheets
         public string Count_Spreadsheets(string inputdir, string outputdir, bool recurse)
         {
+            int numCONFORM_fail = 0;
+
             Console.WriteLine("COUNT");
             Console.WriteLine("---");
 
@@ -28,32 +30,34 @@ namespace CLISC
                 // Count
                 int total = count.GetFiles($"*{fileformat.Extension}", searchoption).Length;
 
-                // Detect OOXML conformance
+                // Handle XLSX and detect OOXML conformance
                 if (fileformat.Extension == ".xlsx")
                 {
-                    int xlsx_total = total;
-                    int strict_total = Count_Strict(inputdir, recurse);
-                    int transitional_total = xlsx_total - strict_total;
+                    Tuple<int, int, int> counted_OOXML_conformance = Count_OOXML_Conformance(inputdir, recurse);
 
                     if (fileformat.Conformance == "transitional")
-                        total = transitional_total;
+                        total = counted_OOXML_conformance.Item1;
                     else if (fileformat.Conformance == "strict")
-                        total = strict_total;
+                        total = counted_OOXML_conformance.Item2;
+                    else if (fileformat.Conformance == "unknown") 
+                    {
+                        total = counted_OOXML_conformance.Item3;
+                        numCONFORM_fail = counted_OOXML_conformance.Item3;
+                    }
                 }
 
-                // Change value in list
+                // Add counted value to the file format list
                 fileformat.Count = total;
 
-                // Create sum of all counts
-                numTOTAL = numTOTAL + total;
-
-                // Subtract if OOXML conformance was counted
-                if (fileformat.Conformance == "transitional" || fileformat.Conformance == "strict")
-                    numTOTAL = numTOTAL - total;
+                if (fileformat.Conformance == null)
+                {
+                    // Add counted value to sum of all files
+                    numTOTAL = numTOTAL + total;
+                }
             }
 
             // Inform user if no spreadsheets identified
-            if (numTOTAL == 0)
+            if (numTOTAL == 0 && numCONFORM_fail == 0)
             {
                 Console.WriteLine("No spreadsheets identified");
                 Console.WriteLine("CLISC ended");

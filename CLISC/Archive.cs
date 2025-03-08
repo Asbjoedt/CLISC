@@ -86,8 +86,10 @@ namespace CLISC
                         string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
                         Console.WriteLine($"--> Analyzing: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
-                        // Check .xlsx for archival requirements
+                        // Create archival requirements as a class object
                         Archive_Requirements arc = new Archive_Requirements();
+
+                        // Check .xlsx for archival requirements;
                         List<Archive_Requirements> arcReq = arc.Check_XLSX_Requirements(xlsx_conv_filepath, fullcompliance);
 
                         // Change .xlsx according to archival requirements

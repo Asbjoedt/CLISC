@@ -1,4 +1,4 @@
-# CLISC
+# 🅒🅛🅘🅢🅒
 **Command Line Interface Spreadsheet Count, Convert, Compare & Archive**
 
 A Windows console application made in C#. It is a prototype project for digital archiving of spreadsheets.
@@ -73,7 +73,8 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * You need to install program in its default directory, or create environment variable "LibreOffice" with path to your installation
 
 :warning: **[Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel)**
-* If you want to convert legacy Excel and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
+* If you want to convert legacy Excel spreadsheets and/or use the archiving method, which converts .xlsx conformance from Transitional to Strict
+* You need to install the program locally on your machine. Recommending Office Professional 2019
 
 :warning: **[ODF Validator 0.12.0](https://odftoolkit.org/conformance/ODFValidator.html)**
 * If you want to validate .ods spreadsheets

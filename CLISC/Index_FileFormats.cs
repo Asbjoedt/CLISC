@@ -47,11 +47,13 @@ namespace CLISC
             // XLSM
             list.Add(new fileFormatIndex() { Extension = ".xlsm", Extension_Upper = ".XLSM", Description = "Office Open XML Macro-Enabled Spreadsheet" });
             // XLSX - Transitional and Strict conformance
-            list.Add(new fileFormatIndex() { Extension = ".xlsx", Extension_Upper = ".XLSX", Description = "Office Open XML Spreadsheet (transitional and strict conformance)" });
+            list.Add(new fileFormatIndex() { Extension = ".xlsx", Extension_Upper = ".XLSX", Description = "Office Open XML Spreadsheet (transitional, strict and unknown conformance)" });
             // XLSX - Transitional conformance
             list.Add(new fileFormatIndex() { Extension = ".xlsx", Extension_Upper = ".XLSX", Description = "Office Open XML Spreadsheet (transitional conformance)", Conformance = "transitional" });
             // XLSX - Strict conformance
             list.Add(new fileFormatIndex() { Extension = ".xlsx", Extension_Upper = ".XLSX", Description = "Office Open XML Spreadsheet (strict conformance)", Conformance = "strict" });
+            // XLSX - Unknown conformance
+            list.Add(new fileFormatIndex() { Extension = ".xlsx", Extension_Upper = ".XLSX", Description = "Office Open XML Spreadsheet (strict conformance)", Conformance = "unknown" });
             // XLT
             list.Add(new fileFormatIndex() { Extension = ".xlt", Extension_Upper = ".XLT", Description = "Legacy Microsoft Excel Spreadsheet Template" });
             // XLTM
