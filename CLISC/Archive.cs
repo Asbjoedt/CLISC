@@ -78,6 +78,7 @@ namespace CLISC
 
                 if (File.Exists(xlsx_conv_filepath))
                 {
+                    System.Console.WriteLine(xlsx_conv_filepath);
                     try
                     {
                         // Inform user
@@ -160,6 +161,18 @@ namespace CLISC
                         var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};;;;;;;;;;;");
                         csv3.AppendLine(newLine3_2);
                     }
+                    catch (System.Runtime.InteropServices.COMException) // If Excel is not installed
+                    {
+                        xlsx_validity = "Archiving failed. Excel is most likely not installed. Unknown validity";
+                        archive_req_accept = false;
+
+                        // inform user
+                        System.Console.WriteLine("--> Archiving failed. Excel is most likely not installed");
+
+                        // Write to CSV archival requirements log
+                        var newLine3_2 = string.Format($"{org_filepath};{xlsx_conv_filepath};{xlsx_validity};;;;;;;;;;;");
+                        csv3.AppendLine(newLine3_2);
+                    }
 
                     // Calculate checksum
                     xlsx_conv_checksum = Calculate_MD5(xlsx_conv_filepath);
@@ -171,7 +184,6 @@ namespace CLISC
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
                     Console.WriteLine($"--> Copy saved to: {folder_number}\\1.ods");
                     Console.WriteLine($"--> Analyzing: {folder_number}\\1.ods");
-                    Console.WriteLine($"--> Archival requirements identical to {folder_number}\\1.xlsx");
 
                     // Make an .ods copy
                     Conversion con = new Conversion();

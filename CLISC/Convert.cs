@@ -35,7 +35,7 @@ namespace CLISC
         string? ods_conv_filename = null;
         string? ods_conv_filepath = null;
         static string? error_message = null;
-        static string[] error_messages = { "", "Spreadsheet cannot be read", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Filesize exceeds application limit" };
+        static string[] error_messages = { "", "Spreadsheet cannot be read or Excel is not installed", "Microsoft Excel Add-In file format cannot contain any cell values and is not converted", "Google Sheets are stored in the cloud and cannot be converted locally", "Apple Numbers file format is not supported", "Filesize exceeds application limit" };
 
         // Convert spreadsheets method
         public List<fileIndex> Convert_Spreadsheets(string function, string inputdir, bool recurse, string Results_Directory)
@@ -182,13 +182,13 @@ namespace CLISC
                     convert_success = false;
                     error_message = error_messages[1];
                 }
-                catch (Win32Exception) // If .LibreOffice is not installed
+                catch (Win32Exception) // If LibreOffice is not installed
                 {
                     numFAILED++;
                     convert_success = false;
                     error_message = error_messages[1];
                 }
-                catch (System.Runtime.InteropServices.COMException) // If files used by Excel Interop are password protected or corrupt
+                catch (System.Runtime.InteropServices.COMException) // If Excel is not installed, or files used by Excel Interop are password protected or corrupt
                 {
                     numFAILED++;
                     convert_success = false;

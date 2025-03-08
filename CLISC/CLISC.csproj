@@ -16,7 +16,7 @@
     <FileVersion>1.0</FileVersion>
     <IsPublishable>True</IsPublishable>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>C:\Users\Asbjo\Mit drev\Diverse\Keys\Signing keys for my programs\CLISC.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>C:\Users\asbjoedt\Mit drev\Diverse\Keys\Signing keys for my programs\CLISC.snk</AssemblyOriginatorKeyFile>
     <Version>1.1.0</Version>
     <Company></Company>
   </PropertyGroup>
