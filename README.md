@@ -49,6 +49,8 @@ The program can convert, package and describe spreadsheets to meet a data qualit
 * Remove RealTimeData (RTD) functions but keep cell values
 * Remove external object references but copy objects to new subfolder
 * Convert embedded images to .tif
+* Convert embeeded audio to .mp3
+* Convert embedded video to .mp4
 * Extract all embedded objects to new subfolder
 * Warn if no cell values or objects detected
 * Inform if metadata detected
@@ -136,6 +138,7 @@ The following packages and software are used under license in CLISC. [Read more]
 * [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel), copyright (c) Microsoft Corporation
 * [ODF Validator 0.12.0](https://odftoolkit.org/conformance/ODFValidator.html), Apache License, [copyright info](https://github.com/tdf/odftoolkit/blob/master/NOTICE)
 * [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), MIT License, copyright (c) Microsoft Corporation
+* [FFmpeg](https://ffmpeg.org/), LGPL 2.1 license
 
 [^1]: See definition of [accepted spreadsheet file formats](https://github.com/Asbjoedt/CLISC/wiki/Spreadsheet-File-Formats).
 [^2]: The program currently has a conversion filesize limit of 150MB to prevent excessive performance bottlenecks. Larger filesize spreadsheets should be converted manually.
