@@ -78,13 +78,12 @@ namespace CLISC
 
                 if (File.Exists(xlsx_conv_filepath))
                 {
-                    System.Console.WriteLine(xlsx_conv_filepath);
                     try
                     {
                         // Inform user
                         Console.WriteLine(org_filepath); // Inform user of original filepath
                         string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
-                        Console.WriteLine($"--> Analyzing: {folder_number}\\1.xlsx"); // Inform user of analyzed filepath
+                        Console.WriteLine($"--> Analyzing: ..\\{folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
                         // Create archival requirements as a class object
                         Archive_Requirements arc = new Archive_Requirements();
@@ -182,8 +181,8 @@ namespace CLISC
                 {
                     // Inform user of .ods operation
                     string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
-                    Console.WriteLine($"--> Copy saved to: {folder_number}\\1.ods");
-                    Console.WriteLine($"--> Analyzing: {folder_number}\\1.ods");
+                    Console.WriteLine($"--> Copy saved to: ..\\{folder_number}\\1.ods");
+                    Console.WriteLine($"--> Analyzing: ..\\{folder_number}\\1.ods");
 
                     // Make an .ods copy
                     Conversion con = new Conversion();
@@ -233,14 +232,13 @@ namespace CLISC
 
             // Zip the output directory
             Console.WriteLine("---");
-            Console.WriteLine("--> ZIP DIRECTORY");
+            Console.WriteLine("ZIP DIRECTORY");
             Console.WriteLine("---");
             try
             {
                 ZIP_Directory(Results_Directory);
                 string zip_path = Results_Directory + ".zip";
-                Console.WriteLine($"The zipped archive directory was saved to: {zip_path}");
-                Console.WriteLine("Zip ended");
+                Console.WriteLine($"--> The zipped archive directory was saved to: {zip_path}");
             }
             catch (SystemException)
             {
