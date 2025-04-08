@@ -145,7 +145,7 @@ namespace CLISC
                             hasRTD = true;
                         }
                     }
-                    if (hasRTD = true)
+                    if (hasRTD == true)
                     {
                         // Save workbook and close Excel
                         wb.Save();
