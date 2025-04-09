@@ -19,7 +19,7 @@ namespace CLISC
 
         public int RTDFunctions { get; set; } = 0;
 
-        public int PrinterSettings { get; set; } = 0; 
+        public int PrinterSettings { get; set; } = 0;
 
         public int ExternalObj { get; set; } = 0;
 
@@ -49,7 +49,7 @@ namespace CLISC
 
             // Add information to list and return it
             List<Archive_Requirements> Arc_Req = new List<Archive_Requirements>();
-            Arc_Req.Add(new Archive_Requirements { Content = content, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, Metadata = metadata, EmbedObj = embedobj, Hyperlinks = hyperlinks});
+            Arc_Req.Add(new Archive_Requirements { Content = content, Conformance = conformance, Connections = connections, CellReferences = cellreferences, RTDFunctions = rtdfunctions, PrinterSettings = printersettings, ExternalObj = extobjects, ActiveSheet = activesheet, AbsolutePath = absolutepath, Metadata = metadata, EmbedObj = embedobj, Hyperlinks = hyperlinks });
             return Arc_Req;
         }
 
@@ -61,22 +61,22 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                if (spreadsheet.WorkbookPart.WorksheetParts != null)
+                if (spreadsheet.WorkbookPart?.WorksheetParts != null)
                 {
-					// Check cell values
-					IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
+                    // Check cell values
+                    IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
                     foreach (WorksheetPart part in worksheetparts)
                     {
                         Worksheet worksheet = part.Worksheet;
-                        IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>();
-						if (rows.Count() > 0)
+                        IEnumerable<Row>? rows = worksheet.GetFirstChild<SheetData>()?.Elements<Row>();
+                        if (rows != null && rows.Count() > 0)
                             // If any rows exist, then cells must exist
                             contentExists = true;
                     }
-					// Check objects
-					if (spreadsheet.DataParts != null)
+                    // Check objects
+                    if (spreadsheet.DataParts != null)
                         contentExists = true;
-				}
+                }
             }
 
             // Inform user
@@ -93,8 +93,8 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                Workbook workbook = spreadsheet.WorkbookPart.Workbook;
-                if (workbook.Conformance == null || workbook.Conformance == "transitional")
+                Workbook? workbook = spreadsheet.WorkbookPart?.Workbook;
+                if (workbook?.Conformance == null || workbook.Conformance == "transitional")
                     conformance = true;
                 else if (workbook.Conformance == "strict")
                     conformance = false;
@@ -116,7 +116,7 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
+                ConnectionsPart? conn = spreadsheet.WorkbookPart?.ConnectionsPart;
                 if (conn != null)
                     conn_count = conn.Connections.Count();
             }
@@ -135,25 +135,33 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart part in worksheetParts)
+                IEnumerable<WorksheetPart>? worksheetParts = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                if (worksheetParts != null)
                 {
-                    Worksheet worksheet = part.Worksheet;
-                    IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
-                    foreach (var row in rows)
+                    foreach (WorksheetPart part in worksheetParts)
                     {
-                        IEnumerable<Cell> cells = row.Elements<Cell>();
-                        foreach (Cell cell in cells)
+                        Worksheet worksheet = part.Worksheet;
+                        IEnumerable<Row>? rows = worksheet.GetFirstChild<SheetData>()?.Elements<Row>(); // Find all rows
+
+                        if (rows != null)
                         {
-                            if (cell.CellFormula != null)
+                            foreach (var row in rows)
                             {
-                                string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 1)
+                                IEnumerable<Cell> cells = row.Elements<Cell>();
+                                foreach (Cell cell in cells)
                                 {
-                                    string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
-                                    string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
-                                    if (hit == "[" || hit2 == "'[")
-                                        ext_cellrefs_count++;
+                                    if (cell.CellFormula != null)
+                                    {
+                                        string formula = cell.CellFormula.InnerText;
+                                        if (formula.Length > 1)
+                                        {
+                                            string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
+                                            string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
+                                            if (hit == "[" || hit2 == "'[")
+                                                ext_cellrefs_count++;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -175,9 +183,13 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
-                foreach (ExternalWorkbookPart extWbPart in extWbParts)
-                    extobj_count++;
+                IEnumerable<ExternalWorkbookPart>? extWbParts = spreadsheet.WorkbookPart?.ExternalWorkbookParts;
+
+                if (extWbParts != null)
+                {
+                    foreach (ExternalWorkbookPart extWbPart in extWbParts)
+                        extobj_count++;
+                }
             }
 
             // Inform user
@@ -193,26 +205,34 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart part in worksheetParts)
+                IEnumerable<WorksheetPart>? worksheetParts = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                if (worksheetParts != null)
                 {
-                    Worksheet worksheet = part.Worksheet;
-                    IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
-                    foreach (var row in rows)
+                    foreach (WorksheetPart part in worksheetParts)
                     {
-                        IEnumerable<Cell> cells = row.Elements<Cell>();
-                        foreach (Cell cell in cells)
+                        Worksheet worksheet = part.Worksheet;
+                        IEnumerable<Row>? rows = worksheet.GetFirstChild<SheetData>()?.Elements<Row>(); // Find all rows
+
+                        if (rows != null)
                         {
-                            if (cell.CellFormula != null)
+                            foreach (var row in rows)
                             {
-                                string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 2)
+                                IEnumerable<Cell> cells = row.Elements<Cell>();
+                                foreach (Cell cell in cells)
                                 {
-                                    string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
-                                    if (hit == "RTD")
+                                    if (cell.CellFormula != null)
                                     {
-                                        rtd_functions_count++;
-                                        Console.WriteLine($"--> Check: RTD function in sheet {part.Uri} cell {cell.CellReference} detected");
+                                        string formula = cell.CellFormula.InnerText;
+                                        if (formula.Length > 2)
+                                        {
+                                            string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
+                                            if (hit == "RTD")
+                                            {
+                                                rtd_functions_count++;
+                                                Console.WriteLine($"--> Check: RTD function in sheet {part.Uri} cell {cell.CellReference} detected");
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -235,19 +255,22 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
+                IEnumerable<WorksheetPart>? worksheetParts = spreadsheet.WorkbookPart?.WorksheetParts;
 
-                // Perform check
-                foreach (WorksheetPart worksheetPart in worksheetParts)
+                if (worksheetParts != null)
                 {
-                    ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
-                    packages = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
-                    emf = worksheetPart.ImageParts.Distinct().ToList();
-                    if (worksheetPart.DrawingsPart != null) // DrawingsPart needs a null check
+                    // Perform check
+                    foreach (WorksheetPart worksheetPart in worksheetParts)
                     {
-                        images = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
+                        ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
+                        packages = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
+                        emf = worksheetPart.ImageParts.Distinct().ToList();
+                        if (worksheetPart.DrawingsPart != null) // DrawingsPart needs a null check
+                        {
+                            images = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
+                        }
+                        threeD = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
                     }
-                    threeD = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
                 }
 
                 // Count number of embeddings
@@ -331,15 +354,20 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                List<SpreadsheetPrinterSettingsPart> printers = new List<SpreadsheetPrinterSettingsPart>();
-                foreach (WorksheetPart worksheetPart in worksheetParts)
+                IEnumerable<WorksheetPart>? worksheetParts = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                if (worksheetParts != null)
                 {
-                    printers = worksheetPart.SpreadsheetPrinterSettingsParts.ToList();
-                }
-                foreach (SpreadsheetPrinterSettingsPart printer in printers)
-                {
-                    printersettings_count++;
+                    List<SpreadsheetPrinterSettingsPart> printers = new List<SpreadsheetPrinterSettingsPart>();
+                    foreach (WorksheetPart worksheetPart in worksheetParts)
+                    {
+                        printers = worksheetPart.SpreadsheetPrinterSettingsParts.ToList();
+                    }
+
+                    foreach (SpreadsheetPrinterSettingsPart printer in printers)
+                    {
+                        printersettings_count++;
+                    }
                 }
             }
 
@@ -357,15 +385,14 @@ namespace CLISC
             // Perform check
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, false))
             {
-                if (spreadsheet.WorkbookPart.Workbook.BookViews != null)
+                if (spreadsheet.WorkbookPart?.Workbook.BookViews != null)
                 {
                     BookViews bookViews = spreadsheet.WorkbookPart.Workbook.BookViews;
                     if (bookViews.ChildElements.Where(p => p.OuterXml == "workbookView") != null)
                     {
-                        WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
-                        if (workbookView.ActiveTab != null)
-                            if (workbookView.ActiveTab.Value > 0)
-                                activeSheet = true;
+                        WorkbookView? workbookView = bookViews.GetFirstChild<WorkbookView>();
+                        if (workbookView?.ActiveTab != null && workbookView.ActiveTab.Value > 0)
+                            activeSheet = true;
                     }
                 }
             }
@@ -387,7 +414,7 @@ namespace CLISC
                 MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(MarkupCompatibilityProcessMode.ProcessAllParts, FileFormatVersions.Office2013)
             }))
             {
-                if (spreadsheet.WorkbookPart.Workbook.AbsolutePath != null)
+                if (spreadsheet.WorkbookPart?.Workbook.AbsolutePath != null)
                     absolutepath = true;
             }
 
