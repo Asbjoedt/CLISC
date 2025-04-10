@@ -19,7 +19,7 @@ namespace CLISC
                 try
                 {
 					// Check for certain protection
-					if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null) // This line will throw NullReferenceException
+					if (spreadsheet.WorkbookPart?.Workbook?.WorkbookProtection != null || spreadsheet.WorkbookPart?.Workbook?.FileSharing != null) // This line will throw NullReferenceException
 					{
 						throw new FileFormatException();
 					}
@@ -69,10 +69,10 @@ namespace CLISC
 
             using (var spreadsheet = SpreadsheetDocument.Open(input_filepath, true))
             {
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                Workbook workbook = wbPart.Workbook;
+                WorkbookPart? wbPart = spreadsheet.WorkbookPart;
+                Workbook? workbook = wbPart?.Workbook;
                 // If Strict
-                if (workbook.Conformance != null || workbook.Conformance != "transitional")
+                if (workbook?.Conformance != null || (workbook?.Conformance != null && workbook.Conformance != "transitional"))
                 {
                     // Change conformance class
                     workbook.Conformance.Value = ConformanceClass.Enumtransitional;

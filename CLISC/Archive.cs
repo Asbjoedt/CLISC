@@ -67,14 +67,14 @@ namespace CLISC
             foreach (fileIndex entry in File_List) // Loop through each file
             {
                 // Get information from File list
-                file_folder = entry.File_Folder;
+                file_folder = entry.File_Folder ?? string.Empty;
                 org_filepath = entry.Org_Filepath;
-                copy_filepath = entry.Copy_Filepath;
+                copy_filepath = entry.Copy_Filepath ?? string.Empty;
                 convert_success = entry.Convert_Success;
-                xlsx_conv_filepath = entry.XLSX_Conv_Filepath;
-                xlsx_conv_extension = entry.XLSX_Conv_Extension;
-                ods_conv_filepath = entry.ODS_Conv_Filepath;
-                ods_conv_extension = entry.ODS_Conv_Extension;
+                xlsx_conv_filepath = entry.XLSX_Conv_Filepath ?? string.Empty;
+                xlsx_conv_extension = entry.XLSX_Conv_Extension ?? string.Empty;
+                ods_conv_filepath = entry.ODS_Conv_Filepath ?? string.Empty;
+                ods_conv_extension = entry.ODS_Conv_Extension ?? string.Empty;
 
                 if (File.Exists(xlsx_conv_filepath))
                 {
@@ -82,7 +82,7 @@ namespace CLISC
                     {
                         // Inform user
                         Console.WriteLine(org_filepath); // Inform user of original filepath
-                        string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath));
+                        string folder_number = Path.GetFileName(Path.GetDirectoryName(xlsx_conv_filepath)) ?? throw new ArgumentNullException(nameof(xlsx_conv_filepath));
                         Console.WriteLine($"--> Analyzing: ..\\{folder_number}\\1.xlsx"); // Inform user of analyzed filepath
 
                         // Create archival requirements as a class object
@@ -180,7 +180,7 @@ namespace CLISC
                 if (entry.ODS_Conv_Extension == ".ods")
                 {
                     // Inform user of .ods operation
-                    string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath));
+                    string folder_number = Path.GetFileName(Path.GetDirectoryName(ods_conv_filepath)) ?? throw new ArgumentNullException(nameof(ods_conv_filepath));
                     Console.WriteLine($"--> Copy saved to: ..\\{folder_number}\\1.ods");
                     Console.WriteLine($"--> Analyzing: ..\\{folder_number}\\1.ods");
 
