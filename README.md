@@ -128,7 +128,7 @@ If you want to test the application, a sample dataset is provided [here](https:/
 
 The following packages and software are used under license in CLISC. [Read more](https://github.com/Asbjoedt/CLISC/wiki/Dependencies).
 
-* [.Net 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0), copyright (c) Microsoft Corporation
+* [.Net 9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0), copyright (c) Microsoft Corporation
 * [Beyond Compare 4](https://www.scootersoftware.com/index.php), copyright (c) 2022 Scooter Software, Inc.
 * [CommandLineParser](https://github.com/commandlineparser/commandline), MIT License, copyright (c) 2005 - 2015 Giacomo Stelluti Scala & Contributor
 * [LibreOffice](https://www.libreoffice.org/), Mozilla Public License v2.0
