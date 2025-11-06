@@ -11,23 +11,45 @@ namespace CLISC
 {
     public partial class Conversion
     {
+        // Check OOXML format validity
+        public void CheckOOXMLFormat(string filepath)
+        {
+            // Quick ZIP/OOXML header check
+            using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            {
+                if (fs.Length < 4) throw new FileFormatException("File too small to be OOXML.");
+                byte[] header = new byte[4];
+                fs.Read(header, 0, 4);
+                if (header[0] != 0x50 || header[1] != 0x4B) // 'P' 'K'
+                    throw new FileFormatException("File is not a valid ZIP/OOXML package.");
+            }
+        }
+
         // Check if spreadsheet is writeable
         public void CheckWriteAbility(string filepath)
         {
-            using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
+            // Check OOXML format validity
+            CheckOOXMLFormat(filepath);
+
+            try
             {
-                try
+                using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
                 {
-					// Check for certain protection
-					if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null || spreadsheet.WorkbookPart.Workbook.FileSharing != null) // This line will throw NullReferenceException
-					{
-						throw new FileFormatException();
-					}
-				}
-                catch (System.NullReferenceException) 
-                {
-					throw new FileFormatException();
-				}
+                    // Validate workbook part exists
+                    if (spreadsheet.WorkbookPart?.Workbook == null)
+                        throw new FileFormatException("Missing workbook part; file is corrupted or not an OOXML spreadsheet.");
+
+                    // Check if spreadsheet is protected
+                    if (spreadsheet.WorkbookPart.Workbook.WorkbookProtection != null ||
+                        spreadsheet.WorkbookPart.Workbook.FileSharing != null)
+                    {
+                        throw new FileFormatException("Workbook is protected or shared.");
+                    }
+                }
+            }
+            catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
+            {
+                throw new FileFormatException("File is not a valid Open XML package or is corrupted.");
             }
         }
 
