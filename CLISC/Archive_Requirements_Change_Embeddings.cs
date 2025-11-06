@@ -12,6 +12,7 @@ using ImageMagick;
 using FFMpegCore;
 using FFMpegCore.Pipes;
 using FFMpegCore.Enums;
+using System.IO.Packaging;
 
 namespace CLISC
 {
@@ -31,98 +32,102 @@ namespace CLISC
             // Open spreadsheet
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart worksheetPart in worksheetParts)
+                IEnumerable<WorksheetPart>? worksheetParts = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                if (worksheetParts != null)
                 {
-                    // Perform check
-                    ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
-                    packages = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
-                    emf = worksheetPart.ImageParts.Distinct().ToList();
-                    if (worksheetPart.DrawingsPart != null) // DrawingsPart needs a null check
+                    foreach (WorksheetPart worksheetPart in worksheetParts)
                     {
-                        images = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
-                    }
-                    threeD = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
-
-                    // Perform change
-
-                    // Embedded binaries cannot be converted
-                    foreach (EmbeddedObjectPart embeddedObjectPart in ole)
-                    {
-                        // Extract object
-                        string output_filepath = Create_Output_Filepath(filepath, embeddedObjectPart.Uri.ToString());
-                        Stream input_stream = embeddedObjectPart.GetStream();
-                        Extract_EmbeddedObjects(input_stream, output_filepath);
-						input_stream.Dispose();
-
-						// Identify object
-						string AV_type = Identify_Object(embeddedObjectPart);
-
-						// Convert if correct AV type
-						if (AV_type == "audio" || AV_type == "video")
+                        // Perform check
+                        ole = worksheetPart.EmbeddedObjectParts.Distinct().ToList();
+                        packages = worksheetPart.EmbeddedPackageParts.Distinct().ToList();
+                        emf = worksheetPart.ImageParts.Distinct().ToList();
+                        if (worksheetPart.DrawingsPart != null) // DrawingsPart needs a null check
                         {
-							Convert_EmbedAV(worksheetPart, embeddedObjectPart, AV_type);
-							success++;
+                            images = worksheetPart.DrawingsPart.ImageParts.Distinct().ToList();
                         }
-                        else
+                        threeD = worksheetPart.Model3DReferenceRelationshipParts.Distinct().ToList();
+
+                        // Perform change
+
+                        // Embedded binaries cannot be converted
+                        foreach (EmbeddedObjectPart embeddedObjectPart in ole)
                         {
-							// Register conversion fail
-							fail++;
-						}
-                    }
+                            // Extract object
+                            string output_filepath = Create_Output_Filepath(filepath, embeddedObjectPart.Uri.ToString());
+                            Stream input_stream = embeddedObjectPart.GetStream();
+                            Extract_EmbeddedObjects(input_stream, output_filepath);
+                            input_stream.Dispose();
 
-                    // Embedded packages cannot be converted
-                    foreach (EmbeddedPackagePart part in packages)
-                    {
-                        // Extract object
-                        string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
-                        Stream input_stream = part.GetStream();
-                        Extract_EmbeddedObjects(input_stream, output_filepath);
-						input_stream.Dispose();
+                            // Identify object
+                            string AV_type = Identify_Object(embeddedObjectPart);
 
-						// Register conversion fail
-						fail++;
-                    }
+                            // Convert if correct AV type
+                            if (AV_type == "audio" || AV_type == "video")
+                            {
+                                Convert_EmbedAV(worksheetPart, embeddedObjectPart, AV_type);
+                                success++;
+                            }
+                            else
+                            {
+                                // Register conversion fail
+                                fail++;
+                            }
+                        }
 
-                    // 3D objects cannot be processed - Bug in Open XML SDK?
-                    foreach (Model3DReferenceRelationshipPart part in threeD)
-                    {
-                        // Extract object
-                        string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
-                        Stream input_stream = part.GetStream();
-                        Extract_EmbeddedObjects(input_stream, output_filepath);
-						input_stream.Dispose();
+                        // Embedded packages cannot be converted
+                        foreach (EmbeddedPackagePart part in packages)
+                        {
+                            // Extract object
+                            string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+                            Stream input_stream = part.GetStream();
+                            Extract_EmbeddedObjects(input_stream, output_filepath);
+                            input_stream.Dispose();
 
-						// Register conversion fail
-						fail++;
-                    }
+                            // Register conversion fail
+                            fail++;
+                        }
 
-                    // Convert Excel-generated .emf images to TIFF
-                    foreach (ImagePart imagePart in emf)
-                    {
-						// Extract object
-						string output_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
-						Stream input_stream = imagePart.GetStream();
-						Extract_EmbeddedObjects(input_stream, output_filepath);
-						input_stream.Dispose();
+                        // 3D objects cannot be processed - Bug in Open XML SDK?
+                        foreach (Model3DReferenceRelationshipPart part in threeD)
+                        {
+                            // Extract object
+                            string output_filepath = Create_Output_Filepath(filepath, part.Uri.ToString());
+                            Stream input_stream = part.GetStream();
+                            Extract_EmbeddedObjects(input_stream, output_filepath);
+                            input_stream.Dispose();
 
-						// Convert object
-						Convert_EmbedEmf(worksheetPart, imagePart);
-                        success++;
-                    }
+                            // Register conversion fail
+                            fail++;
+                        }
 
-                    // Convert embedded images to TIFF
-                    foreach (ImagePart imagePart in images)
-                    {
-						// Extract object
-						string output_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
-						Stream input_stream = imagePart.GetStream();
-						Extract_EmbeddedObjects(input_stream, output_filepath);
-                        input_stream.Dispose();
+                        // Convert Excel-generated .emf images to TIFF
+                        foreach (ImagePart imagePart in emf)
+                        {
+                            // Extract object
+                            string output_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
+                            Stream input_stream = imagePart.GetStream();
+                            Extract_EmbeddedObjects(input_stream, output_filepath);
+                            input_stream.Dispose();
 
-						// Convert object
-						Convert_EmbedImg(worksheetPart, imagePart);
-                        success++;
+                            // Convert object
+                            Convert_EmbedEmf(worksheetPart, imagePart);
+                            success++;
+                        }
+
+                        // Convert embedded images to TIFF
+                        foreach (ImagePart imagePart in images)
+                        {
+                            // Extract object
+                            string output_filepath = Create_Output_Filepath(filepath, imagePart.Uri.ToString());
+                            Stream input_stream = imagePart.GetStream();
+                            Extract_EmbeddedObjects(input_stream, output_filepath);
+                            input_stream.Dispose();
+
+                            // Convert object
+                            Convert_EmbedImg(worksheetPart, imagePart);
+                            success++;
+                        }
                     }
                 }
             }
@@ -139,23 +144,30 @@ namespace CLISC
             Stream new_Stream = Convert_ImageMagick(stream);
             stream.Dispose();
 
-			// Add new ImagePart
-			ImagePart new_ImagePart = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
+            if (worksheetPart.DrawingsPart != null)
+            {
+                // Add new ImagePart
+                ImagePart? new_ImagePart = worksheetPart.DrawingsPart.AddImagePart(ImagePartType.Tiff);
 
-            // Save image from stream to new ImagePart
-            new_Stream.Position = 0;
-            new_ImagePart.FeedData(new_Stream);
+                // Save image from stream to new ImagePart
+                new_Stream.Position = 0;
+                new_ImagePart.FeedData(new_Stream);
 
-            // Change relationships of image
-            string id = Get_RelationshipId(imagePart);
-            Blip blip = worksheetPart.DrawingsPart.WorksheetDrawing.Descendants<DocumentFormat.OpenXml.Drawing.Spreadsheet.Picture>()
-                            .Where(p => p.BlipFill.Blip.Embed == id)
-                            .Select(p => p.BlipFill.Blip)
-                            .Single();
-            blip.Embed = Get_RelationshipId(new_ImagePart);
+                // Change relationships of image
+                string id = Get_RelationshipId(imagePart);
+                Blip? blip = worksheetPart.DrawingsPart.WorksheetDrawing?.Descendants<DocumentFormat.OpenXml.Drawing.Spreadsheet.Picture>()
+                                .Where(p => p.BlipFill?.Blip?.Embed == id)
+                                .Select(p => p.BlipFill?.Blip)
+                                .Single();
 
-            // Delete original ImagePart
-            worksheetPart.DrawingsPart.DeletePart(imagePart);
+                if (blip != null)
+                {
+                    blip.Embed = Get_RelationshipId(new_ImagePart);
+                }
+
+                // Delete original ImagePart
+                worksheetPart.DrawingsPart.DeletePart(imagePart);
+            }
         }
 
         // Convert Excel-generated .emf images to TIFF
@@ -176,20 +188,24 @@ namespace CLISC
             // Change relationships of image
             string id = Get_RelationshipId(imagePart);
             XDocument xElement = worksheetPart.VmlDrawingParts.First().GetXDocument();
-            IEnumerable<XElement> descendants = xElement.FirstNode.Document.Descendants();
-            foreach (XElement descendant in descendants)
+            IEnumerable<XElement>? descendants = xElement.FirstNode?.Document?.Descendants();
+
+            if (descendants != null)
             {
-                if (descendant.Name == "{urn:schemas-microsoft-com:vml}imagedata")
+                foreach (XElement descendant in descendants)
                 {
-                    IEnumerable<XAttribute> attributes = descendant.Attributes();
-                    foreach (XAttribute attribute in attributes)
+                    if (descendant.Name == "{urn:schemas-microsoft-com:vml}imagedata")
                     {
-                        if (attribute.Name == "{urn:schemas-microsoft-com:office:office}relid")
+                        IEnumerable<XAttribute> attributes = descendant.Attributes();
+                        foreach (XAttribute attribute in attributes)
                         {
-                            if (attribute.Value == id)
+                            if (attribute.Name == "{urn:schemas-microsoft-com:office:office}relid")
                             {
-                                attribute.Value = Get_RelationshipId(new_ImagePart);
-                                worksheetPart.VmlDrawingParts.First().SaveXDocument();
+                                if (attribute.Value == id)
+                                {
+                                    attribute.Value = Get_RelationshipId(new_ImagePart);
+                                    worksheetPart.VmlDrawingParts.First().SaveXDocument();
+                                }
                             }
                         }
                     }

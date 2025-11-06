@@ -117,16 +117,19 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                WorkbookPart wbPart = spreadsheet.WorkbookPart;
-                Workbook workbook = wbPart.Workbook;
+                WorkbookPart? wbPart = spreadsheet.WorkbookPart;
+                Workbook? workbook = wbPart?.Workbook;
                 // If Transitional
-                if (workbook.Conformance == null || workbook.Conformance != "strict")
+                if (workbook?.Conformance == null || workbook.Conformance != "strict")
                 {
                     // Change conformance class
-                    workbook.Conformance.Value = ConformanceClass.Enumstrict;
+                    if (workbook?.Conformance?.Value != null)
+                    {
+                        workbook.Conformance.Value = ConformanceClass.Enumstrict;
+                    }
 
                     // Add vml urn namespace to workbook.xml
-                    workbook.AddNamespaceDeclaration("v", "urn:schemas-microsoft-com:vml");
+                    workbook?.AddNamespaceDeclaration("v", "urn:schemas-microsoft-com:vml");
                 }
             }
         }
@@ -138,44 +141,51 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                ConnectionsPart conn = spreadsheet.WorkbookPart.ConnectionsPart;
+                ConnectionsPart? conn = spreadsheet.WorkbookPart?.ConnectionsPart;
 
                 // Count connections
-                success = conn.Connections.Count();
+                success = conn?.Connections?.Count() ?? 0;
 
-                // Delete all connections
-                spreadsheet.WorkbookPart.DeletePart(conn);
-                
-                // Delete all QueryTableParts
-                IEnumerable<WorksheetPart> worksheetParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart worksheetPart in worksheetParts)
+                if (conn != null)
                 {
-                    // Delete all QueryTableParts in WorksheetParts
-                    List<QueryTablePart> queryTables = worksheetPart.QueryTableParts.ToList(); // Must be a list
-                    foreach (QueryTablePart queryTablePart in queryTables)
-                    {
-                        worksheetPart.DeletePart(queryTablePart);
-                    }
+                    // Delete all connections
+                    spreadsheet.WorkbookPart?.DeletePart(conn);
+                }
 
-                    // Delete all QueryTableParts, if they are not registered in a WorksheetPart
-                    List<TableDefinitionPart> tableDefinitionParts = worksheetPart.TableDefinitionParts.ToList();
-                    foreach (TableDefinitionPart tableDefinitionPart in tableDefinitionParts)
+                // Delete all QueryTableParts
+                IEnumerable<WorksheetPart>? worksheetParts = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                if (worksheetParts != null)
+                {
+                    foreach (WorksheetPart worksheetPart in worksheetParts)
                     {
-                        List<IdPartPair> idPartPairs = tableDefinitionPart.Parts.ToList();
-                        foreach (IdPartPair idPartPair in idPartPairs)
+                        // Delete all QueryTableParts in WorksheetParts
+                        List<QueryTablePart> queryTables = worksheetPart.QueryTableParts.ToList(); // Must be a list
+                        foreach (QueryTablePart queryTablePart in queryTables)
                         {
-                            if (idPartPair.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.QueryTablePart")
+                            worksheetPart.DeletePart(queryTablePart);
+                        }
+
+                        // Delete all QueryTableParts, if they are not registered in a WorksheetPart
+                        List<TableDefinitionPart> tableDefinitionParts = worksheetPart.TableDefinitionParts.ToList();
+                        foreach (TableDefinitionPart tableDefinitionPart in tableDefinitionParts)
+                        {
+                            List<IdPartPair> idPartPairs = tableDefinitionPart.Parts.ToList();
+                            foreach (IdPartPair idPartPair in idPartPairs)
                             {
-                                // Delete QueryTablePart
-                                tableDefinitionPart.DeletePart(idPartPair.OpenXmlPart);
-                                // The TableDefinitionPart must also be deleted
-                                worksheetPart.DeletePart(tableDefinitionPart);
-                                // And the reference to the TableDefinitionPart in the WorksheetPart must be deleted
-                                List<TablePart> tableParts = worksheetPart.Worksheet.Descendants<TablePart>().ToList();
-                                foreach (TablePart tablePart in tableParts)
+                                if (idPartPair.OpenXmlPart.ToString() == "DocumentFormat.OpenXml.Packaging.QueryTablePart")
                                 {
-                                    if (idPartPair.RelationshipId == tablePart.Id)
-                                        tablePart.Remove();
+                                    // Delete QueryTablePart
+                                    tableDefinitionPart.DeletePart(idPartPair.OpenXmlPart);
+                                    // The TableDefinitionPart must also be deleted
+                                    worksheetPart.DeletePart(tableDefinitionPart);
+                                    // And the reference to the TableDefinitionPart in the WorksheetPart must be deleted
+                                    List<TablePart> tableParts = worksheetPart.Worksheet.Descendants<TablePart>().ToList();
+                                    foreach (TablePart tablePart in tableParts)
+                                    {
+                                        if (idPartPair.RelationshipId == tablePart.Id)
+                                            tablePart.Remove();
+                                    }
                                 }
                             }
                         }
@@ -183,7 +193,7 @@ namespace CLISC
                 }
 
                 // If spreadsheet contains a CustomXmlMappingsPart, delete databinding
-                if (spreadsheet.WorkbookPart.CustomXmlMappingsPart != null)
+                if (spreadsheet.WorkbookPart?.CustomXmlMappingsPart != null)
                 {
                     CustomXmlMappingsPart xmlMap = spreadsheet.WorkbookPart.CustomXmlMappingsPart;
                     List<Map> maps = xmlMap.MapInfo.Elements<Map>().ToList(); // Must be a list
@@ -204,38 +214,45 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart part in worksheetparts)
+                IEnumerable<WorksheetPart>? worksheetparts = spreadsheet.WorkbookPart?.WorksheetParts;
+                if (worksheetparts != null)
                 {
-                    Worksheet worksheet = part.Worksheet;
-                    var rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
-                    foreach (var row in rows)
+                    foreach (WorksheetPart part in worksheetparts)
                     {
-                        IEnumerable<Cell> cells = row.Elements<Cell>();
-                        foreach (Cell cell in cells)
+                        Worksheet worksheet = part.Worksheet;
+                        IEnumerable<Row>? rows = worksheet.GetFirstChild<SheetData>()?.Elements<Row>(); // Find all rows
+
+                        if (rows != null)
                         {
-                            if (cell.CellFormula != null)
+                            foreach (var row in rows)
                             {
-                                string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 2)
+                                IEnumerable<Cell> cells = row.Elements<Cell>();
+                                foreach (Cell cell in cells)
                                 {
-                                    string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
-                                    if (hit == "RTD")
+                                    if (cell.CellFormula != null)
                                     {
-                                        CellValue cellvalue = cell.CellValue; // Save current cell value
-                                        cell.CellFormula = null; // Remove RTD formula
-                                        // If cellvalue does not have a real value
-                                        if (cellvalue.Text == "#N/A")
+                                        string formula = cell.CellFormula.InnerText;
+                                        if (formula.Length > 2)
                                         {
-                                            cell.DataType = CellValues.String;
-                                            cell.CellValue = new CellValue("Invalid data removed");
+                                            string hit = formula.Substring(0, 3); // Transfer first 3 characters to string
+                                            if (hit == "RTD")
+                                            {
+                                                CellValue? cellvalue = cell.CellValue; // Save current cell value
+                                                cell.CellFormula = null; // Remove RTD formula
+                                                                         // If cellvalue does not have a real value
+                                                if (cellvalue?.Text == "#N/A")
+                                                {
+                                                    cell.DataType = CellValues.String;
+                                                    cell.CellValue = new CellValue("Invalid data removed");
+                                                }
+                                                else
+                                                {
+                                                    cell.CellValue = cellvalue; // Insert saved cell value
+                                                }
+                                                // Add to success
+                                                success++;
+                                            }
                                         }
-                                        else
-                                        {
-                                            cell.CellValue = cellvalue; // Insert saved cell value
-                                        }
-                                        // Add to success
-                                        success++;
                                     }
                                 }
                             }
@@ -243,12 +260,20 @@ namespace CLISC
                     }
                 }
                 // Delete calculation chain
-                CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
-                spreadsheet.WorkbookPart.DeletePart(calc);
+                CalculationChainPart? calc = spreadsheet.WorkbookPart?.CalculationChainPart;
+
+                if (calc != null)
+                {
+                    spreadsheet.WorkbookPart?.DeletePart(calc);
+                }
 
                 // Delete volatile dependencies
-                VolatileDependenciesPart vol = spreadsheet.WorkbookPart.VolatileDependenciesPart;
-                spreadsheet.WorkbookPart.DeletePart(vol);
+                VolatileDependenciesPart? vol = spreadsheet.WorkbookPart?.VolatileDependenciesPart;
+
+                if (vol != null)
+                {
+                    spreadsheet.WorkbookPart?.DeletePart(vol);
+                }
             }
             return success;
         }
@@ -260,14 +285,18 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                IEnumerable<WorksheetPart> wsParts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart wsPart in wsParts)
+                IEnumerable<WorksheetPart>? wsParts = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                if (wsParts != null)
                 {
-                    List<SpreadsheetPrinterSettingsPart> printers = wsPart.SpreadsheetPrinterSettingsParts.ToList(); // Must be a list
-                    foreach (SpreadsheetPrinterSettingsPart printer in printers)
+                    foreach (WorksheetPart wsPart in wsParts)
                     {
-                        wsPart.DeletePart(printer);
-                        success++;
+                        List<SpreadsheetPrinterSettingsPart> printers = wsPart.SpreadsheetPrinterSettingsParts.ToList(); // Must be a list
+                        foreach (SpreadsheetPrinterSettingsPart printer in printers)
+                        {
+                            wsPart.DeletePart(printer);
+                            success++;
+                        }
                     }
                 }
             }
@@ -281,39 +310,48 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                IEnumerable<WorksheetPart> worksheetparts = spreadsheet.WorkbookPart.WorksheetParts;
-                foreach (WorksheetPart part in worksheetparts)
+                IEnumerable<WorksheetPart>? worksheetparts = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                if (worksheetparts != null)
                 {
-                    Worksheet worksheet = part.Worksheet;
-                    IEnumerable<Row> rows = worksheet.GetFirstChild<SheetData>().Elements<Row>(); // Find all rows
-                    foreach (Row row in rows)
+                    foreach (WorksheetPart part in worksheetparts)
                     {
-                        IEnumerable<Cell> cells = row.Elements<Cell>();
-                        foreach (Cell cell in cells)
+                        Worksheet worksheet = part.Worksheet;
+                        IEnumerable<Row>? rows = worksheet.GetFirstChild<SheetData>()?.Elements<Row>(); // Find all rows
+
+                        if (rows != null)
                         {
-                            if (cell.CellFormula != null)
+                            foreach (Row row in rows)
                             {
-                                string formula = cell.CellFormula.InnerText;
-                                if (formula.Length > 1)
+                                IEnumerable<Cell> cells = row.Elements<Cell>();
+                                foreach (Cell cell in cells)
                                 {
-                                    string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
-                                    string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
-                                    if (hit == "[" || hit2 == "'[")
+                                    if (cell.CellFormula != null)
                                     {
-                                        CellValue cellvalue = cell.CellValue; // Save current cell value
-                                        cell.CellFormula = null;
-                                        // If cellvalue does not have a real value
-                                        if (cellvalue.Text == "#N/A")
+                                        string formula = cell.CellFormula.InnerText;
+                                        if (formula.Length > 1)
                                         {
-                                            cell.DataType = CellValues.String;
-                                            cell.CellValue = new CellValue("Invalid data removed");
+                                            string hit = formula.Substring(0, 1); // Transfer first 1 characters to string
+                                            string hit2 = formula.Substring(0, 2); // Transfer first 2 characters to string
+                                            if (hit == "[" || hit2 == "'[")
+                                            {
+                                                CellValue? cellvalue = cell.CellValue; // Save current cell value
+
+                                                cell.CellFormula = null;
+                                                // If cellvalue does not have a real value
+                                                if (cellvalue?.Text == "#N/A")
+                                                {
+                                                    cell.DataType = CellValues.String;
+                                                    cell.CellValue = new CellValue("Invalid data removed");
+                                                }
+                                                else
+                                                {
+                                                    cell.CellValue = cellvalue; // Insert saved cell value
+                                                }
+                                                // Add to success
+                                                success++;
+                                            }
                                         }
-                                        else
-                                        {
-                                            cell.CellValue = cellvalue; // Insert saved cell value
-                                        }
-                                        // Add to success
-                                        success++;
                                     }
                                 }
                             }
@@ -322,8 +360,9 @@ namespace CLISC
                 }
 
                 // Delete external book references
-                List<ExternalWorkbookPart> extwbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts.ToList();
-                if (extwbParts.Count > 0)
+                List<ExternalWorkbookPart>? extwbParts = spreadsheet.WorkbookPart?.ExternalWorkbookParts?.ToList();
+
+                if (extwbParts != null && extwbParts.Count > 0)
                 {
                     foreach (ExternalWorkbookPart extpart in extwbParts)
                     {
@@ -331,17 +370,21 @@ namespace CLISC
                         foreach (var element in elements)
                         {
                             if (element.LocalName == "externalBook")
-                                spreadsheet.WorkbookPart.DeletePart(extpart);
+                                spreadsheet.WorkbookPart?.DeletePart(extpart);
                         }
                     }
                 }
 
                 // Delete calculation chain
-                CalculationChainPart calc = spreadsheet.WorkbookPart.CalculationChainPart;
-                spreadsheet.WorkbookPart.DeletePart(calc);
+                CalculationChainPart? calc = spreadsheet.WorkbookPart?.CalculationChainPart;
+                if (calc != null)
+                {
+                    spreadsheet.WorkbookPart!.DeletePart(calc);
+                }
 
                 // Delete defined names that includes external cell references
-                DefinedNames definedNames = spreadsheet.WorkbookPart.Workbook.DefinedNames;
+                DefinedNames? definedNames = spreadsheet.WorkbookPart?.Workbook?.DefinedNames;
+
                 if (definedNames != null)
                 {
                     var definedNamesList = definedNames.ToList();
@@ -369,28 +412,32 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart.ExternalWorkbookParts;
-                foreach (ExternalWorkbookPart extWbPart in extWbParts)
-                {
-                    List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // Must be a list
-                    foreach (ExternalRelationship extrel in extrels)
-                    {
-                        // Copy external file to subfolder
-                        string output_filepath = new_folder + "\\" + extrel.Uri.ToString().Split("/").Last();
-                        try
-                        {
-                            File.Copy(extrel.Uri.ToString(), output_filepath);
-                            success++;
-                        }
-                        catch(System.IO.IOException)
-                        {
-                            fail++;
-                        }
+                IEnumerable<ExternalWorkbookPart> extWbParts = spreadsheet.WorkbookPart?.ExternalWorkbookParts ?? new List<ExternalWorkbookPart>();
 
-                        // Remove external object reference
-                        Uri uri = new Uri($"External reference {extrel.Uri} was removed", UriKind.Relative);
-                        extWbPart.DeleteExternalRelationship(extrel.Id);
-                        extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: extrel.Id);
+                if (extWbParts != null)
+                {
+                    foreach (ExternalWorkbookPart extWbPart in extWbParts)
+                    {
+                        List<ExternalRelationship> extrels = extWbPart.ExternalRelationships.ToList(); // Must be a list
+                        foreach (ExternalRelationship extrel in extrels)
+                        {
+                            // Copy external file to subfolder
+                            string output_filepath = new_folder + "\\" + extrel.Uri.ToString().Split("/").Last();
+                            try
+                            {
+                                File.Copy(extrel.Uri.ToString(), output_filepath);
+                                success++;
+                            }
+                            catch (System.IO.IOException)
+                            {
+                                fail++;
+                            }
+
+                            // Remove external object reference
+                            Uri uri = new Uri($"External reference {extrel.Uri} was removed", UriKind.Relative);
+                            extWbPart.DeleteExternalRelationship(extrel.Id);
+                            extWbPart.AddExternalRelationship(relationshipType: "http://purl.oclc.org/ooxml/officeDocument/relationships/oleObject", externalUri: uri, id: extrel.Id);
+                        }
                     }
                 }
             }
@@ -407,9 +454,9 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                BookViews bookViews = spreadsheet.WorkbookPart.Workbook.GetFirstChild<BookViews>();
-                WorkbookView workbookView = bookViews.GetFirstChild<WorkbookView>();
-                if (workbookView.ActiveTab != null)
+                BookViews? bookViews = spreadsheet.WorkbookPart?.Workbook?.GetFirstChild<BookViews>();
+                WorkbookView? workbookView = bookViews?.GetFirstChild<WorkbookView>();
+                if (workbookView?.ActiveTab != null)
                 {
                     var activeSheetId = workbookView.ActiveTab.Value;
                     if (activeSheetId > 0)
@@ -418,16 +465,24 @@ namespace CLISC
                         workbookView.ActiveTab.Value = 0;
 
                         // Iterate all worksheets to detect if sheetview.Tabselected exists and change it
-                        IEnumerable<WorksheetPart> worksheets = spreadsheet.WorkbookPart.WorksheetParts;
-                        foreach (WorksheetPart worksheet in worksheets)
+                        IEnumerable<WorksheetPart>? worksheets = spreadsheet.WorkbookPart?.WorksheetParts;
+
+                        if (worksheets != null)
                         {
-                            SheetViews sheetviews = worksheet.Worksheet.SheetViews;
-                            foreach (SheetView sheetview in sheetviews)
+                            foreach (WorksheetPart worksheet in worksheets)
                             {
-                                sheetview.TabSelected = null;
+                                SheetViews? sheetviews = worksheet.Worksheet?.SheetViews;
+
+                                if (sheetviews != null)
+                                {
+                                    foreach (SheetView sheetview in sheetviews)
+                                    {
+                                        sheetview.TabSelected = null;
+                                    }
+                                }
                             }
+                            success = true;
                         }
-                        success = true;
                     }
                 }
             }
@@ -444,8 +499,8 @@ namespace CLISC
                 MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(MarkupCompatibilityProcessMode.ProcessAllParts, FileFormatVersions.Office2013)
             }))
             {
-                AbsolutePath absPath = spreadsheet.WorkbookPart.Workbook.AbsolutePath;
-                absPath.Remove();
+                AbsolutePath? absPath = spreadsheet.WorkbookPart?.Workbook?.AbsolutePath;
+                absPath?.Remove();
                 success = true;
             }
             return success;
@@ -453,7 +508,7 @@ namespace CLISC
 
         // Remove metadata in file properties
         public int Remove_Metadata(string filepath)
-        { 
+        {
             int success = 0;
 
             // Read the file package
@@ -463,7 +518,7 @@ namespace CLISC
                 System.IO.Packaging.PackageProperties properties = package.PackageProperties;
 
                 // Create metadata file
-                string folder = System.IO.Path.GetDirectoryName(filepath);
+                string? folder = System.IO.Path.GetDirectoryName(filepath);
                 using (StreamWriter w = File.AppendText($"{folder}\\orgFile_Metadata.txt"))
                 {
                     w.WriteLine("---");

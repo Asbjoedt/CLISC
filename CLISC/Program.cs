@@ -11,7 +11,7 @@ namespace CLISC
         {
             // Inform user of beginning of program
             Console.WriteLine("---");
-            Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert, Compare & Archive v1.0");
+            Console.WriteLine("CLISC - Command Line Interface Spreadsheet Count, Convert, Compare & Archive v1.2.0");
             Console.WriteLine("@Asbjørn Skødt, web: https://github.com/Asbjoedt/CLISC");
             Console.WriteLine("---");
 

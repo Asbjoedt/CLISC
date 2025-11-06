@@ -33,10 +33,10 @@ namespace CLISC
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
                 // Remove VBA project (if present) due to error in Open XML SDK
-                VbaProjectPart vba = spreadsheet.WorkbookPart.VbaProjectPart;
+                VbaProjectPart? vba = spreadsheet.WorkbookPart?.VbaProjectPart;
                 if (vba != null)
                 {
-                    spreadsheet.WorkbookPart.DeletePart(vba);
+                    spreadsheet.WorkbookPart!.DeletePart(vba);
                     repaired = true;
                 }
             }
@@ -51,11 +51,12 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                RibbonExtensibilityPart ribbon = spreadsheet.RibbonExtensibilityPart;
+                RibbonExtensibilityPart? ribbon = spreadsheet.RibbonExtensibilityPart;
+
                 if (ribbon != null)
                 {
                     // Correct the namespace for CustomUI XML files, if wrong
-                    if (ribbon.CustomUI.NamespaceUri == "http://schemas.microsoft.com/office/2006/01/customui")
+                    if (ribbon.CustomUI?.NamespaceUri == "http://schemas.microsoft.com/office/2006/01/customui")
                     {
                         //ribbon.CustomUI.RemoveNamespaceDeclaration("mso");
                         //ribbon.CustomUI.AddNamespaceDeclaration("mso", "http://schemas.microsoft.com/office/2009/07/customui");
@@ -73,7 +74,7 @@ namespace CLISC
 
             using (SpreadsheetDocument spreadsheet = SpreadsheetDocument.Open(filepath, true))
             {
-                DefinedNames definedNames = spreadsheet.WorkbookPart.Workbook.DefinedNames;
+                DefinedNames? definedNames = spreadsheet.WorkbookPart?.Workbook?.DefinedNames;
 
                 // Remove legacy Excel 4.0 GET.CELL function (if present)
                 if (definedNames != null)
